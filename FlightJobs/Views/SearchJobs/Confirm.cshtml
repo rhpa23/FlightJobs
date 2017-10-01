@@ -1,0 +1,77 @@
+﻿@model IEnumerable<FlightJobs.Models.JobListModel>
+
+@{
+    ViewBag.Title = "Confirm";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<p>
+    <h2> Confirm flight from  @Html.DisplayFor(modelItem => Model.FirstOrDefault().Departure.ICAO) </h2>
+</p>
+
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Arrival)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Dist)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Cargo)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Pay)
+        </th>
+    </tr>
+    
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Arrival)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Dist) NM
+        </td>
+        @if (item.Pax > 0)
+        {
+            if (item.FirstClass)
+            {
+                <td> @Html.DisplayFor(modelItem => item.Pax) Pax (Business) </td>
+            }
+            else
+            {
+                <td> @Html.DisplayFor(modelItem => item.Pax) Pax (Economy)  </td>
+            }
+        }
+        else
+        {
+            <td> @Html.DisplayFor(modelItem => item.Cargo) Kg (Cargo)  </td>
+        }
+        <td>
+            @Html.DisplayFor(modelItem => item.Pay)
+        </td>
+    </tr>
+}
+
+</table>
+
+<span>Totals</span>
+<p>
+    Pax = @ViewBag.TotalPax
+</p>
+<p>
+    Cargo = @ViewBag.TotalCargo
+</p>
+<p>
+    Pay = @ViewBag.TotalPay
+</p>
+
+
+<div>
+    @if (Request.UrlReferrer != null)
+    {
+        <a class="bottomNav" onclick="history.go(-1); return false;" href="#">Back to Result</a><br />
+    }
+</div>
