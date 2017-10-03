@@ -8,12 +8,9 @@ namespace FlightJobs.Models
 {
     public class JobListModel
     {
-
-        //public string Plane { get; set; }
         public AirportModel Departure { get; set; }
         public string Arrival { get; set; }
         public long Dist { get; set; }
-        //public long Eobt { get; set; }
         public long Pax { get; set; }
         public long Cargo { get; set; }
 

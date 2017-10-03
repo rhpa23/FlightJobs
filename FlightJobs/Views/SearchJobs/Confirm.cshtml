@@ -1,4 +1,4 @@
-﻿@model IEnumerable<FlightJobs.Models.JobListModel>
+﻿@model IEnumerable<FlightJobs.Models.JobDbModel>
 
 @{
     ViewBag.Title = "Confirm";
@@ -6,14 +6,14 @@
 }
 
 <p>
-    <h2> Confirm flight from  @Html.DisplayFor(modelItem => Model.FirstOrDefault().Departure.ICAO) </h2>
+    <h2> Confirm flight from  @Html.DisplayFor(modelItem => Model.FirstOrDefault().DepartureICAO) </h2>
 </p>
 
 
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.Arrival)
+            @Html.DisplayNameFor(model => model.ArrivalICAO)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.Dist)
@@ -29,7 +29,7 @@
 @foreach (var item in Model) {
     <tr>
         <td>
-            @Html.DisplayFor(modelItem => item.Arrival)
+            @Html.DisplayFor(modelItem => item.ArrivalICAO)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.Dist) NM

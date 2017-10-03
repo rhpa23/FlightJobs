@@ -39,15 +39,36 @@ namespace FlightJobs.Controllers
         {
             Session.Add("JobSerachModel", model);
             ViewBag.JobSerachModel = model;
-            return Result(1);
+            return Result(-1);
         }
 
         public ActionResult Result(int? pageNumber)
         {
             if (Session["JobSerachModel"] != null)
             {
-                JobSerachModel model = (JobSerachModel)Session["JobSerachModel"];
-                var jobs = GenerateBoardJobs(model);
+                IList<JobListModel> jobs = new List<JobListModel>();
+                JobSerachModel modelParam = (JobSerachModel)Session["JobSerachModel"];
+                if (pageNumber == -1)
+                {
+                    pageNumber = 1;
+                    jobs = GenerateBoardJobs(modelParam);
+                    Session.Add("JobSearchResult", jobs);
+                }
+                else
+                {
+                    if (Session["JobSearchResult"] != null)
+                    {
+                        jobs = (IList<JobListModel>)Session["JobSearchResult"];
+                    }
+                }
+
+                if (Session["ListSelJobs"] != null)
+                {
+                    foreach (var selJob in (List<JobDbModel>)Session["ListSelJobs"])
+                    {
+                        jobs.FirstOrDefault(j => j.Arrival == selJob.ArrivalICAO && j.Pay == selJob.Pay).Selected = true;
+                    }
+                }
 
                 return View("Result", jobs.OrderBy(x => x.Dist).ToPagedList(pageNumber ?? 1, 10));
             }
@@ -60,7 +81,8 @@ namespace FlightJobs.Controllers
         [HttpPost]
         public ActionResult Result(string[] sels, FormCollection form)
         {
-            List<JobListModel> listSelJobs = new List<JobListModel>();
+            //List<JobDbModel> listSelJobs = new List<JobDbModel>();
+            var list = new Dictionary<string, JobDbModel>();
             long totalPax = 0;
             long totalCargo = 0;
             long totalPay = 0;
@@ -71,29 +93,63 @@ namespace FlightJobs.Controllers
                 {
                     string[] iSelJob = item.Split('|');
                     // Departure | Arrival | Dist | Pax | Cargo | Pay | FirstClass
-                    var job = new JobListModel()
+                    string arrival = iSelJob[1];
+
+                    JobDbModel job;
+
+                    if (!list.ContainsKey(arrival))
                     {
-                        Departure = new AirportModel() { ICAO = iSelJob[0] },
-                        Arrival = iSelJob[1],
-                        Dist = string.IsNullOrEmpty(iSelJob[2]) ? 0 : long.Parse(iSelJob[2]),
-                        Pax = string.IsNullOrEmpty(iSelJob[3]) ? 0 : long.Parse(iSelJob[3]),
-                        Cargo = string.IsNullOrEmpty(iSelJob[4]) ? 0 : long.Parse(iSelJob[4]),
-                        Pay = string.IsNullOrEmpty(iSelJob[5]) ? 0 : long.Parse(iSelJob[5]),
-                        FirstClass = Convert.ToBoolean(iSelJob[6])
-                    };
-                    totalPax += job.Pax;
-                    totalCargo += job.Cargo;
-                    totalPay += job.Pay;
-                    listSelJobs.Add(job);
+                        totalPax = 0;
+                        totalCargo = 0;
+                        totalPay = 0;
+
+                        job = new JobDbModel()
+                        {
+                            DepartureICAO = iSelJob[0],
+                            ArrivalICAO = iSelJob[1],
+                            Dist = string.IsNullOrEmpty(iSelJob[2]) ? 0 : long.Parse(iSelJob[2]),
+                            Pax = string.IsNullOrEmpty(iSelJob[3]) ? 0 : long.Parse(iSelJob[3]),
+                            Cargo = string.IsNullOrEmpty(iSelJob[4]) ? 0 : long.Parse(iSelJob[4]),
+                            Pay = string.IsNullOrEmpty(iSelJob[5]) ? 0 : long.Parse(iSelJob[5]),
+                            FirstClass = Convert.ToBoolean(iSelJob[6])
+                        };
+
+                        list.Add(arrival, job);
+                    }
+                    else
+                    {
+                        job = list[arrival];
+
+                        job.Pax += string.IsNullOrEmpty(iSelJob[3]) ? 0 : long.Parse(iSelJob[3]);
+                        job.Cargo += string.IsNullOrEmpty(iSelJob[4]) ? 0 : long.Parse(iSelJob[4]);
+                        job.Pay += string.IsNullOrEmpty(iSelJob[5]) ? 0 : long.Parse(iSelJob[5]);
+                    }
                 }
             }
             ViewBag.TotalPax = totalPax;
             ViewBag.TotalCargo = totalCargo;
             ViewBag.TotalPay = string.Format("{0:C}", totalPay);
 
-            // TODO: Session.add(listSelJobs)
 
-            return View("Confirm", listSelJobs);
+            Session.Add("ListSelJobs", list.Values.ToList());
+
+
+            return View("Confirm", list.Values.ToList());
+        }
+
+
+        [HttpPost]
+        public ActionResult Confirm()
+        {
+            if (Session["ListSelJobs"] != null)
+            {
+                foreach (var selJob in (List<JobListModel>)Session["ListSelJobs"])
+                {
+
+                }
+            }
+
+            return View("Index");
         }
 
             private IList<JobListModel> GenerateBoardJobs(JobSerachModel model)
