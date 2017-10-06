@@ -39,10 +39,10 @@ namespace FlightJobs.Controllers
         {
             Session.Add("JobSerachModel", model);
             ViewBag.JobSerachModel = model;
-            return Result(-1);
+            return Result(-1, string.Empty);
         }
 
-        public ActionResult Result(int? pageNumber)
+        public ActionResult Result(int? pageNumber, string ids)
         {
             if (Session["JobSerachModel"] != null)
             {
@@ -62,12 +62,11 @@ namespace FlightJobs.Controllers
                     }
                 }
 
-                if (Session["ListSelJobs"] != null)
+                string[] idSel = string.IsNullOrEmpty(ids) ? new string[]{ } : ids.Split(',');
+                foreach (var id in idSel)
                 {
-                    foreach (var selJob in (List<JobDbModel>)Session["ListSelJobs"])
-                    {
-                        jobs.FirstOrDefault(j => j.Arrival == selJob.ArrivalICAO && j.Pay == selJob.Pay).Selected = true;
-                    }
+                    var job = jobs.FirstOrDefault(j => j.Id == Convert.ToInt32(id));
+                    job.Selected = true;
                 }
 
                 return View("Result", jobs.OrderBy(x => x.Dist).ToPagedList(pageNumber ?? 1, 10));
@@ -79,60 +78,61 @@ namespace FlightJobs.Controllers
         }
 
         [HttpPost]
-        public ActionResult Result(string[] sels, FormCollection form)
+        public ActionResult ResultNext(FormCollection form)
         {
-            //List<JobDbModel> listSelJobs = new List<JobDbModel>();
-            var list = new Dictionary<string, JobDbModel>();
+            var ids = new List<int>();
+            var pageSelsIds = form["sels"];
+            if (pageSelsIds != null)
+            {
+                string[] sList = pageSelsIds.ToString().Split(',');
+                foreach (var idString in sList)
+                {
+                    ids.Add(Convert.ToInt32(idString));
+                }
+            }
+
             long totalPax = 0;
             long totalCargo = 0;
             long totalPay = 0;
 
-            if (sels != null && sels.Length > 0)
+            var list = new Dictionary<string, JobDbModel>();
+            var jobs = (IList<JobListModel>)Session["JobSearchResult"];
+            foreach (var job in jobs.Where(j => j.Selected || ids.Contains(j.Id)))
             {
-                foreach (var item in sels)
+                JobDbModel jobDB;
+                if (!list.ContainsKey(job.Arrival))
                 {
-                    string[] iSelJob = item.Split('|');
-                    // Departure | Arrival | Dist | Pax | Cargo | Pay | FirstClass
-                    string arrival = iSelJob[1];
-
-                    JobDbModel job;
-
-                    if (!list.ContainsKey(arrival))
+                    jobDB = new JobDbModel()
                     {
-                        totalPax = 0;
-                        totalCargo = 0;
-                        totalPay = 0;
+                        DepartureICAO = job.Departure.ICAO,
+                        ArrivalICAO = job.Arrival,
+                        Dist = job.Dist,
+                        Pax = job.Pax,
+                        Cargo = job.Cargo,
+                        Pay = job.Pay,
+                        FirstClass = job.FirstClass
+                    };
 
-                        job = new JobDbModel()
-                        {
-                            DepartureICAO = iSelJob[0],
-                            ArrivalICAO = iSelJob[1],
-                            Dist = string.IsNullOrEmpty(iSelJob[2]) ? 0 : long.Parse(iSelJob[2]),
-                            Pax = string.IsNullOrEmpty(iSelJob[3]) ? 0 : long.Parse(iSelJob[3]),
-                            Cargo = string.IsNullOrEmpty(iSelJob[4]) ? 0 : long.Parse(iSelJob[4]),
-                            Pay = string.IsNullOrEmpty(iSelJob[5]) ? 0 : long.Parse(iSelJob[5]),
-                            FirstClass = Convert.ToBoolean(iSelJob[6])
-                        };
-
-                        list.Add(arrival, job);
-                    }
-                    else
-                    {
-                        job = list[arrival];
-
-                        job.Pax += string.IsNullOrEmpty(iSelJob[3]) ? 0 : long.Parse(iSelJob[3]);
-                        job.Cargo += string.IsNullOrEmpty(iSelJob[4]) ? 0 : long.Parse(iSelJob[4]);
-                        job.Pay += string.IsNullOrEmpty(iSelJob[5]) ? 0 : long.Parse(iSelJob[5]);
-                    }
+                    list.Add(job.Arrival, jobDB);
                 }
+                else
+                {
+                    jobDB = list[job.Arrival];
+
+                    jobDB.Pax += job.Pax;
+                    jobDB.Cargo += job.Cargo;
+                    jobDB.Pay += job.Pay;
+                }
+                totalPax += job.Pax;
+                totalCargo += job.Cargo;
+                totalPay += job.Pay;
             }
+
             ViewBag.TotalPax = totalPax;
             ViewBag.TotalCargo = totalCargo;
             ViewBag.TotalPay = string.Format("{0:C}", totalPay);
 
-
             Session.Add("ListSelJobs", list.Values.ToList());
-
 
             return View("Confirm", list.Values.ToList());
         }
@@ -163,9 +163,11 @@ namespace FlightJobs.Controllers
                 var depCoord = new GeoCoordinate(dep.Latitude, dep.Longitude);
                 var randomPob = new Random();
                 var randomCargo = new Random();
+                int id = 0;
 
                 foreach (var arrival in AirportDatabaseFile.GetAllAirportInfo())
                 {
+                    
                     var arrCoord = new GeoCoordinate(arrival.Latitude, arrival.Longitude);
                     var distMeters = depCoord.GetDistanceTo(arrCoord);
                     var distMiles = (int)DataConversion.ConvertMetersToMiles(distMeters);
@@ -195,6 +197,7 @@ namespace FlightJobs.Controllers
 
                             listBoardJobs.Add(new JobListModel()
                             {
+                                Id = id++,
                                 Departure = dep,
                                 Arrival = arrival.ICAO,
                                 Dist = distMiles,

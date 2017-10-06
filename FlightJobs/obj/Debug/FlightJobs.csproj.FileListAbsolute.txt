@@ -202,3 +202,4 @@ C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs
 C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\obj\Debug\FlightJobs.csproj.CoreCompileInputs.cache
 C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\obj\Debug\FlightJobs.dll
 C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\obj\Debug\FlightJobs.pdb
+C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\bin\AweSome.dll

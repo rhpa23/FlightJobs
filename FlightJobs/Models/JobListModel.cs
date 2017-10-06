@@ -8,6 +8,8 @@ namespace FlightJobs.Models
 {
     public class JobListModel
     {
+        public int Id { get; set; }
+
         public AirportModel Departure { get; set; }
         public string Arrival { get; set; }
         public long Dist { get; set; }
