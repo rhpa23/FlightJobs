@@ -7,7 +7,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using PagedList;
-
+using FlightJobs.Data.SQLite;
 
 namespace FlightJobs.Controllers
 {
@@ -141,15 +141,16 @@ namespace FlightJobs.Controllers
             return View("Confirm", list.Values.ToList());
         }
 
-
-        [HttpPost]
         public ActionResult Confirm()
         {
             if (Session["ListSelJobs"] != null)
             {
-                foreach (var selJob in (List<JobListModel>)Session["ListSelJobs"])
+                var dbContext = new ApplicationDbContext();
+                foreach (var selJob in (List<JobDbModel>)Session["ListSelJobs"])
                 {
-
+                    dbContext.JobDbModels.Add(selJob);
+                    var sqLite = new SQLiteConnection();
+                    sqLite.Insert(selJob);
                 }
             }
 

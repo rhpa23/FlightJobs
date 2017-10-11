@@ -68,10 +68,12 @@
     Pay = @ViewBag.TotalPay
 </p>
 
+<p style="text-align:right" >@Html.ActionLink("Confirm", "Confirm", "SearchJobs", new object { }, new { @class = "btn btn-primary btn-lg" })</p>
 
 <div>
     @if (Request.UrlReferrer != null)
     {
         <a class="bottomNav" onclick="history.go(-1); return false;" href="#">Back to Result</a><br />
     }
+    
 </div>
