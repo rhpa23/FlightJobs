@@ -38,7 +38,8 @@ namespace FlightJobs.Util
 
         public static AirportModel FindAirportInfo(string code)
         {
-            var airportInfo = File.ReadLines(fileName).First(line => Regex.IsMatch(line, "(^"+ code +".*$)"));
+            var lines = File.ReadLines(fileName);
+            var airportInfo = lines.First(line => Regex.IsMatch(line, "(^"+ code.ToUpper() +".*$)"));
             Console.WriteLine(airportInfo);
 
             string[] infoArray = airportInfo.Split(':');

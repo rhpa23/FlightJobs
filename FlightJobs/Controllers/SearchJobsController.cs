@@ -22,6 +22,7 @@ namespace FlightJobs.Controllers
         // GET: SearchJobs
         public ActionResult Index()
         {
+            Session.Remove("JobSearchResult");
             if (Session["JobSerachModel"] != null)
             {
                 JobSerachModel model = (JobSerachModel)Session["JobSerachModel"];
@@ -97,35 +98,38 @@ namespace FlightJobs.Controllers
 
             var list = new Dictionary<string, JobDbModel>();
             var jobs = (IList<JobListModel>)Session["JobSearchResult"];
-            foreach (var job in jobs.Where(j => j.Selected || ids.Contains(j.Id)))
+            if (jobs != null)
             {
-                JobDbModel jobDB;
-                if (!list.ContainsKey(job.Arrival))
+                foreach (var job in jobs.Where(j => j.Selected || ids.Contains(j.Id)))
                 {
-                    jobDB = new JobDbModel()
+                    JobDbModel jobDB;
+                    if (!list.ContainsKey(job.Arrival))
                     {
-                        DepartureICAO = job.Departure.ICAO,
-                        ArrivalICAO = job.Arrival,
-                        Dist = job.Dist,
-                        Pax = job.Pax,
-                        Cargo = job.Cargo,
-                        Pay = job.Pay,
-                        FirstClass = job.FirstClass
-                    };
+                        jobDB = new JobDbModel()
+                        {
+                            DepartureICAO = job.Departure.ICAO,
+                            ArrivalICAO = job.Arrival,
+                            Dist = job.Dist,
+                            Pax = job.Pax,
+                            Cargo = job.Cargo,
+                            Pay = job.Pay,
+                            FirstClass = job.FirstClass
+                        };
 
-                    list.Add(job.Arrival, jobDB);
-                }
-                else
-                {
-                    jobDB = list[job.Arrival];
+                        list.Add(job.Arrival, jobDB);
+                    }
+                    else
+                    {
+                        jobDB = list[job.Arrival];
 
-                    jobDB.Pax += job.Pax;
-                    jobDB.Cargo += job.Cargo;
-                    jobDB.Pay += job.Pay;
+                        jobDB.Pax += job.Pax;
+                        jobDB.Cargo += job.Cargo;
+                        jobDB.Pay += job.Pay;
+                    }
+                    totalPax += job.Pax;
+                    totalCargo += job.Cargo;
+                    totalPay += job.Pay;
                 }
-                totalPax += job.Pax;
-                totalCargo += job.Cargo;
-                totalPay += job.Pay;
             }
 
             ViewBag.TotalPax = totalPax;
