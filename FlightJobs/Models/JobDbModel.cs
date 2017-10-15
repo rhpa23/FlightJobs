@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNet.Identity.EntityFramework;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -9,6 +10,9 @@ namespace FlightJobs.Models
 {
     public class JobDbModel
     {
+        [Key]
+        public int Id { get; set; }
+
         [DisplayName("Departure")]
         public string DepartureICAO { get; set; }
 
@@ -28,7 +32,12 @@ namespace FlightJobs.Models
         [DisplayName("Pay")]
         public long Pay { get; set; }
 
-
         public bool FirstClass { get; set; }
+
+        public bool IsDone { get; set; }
+
+        public bool IsActivated { get; set; }
+
+        public virtual ApplicationUser User { get; set; }
     }
 }

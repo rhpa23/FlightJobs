@@ -7,7 +7,8 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using PagedList;
-using FlightJobs.Data.SQLite;
+using System.Threading.Tasks;
+using Microsoft.AspNet.Identity.Owin;
 
 namespace FlightJobs.Controllers
 {
@@ -17,6 +18,20 @@ namespace FlightJobs.Controllers
         private double taxFirstC = 0.67; // por NM
 
         private double taxCargo = 0.012; // por NM
+
+        private ApplicationUserManager _userManager;
+
+        public ApplicationUserManager UserManager
+        {
+            get
+            {
+                return _userManager ?? HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
+            }
+            private set
+            {
+                _userManager = value;
+            }
+        }
 
 
         // GET: SearchJobs
@@ -141,17 +156,19 @@ namespace FlightJobs.Controllers
             return View("Confirm", list.Values.ToList());
         }
 
-        public ActionResult Confirm()
+        public async Task<ActionResult> Confirm()
         {
             if (Session["ListSelJobs"] != null)
             {
                 var dbContext = new ApplicationDbContext();
+                var user =  dbContext.Users.FirstOrDefault(u => u.Email == User.Identity.Name);
+
                 foreach (var selJob in (List<JobDbModel>)Session["ListSelJobs"])
                 {
+                    selJob.User = user;
                     dbContext.JobDbModels.Add(selJob);
-                    var sqLite = new SQLiteConnection();
-                    sqLite.Insert(selJob);
                 }
+                dbContext.SaveChanges();
             }
 
             return View("Index");

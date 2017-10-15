@@ -1,31 +1,112 @@
-﻿@{
-    ViewBag.Title = "Home Page";
-}
+﻿@using PagedList;
+
+@using PagedList.Mvc;
+@using FlightJobs.Models;
+
+@model FlightJobs.Models.HomeViewModel
 
 <div class="jumbotron">
-    <h1>ASP.NET</h1>
-    <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
-    <p>@Html.ActionLink("Find a route >>", "Index", "SearchJobs", new object { }, new { @class = "btn btn-primary btn-lg" })</p>
+    <h1>Your pedding jobs...</h1>
+    <p class="lead">First active one job to do and after start your flight in JobFlight X-Plane plugin.</p>
+
+    <table class="table">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Jobs.First().IsActivated)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Jobs.First().DepartureICAO)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Jobs.First().ArrivalICAO)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Jobs.First().Dist)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Jobs.First().Cargo)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Jobs.First().Pay)
+            </th>
+            <th></th>
+        </tr>
+
+        @foreach (var item in Model.Jobs)
+        {
+            var style = (item.IsActivated) ? "font-weight:bold" : "";
+
+            <tr style="@style">
+                <td>
+                    @Html.CheckBoxFor(modelItem => item.IsActivated, new { @disabled = "disabled" })
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DepartureICAO, new { @class = "control-label col-md-6" })
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ArrivalICAO)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Dist) NM
+                </td>
+
+                @if (item.Pax > 0)
+                {
+                    <td> @Html.DisplayFor(modelItem => item.Pax) Pax </td>
+                }
+                else
+                {
+                    <td> @Html.DisplayFor(modelItem => item.Cargo) Kg (Cargo)  </td>
+                }
+                <td>
+                    @Html.DisplayFor(modelItem => item.Pay)
+                </td>
+                <td>
+                    @Html.ActionLink("Activate", "ActivateJob", new { jobId = item.Id  })
+                </td>
+            </tr>
+        }
+
+    </table>
+@Html.PagedListPager(Model.Jobs, pageNumber => Url.Action("Index", new
+{
+    pageNumber
+}))
+
+    <p>@Html.ActionLink("Create route", "Index", "SearchJobs", new object { }, new { @class = "btn btn-primary btn-lg" })</p>
 </div>
 
 <div class="row">
     <div class="col-md-4">
-        <h2>Getting started</h2>
+        <h2>Personal progress</h2>
         <p>
-            ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
-            enables a clean separation of concerns and gives you full control over markup
-            for enjoyable, agile development.
+            <div>
+                @Html.DisplayNameFor(model => model.Statistics.BankBalance) :
+                @Model.Statistics.BankBalance
+            </div>
+            <div>
+                @Html.DisplayNameFor(model => model.Statistics.PilotScore) :
+                @Model.Statistics.PilotScore
+            </div>
         </p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
     </div>
     <div class="col-md-4">
-        <h2>Get more libraries</h2>
-        <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
-    </div>
-    <div class="col-md-4">
-        <h2>Web Hosting</h2>
-        <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
+        <h2>Flights...</h2>
+        <div>
+            @Html.DisplayNameFor(model => model.Statistics.MilesFlown) :
+            @Model.Statistics.MilesFlown NM
+        </div>
+        <div>
+            @Html.DisplayNameFor(model => model.Statistics.MinutesFlown) :
+            @Model.Statistics.MinutesFlown H(s)
+        </div>
+        <div>
+            @Html.DisplayNameFor(model => model.Statistics.NumberFlights) :
+            @Model.Statistics.NumberFlights
+        </div>
+        <div>
+            @Html.DisplayNameFor(model => model.Statistics.LastFlight) :
+            @Html.ValueFor(model => model.Statistics.LastFlight, "{0:MM-dd-yyyy}")
+        </div>
     </div>
 </div>

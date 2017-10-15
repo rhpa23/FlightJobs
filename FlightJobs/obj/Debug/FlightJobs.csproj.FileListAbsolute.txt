@@ -116,3 +116,16 @@ C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs
 C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\obj\Debug\FlightJobs.dll
 C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\obj\Debug\FlightJobs.pdb
 C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\obj\Debug\FlightJobs.csprojResolveAssemblyReference.cache
+C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\obj\Debug\FlightJobs.Migrations.InitialCreate.resources
+C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\obj\Debug\FlightJobs.csproj.GenerateResource.Cache
+C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\obj\Debug\FlightJobs.Migrations.AddUserOnJobs.resources
+C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\obj\Debug\FlightJobs.Migrations.RemoveUserID.resources
+C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\obj\Debug\FlightJobs.Migrations.AddIsdoneToJobs.resources
+C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\obj\Debug\FlightJobs.Migrations.AddIsActivatedToJobs.resources
+C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\obj\Debug\FlightJobs.Migrations.AddStatisticsModel.resources
+C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\bin\System.Net.Http.Formatting.dll
+C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\bin\System.Web.Http.dll
+C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\bin\System.Web.Http.WebHost.dll
+C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\bin\System.Net.Http.Formatting.xml
+C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\bin\System.Web.Http.xml
+C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\bin\System.Web.Http.WebHost.xml

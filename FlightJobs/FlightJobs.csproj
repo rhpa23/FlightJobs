@@ -60,12 +60,21 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Device" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http.Formatting, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Web.Http, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.5.2.3\lib\net45\System.Web.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http.WebHost, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.WebHost.5.2.3\lib\net45\System.Web.Http.WebHost.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Extensions" />
@@ -196,21 +205,49 @@
     <Compile Include="App_Start\IdentityConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
+    <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\WebApiController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\SearchJobsController.cs" />
-    <Compile Include="Data\SQLite.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201710111859366_InitialCreate.cs" />
+    <Compile Include="Migrations\201710111859366_InitialCreate.Designer.cs">
+      <DependentUpon>201710111859366_InitialCreate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201710121103277_AddUserOnJobs.cs" />
+    <Compile Include="Migrations\201710121103277_AddUserOnJobs.Designer.cs">
+      <DependentUpon>201710121103277_AddUserOnJobs.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201710121110133_RemoveUserID.cs" />
+    <Compile Include="Migrations\201710121110133_RemoveUserID.Designer.cs">
+      <DependentUpon>201710121110133_RemoveUserID.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201710121226396_AddIsdoneToJobs.cs" />
+    <Compile Include="Migrations\201710121226396_AddIsdoneToJobs.Designer.cs">
+      <DependentUpon>201710121226396_AddIsdoneToJobs.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201710121232475_AddIsActivatedToJobs.cs" />
+    <Compile Include="Migrations\201710121232475_AddIsActivatedToJobs.Designer.cs">
+      <DependentUpon>201710121232475_AddIsActivatedToJobs.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201710121544120_AddStatisticsModel.cs" />
+    <Compile Include="Migrations\201710121544120_AddStatisticsModel.Designer.cs">
+      <DependentUpon>201710121544120_AddStatisticsModel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\AirportModel.cs" />
+    <Compile Include="Models\HomeViewModel.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\JobDbModel.cs" />
     <Compile Include="Models\JobListModel.cs" />
     <Compile Include="Models\JobSerachModel.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
+    <Compile Include="Models\StatisticsDbModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="Util\AirportDatabaseFile.cs" />
@@ -272,6 +309,8 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="App_Data\SmallDatabase.s3db" />
+    <Content Include="App_Data\FlightJobsDB.sqlite" />
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Scripts\jquery-2.1.1.intellisense.js" />
     <Content Include="Scripts\jquery-2.1.1.js" />
     <Content Include="Scripts\jquery-2.1.1.min.js" />
@@ -286,7 +325,9 @@
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
@@ -324,7 +365,26 @@
     <Content Include="Views\SearchJobs\Index.cshtml" />
     <Content Include="Views\SearchJobs\Result.cshtml" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201710111859366_InitialCreate.resx">
+      <DependentUpon>201710111859366_InitialCreate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201710121103277_AddUserOnJobs.resx">
+      <DependentUpon>201710121103277_AddUserOnJobs.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201710121110133_RemoveUserID.resx">
+      <DependentUpon>201710121110133_RemoveUserID.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201710121226396_AddIsdoneToJobs.resx">
+      <DependentUpon>201710121226396_AddIsdoneToJobs.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201710121232475_AddIsActivatedToJobs.resx">
+      <DependentUpon>201710121232475_AddIsActivatedToJobs.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201710121544120_AddStatisticsModel.resx">
+      <DependentUpon>201710121544120_AddStatisticsModel.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
   </ItemGroup>

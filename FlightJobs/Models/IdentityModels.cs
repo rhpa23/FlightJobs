@@ -21,6 +21,7 @@ namespace FlightJobs.Models
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public DbSet<JobDbModel> JobDbModels { get; set; }
+        public DbSet<StatisticsDbModel> StatisticsDbModels { get; set; }
 
         public ApplicationDbContext()
             : base("DefaultConnection", throwIfV1Schema: false)
