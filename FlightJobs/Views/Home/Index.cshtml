@@ -68,6 +68,9 @@
                     @Html.DisplayFor(modelItem => item.Pay)
                 </td>
                 <td>
+                    <td style="text-align:center;"><a href="Home/DeleteJob/@item.Id"><i class="glyphicon glyphicon-remove"></i></a></td>
+                </td>
+                <td>
                     @Html.ActionLink("Activate", "ActivateJob", new { jobId = item.Id  })
                 </td>
             </tr>
