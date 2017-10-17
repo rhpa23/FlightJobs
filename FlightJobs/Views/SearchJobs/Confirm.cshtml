@@ -5,70 +5,84 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<p>
-    <h2> Confirm flight from  @Html.DisplayFor(modelItem => Model.FirstOrDefault().DepartureICAO) </h2>
-</p>
+@if (Model.Count() > 0)
+{
 
 
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.ArrivalICAO)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Dist)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Cargo)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Pay)
-        </th>
-    </tr>
+    <p>
+        <h2> Confirm flight from  @Html.DisplayFor(modelItem => Model.FirstOrDefault().DepartureICAO) </h2>
+    </p>
+
+
+    <table class="table">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.ArrivalICAO)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Dist)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Cargo)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Pay)
+            </th>
+        </tr>
     
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.ArrivalICAO)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Dist) NM
-        </td>
-        @if (item.Pax > 0)
-        {
-            if (item.FirstClass)
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.ArrivalICAO)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Dist) NM
+            </td>
+            @if (item.Pax > 0)
             {
-                <td> @Html.DisplayFor(modelItem => item.Pax) Pax (Business) </td>
+                if (item.FirstClass)
+                {
+                    <td> @Html.DisplayFor(modelItem => item.Pax) Pax (Business) </td>
+                }
+                else
+                {
+                    <td> @Html.DisplayFor(modelItem => item.Pax) Pax (Economy)  </td>
+                }
             }
             else
             {
-                <td> @Html.DisplayFor(modelItem => item.Pax) Pax (Economy)  </td>
+                <td> @Html.DisplayFor(modelItem => item.Cargo) Kg (Cargo)  </td>
             }
-        }
-        else
-        {
-            <td> @Html.DisplayFor(modelItem => item.Cargo) Kg (Cargo)  </td>
-        }
-        <td>
-            @Html.DisplayFor(modelItem => item.Pay)
-        </td>
-    </tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Pay)
+            </td>
+        </tr>
+    }
+
+    </table>
+
+    <span>Totals</span>
+    <p>
+        Pax = @ViewBag.TotalPax
+    </p>
+    <p>
+        Cargo = @ViewBag.TotalCargo
+    </p>
+    <p>
+        Pay = @ViewBag.TotalPay
+    </p>
+    <p>
+        <b>  Total payload: @ViewBag.TotalPayload Kg </b>
+    </p>
+    <p style="text-align:right" >@Html.ActionLink("Confirm", "Confirm", "SearchJobs", new object { }, new { @class = "btn btn-primary btn-lg" })</p>
 }
-
-</table>
-
-<span>Totals</span>
-<p>
-    Pax = @ViewBag.TotalPax
-</p>
-<p>
-    Cargo = @ViewBag.TotalCargo
-</p>
-<p>
-    Pay = @ViewBag.TotalPay
-</p>
-
-<p style="text-align:right" >@Html.ActionLink("Confirm", "Confirm", "SearchJobs", new object { }, new { @class = "btn btn-primary btn-lg" })</p>
+else
+{
+    <p>
+        <h1 style="color:red;">No flight selected.</h1>
+    </p>
+}
 
 <div>
     @if (Request.UrlReferrer != null)

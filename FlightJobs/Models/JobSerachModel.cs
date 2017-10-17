@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
@@ -14,7 +15,12 @@ namespace FlightJobs.Models
 
         public string Arrival { get; set; }
 
+        [DisplayName("Minimum NM")]
         [Required(ErrorMessage = "An Range in nautical mile is required")]
-        public long Range { get; set; }
+        public long MinRange { get; set; }
+
+        [DisplayName("Maximum NM")]
+        [Required(ErrorMessage = "An Range in nautical mile is required")]
+        public long MaxRange { get; set; }
     }
 }

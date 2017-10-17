@@ -25,65 +25,84 @@
 
 @using (Html.BeginForm("ResultNext", "SearchJobs", FormMethod.Post))
 {
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.First().Selected)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.First().Arrival)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.First().Dist)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.First().Cargo)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.First().Pay)
-        </th>
-        <th></th>
-    </tr>
+    if (Model.Count() > 0)
+    {
+        <table class="table">
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.First().Selected)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.First().Arrival)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.First().Dist) (nm)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.First().Cargo)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.First().Pay)
+                </th>
+                <th></th>
+            </tr>
 
-@foreach (var item in Model)
-{
-    <tr>
-        <td>
-            @Html.CheckBoxFor(modelItem => item.Selected, new { Id = item.Id, Name = "sels", Value = item.Id }  )
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Arrival)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Dist) NM
-        </td>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.CheckBoxFor(modelItem => item.Selected, new { Id = item.Id, Name = "sels", Value = item.Id })
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Arrival)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Dist)
+                </td>
         
-        @if (item.Pax > 0)
-        {
-            if (item.FirstClass)
-            {
-                    <td> @Html.DisplayFor(modelItem => item.Pax) Pax (Business) </td>
-            }
-            else
-            {
-                    <td> @Html.DisplayFor(modelItem => item.Pax) Pax (Economy)  </td>
-            }
+                @if (item.Pax > 0)
+                {
+                    if (item.FirstClass)
+                    {
+                            <td> @Html.DisplayFor(modelItem => item.Pax) Pax (Business) </td>
+                    }
+                    else
+                    {
+                            <td> @Html.DisplayFor(modelItem => item.Pax) Pax (Economy)  </td>
+                    }
+                }
+                else
+                {
+                    <td> @Html.DisplayFor(modelItem => item.Cargo) Kg (Cargo)  </td>
+                }
+                <td>
+                    @Html.DisplayFor(modelItem => item.Pay)
+                </td>
+                <td>
+                    @Html.ActionLink("Find a route", "FindRoute", new { /* id=item.PrimaryKey */ })
+                </td>
+            </tr>
         }
-        else
+
+        </table>
+
+        @Html.PagedListPager(Model, pageNumber => Url.Action("Result", new
         {
-            <td> @Html.DisplayFor(modelItem => item.Cargo) Kg (Cargo)  </td>
-        }
-        <td>
-            @Html.DisplayFor(modelItem => item.Pay)
-        </td>
-        <td>
-            @Html.ActionLink("Find a route", "FindRoute", new { /* id=item.PrimaryKey */ })
-        </td>
-    </tr>
-}
+            pageNumber
+        }))
 
-</table>
-
+        <div class="form-group" style="text-align:right">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Next" class="btn btn-default" />
+            </div>
+        </div>
+    }
+    else
+    {
+        <p>
+            <h1 style="color:red;">No data found.</h1>
+        </p>
+    }
 
 <script type='text/javascript'>
     $(function () {
@@ -104,16 +123,8 @@
 
 </script>
 
-@Html.PagedListPager(Model, pageNumber => Url.Action("Result", new
-{
-    pageNumber
-}))
 
-    <div class="form-group" style="text-align:right">
-        <div class="col-md-offset-2 col-md-10">
-            <input type="submit" value="Next" class="btn btn-default"  />
-        </div>
-    </div>
+
 
 <div>
     @Html.ActionLink("Back to Search", "Index")

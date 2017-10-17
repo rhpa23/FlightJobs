@@ -58,7 +58,7 @@ namespace FlightJobs.Controllers
 
             var response = Request.CreateResponse(HttpStatusCode.OK, "Login ok");
 
-            /*var userModel = await UserManager.FindByNameAsync(email);
+            var userModel = await UserManager.FindByNameAsync(email);
             if (userModel == null)
             {
                 return Request.CreateResponse(HttpStatusCode.Unauthorized, "Invalid login attempt.");
@@ -86,7 +86,7 @@ namespace FlightJobs.Controllers
 
             // Set headers for paging
            // response.Headers.Add("HEADER_TEST", "HEADER_TEST_VALUE");
-           */
+           
             return response;
         }
 

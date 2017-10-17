@@ -27,6 +27,9 @@
                 @Html.DisplayNameFor(model => model.Jobs.First().Cargo)
             </th>
             <th>
+                @Html.DisplayNameFor(model => model.Jobs.First().Payload)
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.Jobs.First().Pay)
             </th>
             <th></th>
@@ -59,6 +62,9 @@
                     <td> @Html.DisplayFor(modelItem => item.Cargo) Kg (Cargo)  </td>
                 }
                 <td>
+                    @Html.DisplayFor(modelItem => item.Payload) Kg
+                </td>
+                <td>
                     @Html.DisplayFor(modelItem => item.Pay)
                 </td>
                 <td>
@@ -73,40 +79,43 @@
     pageNumber
 }))
 
-    <p>@Html.ActionLink("Create route", "Index", "SearchJobs", new object { }, new { @class = "btn btn-primary btn-lg" })</p>
+    <p>@Html.ActionLink("Add job", "Index", "SearchJobs", new object { }, new { @class = "btn btn-primary btn-lg" })</p>
 </div>
 
-<div class="row">
-    <div class="col-md-4">
-        <h2>Personal progress</h2>
-        <p>
+@if (Model.Statistics != null)
+{
+    <div class="row">
+        <div class="col-md-4">
+            <h2>Personal progress</h2>
+            <p>
+                <div>
+                    @Html.DisplayNameFor(model => model.Statistics.BankBalance) :
+                    @Model.Statistics.BankBalance
+                </div>
+                <div>
+                    @Html.DisplayNameFor(model => model.Statistics.PilotScore) :
+                    @Model.Statistics.PilotScore
+                </div>
+            </p>
+        </div>
+        <div class="col-md-4">
+            <h2>Flights...</h2>
             <div>
-                @Html.DisplayNameFor(model => model.Statistics.BankBalance) :
-                @Model.Statistics.BankBalance
+                @Html.DisplayNameFor(model => model.Statistics.MilesFlown) :
+                @Model.Statistics.MilesFlown NM
             </div>
             <div>
-                @Html.DisplayNameFor(model => model.Statistics.PilotScore) :
-                @Model.Statistics.PilotScore
+                @Html.DisplayNameFor(model => model.Statistics.MinutesFlown) :
+                @Model.Statistics.MinutesFlown H(s)
             </div>
-        </p>
-    </div>
-    <div class="col-md-4">
-        <h2>Flights...</h2>
-        <div>
-            @Html.DisplayNameFor(model => model.Statistics.MilesFlown) :
-            @Model.Statistics.MilesFlown NM
-        </div>
-        <div>
-            @Html.DisplayNameFor(model => model.Statistics.MinutesFlown) :
-            @Model.Statistics.MinutesFlown H(s)
-        </div>
-        <div>
-            @Html.DisplayNameFor(model => model.Statistics.NumberFlights) :
-            @Model.Statistics.NumberFlights
-        </div>
-        <div>
-            @Html.DisplayNameFor(model => model.Statistics.LastFlight) :
-            @Html.ValueFor(model => model.Statistics.LastFlight, "{0:MM-dd-yyyy}")
+            <div>
+                @Html.DisplayNameFor(model => model.Statistics.NumberFlights) :
+                @Model.Statistics.NumberFlights
+            </div>
+            <div>
+                @Html.DisplayNameFor(model => model.Statistics.LastFlight) :
+                @Html.ValueFor(model => model.Statistics.LastFlight, "{0:MM-dd-yyyy}")
+            </div>
         </div>
     </div>
-</div>
+}

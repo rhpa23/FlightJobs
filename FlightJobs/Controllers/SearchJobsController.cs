@@ -45,7 +45,10 @@ namespace FlightJobs.Controllers
             }
             else
             {
-                return View();
+                var model = new JobSerachModel() {
+                    MaxRange = 450, MinRange = 10
+                };
+                return View(model);
             }
            
         }
@@ -150,6 +153,7 @@ namespace FlightJobs.Controllers
             ViewBag.TotalPax = totalPax;
             ViewBag.TotalCargo = totalCargo;
             ViewBag.TotalPay = string.Format("{0:C}", totalPay);
+            ViewBag.TotalPayload = (totalPax * 70) + totalCargo;
 
             Session.Add("ListSelJobs", list.Values.ToList());
 
@@ -193,7 +197,7 @@ namespace FlightJobs.Controllers
                     var arrCoord = new GeoCoordinate(arrival.Latitude, arrival.Longitude);
                     var distMeters = depCoord.GetDistanceTo(arrCoord);
                     var distMiles = (int)DataConversion.ConvertMetersToMiles(distMeters);
-                    if (distMiles <= model.Range && arrival.ICAO.ToUpper() != dep.ICAO.ToUpper() && 
+                    if (distMiles >= model.MinRange && distMiles <= model.MaxRange && arrival.ICAO.ToUpper() != dep.ICAO.ToUpper() && 
                         (model.Arrival == null || arrival.ICAO.ToUpper().Contains(model.Arrival.ToUpper())))
                     {
                         int index = randomPob.Next(4, 11);

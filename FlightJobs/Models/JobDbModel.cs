@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Web;
 
@@ -28,6 +29,10 @@ namespace FlightJobs.Models
         [DisplayName("Cargo")]
         public long Cargo { get; set; }
 
+        [NotMapped]
+        [DisplayName("Payload")]
+        public long Payload { get; set; }
+
         [DisplayFormat(DataFormatString = "{0:C0}")]
         [DisplayName("Pay")]
         public long Pay { get; set; }
@@ -36,6 +41,7 @@ namespace FlightJobs.Models
 
         public bool IsDone { get; set; }
 
+        [DisplayName("")]
         public bool IsActivated { get; set; }
 
         public virtual ApplicationUser User { get; set; }
