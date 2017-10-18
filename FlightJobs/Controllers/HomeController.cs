@@ -46,6 +46,13 @@ namespace FlightJobs.Controllers
             return RedirectToAction("Index");
         }
 
+        public ActionResult DeleteJob(int id)
+        {
+            var dbContext = new ApplicationDbContext();
+            
+            return RedirectToAction("Index");
+        }
+
         public ActionResult About()
         {
             ViewBag.Message = "Your application description page.";
