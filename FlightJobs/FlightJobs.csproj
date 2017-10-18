@@ -207,7 +207,8 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
-    <Compile Include="Controllers\WebApiController.cs" />
+    <Compile Include="Controllers\JobApiController .cs" />
+    <Compile Include="Controllers\AuthenticationApiController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\SearchJobsController.cs" />
@@ -415,7 +416,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>54407</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost/</IISUrl>
+          <IISUrl>http://localhost:5646</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>
