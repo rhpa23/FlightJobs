@@ -15,10 +15,6 @@ namespace FlightJobs.Controllers
             var homeModel = new HomeViewModel();
             var dbContext = new ApplicationDbContext();
             var jobList = dbContext.JobDbModels.Where(j => !j.IsDone).OrderBy(j => j.DepartureICAO).ToPagedList(pageNumber ?? 1, 5);
-            foreach (var j in jobList)
-            {
-                j.Payload = (j.Pax * 70) + j.Cargo;
-            }
             var user = dbContext.Users.FirstOrDefault(u => u.Email == User.Identity.Name);
             if (user != null)
             {

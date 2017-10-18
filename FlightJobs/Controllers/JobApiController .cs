@@ -10,6 +10,7 @@ using Microsoft.AspNet.Identity;
 using System.Web;
 using System.Web.Mvc;
 using System.Threading.Tasks;
+using FlightJobs.Models;
 
 namespace FlightJobs.Controllers
 {
@@ -25,9 +26,29 @@ namespace FlightJobs.Controllers
 
             try
             {
-                string icao = Request.Headers.GetValues("ICAO").First();
-                string payload = Request.Headers.GetValues("Payload").First();
-                string usarId = Request.Headers.GetValues("UserId").First();
+                string icaoStr = Request.Headers.GetValues("ICAO").First();
+                string payloadStr = Request.Headers.GetValues("Payload").First();
+                string usarIdStr = Request.Headers.GetValues("UserId").First();
+
+                var dbContext = new ApplicationDbContext();
+                var job = dbContext.JobDbModels.FirstOrDefault(j => j.User.Id == usarIdStr &&  
+                                                                    j.IsActivated && 
+                                                                    j.DepartureICAO.ToLower() == icaoStr.ToLower());
+
+
+                if (job == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.Forbidden, "Fail: you don't have any job activated for this location.");
+                }
+
+                long payload;
+                long.TryParse(payloadStr, out payload);
+                // Check payload
+                if (payload >= (job.Payload + 2) || payload < (job.Payload - 2))
+                {
+                    return Request.CreateResponse(HttpStatusCode.Forbidden, "Fail: wrong payload. The active job payload is: " + job.Payload);
+                }
+                
             }
             catch (Exception)
             {

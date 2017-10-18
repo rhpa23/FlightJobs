@@ -31,7 +31,13 @@ namespace FlightJobs.Models
 
         [NotMapped]
         [DisplayName("Payload")]
-        public long Payload { get; set; }
+        public long Payload
+        {
+            get
+            {
+                return (Pax * 70) + Cargo;
+            }
+        }
 
         [DisplayFormat(DataFormatString = "{0:C0}")]
         [DisplayName("Pay")]
