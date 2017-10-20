@@ -8,78 +8,79 @@
 <div class="jumbotron">
     <h1>Your pedding jobs...</h1>
     <p class="lead">First active one job to do and after start your flight in JobFlight X-Plane plugin.</p>
-
-    <table class="table">
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Jobs.First().IsActivated)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Jobs.First().DepartureICAO)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Jobs.First().ArrivalICAO)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Jobs.First().Dist)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Jobs.First().Pax)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Jobs.First().Cargo)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Jobs.First().Payload)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Jobs.First().Pay)
-            </th>
-            <th></th>
-        </tr>
-
-        @foreach (var item in Model.Jobs)
-        {
-            var style = (item.IsActivated) ? "font-weight:bold" : "";
-
-            <tr style="@style">
-                <td>
-                    @Html.CheckBoxFor(modelItem => item.IsActivated, new { @disabled = "disabled" })
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.DepartureICAO, new { @class = "control-label col-md-6" })
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.ArrivalICAO)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Dist) NM
-                </td>
-                <td> @Html.DisplayFor(modelItem => item.Pax) </td>
-                 <td> @Html.DisplayFor(modelItem => item.Cargo) Kg </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Payload) Kg
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Pay)
-                </td>
-                <td>
-                    <td style="text-align:center;"><a href="Home/DeleteJob/@item.Id"><i class="glyphicon glyphicon-remove"></i></a></td>
-                </td>
-                <td>
-                    @Html.ActionLink("Activate", "ActivateJob", new { jobId = item.Id  })
-                </td>
+    <div class="panel panel-default">
+        <table class="table table-striped table-bordered table-hover">
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Jobs.First().IsActivated)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Jobs.First().DepartureICAO)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Jobs.First().ArrivalICAO)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Jobs.First().Dist)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Jobs.First().Pax)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Jobs.First().Cargo)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Jobs.First().Payload)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Jobs.First().Pay)
+                </th>
+                <th></th>
             </tr>
-        }
 
-    </table>
-@Html.PagedListPager(Model.Jobs, pageNumber => Url.Action("Index", new
+            @foreach (var item in Model.Jobs)
+            {
+                var style = (item.IsActivated) ? "font-weight:bold" : "";
+
+                <tr style="@style">
+                    <td>
+                        @Html.CheckBoxFor(modelItem => item.IsActivated, new { @disabled = "disabled" })
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DepartureICAO, new { @class = "control-label col-md-6" })
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ArrivalICAO)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Dist) NM
+                    </td>
+                    <td> @Html.DisplayFor(modelItem => item.Pax) </td>
+                    <td> @Html.DisplayFor(modelItem => item.Cargo) Kg </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Payload) Kg
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Pay)
+                    </td>
+                    <td>
+                    <td style="text-align:center;"><a data-toggle="confirmation" data-title="Remove Job?" href="Home/DeleteJob/@item.Id"><i class="glyphicon glyphicon-remove"></i></a></td>
+                    </td>
+                    <td>
+                        @Html.ActionLink("Activate", "ActivateJob", new { jobId = item.Id })
+                    </td>
+                </tr>
+            }
+
+        </table>
+        </div>
+        @Html.PagedListPager(Model.Jobs, pageNumber => Url.Action("Index", new
 {
     pageNumber
 }))
 
-    <p>@Html.ActionLink("Add job", "Index", "SearchJobs", new object { }, new { @class = "btn btn-primary btn-lg" })</p>
-</div>
+        <p>@Html.ActionLink("Add job", "Index", "SearchJobs", new object { }, new { @class = "btn btn-primary btn-lg" })</p>
+    </div>
 
 @if (Model.Statistics != null)
 {
