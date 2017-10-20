@@ -71,7 +71,7 @@ namespace FlightJobs.Controllers
                 switch (result)
                 {
                     case SignInStatus.Success:
-                        return Request.CreateResponse(HttpStatusCode.OK, userModel.Id);
+                        return Request.CreateResponse(HttpStatusCode.OK, userModel.Id.ToString());
                     case SignInStatus.LockedOut:
                         return Request.CreateResponse(HttpStatusCode.Forbidden, "Lockout");
                     case SignInStatus.RequiresVerification:

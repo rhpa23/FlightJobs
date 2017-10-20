@@ -239,6 +239,14 @@
     <Compile Include="Migrations\201710121544120_AddStatisticsModel.Designer.cs">
       <DependentUpon>201710121544120_AddStatisticsModel.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201710192151168_AddedInProgressProp.cs" />
+    <Compile Include="Migrations\201710192151168_AddedInProgressProp.Designer.cs">
+      <DependentUpon>201710192151168_AddedInProgressProp.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201710192206169_TimeModelProps.cs" />
+    <Compile Include="Migrations\201710192206169_TimeModelProps.Designer.cs">
+      <DependentUpon>201710192206169_TimeModelProps.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\AirportModel.cs" />
@@ -384,6 +392,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201710121544120_AddStatisticsModel.resx">
       <DependentUpon>201710121544120_AddStatisticsModel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201710192151168_AddedInProgressProp.resx">
+      <DependentUpon>201710192151168_AddedInProgressProp.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201710192206169_TimeModelProps.resx">
+      <DependentUpon>201710192206169_TimeModelProps.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

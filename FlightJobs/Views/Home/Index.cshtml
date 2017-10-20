@@ -24,6 +24,9 @@
                 @Html.DisplayNameFor(model => model.Jobs.First().Dist)
             </th>
             <th>
+                @Html.DisplayNameFor(model => model.Jobs.First().Pax)
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.Jobs.First().Cargo)
             </th>
             <th>
@@ -52,15 +55,8 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.Dist) NM
                 </td>
-
-                @if (item.Pax > 0)
-                {
-                    <td> @Html.DisplayFor(modelItem => item.Pax) Pax </td>
-                }
-                else
-                {
-                    <td> @Html.DisplayFor(modelItem => item.Cargo) Kg (Cargo)  </td>
-                }
+                <td> @Html.DisplayFor(modelItem => item.Pax) </td>
+                 <td> @Html.DisplayFor(modelItem => item.Cargo) Kg </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Payload) Kg
                 </td>

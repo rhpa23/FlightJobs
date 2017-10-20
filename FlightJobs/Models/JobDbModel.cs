@@ -23,7 +23,7 @@ namespace FlightJobs.Models
         [DisplayName("Distance")]
         public long Dist { get; set; }
 
-        [DisplayName("POB")]
+        [DisplayName("Pax")]
         public long Pax { get; set; }
 
         [DisplayName("Cargo")]
@@ -49,6 +49,18 @@ namespace FlightJobs.Models
 
         [DisplayName("")]
         public bool IsActivated { get; set; }
+
+        [DisplayName("")]
+        public bool InProgress { get; set; }
+
+        [DisplayName("")]
+        public DateTime StartTime { get; set; }
+
+        [DisplayName("")]
+        public DateTime EndTime { get; set; }
+
+        [DisplayName("")]
+        public string ModelName { get; set; }
 
         public virtual ApplicationUser User { get; set; }
     }
