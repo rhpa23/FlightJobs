@@ -142,7 +142,7 @@ namespace FlightJobs.Controllers
                     return View("Lockout");
                 case SignInStatus.Failure:
                 default:
-                    ModelState.AddModelError("", "Código inválido.");
+                    ModelState.AddModelError("", "Invalid code.");
                     return View(model);
             }
         }
@@ -174,7 +174,7 @@ namespace FlightJobs.Controllers
                     // Enviar um email com este link
                     string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
                     var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                    await UserManager.SendEmailAsync(user.Id, "Confirmar sua conta (não responder esse email)", "Confirme sua conta clicando <a href=\"" + callbackUrl + "\">aqui</a><p>Not respond.</p>");
+                    await UserManager.SendEmailAsync(user.Id, "Flight Jobs Manager - Verify your account (do not reply to this email)", "Verify your account by clicking <a href=\"" + callbackUrl + "\">here</a><p>Not respond.</p>");
 
                     //return RedirectToAction("VerifyRegistrationCode", new { message = ApplicationMessages.VerificationCodeSent });
                     //
@@ -226,10 +226,10 @@ namespace FlightJobs.Controllers
 
                 // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
                 // Enviar um email com este link
-                // string code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
-                // var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);		
-                // await UserManager.SendEmailAsync(user.Id, "Redefinir senha", "Redefina sua senha, clicando <a href=\"" + callbackUrl + "\">aqui</a>");
-                // return RedirectToAction("ForgotPasswordConfirmation", "Account");
+                string code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
+                var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);		
+                await UserManager.SendEmailAsync(user.Id, "Flight Jobs Manager - Redefine password (do not reply to this email)", "Reset your Flight Jobs password by clicking <a href=\"" + callbackUrl + "\">here</a>");
+                return RedirectToAction("ForgotPasswordConfirmation", "Account");
             }
 
             // Se chegamos até aqui e houver alguma falha, exiba novamente o formulário

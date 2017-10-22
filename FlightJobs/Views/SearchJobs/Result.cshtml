@@ -15,7 +15,7 @@
 <p>
     <h3>Select one or more jobs to update your pending list.</h3>
 </p>
-
+<hr />
 <p style="color:red">
 @Html.ValidationMessage("error")
 </p>
@@ -83,15 +83,10 @@
                         </td>
                     </tr>
                 }
-
             </table>
             </div>
-
-            @Html.PagedListPager(Model, pageNumber => Url.Action("Result", new
-   {
-       pageNumber
-   }))
-
+            @Html.PagedListPager(Model, pageNumber => Url.Action("Result", new  {   pageNumber  }))
+            <hr />
             <div class="form-group" style="text-align:right">
                 <div class="col-md-offset-2 col-md-10">
                     <input type="submit" value="Next" class="btn btn-info  pull-right" />

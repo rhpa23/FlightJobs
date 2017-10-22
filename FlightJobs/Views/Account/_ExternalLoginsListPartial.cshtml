@@ -1,8 +1,7 @@
 ﻿@model FlightJobs.Models.ExternalLoginListViewModel
 @using Microsoft.Owin.Security
 
-<h4>Use outro serviço para fazer login.</h4>
-<hr />
+@*<hr />
 @{
     var loginProviders = Context.GetOwinContext().Authentication.GetExternalAuthenticationTypes();
     if (loginProviders.Count() == 0) {
@@ -25,4 +24,4 @@
             </div>
         }
     }
-}
+}*@

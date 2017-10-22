@@ -55,14 +55,14 @@ namespace FlightJobs.Controllers
 
         public ActionResult About()
         {
-            ViewBag.Message = "Your application description page.";
+            ViewBag.Message = "Version beta. This site is under construction.";
 
             return View();
         }
 
         public ActionResult Contact()
         {
-            ViewBag.Message = "Your contact page.";
+            ViewBag.Message = "rhpa23@gmail.com.";
 
             return View();
         }

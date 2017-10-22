@@ -39,7 +39,7 @@ namespace FlightJobs.Controllers
 
                 if (job == null)
                 {
-                    return Request.CreateResponse(HttpStatusCode.Forbidden, "Fail: you don't have any job activated for this location.");
+                    return Request.CreateResponse(HttpStatusCode.Forbidden, "You don't have any job activated for this location.");
                 }
 
                 long payload = Convert.ToInt64(Math.Round(Convert.ToDouble(payloadStr, new CultureInfo("en-US")))); 

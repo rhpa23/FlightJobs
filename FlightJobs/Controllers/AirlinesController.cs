@@ -67,9 +67,8 @@ namespace FlightJobs.Controllers
             }
             else
             {
-                // TODO: 
+                ViewBag.Message = "You don't have enough bank balance to buy this certificate.";
             }
-
 
             return Sign(airlineId);
         }

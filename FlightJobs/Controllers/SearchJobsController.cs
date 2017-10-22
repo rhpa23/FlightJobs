@@ -14,10 +14,10 @@ namespace FlightJobs.Controllers
 {
     public class SearchJobsController : Controller
     {
-        private double taxEcon = 0.16; // por NM
-        private double taxFirstC = 0.21; // por NM
+        private double taxEcon = 0.008; // por NM
+        private double taxFirstC = 0.012; // por NM
 
-        private double taxCargo = 0.008; // por NM
+        private double taxCargo = 0.0003; // por NM
 
         private ApplicationUserManager _userManager;
 
@@ -153,7 +153,7 @@ namespace FlightJobs.Controllers
             ViewBag.TotalPax = totalPax;
             ViewBag.TotalCargo = totalCargo;
             ViewBag.TotalPay = string.Format("{0:C}", totalPay);
-            ViewBag.TotalPayload = (totalPax * 70) + totalCargo;
+            ViewBag.TotalPayload = string.Format("{0:G}", (totalPax * 70) + totalCargo);
 
             Session.Add("ListSelJobs", list.Values.ToList());
 
@@ -203,7 +203,7 @@ namespace FlightJobs.Controllers
                     if (distMiles >= model.MinRange && distMiles <= model.MaxRange && arrival.ICAO.ToUpper() != dep.ICAO.ToUpper() && 
                         (model.Arrival == null || arrival.ICAO.ToUpper().Contains(model.Arrival.ToUpper())))
                     {
-                        int index = randomPob.Next(4, 11);
+                        int index = randomPob.Next(6, 14);
 
                         for (int i = 0; i < index; i++)
                         {
@@ -215,12 +215,12 @@ namespace FlightJobs.Controllers
                             int isCargo = randomPob.Next(2);
                             if (isCargo == 0)
                             {
-                                cargo = randomCargo.Next(100, 3000);
+                                cargo = model.IsGeneralAviation ? randomCargo.Next(10, 300) : randomCargo.Next(100, 3000);
                                 profit = Convert.ToInt32(taxCargo * distMiles * cargo);
                             }
                             else
                             {
-                                pob = randomPob.Next(10, 60); 
+                                pob = model.IsGeneralAviation ? randomPob.Next(1, 10) : randomPob.Next(8, 60); 
                                 profit = isFisrtClass ? Convert.ToInt32(taxFirstC * distMiles * pob) : Convert.ToInt32(taxEcon * distMiles * pob);
                             }
 
