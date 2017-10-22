@@ -7,6 +7,15 @@ C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs
 C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\bin\roslyn\System.IO.FileSystem.Primitives.dll
 C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\bin\roslyn\System.Reflection.Metadata.dll
 C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\bin\roslyn\VBCSCompiler.exe
+D:\Users\rhpa2\Documents\Visual Studio 2017\Projects\FlightJobs\FlightJobs\bin\roslyn\Microsoft.CodeAnalysis.CSharp.dll
+D:\Users\rhpa2\Documents\Visual Studio 2017\Projects\FlightJobs\FlightJobs\bin\roslyn\Microsoft.CodeAnalysis.dll
+D:\Users\rhpa2\Documents\Visual Studio 2017\Projects\FlightJobs\FlightJobs\bin\roslyn\Microsoft.CodeAnalysis.VisualBasic.dll
+D:\Users\rhpa2\Documents\Visual Studio 2017\Projects\FlightJobs\FlightJobs\bin\roslyn\Microsoft.DiaSymReader.Native.amd64.dll
+D:\Users\rhpa2\Documents\Visual Studio 2017\Projects\FlightJobs\FlightJobs\bin\roslyn\System.Collections.Immutable.dll
+D:\Users\rhpa2\Documents\Visual Studio 2017\Projects\FlightJobs\FlightJobs\bin\roslyn\System.IO.FileSystem.dll
+D:\Users\rhpa2\Documents\Visual Studio 2017\Projects\FlightJobs\FlightJobs\bin\roslyn\System.IO.FileSystem.Primitives.dll
+D:\Users\rhpa2\Documents\Visual Studio 2017\Projects\FlightJobs\FlightJobs\bin\roslyn\System.Reflection.Metadata.dll
+D:\Users\rhpa2\Documents\Visual Studio 2017\Projects\FlightJobs\FlightJobs\bin\roslyn\VBCSCompiler.exe
 D:\Users\rhpa2\Documents\Visual Studio 2017\Projects\FlightJobs\FlightJobs\bin\ApplicationInsights.config
 D:\Users\rhpa2\Documents\Visual Studio 2017\Projects\FlightJobs\FlightJobs\bin\roslyn\csc.exe
 D:\Users\rhpa2\Documents\Visual Studio 2017\Projects\FlightJobs\FlightJobs\bin\roslyn\csc.exe.config
@@ -14,25 +23,16 @@ D:\Users\rhpa2\Documents\Visual Studio 2017\Projects\FlightJobs\FlightJobs\bin\r
 D:\Users\rhpa2\Documents\Visual Studio 2017\Projects\FlightJobs\FlightJobs\bin\roslyn\csi.exe
 D:\Users\rhpa2\Documents\Visual Studio 2017\Projects\FlightJobs\FlightJobs\bin\roslyn\csi.rsp
 D:\Users\rhpa2\Documents\Visual Studio 2017\Projects\FlightJobs\FlightJobs\bin\roslyn\Microsoft.Build.Tasks.CodeAnalysis.dll
-D:\Users\rhpa2\Documents\Visual Studio 2017\Projects\FlightJobs\FlightJobs\bin\roslyn\Microsoft.CodeAnalysis.CSharp.dll
 D:\Users\rhpa2\Documents\Visual Studio 2017\Projects\FlightJobs\FlightJobs\bin\roslyn\Microsoft.CodeAnalysis.CSharp.Scripting.dll
-D:\Users\rhpa2\Documents\Visual Studio 2017\Projects\FlightJobs\FlightJobs\bin\roslyn\Microsoft.CodeAnalysis.dll
 D:\Users\rhpa2\Documents\Visual Studio 2017\Projects\FlightJobs\FlightJobs\bin\roslyn\Microsoft.CodeAnalysis.Scripting.dll
-D:\Users\rhpa2\Documents\Visual Studio 2017\Projects\FlightJobs\FlightJobs\bin\roslyn\Microsoft.CodeAnalysis.VisualBasic.dll
 D:\Users\rhpa2\Documents\Visual Studio 2017\Projects\FlightJobs\FlightJobs\bin\roslyn\Microsoft.CSharp.Core.targets
-D:\Users\rhpa2\Documents\Visual Studio 2017\Projects\FlightJobs\FlightJobs\bin\roslyn\Microsoft.DiaSymReader.Native.amd64.dll
 D:\Users\rhpa2\Documents\Visual Studio 2017\Projects\FlightJobs\FlightJobs\bin\roslyn\Microsoft.DiaSymReader.Native.x86.dll
 D:\Users\rhpa2\Documents\Visual Studio 2017\Projects\FlightJobs\FlightJobs\bin\roslyn\Microsoft.VisualBasic.Core.targets
 D:\Users\rhpa2\Documents\Visual Studio 2017\Projects\FlightJobs\FlightJobs\bin\roslyn\System.AppContext.dll
-D:\Users\rhpa2\Documents\Visual Studio 2017\Projects\FlightJobs\FlightJobs\bin\roslyn\System.Collections.Immutable.dll
 D:\Users\rhpa2\Documents\Visual Studio 2017\Projects\FlightJobs\FlightJobs\bin\roslyn\System.Diagnostics.StackTrace.dll
-D:\Users\rhpa2\Documents\Visual Studio 2017\Projects\FlightJobs\FlightJobs\bin\roslyn\System.IO.FileSystem.dll
-D:\Users\rhpa2\Documents\Visual Studio 2017\Projects\FlightJobs\FlightJobs\bin\roslyn\System.IO.FileSystem.Primitives.dll
-D:\Users\rhpa2\Documents\Visual Studio 2017\Projects\FlightJobs\FlightJobs\bin\roslyn\System.Reflection.Metadata.dll
 D:\Users\rhpa2\Documents\Visual Studio 2017\Projects\FlightJobs\FlightJobs\bin\roslyn\vbc.exe
 D:\Users\rhpa2\Documents\Visual Studio 2017\Projects\FlightJobs\FlightJobs\bin\roslyn\vbc.exe.config
 D:\Users\rhpa2\Documents\Visual Studio 2017\Projects\FlightJobs\FlightJobs\bin\roslyn\vbc.rsp
-D:\Users\rhpa2\Documents\Visual Studio 2017\Projects\FlightJobs\FlightJobs\bin\roslyn\VBCSCompiler.exe
 D:\Users\rhpa2\Documents\Visual Studio 2017\Projects\FlightJobs\FlightJobs\bin\roslyn\VBCSCompiler.exe.config
 D:\Users\rhpa2\Documents\Visual Studio 2017\Projects\FlightJobs\FlightJobs\bin\FlightJobs.dll.config
 D:\Users\rhpa2\Documents\Visual Studio 2017\Projects\FlightJobs\FlightJobs\bin\FlightJobs.dll
@@ -133,10 +133,20 @@ D:\Users\rhpa2\Documents\Visual Studio 2017\Projects\FlightJobs\FlightJobs\obj\D
 D:\Users\rhpa2\Documents\Visual Studio 2017\Projects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.Migrations.AddIsdoneToJobs.resources
 D:\Users\rhpa2\Documents\Visual Studio 2017\Projects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.Migrations.AddIsActivatedToJobs.resources
 D:\Users\rhpa2\Documents\Visual Studio 2017\Projects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.Migrations.AddStatisticsModel.resources
+D:\Users\rhpa2\Documents\Visual Studio 2017\Projects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.Migrations.AddedInProgressProp.resources
+D:\Users\rhpa2\Documents\Visual Studio 2017\Projects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.Migrations.TimeModelProps.resources
+D:\Users\rhpa2\Documents\Visual Studio 2017\Projects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.Migrations.descriptionplane.resources
+D:\Users\rhpa2\Documents\Visual Studio 2017\Projects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.Migrations.AddAirlineCertification.resources
+D:\Users\rhpa2\Documents\Visual Studio 2017\Projects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.Migrations.ListCertificates.resources
+D:\Users\rhpa2\Documents\Visual Studio 2017\Projects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.Migrations.RemoveListCertificates.resources
+D:\Users\rhpa2\Documents\Visual Studio 2017\Projects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.Migrations.statisticsLogo.resources
+D:\Users\rhpa2\Documents\Visual Studio 2017\Projects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.Migrations.scoreBalanceToLong.resources
+D:\Users\rhpa2\Documents\Visual Studio 2017\Projects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.Migrations.AirlineCertificate.resources
+D:\Users\rhpa2\Documents\Visual Studio 2017\Projects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.Migrations.StatisticCertificatesDbModel.resources
+D:\Users\rhpa2\Documents\Visual Studio 2017\Projects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.Migrations.RemoveStatiticsID.resources
+D:\Users\rhpa2\Documents\Visual Studio 2017\Projects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.Migrations.RemoveCountryFroCertificates.resources
 D:\Users\rhpa2\Documents\Visual Studio 2017\Projects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.csproj.GenerateResource.Cache
 D:\Users\rhpa2\Documents\Visual Studio 2017\Projects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.csproj.CoreCompileInputs.cache
 D:\Users\rhpa2\Documents\Visual Studio 2017\Projects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.dll
 D:\Users\rhpa2\Documents\Visual Studio 2017\Projects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.pdb
 D:\Users\rhpa2\Documents\Visual Studio 2017\Projects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.csprojResolveAssemblyReference.cache
-D:\Users\rhpa2\Documents\Visual Studio 2017\Projects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.Migrations.AddedInProgressProp.resources
-D:\Users\rhpa2\Documents\Visual Studio 2017\Projects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.Migrations.TimeModelProps.resources

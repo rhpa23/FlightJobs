@@ -10,16 +10,18 @@ namespace FlightJobs.Models
     public class JobSerachModel
     {
         [StringLength(4)]
+        [DisplayName("Look for Jobs departing from")]
         [Required(ErrorMessage = "An Departure ICAO is required")]
         public string Departure { get; set; }
 
+        [DisplayName("Specify destination")]
         public string Arrival { get; set; }
 
-        [DisplayName("Minimum NM")]
+        [DisplayName("with destinations between")]
         [Required(ErrorMessage = "An Range in nautical mile is required")]
         public long MinRange { get; set; }
 
-        [DisplayName("Maximum NM")]
+        [DisplayName("and xxx miles away.")]
         [Required(ErrorMessage = "An Range in nautical mile is required")]
         public long MaxRange { get; set; }
     }

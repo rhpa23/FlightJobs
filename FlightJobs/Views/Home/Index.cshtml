@@ -5,10 +5,22 @@
 
 @model FlightJobs.Models.HomeViewModel
 
+<div style="width:100%; ">
+    @if (Model.Statistics != null)
+    {
+        <div style="font-size:small; color:cornflowerblue; position: absolute; padding-left:10px; top:90px  ">@Html.DisplayNameFor(model => model.Statistics.BankBalance): @Html.DisplayFor(model => model.Statistics.BankBalance)</div>
+        <div style="font-size:small; color:cornflowerblue; position: absolute; padding-left:10px; top:105px ">@Html.DisplayNameFor(model => model.Statistics.PilotScore): @Html.DisplayFor(model => model.Statistics.PilotScore)</div>
+    }
+    <div style="font-family:'Lucida Console'; font-size:x-large; color:azure; position: absolute; padding-left:10px; padding-top:10px; ">Flight Jobs</div>
+    <img src="~/Content/img/banner0001.jpg"  style="width:99.8%" />
+</div>
+
 <div class="jumbotron">
-    <h1>Your pedding jobs...</h1>
-    <p class="lead">First active one job to do and after start your flight in JobFlight X-Plane plugin.</p>
-    <div class="panel panel-default">
+    <p class="lead">First active one job to do and after start your flight in FlightJobs Connector X-Plane plugin.</p>
+    <div class="panel panel-default text-center">
+        <p>
+            <b>Your pedding jobs...</b>
+        </p>
         <table class="table table-striped table-bordered table-hover">
             <tr>
                 <th>
@@ -38,6 +50,7 @@
                 <th></th>
             </tr>
 
+
             @foreach (var item in Model.Jobs)
             {
                 var style = (item.IsActivated) ? "font-weight:bold" : "";
@@ -63,9 +76,7 @@
                     <td>
                         @Html.DisplayFor(modelItem => item.Pay)
                     </td>
-                    <td>
                     <td style="text-align:center;"><a data-toggle="confirmation" data-title="Remove Job?" href="Home/DeleteJob/@item.Id"><i class="glyphicon glyphicon-remove"></i></a></td>
-                    </td>
                     <td>
                         @Html.ActionLink("Activate", "ActivateJob", new { jobId = item.Id })
                     </td>
@@ -73,49 +84,9 @@
             }
 
         </table>
-        </div>
-        @Html.PagedListPager(Model.Jobs, pageNumber => Url.Action("Index", new
-{
-    pageNumber
-}))
+    </div>
+        @Html.PagedListPager(Model.Jobs, pageNumber => Url.Action("Index", new  { pageNumber }))
 
-        <p>@Html.ActionLink("Add job", "Index", "SearchJobs", new object { }, new { @class = "btn btn-primary btn-lg" })</p>
+        <p>@Html.ActionLink("Add jobs", "Index", "SearchJobs", new object { }, new { @class = "btn btn-info  pull-right btn-md" })</p>
     </div>
 
-@if (Model.Statistics != null)
-{
-    <div class="row">
-        <div class="col-md-4">
-            <h2>Personal progress</h2>
-            <p>
-                <div>
-                    @Html.DisplayNameFor(model => model.Statistics.BankBalance) :
-                    @Model.Statistics.BankBalance
-                </div>
-                <div>
-                    @Html.DisplayNameFor(model => model.Statistics.PilotScore) :
-                    @Model.Statistics.PilotScore
-                </div>
-            </p>
-        </div>
-        <div class="col-md-4">
-            <h2>Flights...</h2>
-            <div>
-                @Html.DisplayNameFor(model => model.Statistics.MilesFlown) :
-                @Model.Statistics.MilesFlown NM
-            </div>
-            <div>
-                @Html.DisplayNameFor(model => model.Statistics.MinutesFlown) :
-                @Model.Statistics.MinutesFlown H(s)
-            </div>
-            <div>
-                @Html.DisplayNameFor(model => model.Statistics.NumberFlights) :
-                @Model.Statistics.NumberFlights
-            </div>
-            <div>
-                @Html.DisplayNameFor(model => model.Statistics.LastFlight) :
-                @Html.ValueFor(model => model.Statistics.LastFlight, "{0:MM-dd-yyyy}")
-            </div>
-        </div>
-    </div>
-}

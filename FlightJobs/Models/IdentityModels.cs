@@ -21,6 +21,10 @@ namespace FlightJobs.Models
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public DbSet<JobDbModel> JobDbModels { get; set; }
+        public DbSet<AirlineDbModel> AirlineDbModels { get; set; }
+        public DbSet<AirlineCertificatesDbModel> AirlineCertificatesDbModels { get; set; }
+        public DbSet<StatisticCertificatesDbModel> StatisticCertificatesDbModels { get; set; }
+        public DbSet<CertificateDbModel> CertificateDbModels { get; set; }
         public DbSet<StatisticsDbModel> StatisticsDbModels { get; set; }
 
         public ApplicationDbContext()

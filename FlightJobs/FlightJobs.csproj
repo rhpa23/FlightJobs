@@ -207,10 +207,12 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\AirlinesController.cs" />
     <Compile Include="Controllers\JobApiController .cs" />
     <Compile Include="Controllers\AuthenticationApiController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Controllers\ProfileController.cs" />
     <Compile Include="Controllers\SearchJobsController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -247,11 +249,56 @@
     <Compile Include="Migrations\201710192206169_TimeModelProps.Designer.cs">
       <DependentUpon>201710192206169_TimeModelProps.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201710211338573_description plane.cs" />
+    <Compile Include="Migrations\201710211338573_description plane.Designer.cs">
+      <DependentUpon>201710211338573_description plane.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201710211653326_AddAirlineCertification.cs" />
+    <Compile Include="Migrations\201710211653326_AddAirlineCertification.Designer.cs">
+      <DependentUpon>201710211653326_AddAirlineCertification.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201710211655439_ListCertificates.cs" />
+    <Compile Include="Migrations\201710211655439_ListCertificates.Designer.cs">
+      <DependentUpon>201710211655439_ListCertificates.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201710211659406_RemoveListCertificates.cs" />
+    <Compile Include="Migrations\201710211659406_RemoveListCertificates.Designer.cs">
+      <DependentUpon>201710211659406_RemoveListCertificates.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201710211703498_statisticsLogo.cs" />
+    <Compile Include="Migrations\201710211703498_statisticsLogo.Designer.cs">
+      <DependentUpon>201710211703498_statisticsLogo.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201710211900261_scoreBalanceToLong.cs" />
+    <Compile Include="Migrations\201710211900261_scoreBalanceToLong.Designer.cs">
+      <DependentUpon>201710211900261_scoreBalanceToLong.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201710212156563_AirlineCertificate.cs" />
+    <Compile Include="Migrations\201710212156563_AirlineCertificate.Designer.cs">
+      <DependentUpon>201710212156563_AirlineCertificate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201710212253322_StatisticCertificatesDbModel.cs" />
+    <Compile Include="Migrations\201710212253322_StatisticCertificatesDbModel.Designer.cs">
+      <DependentUpon>201710212253322_StatisticCertificatesDbModel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201710212255227_RemoveStatiticsID.cs" />
+    <Compile Include="Migrations\201710212255227_RemoveStatiticsID.Designer.cs">
+      <DependentUpon>201710212255227_RemoveStatiticsID.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201710212256413_RemoveCountryFroCertificates.cs" />
+    <Compile Include="Migrations\201710212256413_RemoveCountryFroCertificates.Designer.cs">
+      <DependentUpon>201710212256413_RemoveCountryFroCertificates.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\CertificateViewModel.cs" />
+    <Compile Include="Models\StatisticCertificatesDbModel.cs" />
+    <Compile Include="Models\AirlineCertificatesDbModel.cs" />
+    <Compile Include="Models\CertificateDbModel.cs" />
     <Compile Include="Models\AirportModel.cs" />
     <Compile Include="Models\HomeViewModel.cs" />
     <Compile Include="Models\IdentityModels.cs" />
+    <Compile Include="Models\AirlineDbModel.cs" />
     <Compile Include="Models\JobDbModel.cs" />
     <Compile Include="Models\JobListModel.cs" />
     <Compile Include="Models\JobSerachModel.cs" />
@@ -268,6 +315,17 @@
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\img\airfrance.png" />
+    <Content Include="Content\img\austrian.png" />
+    <Content Include="Content\img\azul.jpg" />
+    <Content Include="Content\img\banner0001.jpg" />
+    <Content Include="Content\img\britishairways.png" />
+    <Content Include="Content\img\certificate.png" />
+    <Content Include="Content\img\contract2.jpg" />
+    <Content Include="Content\img\default.jpg" />
+    <Content Include="Content\img\gol.png" />
+    <Content Include="Content\img\logbook0001.jpg" />
+    <Content Include="Content\img\lufthansa.jpg" />
     <Content Include="Content\PagedList.css" />
     <Content Include="Content\themes\base\accordion.css" />
     <Content Include="Content\themes\base\all.css" />
@@ -382,6 +440,9 @@
     <Content Include="Views\SearchJobs\Confirm.cshtml" />
     <Content Include="Views\SearchJobs\Index.cshtml" />
     <Content Include="Views\SearchJobs\Result.cshtml" />
+    <Content Include="Views\Profile\Index.cshtml" />
+    <Content Include="Views\Airlines\Index.cshtml" />
+    <Content Include="Views\Airlines\Contract.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201710111859366_InitialCreate.resx">
@@ -408,10 +469,41 @@
     <EmbeddedResource Include="Migrations\201710192206169_TimeModelProps.resx">
       <DependentUpon>201710192206169_TimeModelProps.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201710211338573_description plane.resx">
+      <DependentUpon>201710211338573_description plane.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201710211653326_AddAirlineCertification.resx">
+      <DependentUpon>201710211653326_AddAirlineCertification.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201710211655439_ListCertificates.resx">
+      <DependentUpon>201710211655439_ListCertificates.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201710211659406_RemoveListCertificates.resx">
+      <DependentUpon>201710211659406_RemoveListCertificates.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201710211703498_statisticsLogo.resx">
+      <DependentUpon>201710211703498_statisticsLogo.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201710211900261_scoreBalanceToLong.resx">
+      <DependentUpon>201710211900261_scoreBalanceToLong.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201710212156563_AirlineCertificate.resx">
+      <DependentUpon>201710212156563_AirlineCertificate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201710212253322_StatisticCertificatesDbModel.resx">
+      <DependentUpon>201710212253322_StatisticCertificatesDbModel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201710212255227_RemoveStatiticsID.resx">
+      <DependentUpon>201710212255227_RemoveStatiticsID.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201710212256413_RemoveCountryFroCertificates.resx">
+      <DependentUpon>201710212256413_RemoveCountryFroCertificates.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

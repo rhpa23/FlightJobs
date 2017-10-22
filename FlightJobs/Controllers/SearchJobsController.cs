@@ -170,15 +170,18 @@ namespace FlightJobs.Controllers
                 foreach (var selJob in (List<JobDbModel>)Session["ListSelJobs"])
                 {
                     selJob.User = user;
+                    selJob.StartTime = DateTime.Now;
+                    selJob.EndTime = DateTime.Now;
+
                     dbContext.JobDbModels.Add(selJob);
                 }
                 dbContext.SaveChanges();
             }
 
-            return View("Index");
+            return RedirectToAction("Index", "Home");
         }
 
-            private IList<JobListModel> GenerateBoardJobs(JobSerachModel model)
+        private IList<JobListModel> GenerateBoardJobs(JobSerachModel model)
         {
             IList<JobListModel> listBoardJobs = new List<JobListModel>();
 

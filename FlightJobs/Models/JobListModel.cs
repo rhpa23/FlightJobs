@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
@@ -11,6 +12,8 @@ namespace FlightJobs.Models
         public int Id { get; set; }
 
         public AirportModel Departure { get; set; }
+
+        [DisplayName("Destination")]
         public string Arrival { get; set; }
         public long Dist { get; set; }
         public long Pax { get; set; }

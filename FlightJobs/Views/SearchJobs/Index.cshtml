@@ -16,52 +16,52 @@
 {
     @Html.AntiForgeryToken()
     
-    <div class="form-horizontal">
+    <div class="form-horizontal" role="form">
         <h4>JobSerachModel</h4>
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         <div class="form-group">
-            @Html.LabelFor(model => model.Departure, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Departure, new { htmlAttributes = new { @class = "form-control uppercase", @maxlength = "4" } })
+            @Html.LabelFor(model => model.Departure, htmlAttributes: new { @class = "control-label col-md-4" })
+            <div class="col-md-2">
+                @Html.EditorFor(model => model.Departure, new { htmlAttributes = new { placeholder = "ICAO",  @class = "form-control uppercase", @maxlength = "4" } })
                 @Html.ValidationMessageFor(model => model.Departure, "", new { @class = "text-danger" })
             </div>
         </div>
 
+
         <div class="form-group">
-            @Html.LabelFor(model => model.Arrival, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Arrival, new { htmlAttributes = new { @class = "form-control uppercase", @maxlength = "4" } })
+            
+            <div class="form-inline">
+                    @Html.LabelFor(model => model.MinRange, htmlAttributes: new { @class = "control-label col-md-4" })
+                    @Html.EditorFor(model => model.MinRange, new { htmlAttributes = new { @class = "form-control", @maxlength = "4", @minlength = "1" } })
+                    
+                    <label>miles</label>
+
+                <label> and </label>
+                @Html.EditorFor(model => model.MaxRange, new { htmlAttributes = new { @class = "form-control", @maxlength = "4", @minlength = "1" } })
+                <label> miles away.</label>
+            </div>
+            @Html.ValidationMessageFor(model => model.MaxRange, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Arrival, htmlAttributes: new { @class = "control-label col-md-4" })
+            <div class="col-md-2">
+                @Html.EditorFor(model => model.Arrival, new { htmlAttributes = new { placeholder = "ICAO", @class = "form-control uppercase", @maxlength = "4" } })
                 @Html.ValidationMessageFor(model => model.Arrival, "", new { @class = "text-danger" })
             </div>
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.MinRange, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.MinRange, new { htmlAttributes = new { @class = "form-control", @maxlength = "4", @minlength = "1" } })
-                @Html.ValidationMessageFor(model => model.MinRange, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.MaxRange, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.MaxRange, new { htmlAttributes = new { @class = "form-control", @maxlength = "4", @minlength = "1" } })
-                @Html.ValidationMessageFor(model => model.MaxRange, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Search" class="btn btn-default" />
+                <input  type="submit" value="Confirm" class="btn btn-info  pull-right" />
             </div>
         </div>
     </div>
 }
 
 <div>
-    @Html.ActionLink("Back to Home", "Index")
+    <a class="bottomNav" onclick="history.go(-1); return false;" href="#">Back to Result</a><br />
 </div>
 
 @section Scripts {

@@ -44,9 +44,9 @@ namespace FlightJobs.Controllers
 
                 long payload = Convert.ToInt64(Math.Round(Convert.ToDouble(payloadStr, new CultureInfo("en-US")))); 
                 // Check payload
-                if (payload >= (job.Payload + 2) || payload < (job.Payload - 2))
+                if (payload >= (job.Payload + 50) || payload <= (job.Payload - 50))
                 {
-                    return Request.CreateResponse(HttpStatusCode.Forbidden, "Fail: wrong payload. The active job payload is: " + job.Payload);
+                    return Request.CreateResponse(HttpStatusCode.Forbidden, "Wrong payload. Active job payload is: " + job.Payload + "Kg");
                 }
 
                 job.InProgress = true;
@@ -76,6 +76,7 @@ namespace FlightJobs.Controllers
                 string payloadStr = Request.Headers.GetValues("Payload").First();
                 string usarIdStr = Request.Headers.GetValues("UserId").First().Replace("\"", "");
                 string tailNumberStr = Request.Headers.GetValues("TailNumber").First();
+                string planeDescriptionStr = Request.Headers.GetValues("PlaneDescription").First();
 
                 var dbContext = new ApplicationDbContext();
                 var job = dbContext.JobDbModels.FirstOrDefault(j => j.User.Id == usarIdStr &&  
@@ -85,14 +86,14 @@ namespace FlightJobs.Controllers
 
                 if (job == null)
                 {
-                    return Request.CreateResponse(HttpStatusCode.Forbidden, "wrong destination to finish this job.");
+                    return Request.CreateResponse(HttpStatusCode.Forbidden, "Wrong destination to finish this job.");
                 }
 
                 long payload = Convert.ToInt64(Math.Round(Convert.ToDouble(payloadStr, new CultureInfo("en-US"))));
                 // Check payload
-                if (payload >= (job.Payload + 2) || payload < (job.Payload - 2))
+                if (payload >= (job.Payload + 50) || payload <= (job.Payload - 50))
                 {
-                    return Request.CreateResponse(HttpStatusCode.Forbidden, "Fail: wrong payload. The active job payload is: " + job.Payload);
+                    return Request.CreateResponse(HttpStatusCode.Forbidden, "Wrong payload. Active job payload is: " + job.Payload + "Kg");
                 }
 
                 job.InProgress = false;
@@ -100,6 +101,10 @@ namespace FlightJobs.Controllers
                 job.IsDone = true;
                 job.IsActivated = false;
                 job.ModelName = tailNumberStr;
+                job.ModelDescription = planeDescriptionStr;
+
+                UpdateStatistics(job, dbContext);
+
                 dbContext.SaveChanges();
 
                 return Request.CreateResponse(HttpStatusCode.OK, "Job finish successfully.");
@@ -110,6 +115,27 @@ namespace FlightJobs.Controllers
             }
 
             return response;
+        }
+
+        private void UpdateStatistics(JobDbModel job, ApplicationDbContext dbContext)
+        {
+            var statistics = dbContext.StatisticsDbModels.FirstOrDefault(s => s.User.Id == job.User.Id);
+            if (statistics != null)
+            {
+                statistics.PilotScore += job.Dist / 15;
+                statistics.BankBalance += job.Pay;
+            }
+            else
+            {
+                var newStatistics = new StatisticsDbModel()
+                {
+                    BankBalance = job.Pay,
+                    PilotScore = job.Dist / 15,
+                    Logo = "/Content/img/default.jpg",
+                    User = job.User
+                };
+                dbContext.StatisticsDbModels.Add(newStatistics);
+            }
         }
     }
 }

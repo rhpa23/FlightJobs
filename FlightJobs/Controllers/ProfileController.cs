@@ -8,19 +8,31 @@ using PagedList;
 
 namespace FlightJobs.Controllers
 {
-    public class HomeController : Controller
+    public class ProfileController : Controller
     {
+        // GET: Profile
         public ActionResult Index(int? pageNumber)
         {
             var homeModel = new HomeViewModel();
             var dbContext = new ApplicationDbContext();
-            var jobList = dbContext.JobDbModels.Where(j => !j.IsDone).OrderBy(j => j.DepartureICAO).ToPagedList(pageNumber ?? 1, 5);
+            var jobList = dbContext.JobDbModels.Where(j => j.IsDone).OrderBy(j => j.EndTime).ToPagedList(pageNumber ?? 1, 5);
             var user = dbContext.Users.FirstOrDefault(u => u.Email == User.Identity.Name);
             if (user != null)
             {
                 var statistics = dbContext.StatisticsDbModels.FirstOrDefault(s => s.User.Id == user.Id);
                 if (statistics != null)
                 {
+                    TimeSpan span = new TimeSpan();
+                    long payloadTotal = 0;
+                    jobList.ToList().ForEach(j => span += (j.EndTime - j.StartTime));
+                    jobList.ToList().ForEach(j => payloadTotal += j.Payload);
+
+                    statistics.NumberFlights = jobList.Count();
+                    statistics.FlightTimeTotal = String.Format("{0:00}:{1:00}", span.Hours, span.Minutes);
+                    statistics.PayloadTotal = payloadTotal;
+                    statistics.LastFlight = jobList.Last().EndTime;
+                    statistics.LastAircraft = jobList.Last().ModelDescription;
+                    statistics.FavoriteAirplane = jobList.Max(j => j.ModelDescription);
                     homeModel.Statistics = statistics;
                 }
             }
@@ -28,21 +40,7 @@ namespace FlightJobs.Controllers
             return View(homeModel);
         }
 
-
-        public ActionResult ActivateJob(int? jobId)
-        {
-            var dbContext = new ApplicationDbContext();
-            var jobs = dbContext.JobDbModels.ToList();
-            foreach (var job in jobs)
-            {
-                job.IsActivated = (job.Id == jobId);
-                dbContext.SaveChanges();
-            }
-
-            return RedirectToAction("Index");
-        }
-
-        public ActionResult DeleteJob(int id)
+        public ActionResult Delete(int id)
         {
             var dbContext = new ApplicationDbContext();
             JobDbModel job = new JobDbModel() { Id = id };
@@ -51,20 +49,6 @@ namespace FlightJobs.Controllers
             dbContext.SaveChanges();
 
             return RedirectToAction("Index");
-        }
-
-        public ActionResult About()
-        {
-            ViewBag.Message = "Your application description page.";
-
-            return View();
-        }
-
-        public ActionResult Contact()
-        {
-            ViewBag.Message = "Your contact page.";
-
-            return View();
         }
     }
 }

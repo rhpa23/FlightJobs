@@ -39,6 +39,18 @@ namespace FlightJobs.Models
             }
         }
 
+        [NotMapped]
+        [DisplayName("Flight time")]
+        public string FlightTime
+        {
+            get
+            {
+                TimeSpan span = (EndTime - StartTime);
+
+                return String.Format("{0:00}:{1:00}", span.Hours, span.Minutes);
+            }
+        }
+
         [DisplayFormat(DataFormatString = "{0:C0}")]
         [DisplayName("Pay")]
         public long Pay { get; set; }
@@ -53,14 +65,17 @@ namespace FlightJobs.Models
         [DisplayName("")]
         public bool InProgress { get; set; }
 
-        [DisplayName("")]
+        [DisplayFormat(DataFormatString = "{0:yyyy/MM/dd}")]
         public DateTime StartTime { get; set; }
 
-        [DisplayName("")]
+        [DisplayFormat(DataFormatString = "{0:yyyy/MM/dd}")]
         public DateTime EndTime { get; set; }
 
-        [DisplayName("")]
+        [DisplayName("Registration")]
         public string ModelName { get; set; }
+
+        [DisplayName("Model")]
+        public string ModelDescription { get; set; }
 
         public virtual ApplicationUser User { get; set; }
     }
