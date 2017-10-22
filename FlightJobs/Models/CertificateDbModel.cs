@@ -17,6 +17,7 @@ namespace FlightJobs.Models
         [DisplayName("Name")]
         public string Name { get; set; }
 
+        [DisplayFormat(DataFormatString = "{0:C0}")]
         [DisplayName("Price")]
         public long Price { get; set; }
 

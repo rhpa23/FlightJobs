@@ -14,10 +14,10 @@ namespace FlightJobs.Controllers
 {
     public class SearchJobsController : Controller
     {
-        private double taxEcon = 0.54; // por NM
-        private double taxFirstC = 0.67; // por NM
+        private double taxEcon = 0.16; // por NM
+        private double taxFirstC = 0.21; // por NM
 
-        private double taxCargo = 0.012; // por NM
+        private double taxCargo = 0.008; // por NM
 
         private ApplicationUserManager _userManager;
 
