@@ -205,7 +205,8 @@ $("#avatar-1").fileinput({
     removeTitle: 'Cancel or reset changes',
     elErrorContainer: '#kv-avatar-errors-1',
     msgErrorClass: 'alert alert-block alert-danger',
-    defaultPreviewContent: '<img src="@Model.Statistics.Logo" alt="Your Avatar" style="width:140px;"><h6 class="text-muted">Click to select</h6>',
+
+    defaultPreviewContent: '<img src="@if (@Model.Statistics != null) { @Model.Statistics.Logo }" alt="Your Avatar" style="width:140px;"><h6 class="text-muted">Click to select</h6>',
     layoutTemplates: { main2: '{preview} {remove} ' },
     language: 'eN',
     uploadUrl: '/Profile/Upload',
