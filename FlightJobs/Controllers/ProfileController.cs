@@ -16,10 +16,12 @@ namespace FlightJobs.Controllers
         {
             var homeModel = new HomeViewModel();
             var dbContext = new ApplicationDbContext();
-            var jobList = dbContext.JobDbModels.Where(j => j.IsDone).OrderBy(j => j.EndTime).ToPagedList(pageNumber ?? 1, 5);
+            
             var user = dbContext.Users.FirstOrDefault(u => u.Email == User.Identity.Name);
             if (user != null)
             {
+                var jobList = dbContext.JobDbModels.Where(j => j.IsDone && j.User.Id == user.Id).OrderBy(j => j.EndTime).ToPagedList(pageNumber ?? 1, 5);
+
                 var statistics = dbContext.StatisticsDbModels.FirstOrDefault(s => s.User.Id == user.Id);
                 if (statistics != null)
                 {
@@ -39,8 +41,9 @@ namespace FlightJobs.Controllers
                     }
                     homeModel.Statistics = statistics;
                 }
+                homeModel.Jobs = jobList;
             }
-            homeModel.Jobs = jobList;
+            
             return View(homeModel);
         }
 

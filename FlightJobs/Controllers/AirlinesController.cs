@@ -12,6 +12,7 @@ namespace FlightJobs.Controllers
         // GET: Airlines
         public ActionResult Index()
         {
+            ViewBag.Message = TempData["Message"];
             var dbContext = new ApplicationDbContext();
             return View(dbContext.AirlineDbModels.ToList());
         }
@@ -25,7 +26,7 @@ namespace FlightJobs.Controllers
             var airline = dbContext.AirlineDbModels.FirstOrDefault(a => a.Id == id);
             var user = dbContext.Users.FirstOrDefault(u => u.Email == User.Identity.Name);
             var statistics = dbContext.StatisticsDbModels.FirstOrDefault(s => s.User.Id == user.Id);
-            if (statistics.PilotScore >= airline.Score)
+            if (statistics != null && statistics.PilotScore >= airline.Score)
             {
                 certificateView.Airline = airline;
                 certificateView.Statistic = statistics;
@@ -42,8 +43,8 @@ namespace FlightJobs.Controllers
             }
             else
             {
-                ViewBag.Message = string.Format("You don't have enough scores to sign contract with this airline.");
-                return View("Index");
+                TempData["Message"] = "You don't have enough scores to sign contract with this airline.";
+                return RedirectToAction("Index");
             }
         }
 
@@ -54,7 +55,7 @@ namespace FlightJobs.Controllers
             var statistics = dbContext.StatisticsDbModels.FirstOrDefault(s => s.User.Id == user.Id);
             var certificate = dbContext.CertificateDbModels.FirstOrDefault(c => c.Id == id);
 
-            if (statistics.BankBalance >= certificate.Price)
+            if (statistics != null && statistics.BankBalance >= certificate.Price)
             {
                 var statisticCertificate = new StatisticCertificatesDbModel();
                 statisticCertificate.Certificate = certificate;
