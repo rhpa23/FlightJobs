@@ -8,54 +8,102 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<style>
+    .kv-avatar .krajee-default.file-preview-frame, .kv-avatar .krajee-default.file-preview-frame:hover {
+        margin: 0;
+        padding: 0;
+        border: none;
+        box-shadow: none;
+        text-align: center;
+        
+    }
+
+    .kv-avatar {
+        display: inline-block;
+        
+    }
+
+        .kv-avatar .file-input {
+            display: table-cell;
+            width: 110px;
+            
+        }
+
+    .kv-reqd {
+        color: red;
+        font-family: monospace;
+        font-weight: normal;
+    }
+</style>
+
 <div style="width:100%; ">
     <img src="~/Content/img/logbook0001.jpg" style="width:99.8%" />
 </div>
-<div class="jumbotron">
+
     @if (Model.Statistics != null)
     {
-        <div class="panel panel-default panel-title" style="padding:10px; height:180px">
-            <img class="pull-right" src="@Model.Statistics.Logo" style="width:100px; height:110px; " />
-            <ul style="font-size:small; list-style-type: none;">
-                <li><b>@Html.DisplayNameFor(model => model.Statistics.BankBalance):</b> @Html.DisplayFor(model => model.Statistics.BankBalance)</li>
-                <li><b>@Html.DisplayNameFor(model => model.Statistics.PilotScore):</b> @Html.DisplayFor(model => model.Statistics.PilotScore)</li>
-                @if (Model.Statistics.Airline != null)
-                {
-                    <li><b>@Html.DisplayNameFor(model => model.Statistics.Airline):</b> @Html.DisplayFor(model => model.Statistics.Airline.Name)</li>
-                    <li><img class="pull-right" src="@Model.Statistics.Airline.Logo" style="width:110px; height:110px; margin-top:-60px; margin-right:10px" /></li>
-                }
-                else
-                {
-                    <li>
-                        <b>@Html.DisplayNameFor(model => model.Statistics.Airline):</b> Unemployed
-                    </li>
-                }
+        <div class="row">
+            <div class="col-sm-4 text-center">
+                <div class="panel panel-default panel-title" style="padding:10px; height:300px">
+                    @using (Html.BeginForm("Upload", "Profile", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                    {
+                        <div class="kv-avatar">
+                            <div class="file-loading">
+                                <input id="avatar-1" name="FilesInput" type="file" required>
+                                
+                            </div>
+                        </div>
+                        
+                        <div id="kv-avatar-errors-1" class="center-block" style="font-size:8pt; width:400px;display:none"></div>
+                    }
+                </div>
+            </div>
+            <div class="col-sm-8">
+                <div class="panel panel-default panel-title" style="padding:10px; height:300px">
+                    @*<img class="pull-right" src="@Model.Statistics.Logo" style="width:100px; height:110px; " />*@
 
-                <li>
-                    <b>@Html.DisplayNameFor(model => model.Statistics.FlightTimeTotal):</b> @Html.DisplayFor(model => model.Statistics.FlightTimeTotal)
-                </li>
-                <li>
-                    <b>@Html.DisplayNameFor(model => model.Statistics.NumberFlights):</b> @Html.DisplayFor(model => model.Statistics.NumberFlights)
-                </li>
-                <li>
-                    <b>@Html.DisplayNameFor(model => model.Statistics.PayloadTotal):</b> @Html.DisplayFor(model => model.Statistics.PayloadTotal) Kg
-                </li>
-                <li>
-                    <b>@Html.DisplayNameFor(model => model.Statistics.LastFlight):</b> @Html.DisplayFor(model => model.Statistics.LastFlight)
-                </li>
-                <li>
-                    <b>@Html.DisplayNameFor(model => model.Statistics.LastAircraft):</b> @Html.DisplayFor(model => model.Statistics.LastAircraft)
-                </li>
-                <li>
-                    <b>@Html.DisplayNameFor(model => model.Statistics.FavoriteAirplane):</b> @Html.DisplayFor(model => model.Statistics.FavoriteAirplane)
-                </li>
-            </ul>
+                    <ul style="font-size:small; list-style-type: none;">
+                        <li><b>@Html.DisplayNameFor(model => model.Statistics.BankBalance):</b> @Html.DisplayFor(model => model.Statistics.BankBalance)</li>
+                        <li><b>@Html.DisplayNameFor(model => model.Statistics.PilotScore):</b> @Html.DisplayFor(model => model.Statistics.PilotScore)</li>
+                        @if (Model.Statistics.Airline != null)
+                        {
+                            <li><b>@Html.DisplayNameFor(model => model.Statistics.Airline):</b> @Html.DisplayFor(model => model.Statistics.Airline.Name)</li>
+                            <li><img class="pull-right" src="@Model.Statistics.Airline.Logo" style="width:110px; height:110px; margin-top:-60px; margin-right:10px" /></li>
+                        }
+                        else
+                        {
+                            <li>
+                                <b>@Html.DisplayNameFor(model => model.Statistics.Airline):</b> Unemployed
+                            </li>
+                        }
+
+                        <li>
+                            <b>@Html.DisplayNameFor(model => model.Statistics.FlightTimeTotal):</b> @Html.DisplayFor(model => model.Statistics.FlightTimeTotal)
+                        </li>
+                        <li>
+                            <b>@Html.DisplayNameFor(model => model.Statistics.NumberFlights):</b> @Html.DisplayFor(model => model.Statistics.NumberFlights)
+                        </li>
+                        <li>
+                            <b>@Html.DisplayNameFor(model => model.Statistics.PayloadTotal):</b> @Html.DisplayFor(model => model.Statistics.PayloadTotal) Kg
+                        </li>
+                        <li>
+                            <b>@Html.DisplayNameFor(model => model.Statistics.LastFlight):</b> @Html.DisplayFor(model => model.Statistics.LastFlight)
+                        </li>
+                        <li>
+                            <b>@Html.DisplayNameFor(model => model.Statistics.LastAircraft):</b> @Html.DisplayFor(model => model.Statistics.LastAircraft)
+                        </li>
+                        <li>
+                            <b>@Html.DisplayNameFor(model => model.Statistics.FavoriteAirplane):</b> @Html.DisplayFor(model => model.Statistics.FavoriteAirplane)
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </div>
     }
 
     <div class="panel panel-default text-center">
         <p><b>PILOT LOGBOOK</b></p>
-        <table class="table table-striped table-bordered table-hover" style="font-size: 10px;">
+        <table class="table table-striped table-bordered table-hover" style="font-size: 10px; padding:0px">
             <tr>
                 <th>
                     Date
@@ -85,6 +133,9 @@
                 </th>
                 <th>
                     @Html.DisplayNameFor(model => model.Jobs.First().FlightTime)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Jobs.First().UsedFuelWeight)
                 </th>
                 <th></th>
             </tr>
@@ -125,6 +176,9 @@
                     <td>
                         @Html.DisplayFor(modelItem => item.FlightTime)
                     </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.UsedFuelWeight)
+                    </td>
                     <td style="text-align:center;"><a data-toggle="confirmation" data-title="Remove Job?" href="Profile/Delete/@item.Id"><i class="glyphicon glyphicon-remove"></i></a></td>
                 </tr>
             }
@@ -132,4 +186,30 @@
         </table>
     </div>
     @Html.PagedListPager(Model.Jobs, pageNumber => Url.Action("Index", new { pageNumber }))
-</div>
+
+
+
+<script>
+$("#avatar-1").fileinput({
+    overwriteInitial: true,
+    maxFileSize: 60,
+    showClose: false,
+    showCaption: true,
+    browseOnZoneClick: true,
+    showBrowse: false,
+    preferIconicZoomPreview: false,
+    browseLabel: '',
+    removeLabel: '',
+    browseIcon: '<i class="glyphicon glyphicon-folder-open"></i>',
+    removeIcon: '<i class="glyphicon glyphicon-remove"></i>',
+    removeTitle: 'Cancel or reset changes',
+    elErrorContainer: '#kv-avatar-errors-1',
+    msgErrorClass: 'alert alert-block alert-danger',
+    defaultPreviewContent: '<img src="@Model.Statistics.Logo" alt="Your Avatar" style="width:140px;"><h6 class="text-muted">Click to select</h6>',
+    layoutTemplates: { main2: '{preview} {remove} ' },
+    language: 'eN',
+    uploadUrl: '/Profile/Upload',
+    allowedFileExtensions: ["jpg", "png", "gif"],
+    maxFileCount: 1
+});
+</script>

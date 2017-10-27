@@ -30,6 +30,7 @@ namespace FlightJobs.Controllers
                 string icaoStr = Request.Headers.GetValues("ICAO").First();
                 string payloadStr = Request.Headers.GetValues("Payload").First();
                 string usarIdStr = Request.Headers.GetValues("UserId").First().Replace("\"", "");
+                string fuelWeightStr = Request.Headers.GetValues("FuelWeight").First();
 
                 var dbContext = new ApplicationDbContext();
                 var job = dbContext.JobDbModels.FirstOrDefault(j => j.User.Id == usarIdStr &&  
@@ -48,6 +49,9 @@ namespace FlightJobs.Controllers
                 {
                     return Request.CreateResponse(HttpStatusCode.Forbidden, "Wrong payload. Active job payload is: " + job.Payload + "Kg");
                 }
+
+                long fuelWeight = Convert.ToInt64(Math.Round(Convert.ToDouble(fuelWeightStr, new CultureInfo("en-US"))));
+                job.StartFuelWeight = fuelWeight;
 
                 job.InProgress = true;
                 job.StartTime = DateTime.Now;
@@ -77,6 +81,7 @@ namespace FlightJobs.Controllers
                 string usarIdStr = Request.Headers.GetValues("UserId").First().Replace("\"", "");
                 string tailNumberStr = Request.Headers.GetValues("TailNumber").First();
                 string planeDescriptionStr = Request.Headers.GetValues("PlaneDescription").First();
+                string fuelWeightStr = Request.Headers.GetValues("FuelWeight").First();
 
                 var dbContext = new ApplicationDbContext();
                 var job = dbContext.JobDbModels.FirstOrDefault(j => j.User.Id == usarIdStr &&  
@@ -102,6 +107,9 @@ namespace FlightJobs.Controllers
                 job.IsActivated = false;
                 job.ModelName = tailNumberStr;
                 job.ModelDescription = planeDescriptionStr;
+
+                long fuelWeight = Convert.ToInt64(Math.Round(Convert.ToDouble(fuelWeightStr, new CultureInfo("en-US"))));
+                job.FinishFuelWeight = fuelWeight;
 
                 UpdateStatistics(job, dbContext);
 

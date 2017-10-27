@@ -5,6 +5,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using PagedList;
+using System.IO;
 
 namespace FlightJobs.Controllers
 {
@@ -49,6 +50,31 @@ namespace FlightJobs.Controllers
             dbContext.SaveChanges();
 
             return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public string Upload(IEnumerable<HttpPostedFileBase> FilesInput)
+        {
+            if (Request.Files.Count > 0)
+            {
+                var file = Request.Files[0];
+
+                if (file != null && file.ContentLength > 0)
+                {
+                    var dbContext = new ApplicationDbContext();
+                    var user = dbContext.Users.FirstOrDefault(u => u.Email == User.Identity.Name);
+                    var fileName = Path.GetFileName(user.Id + Path.GetExtension(file.FileName));
+
+                    var path = Path.Combine(Server.MapPath("~/Content/img/avatar/"), fileName);
+                    file.SaveAs(path);
+                    var statistics = dbContext.StatisticsDbModels.FirstOrDefault(s => s.User.Id == user.Id);
+                    statistics.Logo = "/Content/img/avatar/" + fileName;
+                    dbContext.SaveChanges();
+                }
+            }
+
+            return "{}";
+            //return RedirectToAction("Index");
         }
     }
 }

@@ -77,6 +77,20 @@ namespace FlightJobs.Models
         [DisplayName("Model")]
         public string ModelDescription { get; set; }
 
+        [DisplayName("Fuel weight")]
+        public long StartFuelWeight { get; set; }
+
+        [DisplayName("Fuel weight")]
+        public long FinishFuelWeight { get; set; }
+
+        [NotMapped]
+        [DisplayName("Burned fuel")]
+        public string UsedFuelWeight {
+            get {
+                return (StartFuelWeight - FinishFuelWeight) + "kg";
+            }
+        }
+
         public virtual ApplicationUser User { get; set; }
     }
 }

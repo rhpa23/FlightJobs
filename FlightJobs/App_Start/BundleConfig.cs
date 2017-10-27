@@ -31,6 +31,14 @@ namespace FlightJobs
 
             bundles.Add(new ScriptBundle("~/bundles/jqueryui").Include(
             "~/Scripts/jquery-ui-{version}.js"));
+
+            bundles.Add(new ScriptBundle("~/bundles/fileinput").Include(
+            "~/Scripts/fileinput.min.js"));
+
+            bundles.Add(new ScriptBundle("~/Content/css/fileinput").Include(
+            "~/Content/bootstrap-fileinput/css/fileinput.min.css"));
+
+            //D:\Users\rhpa2\Documents\Visual Studio 2017\Projects\FlightJobs\FlightJobs\Content\bootstrap-fileinput\css\fileinput.min.css
         }
     }
 }
