@@ -15,19 +15,20 @@
         border: none;
         box-shadow: none;
         text-align: center;
-        
+    }
+
+    .file-drop-zone {
+        margin: 0px;
     }
 
     .kv-avatar {
         display: inline-block;
-        
     }
 
-        .kv-avatar .file-input {
-            display: table-cell;
-            width: 110px;
-            
-        }
+    .kv-avatar .file-input {
+        display: table-cell;
+        width: 110px;
+    }
 
     .kv-reqd {
         color: red;
@@ -44,7 +45,7 @@
     {
         <div class="row">
             <div class="col-sm-4 text-center">
-                <div class="panel panel-default panel-title" style="padding:10px; height:300px">
+                <div class="panel panel-default panel-title" style="padding:10px; height:auto; min-height:300px">
                     @using (Html.BeginForm("Upload", "Profile", FormMethod.Post, new { enctype = "multipart/form-data" }))
                     {
                         <div class="kv-avatar">

@@ -31,9 +31,12 @@ namespace FlightJobs.Controllers
                     statistics.NumberFlights = jobList.Count();
                     statistics.FlightTimeTotal = String.Format("{0:00}:{1:00}", span.Hours, span.Minutes);
                     statistics.PayloadTotal = payloadTotal;
-                    statistics.LastFlight = jobList.Last().EndTime;
-                    statistics.LastAircraft = jobList.Last().ModelDescription;
-                    statistics.FavoriteAirplane = jobList.Max(j => j.ModelDescription);
+                    if (jobList.Count() > 0)
+                    {
+                        statistics.LastFlight = jobList.Last().EndTime;
+                        statistics.LastAircraft = jobList.Last().ModelDescription;
+                        statistics.FavoriteAirplane = jobList.Max(j => j.ModelDescription);
+                    }
                     homeModel.Statistics = statistics;
                 }
             }
