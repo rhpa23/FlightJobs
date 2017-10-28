@@ -289,3 +289,5 @@ __pycache__/
 
 FlightJobs/Content/img/avatar
 FlightJobs/Content/img/avatar/*.*
+FlightJobs/Web.config
+Web.config
