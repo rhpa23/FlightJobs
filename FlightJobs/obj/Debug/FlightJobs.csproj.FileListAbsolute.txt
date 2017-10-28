@@ -150,7 +150,6 @@ D:\Users\rhpa2\Documents\Visual Studio 2017\Projects\FlightJobs\FlightJobs\obj\D
 D:\Users\rhpa2\Documents\Visual Studio 2017\Projects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.dll
 D:\Users\rhpa2\Documents\Visual Studio 2017\Projects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.pdb
 D:\Users\rhpa2\Documents\Visual Studio 2017\Projects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.Migrations.UsedFuelWeight.resources
-D:\Users\rhpa2\Documents\Visual Studio 2017\Projects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.csprojResolveAssemblyReference.cache
 C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\bin\ApplicationInsights.config
 C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\bin\roslyn\csc.exe
 C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\bin\roslyn\csc.exe.config
@@ -286,3 +285,4 @@ C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs
 C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\obj\Debug\FlightJobs.csproj.CoreCompileInputs.cache
 C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\obj\Debug\FlightJobs.dll
 C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\obj\Debug\FlightJobs.pdb
+D:\Users\rhpa2\Documents\Visual Studio 2017\Projects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.csprojResolveAssemblyReference.cache

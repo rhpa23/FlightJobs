@@ -22,9 +22,12 @@ namespace FlightJobs
         {
             SmtpClient client = new SmtpClient();
 
-            var msg = new MailMessage("dvd.f0953@gmail.com",
-                message.Destination, message.Subject,
-                message.Body);
+            MailAddress from = new MailAddress("dvd.f0953@gmail.com", "FlightJobs");
+            MailAddress to = new MailAddress(message.Destination);
+
+            var msg = new MailMessage(from, to);
+            msg.Subject = message.Subject;
+            msg.Body = message.Body;
 
             msg.IsBodyHtml = true;
 
