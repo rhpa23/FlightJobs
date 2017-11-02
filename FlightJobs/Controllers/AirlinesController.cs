@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.UI;
 
 namespace FlightJobs.Controllers
 {
@@ -65,6 +66,8 @@ namespace FlightJobs.Controllers
                 statistics.BankBalance = statistics.BankBalance - certificate.Price;
 
                 dbContext.SaveChanges();
+
+                PopUpCertificateTest(certificate);
             }
             else
             {
@@ -101,6 +104,8 @@ namespace FlightJobs.Controllers
             }
             else
             {
+                dbContext.StatisticCertificatesDbModels.RemoveRange(certsUser); // To recycle certificates in next contract.
+
                 statistics.Airline = airline;
                 dbContext.SaveChanges();
                 ViewBag.Message = "Congratulations, you signed contract with " + airline.Name +  " airline in " + airline.Country + ".";
@@ -108,6 +113,26 @@ namespace FlightJobs.Controllers
 
             return View("Contract", certificateView);
  
+        }
+
+        private void PopUpCertificateTest(CertificateDbModel certificate)
+        {
+            string strUrl = "https://goo.gl/forms/8GHdrmENEDHpF2tG3";
+            switch (certificate.Name)
+            {
+                case "Private Pilot":
+                    strUrl = "https://goo.gl/forms/8GHdrmENEDHpF2tG3";
+                    break;
+                case "Commercial Pilot":
+                    strUrl = "https://goo.gl/forms/DH7ISfSdaU1JGpQi1";
+                    break;
+                case "Instrument flying requirements":
+                    strUrl = "https://goo.gl/forms/DaDZMTTgs9VFd29n1";
+                    break;
+                default:
+                    break;
+            }
+            Response.Write("<script>window.open('" + strUrl + "' ,'_blank')</script>");
         }
     }
 }
