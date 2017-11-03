@@ -54,10 +54,10 @@ namespace FlightJobs.Controllers
                 job.StartFuelWeight = fuelWeight;
 
                 job.InProgress = true;
-                job.StartTime = DateTime.Now;
+                job.StartTime = DateTime.UtcNow;
                 dbContext.SaveChanges();
 
-                return Request.CreateResponse(HttpStatusCode.OK, "Job started successfully.");
+                return Request.CreateResponse(HttpStatusCode.OK, "Job started successfully at: " + job.StartTime.ToShortTimeString() + " (UTC)");
             }
             catch (Exception)
             {
@@ -102,7 +102,7 @@ namespace FlightJobs.Controllers
                 }
 
                 job.InProgress = false;
-                job.EndTime = DateTime.Now;
+                job.EndTime = DateTime.UtcNow;
                 job.IsDone = true;
                 job.IsActivated = false;
                 job.ModelName = tailNumberStr;
@@ -115,7 +115,7 @@ namespace FlightJobs.Controllers
 
                 dbContext.SaveChanges();
 
-                return Request.CreateResponse(HttpStatusCode.OK, "Job finish successfully.");
+                return Request.CreateResponse(HttpStatusCode.OK, "Job finish successfully at: " + job.EndTime.ToShortTimeString() + "  (UTC)");
             }
             catch (Exception)
             {

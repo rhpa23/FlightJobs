@@ -80,7 +80,7 @@ namespace FlightJobs.Controllers
                         return Request.CreateResponse(HttpStatusCode.Forbidden, "Your login attempt failed.");
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 response = Request.CreateResponse(HttpStatusCode.BadRequest, "Authentication error.");
             }
