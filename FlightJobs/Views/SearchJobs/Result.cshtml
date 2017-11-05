@@ -44,7 +44,6 @@
                     <th>
                         @Html.DisplayNameFor(model => model.First().Pay)
                     </th>
-                    <th></th>
                 </tr>
 
                 @foreach (var item in Model)
@@ -77,9 +76,6 @@
                         }
                         <td>
                             @Html.DisplayFor(modelItem => item.Pay)
-                        </td>
-                        <td>
-                            @Html.ActionLink("Find a route", "FindRoute", new { /* id=item.PrimaryKey */ })
                         </td>
                     </tr>
                 }

@@ -52,5 +52,13 @@ namespace FlightJobs.Models
         [NotMapped]
         [DisplayName("Favorite airplane")]
         public string FavoriteAirplane { get; set; }
+
+        [NotMapped]
+        [DisplayName("Pilots hired")]
+        public long AirlinePilotsHired { get; set; }
+
+        [NotMapped]
+        [DisplayName("Score")]
+        public long AirlineScore { get; set; }
     }
 }

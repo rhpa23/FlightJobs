@@ -42,14 +42,7 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.Dist) NM
                 </td>
-                @if (item.FirstClass)
-                {
-                    <td> @Html.DisplayFor(modelItem => item.Pax) Pax (Business) </td>
-                }
-                else
-                {
-                    <td> @Html.DisplayFor(modelItem => item.Pax) Pax (Economy)  </td>
-                }
+                <td> @Html.DisplayFor(modelItem => item.Pax)</td>
                 <td> @Html.DisplayFor(modelItem => item.Cargo) Kg (Cargo)  </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Pay)

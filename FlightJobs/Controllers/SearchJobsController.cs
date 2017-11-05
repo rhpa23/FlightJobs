@@ -88,7 +88,7 @@ namespace FlightJobs.Controllers
                     job.Selected = true;
                 }
 
-                return View("Result", jobs.OrderBy(x => x.Dist).ToPagedList(pageNumber ?? 1, 10));
+                return View("Result", jobs.OrderBy(x => x.Dist).ToPagedList(pageNumber ?? 1, 15));
             }
             else
             {
@@ -203,7 +203,7 @@ namespace FlightJobs.Controllers
                     if (distMiles >= model.MinRange && distMiles <= model.MaxRange && arrival.ICAO.ToUpper() != dep.ICAO.ToUpper() && 
                         (model.Arrival == null || arrival.ICAO.ToUpper().Contains(model.Arrival.ToUpper())))
                     {
-                        int index = randomPob.Next(6, 14);
+                        int index = randomPob.Next(14, 25);
 
                         for (int i = 0; i < index; i++)
                         {
@@ -220,7 +220,7 @@ namespace FlightJobs.Controllers
                             }
                             else
                             {
-                                pob = model.IsGeneralAviation ? randomPob.Next(1, 10) : randomPob.Next(8, 60); 
+                                pob = model.IsGeneralAviation ? randomPob.Next(1, 10) : randomPob.Next(10, 80); 
                                 profit = isFisrtClass ? Convert.ToInt32(taxFirstC * distMiles * pob) : Convert.ToInt32(taxEcon * distMiles * pob);
                             }
 

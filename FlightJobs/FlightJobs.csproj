@@ -314,6 +314,10 @@
     <Compile Include="Util\DataConversion.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="App_Data\aspnet-FlightJobs-20171009084556.mdf" />
+    <Content Include="App_Data\aspnet-FlightJobs-20171009084556_log.ldf">
+      <DependentUpon>aspnet-FlightJobs-20171009084556.mdf</DependentUpon>
+    </Content>
     <Content Include="App_Data\GlobalAirportDatabase.txt" />
     <Content Include="Content\bootstrap-fileinput\css\fileinput-rtl.css" />
     <Content Include="Content\bootstrap-fileinput\css\fileinput-rtl.min.css" />

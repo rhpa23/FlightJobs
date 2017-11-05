@@ -20,13 +20,21 @@ namespace FlightJobs.Controllers
             var user = dbContext.Users.FirstOrDefault(u => u.Email == User.Identity.Name);
             if (user != null)
             {
-                var jobList = dbContext.JobDbModels.Where(j => j.IsDone && j.User.Id == user.Id).OrderBy(j => j.EndTime).ToPagedList(pageNumber ?? 1, 5);
-
+                var jobList = dbContext.JobDbModels.Where(j => j.IsDone && j.User.Id == user.Id).OrderByDescending(j => j.EndTime).ToPagedList(pageNumber ?? 1, 5);
+                
                 var statistics = dbContext.StatisticsDbModels.FirstOrDefault(s => s.User.Id == user.Id);
                 if (statistics != null)
                 {
+                    if (statistics.Airline != null)
+                    {
+                        var statisticsAirline = dbContext.StatisticsDbModels.Where(s => s.Airline != null && s.Airline.Id == statistics.Airline.Id);
+                        statistics.AirlinePilotsHired = statisticsAirline.Count();
+                        statisticsAirline.ToList().ForEach(a => statistics.AirlineScore += a.PilotScore);
+                    }
+
                     TimeSpan span = new TimeSpan();
                     long payloadTotal = 0;
+                    
                     jobList.ToList().ForEach(j => span += (j.EndTime - j.StartTime));
                     jobList.ToList().ForEach(j => payloadTotal += j.Payload);
 

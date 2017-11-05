@@ -57,7 +57,7 @@ namespace FlightJobs.Controllers
                 job.StartTime = DateTime.UtcNow;
                 dbContext.SaveChanges();
 
-                return Request.CreateResponse(HttpStatusCode.OK, "Job started successfully at: " + job.StartTime.ToShortTimeString() + " (UTC)");
+                return Request.CreateResponse(HttpStatusCode.OK, "Job to " + job.ArrivalICAO + " started at: " + job.StartTime.ToShortTimeString() + " (UTC)");
             }
             catch (Exception)
             {
