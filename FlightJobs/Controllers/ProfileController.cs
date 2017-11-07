@@ -12,15 +12,18 @@ namespace FlightJobs.Controllers
     public class ProfileController : Controller
     {
         // GET: Profile
-        public ActionResult Index(int? pageNumber)
+        public ActionResult Index(string sortOrder, string CurrentSort, int? pageNumber)
         {
+            sortOrder = String.IsNullOrEmpty(sortOrder) ? "Date" : sortOrder;
+            
+
             var homeModel = new HomeViewModel();
             var dbContext = new ApplicationDbContext();
             
             var user = dbContext.Users.FirstOrDefault(u => u.Email == User.Identity.Name);
             if (user != null)
             {
-                var jobList = dbContext.JobDbModels.Where(j => j.IsDone && j.User.Id == user.Id).OrderByDescending(j => j.EndTime).ToPagedList(pageNumber ?? 1, 5);
+                var jobList = GetSortedJobs(sortOrder, CurrentSort, pageNumber, user);
                 
                 var statistics = dbContext.StatisticsDbModels.FirstOrDefault(s => s.User.Id == user.Id);
                 if (statistics != null)
@@ -89,6 +92,89 @@ namespace FlightJobs.Controllers
 
             return "{}";
             //return RedirectToAction("Index");
+        }
+
+        private IPagedList<JobDbModel> GetSortedJobs(string sortOrder, string CurrentSort, int? pageNumber, ApplicationUser user)
+        {
+            var dbContext = new ApplicationDbContext();
+            int pageSize = 5;
+            IPagedList<JobDbModel> jobList = null;
+            switch (sortOrder)
+            {
+                case "Date":
+                    if (sortOrder.Equals(CurrentSort))
+                        jobList = dbContext.JobDbModels.Where(j => j.IsDone && j.User.Id == user.Id).OrderBy(j => j.EndTime).ToPagedList(pageNumber ?? 1, pageSize);
+                    else
+                    {
+                        ViewBag.CurrentSort = sortOrder;
+                        jobList = dbContext.JobDbModels.Where(j => j.IsDone && j.User.Id == user.Id).OrderByDescending(j => j.EndTime).ToPagedList(pageNumber ?? 1, pageSize);
+                    }
+                    break;
+                case "DepartureICAO":
+                    if (sortOrder.Equals(CurrentSort))
+                        jobList = dbContext.JobDbModels.Where(j => j.IsDone && j.User.Id == user.Id).OrderBy(j => j.DepartureICAO).ToPagedList(pageNumber ?? 1, pageSize);
+                    else
+                    {
+                        jobList = dbContext.JobDbModels.Where(j => j.IsDone && j.User.Id == user.Id).OrderByDescending(j => j.DepartureICAO).ToPagedList(pageNumber ?? 1, pageSize);
+                        ViewBag.CurrentSort = sortOrder;
+                    }
+                    break;
+                case "ArrivalICAO":
+                    if (sortOrder.Equals(CurrentSort))
+                        jobList = dbContext.JobDbModels.Where(j => j.IsDone && j.User.Id == user.Id).OrderBy(j => j.ArrivalICAO).ToPagedList(pageNumber ?? 1, pageSize);
+                    else
+                    {
+                        jobList = dbContext.JobDbModels.Where(j => j.IsDone && j.User.Id == user.Id).OrderByDescending(j => j.ArrivalICAO).ToPagedList(pageNumber ?? 1, pageSize);
+                        ViewBag.CurrentSort = sortOrder;
+                    }
+                    break;
+                case "Model":
+                    if (sortOrder.Equals(CurrentSort))
+                        jobList = dbContext.JobDbModels.Where(j => j.IsDone && j.User.Id == user.Id).OrderBy(j => j.ModelDescription).ThenBy(j => j.ModelName).ToPagedList(pageNumber ?? 1, pageSize);
+                    else
+                    {
+                        jobList = dbContext.JobDbModels.Where(j => j.IsDone && j.User.Id == user.Id).OrderByDescending(j => j.ModelDescription).ThenBy(j => j.ModelName).ToPagedList(pageNumber ?? 1, pageSize);
+                        ViewBag.CurrentSort = sortOrder;
+                    }
+                    break;
+                case "Distance":
+                    if (sortOrder.Equals(CurrentSort))
+                        jobList = dbContext.JobDbModels.Where(j => j.IsDone && j.User.Id == user.Id).OrderBy(j => j.Dist).ToPagedList(pageNumber ?? 1, pageSize);
+                    else
+                    {
+                        jobList = dbContext.JobDbModels.Where(j => j.IsDone && j.User.Id == user.Id).OrderByDescending(j => j.Dist).ToPagedList(pageNumber ?? 1, pageSize);
+                        ViewBag.CurrentSort = sortOrder;
+                    }
+                    break;
+                case "Pax":
+                    if (sortOrder.Equals(CurrentSort))
+                        jobList = dbContext.JobDbModels.Where(j => j.IsDone && j.User.Id == user.Id).OrderBy(j => j.Pax).ToPagedList(pageNumber ?? 1, pageSize);
+                    else
+                    {
+                        jobList = dbContext.JobDbModels.Where(j => j.IsDone && j.User.Id == user.Id).OrderByDescending(j => j.Pax).ToPagedList(pageNumber ?? 1, pageSize);
+                        ViewBag.CurrentSort = sortOrder;
+                    }
+                    break;
+                case "Cargo":
+                    if (sortOrder.Equals(CurrentSort))
+                        jobList = dbContext.JobDbModels.Where(j => j.IsDone && j.User.Id == user.Id).OrderBy(j => j.Cargo).ToPagedList(pageNumber ?? 1, pageSize);
+                    else
+                    {
+                        jobList = dbContext.JobDbModels.Where(j => j.IsDone && j.User.Id == user.Id).OrderByDescending(j => j.Cargo).ToPagedList(pageNumber ?? 1, pageSize);
+                        ViewBag.CurrentSort = sortOrder;
+                    }
+                    break;
+                case "Pay":
+                    if (sortOrder.Equals(CurrentSort))
+                        jobList = dbContext.JobDbModels.Where(j => j.IsDone && j.User.Id == user.Id).OrderBy(j => j.Pay).ToPagedList(pageNumber ?? 1, pageSize);
+                    else
+                    {
+                        jobList = dbContext.JobDbModels.Where(j => j.IsDone && j.User.Id == user.Id).OrderByDescending(j => j.Pay).ToPagedList(pageNumber ?? 1, pageSize);
+                        ViewBag.CurrentSort = sortOrder;
+                    }
+                    break;
+            }
+            return jobList;
         }
     }
 }

@@ -131,30 +131,31 @@
         <table class="table table-striped table-bordered table-hover" style="font-size: 10px; padding:0px">
             <tr>
                 <th>
-                    Date
+                    @Html.ActionLink("Date", "Index", new { sortOrder = "Date", CurrentSort = ViewBag.CurrentSort })
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Jobs.First().DepartureICAO)/Time
-                </th>
-                <th>Arrival/Time</th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Jobs.First().ModelDescription)/
-                    @Html.DisplayNameFor(model => model.Jobs.First().ModelName)
+                    @Html.ActionLink("Departure/Time", "Index", new { sortOrder = "DepartureICAO", CurrentSort = ViewBag.CurrentSort })
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Jobs.First().Dist)
+                    @Html.ActionLink("Arrival/Time", "Index", new { sortOrder = "ArrivalICAO", CurrentSort = ViewBag.CurrentSort })
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Jobs.First().Pax)
+                    @Html.ActionLink("Model/Registration", "Index", new { sortOrder = "Model", CurrentSort = ViewBag.CurrentSort })
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Jobs.First().Cargo)
+                    @Html.ActionLink("Distance", "Index", new { sortOrder = "Distance", CurrentSort = ViewBag.CurrentSort })
+                </th>
+                <th>
+                    @Html.ActionLink("Pax", "Index", new { sortOrder = "Pax", CurrentSort = ViewBag.CurrentSort })
+                </th>
+                <th>
+                    @Html.ActionLink("Cargo", "Index", new { sortOrder = "Cargo", CurrentSort = ViewBag.CurrentSort })
                 </th>
                 <th>
                     @Html.DisplayNameFor(model => model.Jobs.First().Payload)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Jobs.First().Pay)
+                    @Html.ActionLink("Pay", "Index", new { sortOrder = "Pay", CurrentSort = ViewBag.CurrentSort })
                 </th>
                 <th>
                     @Html.DisplayNameFor(model => model.Jobs.First().FlightTime)
@@ -169,7 +170,7 @@
             {
                 <tr>
                     <td>
-                        @Html.DisplayFor(modelItem => item.StartTime)
+                        @Html.DisplayFor(modelItem => item.EndTime)
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.DepartureICAO) 
