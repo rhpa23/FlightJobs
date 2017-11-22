@@ -23,8 +23,9 @@ namespace FlightJobs.Controllers
             var user = dbContext.Users.FirstOrDefault(u => u.Email == User.Identity.Name);
             if (user != null)
             {
-                var jobList = GetSortedJobs(sortOrder, CurrentSort, pageNumber, user);
                 
+                var allUserJobs = dbContext.JobDbModels.Where(j => j.IsDone && j.User.Id == user.Id).ToList();
+
                 var statistics = dbContext.StatisticsDbModels.FirstOrDefault(s => s.User.Id == user.Id);
                 if (statistics != null)
                 {
@@ -37,21 +38,22 @@ namespace FlightJobs.Controllers
 
                     TimeSpan span = new TimeSpan();
                     long payloadTotal = 0;
-                    
-                    jobList.ToList().ForEach(j => span += (j.EndTime - j.StartTime));
-                    jobList.ToList().ForEach(j => payloadTotal += j.Payload);
 
-                    statistics.NumberFlights = jobList.Count();
+                    allUserJobs.ToList().ForEach(j => span += (j.EndTime - j.StartTime));
+                    allUserJobs.ToList().ForEach(j => payloadTotal += j.Payload);
+
+                    statistics.NumberFlights = allUserJobs.Count();
                     statistics.FlightTimeTotal = String.Format("{0:00}:{1:00}", span.Hours, span.Minutes);
                     statistics.PayloadTotal = payloadTotal;
-                    if (jobList.Count() > 0)
+                    if (allUserJobs.Count() > 0)
                     {
-                        statistics.LastFlight = jobList.Last().EndTime;
-                        statistics.LastAircraft = jobList.Last().ModelDescription;
-                        statistics.FavoriteAirplane = jobList.Max(j => j.ModelDescription);
+                        statistics.LastFlight = allUserJobs.Last().EndTime;
+                        statistics.LastAircraft = allUserJobs.Last().ModelDescription;
+                        statistics.FavoriteAirplane = allUserJobs.Max(j => j.ModelDescription);
                     }
                     homeModel.Statistics = statistics;
                 }
+                var jobList = GetSortedJobs(allUserJobs, sortOrder, CurrentSort, pageNumber, user);
                 homeModel.Jobs = jobList;
             }
             
@@ -94,87 +96,86 @@ namespace FlightJobs.Controllers
             //return RedirectToAction("Index");
         }
 
-        private IPagedList<JobDbModel> GetSortedJobs(string sortOrder, string CurrentSort, int? pageNumber, ApplicationUser user)
+        private IPagedList<JobDbModel> GetSortedJobs(List<JobDbModel> listJobs, string sortOrder, string CurrentSort, int? pageNumber, ApplicationUser user)
         {
-            var dbContext = new ApplicationDbContext();
             int pageSize = 5;
-            IPagedList<JobDbModel> jobList = null;
+            IPagedList<JobDbModel> jobSortedList = null;
             switch (sortOrder)
             {
                 case "Date":
                     if (sortOrder.Equals(CurrentSort))
-                        jobList = dbContext.JobDbModels.Where(j => j.IsDone && j.User.Id == user.Id).OrderBy(j => j.EndTime).ToPagedList(pageNumber ?? 1, pageSize);
+                        jobSortedList = listJobs.OrderBy(j => j.EndTime).ToPagedList(pageNumber ?? 1, pageSize);
                     else
                     {
                         ViewBag.CurrentSort = sortOrder;
-                        jobList = dbContext.JobDbModels.Where(j => j.IsDone && j.User.Id == user.Id).OrderByDescending(j => j.EndTime).ToPagedList(pageNumber ?? 1, pageSize);
+                        jobSortedList = listJobs.OrderByDescending(j => j.EndTime).ToPagedList(pageNumber ?? 1, pageSize);
                     }
                     break;
                 case "DepartureICAO":
                     if (sortOrder.Equals(CurrentSort))
-                        jobList = dbContext.JobDbModels.Where(j => j.IsDone && j.User.Id == user.Id).OrderBy(j => j.DepartureICAO).ToPagedList(pageNumber ?? 1, pageSize);
+                        jobSortedList = listJobs.OrderBy(j => j.DepartureICAO).ToPagedList(pageNumber ?? 1, pageSize);
                     else
                     {
-                        jobList = dbContext.JobDbModels.Where(j => j.IsDone && j.User.Id == user.Id).OrderByDescending(j => j.DepartureICAO).ToPagedList(pageNumber ?? 1, pageSize);
+                        jobSortedList = listJobs.OrderByDescending(j => j.DepartureICAO).ToPagedList(pageNumber ?? 1, pageSize);
                         ViewBag.CurrentSort = sortOrder;
                     }
                     break;
                 case "ArrivalICAO":
                     if (sortOrder.Equals(CurrentSort))
-                        jobList = dbContext.JobDbModels.Where(j => j.IsDone && j.User.Id == user.Id).OrderBy(j => j.ArrivalICAO).ToPagedList(pageNumber ?? 1, pageSize);
+                        jobSortedList = listJobs.OrderBy(j => j.ArrivalICAO).ToPagedList(pageNumber ?? 1, pageSize);
                     else
                     {
-                        jobList = dbContext.JobDbModels.Where(j => j.IsDone && j.User.Id == user.Id).OrderByDescending(j => j.ArrivalICAO).ToPagedList(pageNumber ?? 1, pageSize);
+                        jobSortedList = listJobs.OrderByDescending(j => j.ArrivalICAO).ToPagedList(pageNumber ?? 1, pageSize);
                         ViewBag.CurrentSort = sortOrder;
                     }
                     break;
                 case "Model":
                     if (sortOrder.Equals(CurrentSort))
-                        jobList = dbContext.JobDbModels.Where(j => j.IsDone && j.User.Id == user.Id).OrderBy(j => j.ModelDescription).ThenBy(j => j.ModelName).ToPagedList(pageNumber ?? 1, pageSize);
+                        jobSortedList = listJobs.OrderBy(j => j.ModelDescription).ThenBy(j => j.ModelName).ToPagedList(pageNumber ?? 1, pageSize);
                     else
                     {
-                        jobList = dbContext.JobDbModels.Where(j => j.IsDone && j.User.Id == user.Id).OrderByDescending(j => j.ModelDescription).ThenBy(j => j.ModelName).ToPagedList(pageNumber ?? 1, pageSize);
+                        jobSortedList = listJobs.OrderByDescending(j => j.ModelDescription).ThenBy(j => j.ModelName).ToPagedList(pageNumber ?? 1, pageSize);
                         ViewBag.CurrentSort = sortOrder;
                     }
                     break;
                 case "Distance":
                     if (sortOrder.Equals(CurrentSort))
-                        jobList = dbContext.JobDbModels.Where(j => j.IsDone && j.User.Id == user.Id).OrderBy(j => j.Dist).ToPagedList(pageNumber ?? 1, pageSize);
+                        jobSortedList = listJobs.OrderBy(j => j.Dist).ToPagedList(pageNumber ?? 1, pageSize);
                     else
                     {
-                        jobList = dbContext.JobDbModels.Where(j => j.IsDone && j.User.Id == user.Id).OrderByDescending(j => j.Dist).ToPagedList(pageNumber ?? 1, pageSize);
+                        jobSortedList = listJobs.OrderByDescending(j => j.Dist).ToPagedList(pageNumber ?? 1, pageSize);
                         ViewBag.CurrentSort = sortOrder;
                     }
                     break;
                 case "Pax":
                     if (sortOrder.Equals(CurrentSort))
-                        jobList = dbContext.JobDbModels.Where(j => j.IsDone && j.User.Id == user.Id).OrderBy(j => j.Pax).ToPagedList(pageNumber ?? 1, pageSize);
+                        jobSortedList = listJobs.OrderBy(j => j.Pax).ToPagedList(pageNumber ?? 1, pageSize);
                     else
                     {
-                        jobList = dbContext.JobDbModels.Where(j => j.IsDone && j.User.Id == user.Id).OrderByDescending(j => j.Pax).ToPagedList(pageNumber ?? 1, pageSize);
+                        jobSortedList = listJobs.OrderByDescending(j => j.Pax).ToPagedList(pageNumber ?? 1, pageSize);
                         ViewBag.CurrentSort = sortOrder;
                     }
                     break;
                 case "Cargo":
                     if (sortOrder.Equals(CurrentSort))
-                        jobList = dbContext.JobDbModels.Where(j => j.IsDone && j.User.Id == user.Id).OrderBy(j => j.Cargo).ToPagedList(pageNumber ?? 1, pageSize);
+                        jobSortedList = listJobs.OrderBy(j => j.Cargo).ToPagedList(pageNumber ?? 1, pageSize);
                     else
                     {
-                        jobList = dbContext.JobDbModels.Where(j => j.IsDone && j.User.Id == user.Id).OrderByDescending(j => j.Cargo).ToPagedList(pageNumber ?? 1, pageSize);
+                        jobSortedList = listJobs.OrderByDescending(j => j.Cargo).ToPagedList(pageNumber ?? 1, pageSize);
                         ViewBag.CurrentSort = sortOrder;
                     }
                     break;
                 case "Pay":
                     if (sortOrder.Equals(CurrentSort))
-                        jobList = dbContext.JobDbModels.Where(j => j.IsDone && j.User.Id == user.Id).OrderBy(j => j.Pay).ToPagedList(pageNumber ?? 1, pageSize);
+                        jobSortedList = listJobs.OrderBy(j => j.Pay).ToPagedList(pageNumber ?? 1, pageSize);
                     else
                     {
-                        jobList = dbContext.JobDbModels.Where(j => j.IsDone && j.User.Id == user.Id).OrderByDescending(j => j.Pay).ToPagedList(pageNumber ?? 1, pageSize);
+                        jobSortedList = listJobs.OrderByDescending(j => j.Pay).ToPagedList(pageNumber ?? 1, pageSize);
                         ViewBag.CurrentSort = sortOrder;
                     }
                     break;
             }
-            return jobList;
+            return jobSortedList;
         }
     }
 }

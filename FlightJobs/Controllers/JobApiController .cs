@@ -45,7 +45,7 @@ namespace FlightJobs.Controllers
 
                 long payload = Convert.ToInt64(Math.Round(Convert.ToDouble(payloadStr, new CultureInfo("en-US")))); 
                 // Check payload
-                if (payload >= (job.Payload + 50) || payload <= (job.Payload - 50))
+                if (payload >= (job.Payload + 80) || payload <= (job.Payload - 80))
                 {
                     return Request.CreateResponse(HttpStatusCode.Forbidden, "Wrong payload. Active job payload is: " + job.Payload + "Kg");
                 }
@@ -99,6 +99,15 @@ namespace FlightJobs.Controllers
                 if (payload >= (job.Payload + 50) || payload <= (job.Payload - 50))
                 {
                     return Request.CreateResponse(HttpStatusCode.Forbidden, "Wrong payload. Active job payload is: " + job.Payload + "Kg");
+                }
+
+                var diffTime = DateTime.UtcNow - job.StartTime;
+
+                var minTime = (job.Dist * 15) / 100;
+
+                if (diffTime.TotalMinutes < minTime)
+                {
+                    return Request.CreateResponse(HttpStatusCode.Forbidden, "Impossible to arrive at destination in this short time.");
                 }
 
                 job.InProgress = false;
