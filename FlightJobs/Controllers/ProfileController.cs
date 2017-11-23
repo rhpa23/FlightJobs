@@ -47,9 +47,11 @@ namespace FlightJobs.Controllers
                     statistics.PayloadTotal = payloadTotal;
                     if (allUserJobs.Count() > 0)
                     {
-                        statistics.LastFlight = allUserJobs.Last().EndTime;
-                        statistics.LastAircraft = allUserJobs.Last().ModelDescription;
-                        statistics.FavoriteAirplane = allUserJobs.Max(j => j.ModelDescription);
+                        statistics.LastFlight = allUserJobs.OrderBy(j => j.EndTime).Last().EndTime;
+                        statistics.LastAircraft = allUserJobs.OrderBy(j => j.EndTime).Last().ModelDescription;
+                        statistics.FavoriteAirplane = allUserJobs.GroupBy(q => q.ModelDescription)
+                                                                 .OrderByDescending(gp => gp.Count())
+                                                                 .Select(g => g.Key).FirstOrDefault();
                     }
                     homeModel.Statistics = statistics;
                 }
