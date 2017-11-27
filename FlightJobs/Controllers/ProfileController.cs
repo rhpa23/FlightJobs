@@ -43,7 +43,7 @@ namespace FlightJobs.Controllers
                     allUserJobs.ToList().ForEach(j => payloadTotal += j.Payload);
 
                     statistics.NumberFlights = allUserJobs.Count();
-                    statistics.FlightTimeTotal = String.Format("{0:00}:{1:00}", span.Hours, span.Minutes);
+                    statistics.FlightTimeTotal = String.Format("{0}h {1}m", (int)span.TotalHours, span.Minutes);
                     statistics.PayloadTotal = payloadTotal;
                     if (allUserJobs.Count() > 0)
                     {
