@@ -153,7 +153,7 @@ namespace FlightJobs.Controllers
             ViewBag.TotalPax = totalPax;
             ViewBag.TotalCargo = totalCargo;
             ViewBag.TotalPay = string.Format("{0:C}", totalPay);
-            ViewBag.TotalPayload = string.Format("{0:G}", (totalPax * 70) + totalCargo);
+            ViewBag.TotalPayload = string.Format("{0:G}", (totalPax * 84) + totalCargo);
 
             Session.Add("ListSelJobs", list.Values.ToList());
 
