@@ -176,7 +176,11 @@ namespace FlightJobs.Controllers
                         // Enviar um email com este link
                         string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
                         var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                        await UserManager.SendEmailAsync(user.Id, "Flight Jobs Manager - Verify your account (do not reply to this email)", "<h2>Verify your FlightJobs account by clicking <a href=\"" + callbackUrl + "\">here</a><p>Not respond.</p></h2>");
+
+                        string emailTemplateFileName = System.Web.HttpContext.Current.Server.MapPath("~/Content/templates/Confirm Email.html");
+                        var bodyText = System.IO.File.ReadAllText(emailTemplateFileName);
+                        bodyText = string.Format(bodyText, callbackUrl);
+                        await UserManager.SendEmailAsync(user.Id, "Flight Jobs Manager - Verify your account (do not reply to this email)", bodyText);
 
                         //return RedirectToAction("VerifyRegistrationCode", new { message = ApplicationMessages.VerificationCodeSent });
                         //
