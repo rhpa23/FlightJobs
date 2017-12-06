@@ -343,7 +343,6 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\img\airfrance.png" />
     <Content Include="Content\img\austrian.png" />
-    <Content Include="Content\img\avatar\default.jpg" />
     <Content Include="Content\img\azul.jpg" />
     <Content Include="Content\img\banner0001.jpg" />
     <Content Include="Content\img\britishairways.png" />
@@ -354,6 +353,9 @@
     <Content Include="Content\img\logbook0001.jpg" />
     <Content Include="Content\img\lufthansa.jpg" />
     <Content Include="Content\PagedList.css" />
+    <Content Include="Content\templates\Confirm Email.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Content\themes\base\accordion.css" />
     <Content Include="Content\themes\base\all.css" />
     <Content Include="Content\themes\base\autocomplete.css" />
@@ -411,9 +413,7 @@
     <Content Include="Content\bootstrap.css.map" />
     <Content Include="Content\bootstrap-theme.min.css.map" />
     <Content Include="Content\bootstrap-theme.css.map" />
-    <None Include="Properties\PublishProfiles\Flightjobs - GEARHOST - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\FlightJobs - Gearhost Web Deploy.pubxml" />
-    <None Include="Properties\PublishProfiles\FlightJobs - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Scripts\jquery-2.1.1.intellisense.js" />
     <Content Include="Scripts\bootstrap.js" />
@@ -583,7 +583,9 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Content\img\avatar\" />
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
