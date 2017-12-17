@@ -34,10 +34,14 @@ namespace FlightJobs.Controllers
         public ActionResult ActivateJob(int? jobId)
         {
             var dbContext = new ApplicationDbContext();
-            var jobs = dbContext.JobDbModels.ToList();
-            foreach (var job in jobs)
+            var user = dbContext.Users.FirstOrDefault(u => u.Email == User.Identity.Name);
+            if (user != null)
             {
-                job.IsActivated = (job.Id == jobId);
+                var jobList = dbContext.JobDbModels.Where(j => !j.IsDone && j.User.Id == user.Id);
+                foreach (var job in jobList)
+                {
+                    job.IsActivated = (job.Id == jobId);
+                }
                 dbContext.SaveChanges();
             }
 
@@ -47,10 +51,16 @@ namespace FlightJobs.Controllers
         public ActionResult DeleteJob(int id)
         {
             var dbContext = new ApplicationDbContext();
-            JobDbModel job = new JobDbModel() { Id = id };
-            dbContext.JobDbModels.Attach(job);
-            dbContext.JobDbModels.Remove(job);
-            dbContext.SaveChanges();
+            var user = dbContext.Users.FirstOrDefault(u => u.Email == User.Identity.Name);
+            if (user != null)
+            {
+                JobDbModel job = dbContext.JobDbModels.FirstOrDefault(j => j.Id == id && j.User.Id == user.Id);
+                if (job != null)
+                {
+                    dbContext.JobDbModels.Remove(job);
+                    dbContext.SaveChanges();
+                }
+            }
 
             return RedirectToAction("Index");
         }

@@ -24,7 +24,7 @@
         <div class="form-group">
             @Html.LabelFor(model => model.Departure, htmlAttributes: new { @class = "control-label col-md-4" })
             <div class="col-md-2">
-                @Html.EditorFor(model => model.Departure, new { htmlAttributes = new { placeholder = "ICAO ex: 'EDDM'",  @class = "form-control uppercase", @maxlength = "4" } })
+                @Html.EditorFor(model => model.Departure, new { htmlAttributes = new { placeholder = "ICAO e.g. 'EDDM'",  @class = "form-control uppercase", @maxlength = "4" } })
                 @Html.ValidationMessageFor(model => model.Departure, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -47,7 +47,7 @@
         <div class="form-group">
             @Html.LabelFor(model => model.Arrival, htmlAttributes: new { @class = "control-label col-md-4" })
             <div class="col-md-2">
-                @Html.EditorFor(model => model.Arrival, new { htmlAttributes = new { placeholder = "ICAO ex: 'ED'", @class = "form-control uppercase", @maxlength = "4" } })
+                @Html.EditorFor(model => model.Arrival, new { htmlAttributes = new { placeholder = "ICAO e.g. 'ED'", @class = "form-control uppercase", @maxlength = "4" } })
                 @Html.ValidationMessageFor(model => model.Arrival, "", new { @class = "text-danger" })
             </div>
         </div>
