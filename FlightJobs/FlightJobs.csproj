@@ -343,7 +343,6 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\img\airfrance.png" />
     <Content Include="Content\img\austrian.png" />
-    <Content Include="Content\img\avatar\default.jpg" />
     <Content Include="Content\img\azul.jpg" />
     <Content Include="Content\img\banner0001.jpg" />
     <Content Include="Content\img\britishairways.png" />
@@ -587,7 +586,9 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Content\img\avatar\" />
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

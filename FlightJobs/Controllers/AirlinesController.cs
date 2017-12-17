@@ -129,6 +129,10 @@ namespace FlightJobs.Controllers
                 case "Instrument flying requirements":
                     strUrl = "https://goo.gl/forms/DaDZMTTgs9VFd29n1";
                     break;
+                case "Night flying requirements":
+                    strUrl = "https://goo.gl/forms/5ZQYl1FJQJ3ALDqB2";
+                    break;
+                    
                 default:
                     break;
             }
