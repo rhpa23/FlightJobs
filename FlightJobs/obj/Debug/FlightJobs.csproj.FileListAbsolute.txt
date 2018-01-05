@@ -431,3 +431,4 @@ D:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.dll
 D:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.pdb
 D:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.csprojResolveAssemblyReference.cache
 D:\DotNetProjects\FlightJobs\FlightJobs\bin\Content\templates\Confirm Email.html
+C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\bin\Content\templates\Confirm Email.html
