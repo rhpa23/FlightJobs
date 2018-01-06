@@ -16,8 +16,12 @@ namespace FlightJobs.Models
         [DisplayName("Destination")]
         public string Arrival { get; set; }
         public long Dist { get; set; }
+        public string PayloadView { get; set; }
         public long Pax { get; set; }
         public long Cargo { get; set; }
+
+        public string PaxSummary { get; set; }
+        public string CargoSummary { get; set; }
 
         [DisplayFormat(DataFormatString = "{0:C0}")]
         public long Pay { get; set; }

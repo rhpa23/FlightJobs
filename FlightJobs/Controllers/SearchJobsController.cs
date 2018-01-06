@@ -88,7 +88,7 @@ namespace FlightJobs.Controllers
                     job.Selected = true;
                 }
 
-                return View("Result", jobs.OrderBy(x => x.Dist).ToPagedList(pageNumber ?? 1, 15));
+                return View("Result", jobs.OrderBy(x => x.Dist).ToPagedList(pageNumber ?? 1, 45));
             }
             else
             {
@@ -232,6 +232,7 @@ namespace FlightJobs.Controllers
                                 Dist = distMiles,
                                 Pax = pob,
                                 Cargo = cargo,
+                                PayloadView = (isCargo == 0) ? "[Cargo] " + cargo + " Kg" : (isFisrtClass) ? "[Premium] " + pob + " Pax" : "[Promo] " + pob + " Pax",
                                 Pay = profit,
                                 FirstClass = isFisrtClass
                             });
@@ -244,7 +245,7 @@ namespace FlightJobs.Controllers
                 ModelState.AddModelError("error", ex.Message);
             }
 
-            return listBoardJobs;
+            return listBoardJobs.OrderBy(j => j.Arrival).ThenBy(x => x.PayloadView).ToList();
         }
 
     }
