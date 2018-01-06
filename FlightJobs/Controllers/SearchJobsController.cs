@@ -201,7 +201,7 @@ namespace FlightJobs.Controllers
                     var distMeters = depCoord.GetDistanceTo(arrCoord);
                     var distMiles = (int)DataConversion.ConvertMetersToMiles(distMeters);
                     if (distMiles >= model.MinRange && distMiles <= model.MaxRange && arrival.ICAO.ToUpper() != dep.ICAO.ToUpper() && 
-                        (model.Arrival == null || arrival.ICAO.ToUpper().Contains(model.Arrival.ToUpper())))
+                        arrival.ICAO.ToUpper() == model.Arrival.ToUpper())
                     {
                         int index = randomPob.Next(14, 25);
 
@@ -212,15 +212,40 @@ namespace FlightJobs.Controllers
                             long profit = 0;
                             bool isFisrtClass = Convert.ToBoolean(randomPob.Next(2));
 
+
                             int isCargo = randomPob.Next(2);
                             if (isCargo == 0)
                             {
-                                cargo = model.IsGeneralAviation ? randomCargo.Next(10, 300) : randomCargo.Next(100, 3000);
+                                if (model.AviationType == "GeneralAviation")
+                                {
+                                    cargo = randomCargo.Next(10, 300);
+                                }
+                                else if (model.AviationType == "AirTransport")
+                                {
+                                    cargo = randomCargo.Next(100, 3000);
+                                }
+                                else // HeavyAirTransport
+                                {
+                                    cargo = randomCargo.Next(800, 6000);
+                                }
+                                
                                 profit = Convert.ToInt32(taxCargo * distMiles * cargo);
                             }
                             else
                             {
-                                pob = model.IsGeneralAviation ? randomPob.Next(1, 10) : randomPob.Next(10, 80); 
+                                if (model.AviationType == "GeneralAviation")
+                                {
+                                    pob = randomPob.Next(1, 10);
+                                }
+                                else if (model.AviationType == "AirTransport")
+                                {
+                                    pob = randomPob.Next(10, 80);
+                                }
+                                else // HeavyAirTransport
+                                {
+                                    pob = randomPob.Next(50, 140);
+                                }
+
                                 profit = isFisrtClass ? Convert.ToInt32(taxFirstC * distMiles * pob) : Convert.ToInt32(taxEcon * distMiles * pob);
                             }
 

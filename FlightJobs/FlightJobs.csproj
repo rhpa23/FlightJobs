@@ -347,6 +347,7 @@
     <Content Include="Content\img\contract2.jpg" />
     <Content Include="Content\img\default.jpg" />
     <Content Include="Content\img\gol.png" />
+    <Content Include="Content\img\line.png" />
     <Content Include="Content\img\logbook0001.jpg" />
     <Content Include="Content\img\lufthansa.jpg" />
     <Content Include="Content\PagedList.css" />

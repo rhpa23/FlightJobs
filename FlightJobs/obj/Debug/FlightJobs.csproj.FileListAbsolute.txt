@@ -286,7 +286,9 @@ C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs
 C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\obj\Debug\FlightJobs.dll
 C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\obj\Debug\FlightJobs.pdb
 D:\Users\rhpa2\Documents\Visual Studio 2017\Projects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.csprojResolveAssemblyReference.cache
+C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\bin\Content\templates\Confirm Email.html
 D:\DotNetProjects\FlightJobs\FlightJobs\bin\ApplicationInsights.config
+D:\DotNetProjects\FlightJobs\FlightJobs\bin\Content\templates\Confirm Email.html
 D:\DotNetProjects\FlightJobs\FlightJobs\bin\FlightJobs.dll.config
 D:\DotNetProjects\FlightJobs\FlightJobs\bin\FlightJobs.dll
 D:\DotNetProjects\FlightJobs\FlightJobs\bin\FlightJobs.pdb
@@ -402,5 +404,3 @@ D:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.csproj.CoreCompileI
 D:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.dll
 D:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.pdb
 D:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.csprojResolveAssemblyReference.cache
-D:\DotNetProjects\FlightJobs\FlightJobs\bin\Content\templates\Confirm Email.html
-C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\bin\Content\templates\Confirm Email.html

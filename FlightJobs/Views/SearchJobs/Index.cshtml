@@ -7,9 +7,6 @@
     .uppercase {
         text-transform: uppercase;
     }
-    .form-inline .form-control {
-        width: 90px;
-    }
 </style>
 
 
@@ -18,57 +15,76 @@
     @Html.AntiForgeryToken()
     
     <div class="form-horizontal" role="form">
-        <h4>Choose the parameters for the search</h4>
+        <br />
+        <h4>Choose the parameters for generate jobs</h4>
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         <div class="form-group">
-            <div class="col-md-2">
-                @Html.LabelFor(model => model.Departure, htmlAttributes: new { @class = "control-label col-md-4" })
+            <div class="col-md-2" style="padding-right:0px">
+                @Html.LabelFor(model => model.Departure, htmlAttributes: new { @class = "control-label" })
                 @Html.EditorFor(model => model.Departure, new { htmlAttributes = new { placeholder = "ICAO e.g. 'EDDM'",  @class = "form-control uppercase", @maxlength = "4" } })
                 @Html.ValidationMessageFor(model => model.Departure, "", new { @class = "text-danger" })
             </div>
-            <img src="~/Content/img/airplane.png" />
-            <div class="col-md-2">
-                @Html.LabelFor(model => model.Arrival, htmlAttributes: new { @class = "control-label col-md-4" })
-                @Html.EditorFor(model => model.Arrival, new { htmlAttributes = new { placeholder = "ICAO e.g. 'ED'", @class = "form-control uppercase", @maxlength = "4" } })
-                @Html.ValidationMessageFor(model => model.Arrival, "", new { @class = "text-danger" })
+            <div class="col-sm-1" style="padding-left:0px; padding-right:0px; width:auto;">
+                <br />
+                <img src="~/Content/img/airplane.png" />
             </div>
-        </div>
-
+            <div class="col-md-2" style="padding-left:0px">
+                    @Html.LabelFor(model => model.Arrival, htmlAttributes: new { @class = "control-label" })
+                    @Html.EditorFor(model => model.Arrival, new { htmlAttributes = new { placeholder = "ICAO e.g. 'ED'", @class = "form-control uppercase", @maxlength = "4" } })
+                    @Html.ValidationMessageFor(model => model.Arrival, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        <br />
         <div class="form-group">
-            
-            <div class="form-inline">
-                    @Html.LabelFor(model => model.MinRange, htmlAttributes: new { @class = "control-label col-md-2" })
-                    @Html.EditorFor(model => model.MinRange, new { htmlAttributes = new { @class = "form-control", @maxlength = "4", @minlength = "1" } })
-                    
-                <label> and </label>
-
+            <div class="row" style="margin-left:0px;">
+                <div class="col-md-5" style="padding-right:0px;">
+                    <label> Distance range (Min/Max) </label>
+                </div>
+            </div>
+            <div class="col-md-2" style="padding-right:0px;">
+                @Html.EditorFor(model => model.MinRange, new { htmlAttributes = new { @class = "form-control", @maxlength = "4", @minlength = "1" } })
+            </div>
+            <div class="col-sm-1" style="padding-left:0px; padding-right:0px; width:auto;">
+                
+                <img src="~/Content/img/line.png" />
+            </div>
+            <div class="col-md-2" style="padding-left:0px">
+                
                 @Html.EditorFor(model => model.MaxRange, new { htmlAttributes = new { @class = "form-control", @maxlength = "4", @minlength = "1" } })
-                <label> miles away.</label>
             </div>
-            @Html.ValidationMessageFor(model => model.MaxRange, "", new { @class = "text-danger" })
-        </div>
 
-        
+
+                @Html.ValidationMessageFor(model => model.MaxRange, "", new { @class = "text-danger" })
+            </div>
+
+        <br />
 
         <div class="form-group">
-            @Html.LabelFor(model => model.IsGeneralAviation, htmlAttributes: new { @class = "control-label col-md-4" })
-            <div class="col-md-2">
-                @Html.CheckBoxFor(model => model.IsGeneralAviation)
+            <hr />
+            <div class="col-md-2" >
+                <label>
+                    @Html.RadioButtonFor(m => m.AviationType, "GeneralAviation")
+                    General aviation
+                </label>
             </div>
-        </div>
-        <hr />
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input  type="submit" value="Search" class="btn btn-info  pull-right" />
+            <div class="col-md-2" >
+                <label>
+                    @Html.RadioButtonFor(m => m.AviationType, "AirTransport", new { @checked = true })
+                    Air transport
+                </label>
             </div>
+            <div class="col-md-2" >
+                <label>
+                    @Html.RadioButtonFor(m => m.AviationType, "HeavyAirTransport ")
+                    Heavy
+                </label>
+            </div>
+            <input type="submit" value="Generate" class="btn btn-info  pull-right" />
         </div>
     </div>
 }
 
-<div>
-    <a class="bottomNav" onclick="history.go(-1); return false;" href="#">Back to Result</a><br />
-</div>
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
