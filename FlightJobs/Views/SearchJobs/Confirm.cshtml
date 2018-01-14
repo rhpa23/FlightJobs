@@ -1,88 +1,121 @@
-﻿@model IEnumerable<FlightJobs.Models.JobDbModel>
+﻿@model FlightJobs.Models.ConfirmJobsViewModel
 
-@{
-    ViewBag.Title = "Confirm";
-    Layout = "~/Views/Shared/_Layout.cshtml";
-}
-
-@if (Model.Count() > 0)
-{
-
-
-    <p>
-        <h3> Confirm jobs departing from  @Html.DisplayFor(modelItem => Model.FirstOrDefault().DepartureICAO)  </h3>
-    </p>
-    <hr />
-
-    <table class="table table-striped table-bordered table-hover">
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.ArrivalICAO)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Dist)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Pax)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Cargo)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Pay)
-            </th>
-        </tr>
-
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.ArrivalICAO)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Dist) NM
-                </td>
-                <td> @Html.DisplayFor(modelItem => item.Pax)</td>
-                <td> @Html.DisplayFor(modelItem => item.Cargo) Kg (Cargo)  </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Pay)
-                </td>
-            </tr>
-        }
-
-    </table>
-    <div class="panel panel-default">
-        <div class="panel-footer">
-            <p><b>Summary</b></p>
-            <p>
-                Pax = @ViewBag.TotalPax
-            </p>
-            <p>
-                Cargo = @ViewBag.TotalCargo
-            </p>
-            <p>
-                Pay = @ViewBag.TotalPay
-            </p>
-            <p>
-                <b>  Total payload: @ViewBag.TotalPayload Kg </b>
-            </p>
-            
-        </div>
-
-    </div>
-    <p style="text-align:right">@Html.ActionLink("Confirm", "Confirm", "SearchJobs", new object { }, new { @class = "btn btn-info  pull-right" })</p>
-}
-else
-{
-<p>
-    <h1 style="color:red;">No job selected.</h1>
-</p>
-}
-
-<div>
-    @if (Request.UrlReferrer != null)
-    {
-        <a class="bottomNav" onclick="history.go(-1); return false;" href="#">Back to Result</a><br />
+<style type="text/css">
+    .summary-label {
+        font-size:smaller;
+        color:yellow;
     }
+    .summary-value {
+        font-size: larger;
+        font-weight:bold; 
+        color:yellow;
+    }
+    .panel-footer {
+        background-color:dimgray;
+        text-align:center;
+    }
+    .summary-title {
+        width: 100%;
+        background-color: black;
+        font-size: large;
+        font-weight: bold;
+        color: #9d9d9d;
+        text-align: center;
+    }
+</style>
 
+<div class="modal-body">
+        @if (Model != null && Model.JobsList != null && Model.JobsList.Count > 0)
+        {
+
+            <p>
+                <div class="media">
+                    <img class="pull-left" src="~/Content/img/Departing.png" />
+                    <div class="media-body">
+                        <h4 class="media-heading">Departing from  @Html.DisplayFor(modelItem => modelItem.JobsList.FirstOrDefault().DepartureICAO) </h4>
+                    </div>
+                </div>
+            </p>
+
+            <table class="table table-striped table-bordered table-hover">
+                <tr>
+                    <th>
+                        Arrival
+                    </th>
+                    <th>
+                        Distance
+                    </th>
+                    <th>
+                        Pax
+                    </th>
+                    <th>
+                        Cargo
+                    </th>
+                    <th>
+                        Pay
+                    </th>
+                </tr>
+
+                @foreach (var item in Model.JobsList)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ArrivalICAO)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Dist) NM
+                        </td>
+                        <td> @Html.DisplayFor(modelItem => item.Pax)</td>
+                        <td> @Html.DisplayFor(modelItem => item.Cargo) Kg (Cargo)  </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Pay)
+                        </td>
+                    </tr>
+                }
+
+            </table>
+            <div class="panel panel-default">
+                <div class="summary-title">Summary</div>
+                <div class="panel-footer">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="summary-label">Pax</div>
+                            <div class="summary-value">@Model.TotalPax</div>
+
+                        </div>
+                        <div class="col-md-6">
+                            <div class="summary-label">Cargo</div>
+                            <div class="summary-value">@Model.TotalCargo</div>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="summary-label">Pay</div>
+                            <div class="summary-value">@Model.TotalPay</div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="summary-label">Payload (Pax + Cargo)</div>
+                            <div class="summary-value">@Model.TotalPayload Kg</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                @Html.ActionLink("Confirm", "Confirm", "SearchJobs", new object { }, new { @class = "btn btn-info  pull-right" })
+            </div>
+
+        }
+        else
+        {
+            <p><h1 style="color:red;">No job selected.</h1></p>
+        }
 </div>
+
+
+
+
+

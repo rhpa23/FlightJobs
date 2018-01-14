@@ -292,6 +292,7 @@
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\CertificateViewModel.cs" />
+    <Compile Include="Models\ConfirmJobsViewModel.cs" />
     <Compile Include="Models\StatisticCertificatesDbModel.cs" />
     <Compile Include="Models\AirlineCertificatesDbModel.cs" />
     <Compile Include="Models\CertificateDbModel.cs" />
@@ -310,10 +311,6 @@
     <Compile Include="Util\DataConversion.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="App_Data\aspnet-FlightJobs-20171009084556.mdf" />
-    <Content Include="App_Data\aspnet-FlightJobs-20171009084556_log.ldf">
-      <DependentUpon>aspnet-FlightJobs-20171009084556.mdf</DependentUpon>
-    </Content>
     <Content Include="App_Data\GlobalAirportDatabase.txt" />
     <Content Include="Content\bootstrap-fileinput\css\fileinput-rtl.css" />
     <Content Include="Content\bootstrap-fileinput\css\fileinput-rtl.min.css" />
@@ -346,6 +343,7 @@
     <Content Include="Content\img\certificate.png" />
     <Content Include="Content\img\contract2.jpg" />
     <Content Include="Content\img\default.jpg" />
+    <Content Include="Content\img\Departing.png" />
     <Content Include="Content\img\gol.png" />
     <Content Include="Content\img\line.png" />
     <Content Include="Content\img\logbook0001.jpg" />
@@ -417,6 +415,7 @@
     <None Include="Properties\PublishProfiles\FlightJobs - Gearhost Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\FlightJobs - HTTP Gearhost.pubxml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
+    <None Include="Properties\PublishProfiles\MyAspNet FTP.pubxml" />
     <None Include="Properties\PublishProfiles\MyAspNet.pubxml" />
     <None Include="Scripts\jquery-2.1.1.intellisense.js" />
     <Content Include="Scripts\bootstrap.js" />

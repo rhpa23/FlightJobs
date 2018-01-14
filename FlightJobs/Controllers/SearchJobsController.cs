@@ -150,14 +150,27 @@ namespace FlightJobs.Controllers
                 }
             }
 
-            ViewBag.TotalPax = totalPax;
-            ViewBag.TotalCargo = totalCargo;
-            ViewBag.TotalPay = string.Format("{0:C}", totalPay);
-            ViewBag.TotalPayload = string.Format("{0:G}", (totalPax * JobDbModel.PaxWeight) + totalCargo);
+            //ViewBag.TotalPax = totalPax;
+            //ViewBag.TotalCargo = totalCargo;
+            //ViewBag.TotalPay = string.Format("{0:C}", totalPay);
+            //ViewBag.TotalPayload = string.Format("{0:G}", (totalPax * JobDbModel.PaxWeight) + totalCargo);
 
-            Session.Add("ListSelJobs", list.Values.ToList());
+            var jobList = list.Values.ToList();
+            Session.Add("ListSelJobs", jobList);
 
-            return View("Confirm", list.Values.ToList());
+            var viewModel = new ConfirmJobsViewModel()
+            {
+                JobsList = jobList,
+                TotalPax = totalPax,
+                TotalCargo = totalCargo,
+                TotalPay = string.Format("{0:C}", totalPay),
+                TotalPayload = string.Format("{0:G}", (totalPax * JobDbModel.PaxWeight) + totalCargo)
+        };
+
+            //return View("Confirm", list.Values.ToList());
+            //return Result(1, pageSelsIds);
+            //return Json(new { Data = form, success = ModelState.IsValid ? true : false }, JsonRequestBehavior.AllowGet);
+            return PartialView("Confirm", viewModel);
         }
 
         public async Task<ActionResult> Confirm()

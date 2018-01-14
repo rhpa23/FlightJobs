@@ -17,7 +17,7 @@
 @Html.ValidationMessage("error")
 </p>
 
-@using (Html.BeginForm("ResultNext", "SearchJobs", FormMethod.Post))
+@using (Html.BeginForm("ResultNext", "SearchJobs", FormMethod.Post, new { id = "resultForm" }))
 {
     if (Model.Count() > 0)
     {
@@ -87,11 +87,11 @@
                 }
             </table>
             </div>
-            @Html.PagedListPager(Model, pageNumber => Url.Action("Result", new  {   pageNumber  }))
+            //@Html.PagedListPager(Model, pageNumber => Url.Action("Result", new  {   pageNumber  }))
             <hr />
             <div class="form-group" style="text-align:right">
                 <div class="col-md-offset-2 col-md-10">
-                    <input type="submit" value="Next" class="btn btn-info  pull-right" />
+                    <input type="submit" value="Finish" class="btn btn-info  pull-right" />
                 </div>
             </div>
             }
@@ -100,67 +100,105 @@
             <p>
                 <h1 style="color:red;">No jobs found.</h1>
             </p>
+    }
+
+    <!-- Modal -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content" style="width: 100%;">
+                @using (Html.BeginForm("SearchProfile", "Profile", FormMethod.Post))
+                {
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="myModalLabel">Confirm addition of jobs</h4>
+                    </div>
+
+                    <div id="confirm-content"></div>
+                }
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+    <script type='text/javascript'>
+
+        $('#resultForm').submit(function () {
+        $.ajax({
+            url: '@Url.Action("ResultNext", "SearchJobs")', 
+            type: "Post",
+            data: $("#resultForm").serialize(),
+            success: function (result) {
+                if (result != null) {
+                    $("#confirm-content").html(result);
+
+                    $('#myModal').modal('show');
+                }
             }
+        });
+            return false;
+        });
 
-            <script type='text/javascript'>
-                $(function () {
+        $(function () {
 
-                    $("ul.pagination li").click(function (e) {
+            $("ul.pagination li").click(function (e) {
 
-                        var url = $(this).find("a").attr("href");
-                        var selectedCheckbox = [];
-                        $("input[type='checkbox']").each(function () {
-                            if ($(this).prop("checked")) {
-                                selectedCheckbox.push($(this).attr("id"));
-                            }
-                        });
-                        $(this).find("a").attr("href", url + '&ids=' + selectedCheckbox);
-                        //alert($(this).find("a").attr("href"));
-                    });
+                var url = $(this).find("a").attr("href");
+                var selectedCheckbox = [];
+                $("input[type='checkbox']").each(function () {
+                    if ($(this).prop("checked")) {
+                        selectedCheckbox.push($(this).attr("id"));
+                    }
                 });
+                $(this).find("a").attr("href", url + '&ids=' + selectedCheckbox);
+                //alert($(this).find("a").attr("href"));
+            });
+        });
 
-                $(function () {
-                    $('td:first-child input').change(function () {
-                        $(this).closest('tr').toggleClass("bg-success", this.checked);
+        $(function () {
+            $('td:first-child input').change(function () {
+                $(this).closest('tr').toggleClass("bg-success", this.checked);
 
-                        
 
-                        var payLoad = $(this).closest('tr').find('td').eq(3).text();
-                        var payloadNumber = payLoad.match(/\d+/);
-                        //alert(payLoad.startsWith("[Cargo]"));
-                        if (payLoad.indexOf("Cargo") >= 0) {
-                            
-                            var t = parseFloat($('#cargoSummary').val());
-                            if (t) {
-                                if (this.checked) {
-                                    $('#cargoSummary').val(t + parseFloat(payloadNumber));
-                                }
-                                else {
-                                    $('#cargoSummary').val(t - parseFloat(payloadNumber));
-                                }
+
+                var payLoad = $(this).closest('tr').find('td').eq(3).text();
+                var payloadNumber = payLoad.match(/\d+/);
+                //alert(payLoad.startsWith("[Cargo]"));
+                if (payLoad.indexOf("Cargo") >= 0) {
+
+                    var t = parseFloat($('#cargoSummary').val());
+                    if (t) {
+                        if (this.checked) {
+                            $('#cargoSummary').val(t + parseFloat(payloadNumber));
                             }
-                            else {
-                                $('#cargoSummary').val(payloadNumber);
-                            }
-
-                            $('#cargoSummary').text("Total cargo: " + $('#cargoSummary').val());
-                        }
                         else {
-
-                            var t = parseFloat($('#paxSummary').val());
-                            if (t) {
-                                if (this.checked) {
-                                    $('#paxSummary').val(t + parseFloat(payloadNumber));
-                                }
-                                else {
-                                    $('#paxSummary').val(t - parseFloat(payloadNumber));
-                                }
+                            $('#cargoSummary').val(t - parseFloat(payloadNumber));
                             }
+                            }
+                        else {
+                        $('#cargoSummary').val(payloadNumber);
+                        }
+
+                    $('#cargoSummary').text("Total cargo: " + $('#cargoSummary').val());
+                    }
+                    else {
+
+                        var t = parseFloat($('#paxSummary').val());
+                        if (t) {
+                            if (this.checked) {
+                            $('#paxSummary').val(t + parseFloat(payloadNumber));
+                                }
+                        else {
+                            $('#paxSummary').val(t - parseFloat(payloadNumber));
+                                }
+                                }
                             else {
-                                $('#paxSummary').val(payloadNumber);
+                        $('#paxSummary').val(payloadNumber);
                             }
 
-                            $('#paxSummary').text("Total pax: " + $('#paxSummary').val());
+                    $('#paxSummary').text("Total pax: " + $('#paxSummary').val());
                         }
 
 
@@ -171,29 +209,29 @@
                         var p = parseFloat($('#paymentSummary').val());
                         if (p) {
                             if (this.checked) {
-                                $('#paymentSummary').val(p + parseFloat(paymentNumber));
-                            }
+                        $('#paymentSummary').val(p + parseFloat(paymentNumber));
+                                }
+                    else {
+                        $('#paymentSummary').val(p - parseFloat(paymentNumber));
+                                }
+                                }
                             else {
-                                $('#paymentSummary').val(p - parseFloat(paymentNumber));
+                    $('#paymentSummary').val(paymentNumber);
                             }
-                        }
-                        else {
-                            $('#paymentSummary').val(paymentNumber);
-                        }
 
-                        $('#paymentSummary').text("Payment: $" + $('#paymentSummary').val());
-                        
+                $('#paymentSummary').text("Payment: $" + $('#paymentSummary').val());
+
+                        });
                     });
-                });
 
-            </script>
-
+    </script>
 
 
 
-            <div>
-                @Html.ActionLink("Back to Search", "Index")
-            </div>
+
+    <div>
+        @Html.ActionLink("Back to Search", "Index")
+    </div>
 
 
   }

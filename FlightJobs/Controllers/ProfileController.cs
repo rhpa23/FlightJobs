@@ -14,51 +14,14 @@ namespace FlightJobs.Controllers
         // GET: Profile
         public ActionResult Index(string sortOrder, string CurrentSort, int? pageNumber)
         {
-            sortOrder = String.IsNullOrEmpty(sortOrder) ? "Date" : sortOrder;
-            
-
-            var homeModel = new HomeViewModel();
-            var dbContext = new ApplicationDbContext();
-            
-            var user = dbContext.Users.FirstOrDefault(u => u.Email == User.Identity.Name);
-            if (user != null)
+            HomeViewModel filterModel = null;
+            if (Session["ProfileFilterModel"] != null)
             {
-                
-                var allUserJobs = dbContext.JobDbModels.Where(j => j.IsDone && j.User.Id == user.Id).ToList();
-
-                var statistics = dbContext.StatisticsDbModels.FirstOrDefault(s => s.User.Id == user.Id);
-                if (statistics != null)
-                {
-                    if (statistics.Airline != null)
-                    {
-                        var statisticsAirline = dbContext.StatisticsDbModels.Where(s => s.Airline != null && s.Airline.Id == statistics.Airline.Id);
-                        statistics.AirlinePilotsHired = statisticsAirline.Count();
-                        statisticsAirline.ToList().ForEach(a => statistics.AirlineScore += a.PilotScore);
-                    }
-
-                    TimeSpan span = new TimeSpan();
-                    long payloadTotal = 0;
-
-                    allUserJobs.ToList().ForEach(j => span += (j.EndTime - j.StartTime));
-                    allUserJobs.ToList().ForEach(j => payloadTotal += j.Payload);
-
-                    statistics.NumberFlights = allUserJobs.Count();
-                    statistics.FlightTimeTotal = String.Format("{0}h {1}m", (int)span.TotalHours, span.Minutes);
-                    statistics.PayloadTotal = payloadTotal;
-                    if (allUserJobs.Count() > 0)
-                    {
-                        statistics.LastFlight = allUserJobs.OrderBy(j => j.EndTime).Last().EndTime;
-                        statistics.LastAircraft = allUserJobs.OrderBy(j => j.EndTime).Last().ModelDescription;
-                        statistics.FavoriteAirplane = allUserJobs.GroupBy(q => q.ModelDescription)
-                                                                 .OrderByDescending(gp => gp.Count())
-                                                                 .Select(g => g.Key).FirstOrDefault();
-                    }
-                    homeModel.Statistics = statistics;
-                }
-                var jobList = GetSortedJobs(allUserJobs, sortOrder, CurrentSort, pageNumber, user);
-                homeModel.Jobs = jobList;
+                filterModel = (HomeViewModel)Session["ProfileFilterModel"];
             }
-            
+
+            var homeModel = SearchProfileInfo(sortOrder, CurrentSort, pageNumber, filterModel);
+
             return View(homeModel);
         }
 
@@ -178,6 +141,94 @@ namespace FlightJobs.Controllers
                     break;
             }
             return jobSortedList;
+        }
+
+        [HttpPost]
+        public ActionResult SearchProfile(HomeViewModel filterModel)
+        {
+            Session.Add("ProfileFilterModel", filterModel);
+            var homeModel = SearchProfileInfo("", "Date", 1, filterModel);
+            return View("Index", homeModel);
+        }
+
+        public ActionResult RemoveFilter()
+        {
+            Session.Remove("ProfileFilterModel");
+            return RedirectToAction("Index");
+        }
+
+        private List<JobDbModel> FilterJobs(ApplicationUser user, HomeViewModel filterModel)
+        {
+            var dbContext = new ApplicationDbContext();
+            var allUserJobs = dbContext.JobDbModels.Where(j => j.IsDone && j.User.Id == user.Id);
+            if (filterModel != null)
+            {
+                if (!string.IsNullOrEmpty(filterModel.DepartureFilter))
+                {
+                    allUserJobs = allUserJobs.Where(j => j.DepartureICAO.Contains(filterModel.DepartureFilter));
+                }
+
+                if (!string.IsNullOrEmpty(filterModel.ArrivalFilter))
+                {
+                    allUserJobs = allUserJobs.Where(j => j.ArrivalICAO.Contains(filterModel.ArrivalFilter));
+                }
+
+                if (!string.IsNullOrEmpty(filterModel.ModelDescriptionFilter))
+                {
+                    allUserJobs = allUserJobs.Where(j => j.ModelDescription.Contains(filterModel.ModelDescriptionFilter));
+                }
+
+            }
+
+            return allUserJobs.ToList();
+        }
+
+        private HomeViewModel SearchProfileInfo(string sortOrder, string CurrentSort, int? pageNumber, HomeViewModel filterModel)
+        {
+            sortOrder = String.IsNullOrEmpty(sortOrder) ? "Date" : sortOrder;
+
+            var homeModel = new HomeViewModel();
+            var dbContext = new ApplicationDbContext();
+
+            var user = dbContext.Users.FirstOrDefault(u => u.Email == User.Identity.Name);
+            if (user != null)
+            {
+                var allUserJobs = FilterJobs(user, filterModel);
+
+                var statistics = dbContext.StatisticsDbModels.FirstOrDefault(s => s.User.Id == user.Id);
+                if (statistics != null)
+                {
+                    if (statistics.Airline != null)
+                    {
+                        var statisticsAirline = dbContext.StatisticsDbModels.Where(s => s.Airline != null && s.Airline.Id == statistics.Airline.Id);
+                        statistics.AirlinePilotsHired = statisticsAirline.Count();
+                        statisticsAirline.ToList().ForEach(a => statistics.AirlineScore += a.PilotScore);
+                    }
+
+                    TimeSpan span = new TimeSpan();
+                    long payloadTotal = 0;
+
+                    allUserJobs.ToList().ForEach(j => span += (j.EndTime - j.StartTime));
+                    allUserJobs.ToList().ForEach(j => payloadTotal += j.Payload);
+
+                    statistics.NumberFlights = allUserJobs.Count();
+                    statistics.FlightTimeTotal = String.Format("{0}h {1}m", (int)span.TotalHours, span.Minutes);
+                    statistics.PayloadTotal = payloadTotal;
+                    if (allUserJobs.Count() > 0)
+                    {
+                        statistics.LastFlight = allUserJobs.OrderBy(j => j.EndTime).Last().EndTime;
+                        statistics.LastAircraft = allUserJobs.OrderBy(j => j.EndTime).Last().ModelDescription;
+                        statistics.FavoriteAirplane = allUserJobs.GroupBy(q => q.ModelDescription)
+                                                                 .OrderByDescending(gp => gp.Count())
+                                                                 .Select(g => g.Key).FirstOrDefault();
+                    }
+                    homeModel.Statistics = statistics;
+                }
+                var jobList = GetSortedJobs(allUserJobs, sortOrder, CurrentSort, pageNumber, user);
+                homeModel.Jobs = jobList;
+            }
+
+            return homeModel;
         }
     }
 }
