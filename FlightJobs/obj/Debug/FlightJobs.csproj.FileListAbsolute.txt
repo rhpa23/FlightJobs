@@ -1,12 +1,3 @@
-C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\bin\roslyn\Microsoft.CodeAnalysis.CSharp.dll
-C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\bin\roslyn\Microsoft.CodeAnalysis.dll
-C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\bin\roslyn\Microsoft.CodeAnalysis.VisualBasic.dll
-C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\bin\roslyn\Microsoft.DiaSymReader.Native.amd64.dll
-C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\bin\roslyn\System.Collections.Immutable.dll
-C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\bin\roslyn\System.IO.FileSystem.dll
-C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\bin\roslyn\System.IO.FileSystem.Primitives.dll
-C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\bin\roslyn\System.Reflection.Metadata.dll
-C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\bin\roslyn\VBCSCompiler.exe
 D:\Users\rhpa2\Documents\Visual Studio 2017\Projects\FlightJobs\FlightJobs\bin\roslyn\Microsoft.CodeAnalysis.CSharp.dll
 D:\Users\rhpa2\Documents\Visual Studio 2017\Projects\FlightJobs\FlightJobs\bin\roslyn\Microsoft.CodeAnalysis.dll
 D:\Users\rhpa2\Documents\Visual Studio 2017\Projects\FlightJobs\FlightJobs\bin\roslyn\Microsoft.CodeAnalysis.VisualBasic.dll
@@ -151,23 +142,6 @@ D:\Users\rhpa2\Documents\Visual Studio 2017\Projects\FlightJobs\FlightJobs\obj\D
 D:\Users\rhpa2\Documents\Visual Studio 2017\Projects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.pdb
 D:\Users\rhpa2\Documents\Visual Studio 2017\Projects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.Migrations.UsedFuelWeight.resources
 C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\bin\ApplicationInsights.config
-C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\bin\roslyn\csc.exe
-C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\bin\roslyn\csc.exe.config
-C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\bin\roslyn\csc.rsp
-C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\bin\roslyn\csi.exe
-C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\bin\roslyn\csi.rsp
-C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\bin\roslyn\Microsoft.Build.Tasks.CodeAnalysis.dll
-C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\bin\roslyn\Microsoft.CodeAnalysis.CSharp.Scripting.dll
-C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\bin\roslyn\Microsoft.CodeAnalysis.Scripting.dll
-C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\bin\roslyn\Microsoft.CSharp.Core.targets
-C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\bin\roslyn\Microsoft.DiaSymReader.Native.x86.dll
-C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\bin\roslyn\Microsoft.VisualBasic.Core.targets
-C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\bin\roslyn\System.AppContext.dll
-C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\bin\roslyn\System.Diagnostics.StackTrace.dll
-C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\bin\roslyn\vbc.exe
-C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\bin\roslyn\vbc.exe.config
-C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\bin\roslyn\vbc.rsp
-C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\bin\roslyn\VBCSCompiler.exe.config
 C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\bin\FlightJobs.dll.config
 C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\bin\FlightJobs.dll
 C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\bin\FlightJobs.pdb
@@ -184,7 +158,6 @@ C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs
 C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\bin\Microsoft.AspNet.Identity.Core.dll
 C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\bin\Microsoft.AspNet.Identity.EntityFramework.dll
 C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\bin\Microsoft.AspNet.Identity.Owin.dll
-C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll
 C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\bin\Microsoft.Owin.dll
 C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\bin\Microsoft.Owin.Host.SystemWeb.dll
 C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\bin\Microsoft.Owin.Security.Cookies.dll
@@ -210,7 +183,6 @@ C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs
 C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\bin\System.Web.WebPages.dll
 C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\bin\System.Web.WebPages.Razor.dll
 C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\bin\WebGrease.dll
-C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
 C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\bin\PagedList.xml
 C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\bin\PagedList.Mvc.xml
 C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\bin\System.Net.Http.Formatting.xml

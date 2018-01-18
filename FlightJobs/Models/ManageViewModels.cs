@@ -27,34 +27,34 @@ namespace FlightJobs.Models
 
     public class SetPasswordViewModel
     {
-        [Required]
-        [StringLength(100, ErrorMessage = "{0} deve ter pelo menos {2} caracteres.", MinimumLength = 6)]
+        [Required(ErrorMessage = "New password is required")]
+        [StringLength(100, ErrorMessage = "{0} must be at least {2} characters.", MinimumLength = 6)]
         [DataType(DataType.Password)]
-        [Display(Name = "Nova senha")]
+        [Display(Name = "New password")]
         public string NewPassword { get; set; }
 
         [DataType(DataType.Password)]
-        [Display(Name = "Confirmar nova senha")]
-        [Compare("NewPassword", ErrorMessage = "A nova senha e a senha de confirmação não correspondem.")]
+        [Display(Name = "Confirm new password")]
+        [Compare("NewPassword", ErrorMessage = "New password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
     }
 
     public class ChangePasswordViewModel
     {
-        [Required]
+        [Required(ErrorMessage = "Current password is required")]
         [DataType(DataType.Password)]
-        [Display(Name = "Senha atual")]
+        [Display(Name = "Current password")]
         public string OldPassword { get; set; }
 
-        [Required]
-        [StringLength(100, ErrorMessage = "{0} deve ter pelo menos {2} caracteres.", MinimumLength = 6)]
+        [Required(ErrorMessage = "New password is required")]
+        [StringLength(100, ErrorMessage = "{0} must be at least {2} characters.", MinimumLength = 6)]
         [DataType(DataType.Password)]
-        [Display(Name = "Nova senha")]
+        [Display(Name = "New password")]
         public string NewPassword { get; set; }
 
         [DataType(DataType.Password)]
-        [Display(Name = "Confirmar nova senha")]
-        [Compare("NewPassword", ErrorMessage = "A nova senha e a senha de confirmação não correspondem.")]
+        [Display(Name = "Confirm new password")]
+        [Compare("NewPassword", ErrorMessage = "New password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
     }
 
@@ -62,19 +62,19 @@ namespace FlightJobs.Models
     {
         [Required]
         [Phone]
-        [Display(Name = "Número de telefone")]
+        [Display(Name = "Phone number")]
         public string Number { get; set; }
     }
 
     public class VerifyPhoneNumberViewModel
     {
         [Required]
-        [Display(Name = "Código")]
+        [Display(Name = "Code")]
         public string Code { get; set; }
 
         [Required]
         [Phone]
-        [Display(Name = "Número de telefone")]
+        [Display(Name = "Phone number")]
         public string PhoneNumber { get; set; }
     }
 
