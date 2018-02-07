@@ -9,35 +9,7 @@
 }
 <link href="/Content/bootstrap-fileinput/css/fileinput.min.css" rel="stylesheet">
 <style>
-    .kv-avatar .krajee-default.file-preview-frame, .kv-avatar .krajee-default.file-preview-frame:hover {
-        margin: 0;
-        padding: 0;
-        border: none;
-        box-shadow: none;
-        text-align: center;
-    }
-
-    .file-drop-zone {
-        margin: 0px;
-    }
-
-    .kv-avatar {
-        display: inline-block;
-    }
-
-    .kv-avatar .file-input {
-        display: table-cell;
-        width: 110px;
-    }
-    .krajee-default.file-preview-frame .kv-file-content {
-        width: 110px;
-    }
-
-    .kv-reqd {
-        color: red;
-        font-family: monospace;
-        font-weight: normal;
-    }
+    
     .myList {
         font-size: small;
         padding: 10px 0px 0px 0px;
@@ -239,7 +211,7 @@
                     <div class="form-group">
                         <div class="row">
                             <div class="col-md-6">
-                                @Html.LabelFor(model => model.DepartureFilter, htmlAttributes: new { @class = "contro   l-label" })
+                                @Html.LabelFor(model => model.DepartureFilter, htmlAttributes: new { @class = "control-label" })
                                 @Html.EditorFor(model => model.DepartureFilter, new { htmlAttributes = new { @class = "form-control uppercase", @maxlength = "4" } })
                                 @Html.ValidationMessageFor(model => model.DepartureFilter, "", new { @class = "text-danger" })
                             </div>

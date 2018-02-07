@@ -14,9 +14,11 @@ namespace FlightJobs.Models
         [Key]
         public int Id { get; set; }
 
+        //[Required(ErrorMessage = "Name is required")]
         [DisplayName("Name")]
         public string Name { get; set; }
 
+        //[Required(ErrorMessage = "Country is required")]
         [DisplayName("Country")]
         public string Country { get; set; }
 

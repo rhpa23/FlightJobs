@@ -291,6 +291,7 @@
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\AirlineViewModel.cs" />
     <Compile Include="Models\CertificateViewModel.cs" />
     <Compile Include="Models\ConfirmJobsViewModel.cs" />
     <Compile Include="Models\StatisticCertificatesDbModel.cs" />
@@ -334,8 +335,12 @@
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\img\aeroflot.png" />
+    <Content Include="Content\img\aireuropa.png" />
     <Content Include="Content\img\airfrance.png" />
     <Content Include="Content\img\airplane.png" />
+    <Content Include="Content\img\alitalia.png" />
+    <Content Include="Content\img\americanAirlines.jpg" />
     <Content Include="Content\img\austrian.png" />
     <Content Include="Content\img\azul.jpg" />
     <Content Include="Content\img\banner0001.jpg" />
@@ -343,11 +348,21 @@
     <Content Include="Content\img\certificate.png" />
     <Content Include="Content\img\contract2.jpg" />
     <Content Include="Content\img\default.jpg" />
+    <Content Include="Content\img\delta.jpg" />
     <Content Include="Content\img\Departing.png" />
+    <Content Include="Content\img\easyJet.jpg" />
+    <Content Include="Content\img\FlightJobsLogo0001.png" />
+    <Content Include="Content\img\FlightJobsLogo0002.png" />
+    <Content Include="Content\img\flybe.png" />
     <Content Include="Content\img\gol.png" />
+    <Content Include="Content\img\KLM.png" />
     <Content Include="Content\img\line.png" />
     <Content Include="Content\img\logbook0001.jpg" />
+    <Content Include="Content\img\logo\LogoDefault.png" />
     <Content Include="Content\img\lufthansa.jpg" />
+    <Content Include="Content\img\ryanair.png" />
+    <Content Include="Content\img\southwest.png" />
+    <Content Include="Content\img\TAP.jpg" />
     <Content Include="Content\PagedList.css" />
     <Content Include="Content\templates\Confirm Email.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -522,6 +537,7 @@
     <Content Include="Views\Profile\Index.cshtml" />
     <Content Include="Views\Airlines\Index.cshtml" />
     <Content Include="Views\Airlines\Contract.cshtml" />
+    <Content Include="Views\Airlines\Add.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201710111859366_InitialCreate.resx">

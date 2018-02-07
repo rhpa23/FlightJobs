@@ -1,0 +1,86 @@
+﻿@model FlightJobs.Models.AirlineViewModel
+
+
+<link href="/Content/bootstrap-fileinput/css/fileinput.min.css" rel="stylesheet">
+@Scripts.Render("~/bundles/fileinput")
+@Scripts.Render("~/bundles/jqueryval")
+
+
+
+@using (Html.BeginForm("Add", "Airlines", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="modal-body">
+        <div class="row">
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+            <div class="col-lg-6 col-md-4 col-md-12 ">
+
+                <div class="form-group col-md-12">
+                    @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label" })
+                    @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control", @maxlength = "20", @minlength = "2" } })
+                    @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="form-group col-md-12">
+                    @Html.LabelFor(model => model.Country, htmlAttributes: new { @class = "control-label" })
+                    @Html.EditorFor(model => model.Country, new { htmlAttributes = new { @class = "form-control", @maxlength = "35", @minlength = "2" } })
+                    @Html.ValidationMessageFor(model => model.Country, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="form-group col-md-12">
+                    @Html.LabelFor(model => model.Score, htmlAttributes: new { @class = "control-label" })
+                    @Html.EditorFor(model => model.Score, new { htmlAttributes = new { @class = "form-control", @maxlength = "4", @minlength = "1" } })
+                    @Html.ValidationMessageFor(model => model.Score, "", new { @class = "text-danger" })
+                </div>
+
+
+                <div class="col-md-offset-1 col-md-12">
+                    <div class="checkbox">
+                        @Html.CheckBoxFor(model => model.RequireCertificates, new { @checked = true })
+                        @Html.LabelFor(m => m.RequireCertificates)
+                    </div>
+                </div>
+            </div>
+
+            <div class="kv-avatar" style="float:right; margin:25px;">
+                <div class="file-loading">
+                    <input id="FilesInput" name="FilesInput" type="file">
+
+                </div>
+            </div>
+
+            <div id="kv-avatar-errors-1" class="center-block" style="font-size:8pt; width:400px;display:none"></div>
+
+        </div>
+        <div class="modal-footer">
+            <input type="submit" value="Create" class="btn btn-info" />
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        </div>
+    </div>
+}
+
+
+
+<script>
+    var btnCust = '<button type="button" class="btn btn-secondary" title="Add picture tags" ' +
+        'onclick="alert(\'Call your custom code here.\')">' +
+        '<i class="glyphicon glyphicon-tag"></i>' +
+        '</button>';
+    $("#FilesInput").fileinput({
+        overwriteInitial: true,
+        maxFileSize: 20,
+        showClose: false,
+        showCaption: false,
+        browseLabel: '',
+        removeLabel: '',
+        browseIcon: '<i class="glyphicon glyphicon-folder-open"></i>',
+        removeIcon: '<i class="glyphicon glyphicon-remove"></i>',
+        removeTitle: 'Cancel or reset changes',
+        elErrorContainer: '#kv-avatar-errors-1',
+        msgErrorClass: 'alert alert-block alert-danger',
+        defaultPreviewContent: '<img src="/Content/img/logo/LogoDefault.png" alt="Airline Logo" style="width:115px">',
+        layoutTemplates: { main2: '{preview} ' + btnCust + ' {remove} {browse}' },
+        allowedFileExtensions: ["jpg", "png", "gif"]
+    });
+</script>

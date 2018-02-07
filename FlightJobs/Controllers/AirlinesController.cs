@@ -1,6 +1,8 @@
 ﻿using FlightJobs.Models;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -10,6 +12,8 @@ namespace FlightJobs.Controllers
 {
     public class AirlinesController : Controller
     {
+        private int airlinePrice = 40000;
+
         // GET: Airlines
         public ActionResult Index()
         {
@@ -108,11 +112,11 @@ namespace FlightJobs.Controllers
 
                 statistics.Airline = airline;
                 dbContext.SaveChanges();
-                ViewBag.Message = "Congratulations, you signed contract with " + airline.Name +  " airline in " + airline.Country + ".";
+                ViewBag.Message = "Congratulations, you signed contract with " + airline.Name + " airline in " + airline.Country + ".";
             }
 
             return View("Contract", certificateView);
- 
+
         }
 
         private void PopUpCertificateTest(CertificateDbModel certificate)
@@ -132,11 +136,117 @@ namespace FlightJobs.Controllers
                 case "Night flying requirements":
                     strUrl = "https://goo.gl/forms/5ZQYl1FJQJ3ALDqB2";
                     break;
-                    
+
                 default:
                     break;
             }
             Response.Write("<script>window.open('" + strUrl + "' ,'_blank')</script>");
+        }
+
+        public JsonResult AirlineNameAvailable(string name)
+        {
+            var dbContext = new ApplicationDbContext();
+            var nameUsed = dbContext.AirlineDbModels.Any(a => a.Name.ToUpper() == name.Trim().ToUpper());
+
+            if (!nameUsed)
+                return Json(true, JsonRequestBehavior.AllowGet);
+
+            string suggestedUID = String.Format(CultureInfo.InvariantCulture,
+                "The name '{0}' is already used.", name);
+
+            return Json(suggestedUID, JsonRequestBehavior.AllowGet);            
+        }
+
+        [HttpPost]
+        public ActionResult Add(AirlineViewModel model)
+        {
+            var dbContext = new ApplicationDbContext();
+            var user = dbContext.Users.FirstOrDefault(u => u.Email == User.Identity.Name);
+            var statistics = dbContext.StatisticsDbModels.FirstOrDefault(s => s.User.Id == user.Id);
+
+            if (statistics != null && statistics.Airline != null && statistics.BankBalance >= airlinePrice)
+            {
+                var dbModel = new AirlineDbModel()
+                {
+                    Name = model.Name,
+                    Country = model.Country,
+                    Salary = 20,
+                    Score = model.Score
+                };
+
+                if (model.FilesInput != null && model.FilesInput.Any())
+                {
+                    var file = model.FilesInput.FirstOrDefault();
+                    var filePath = Upload(file);
+                    dbModel.Logo = filePath;
+                }
+
+                dbContext.AirlineDbModels.Add(dbModel);
+
+                statistics.BankBalance = statistics.BankBalance - airlinePrice;
+                statistics.Airline = dbModel;
+
+                if (model.RequireCertificates)
+                {
+                    foreach (var cert in dbContext.CertificateDbModels)
+                    {
+                        var airlineCertificates = new AirlineCertificatesDbModel()
+                        {
+                            Certificate = cert,
+                            Airline = dbModel
+                        };
+                        dbContext.AirlineCertificatesDbModels.Add(airlineCertificates);
+                    }
+                }
+
+                dbContext.SaveChanges();
+
+                TempData["Message"] = "Congratulation you created a new airline. Now you can invite pilots to work with you.";
+            }
+            else
+            {
+                TempData["Message"] = "You don't have enough bank balance to buy new airline.";
+            }
+            return RedirectToAction("Index");
+        }
+
+        public string Upload(HttpPostedFileBase file)
+        {
+            var path = "/Content/img/logo/";
+            if (file != null && file.ContentLength > 0)
+            {
+                var dbContext = new ApplicationDbContext();
+                var user = dbContext.Users.FirstOrDefault(u => u.Email == User.Identity.Name);
+                var fileName = Path.GetFileName(user.Id + Path.GetExtension(file.FileName));
+
+                path = Path.Combine(path, fileName);
+                file.SaveAs(Server.MapPath("~" + path));
+            }
+            else
+            {
+                path = path + "LogoDefault.png";
+            }
+
+            return path;
+        }
+
+        public ActionResult AddView()
+        {
+            var dbContext = new ApplicationDbContext();
+            var user = dbContext.Users.FirstOrDefault(u => u.Email == User.Identity.Name);
+            var statistics = dbContext.StatisticsDbModels.FirstOrDefault(s => s.User.Id == user.Id);
+            
+            if (statistics != null && statistics.Airline != null && statistics.BankBalance >= airlinePrice)
+            {
+
+                var airlineModel = new AirlineViewModel();
+                return PartialView("Add", airlineModel);
+            }
+            else
+            {
+                TempData["Message"] = "You don't have enough bank balance to buy new airline.";
+                return null;
+            }
         }
     }
 }
