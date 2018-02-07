@@ -48,7 +48,7 @@ namespace FlightJobs.Controllers
             }
             else
             {
-                TempData["Message"] = "You don't have enough scores to sign contract with this airline.";
+                TempData["Message"] = string.Format("You don't have enough scores to sign contract with {0}.", airline.Name);
                 return RedirectToAction("Index");
             }
         }
