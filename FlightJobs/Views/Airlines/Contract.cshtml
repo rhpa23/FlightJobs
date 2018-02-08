@@ -10,42 +10,49 @@
     </div>
 }
 <hr />
-<img src="@Model.Airline.Logo" style="width:70px; height:70px; position:absolute; " />
+<img src="@Model.Airline.Logo" style="width:80px; height:80px; position:absolute; " />
 <p style="height: 40px; ">
     <div style="padding-left:100px; top:-10px">
-        <h4>The @Model.Airline.Name airline require this certificates to sign the contract. Now you have @Html.DisplayFor(modelItem => @Model.Statistic.BankBalance)  to buy certificates.</h4>
+        <h4>@Model.Airline.Name require all this certificates to sign the contract. Now you have @Html.DisplayFor(modelItem => @Model.Statistic.BankBalance)  to buy certificates.</h4>
     </div>
 </p>
 
 <hr />
-<table class="table table-striped table-bordered table-hover">
-    @foreach (var item in Model.Certificates)
-    {
-        <tr>
-            <td>
-                <img src="@item.Logo" style="width:30px; height:30px;" />
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Price)
-            </td>
-            <td style="text-align:center;">
-                @if (item.Selected)
-                {
-                    <span>bought</span>
-                }
-                else
-                {
-                    <a data-toggle="confirmation" data-title="Buy certificate?" href="/Airlines/Buy/@item.Id?airlineId=@Model.Airline.Id">Buy</a>
-                }
-            </td>
-     </tr>
-    }
+<div class="jumbotron">
+    <table class="table table-bordered ">
+        @foreach (var item in Model.Certificates)
+        {
+            string rowClass = "";
+            if (item.Selected)
+            {
+                rowClass = "bg-info";
+            }
 
-</table>
+            <tr class="@rowClass">
+                <td>
+                    <img src="@item.Logo" style="width:30px; height:30px;" />
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Price)
+                </td>
+                <td style="text-align:center;">
+                    @if (item.Selected)
+                    {
+                        <span>bought</span>
+                    }
+                    else
+                    {
+                        <a data-toggle="confirmation" data-title="Buy certificate?" href="/Airlines/Buy/@item.Id?airlineId=@Model.Airline.Id">Buy</a>
+                    }
+                </td>
+            </tr>
+        }
 
+    </table>
+</div>
 <p style="text-align:right">
     <a class="btn btn-info  pull-right" href="/Airlines/Confirm/@Model.Airline.Id" >Confirm</a>
 </p>
