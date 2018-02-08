@@ -347,6 +347,7 @@
     <Content Include="Content\img\britishairways.png" />
     <Content Include="Content\img\certificate.png" />
     <Content Include="Content\img\contract2.jpg" />
+    <Content Include="Content\img\contract_ico.jpg" />
     <Content Include="Content\img\default.jpg" />
     <Content Include="Content\img\delta.jpg" />
     <Content Include="Content\img\Departing.png" />
