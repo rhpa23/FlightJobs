@@ -79,8 +79,20 @@ namespace FlightJobs.Controllers
             return View();
         }
 
-
-
-
+        public PartialViewResult RenderHeader()
+        {
+            if (Session["HeaderStatistics"] == null)
+            {
+                var dbContext = new ApplicationDbContext();
+                var user = dbContext.Users.FirstOrDefault(u => u.Email == User.Identity.Name);
+                var statistics = dbContext.StatisticsDbModels.FirstOrDefault(s => s.User.Id == user.Id);
+                Session.Add("HeaderStatistics", statistics);
+                return PartialView("_HeaderInfo", statistics);
+            }
+            else
+            {
+                return PartialView("_HeaderInfo", Session["HeaderStatistics"]);
+            }
+        }
     }
 }

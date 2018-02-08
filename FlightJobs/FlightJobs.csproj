@@ -539,6 +539,7 @@
     <Content Include="Views\Airlines\Index.cshtml" />
     <Content Include="Views\Airlines\Contract.cshtml" />
     <Content Include="Views\Airlines\Add.cshtml" />
+    <Content Include="Views\Shared\_HeaderInfo.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201710111859366_InitialCreate.resx">

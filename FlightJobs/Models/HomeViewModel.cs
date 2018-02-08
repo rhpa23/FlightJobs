@@ -21,5 +21,7 @@ namespace FlightJobs.Models
 
         [DisplayName("Model description")]
         public string ModelDescriptionFilter { get; set; }
+
+
     }
 }
