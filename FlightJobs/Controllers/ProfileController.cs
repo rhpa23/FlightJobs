@@ -6,6 +6,7 @@ using System.Web;
 using System.Web.Mvc;
 using PagedList;
 using System.IO;
+using Chart.Mvc.ComplexChart;
 
 namespace FlightJobs.Controllers
 {
@@ -229,6 +230,31 @@ namespace FlightJobs.Controllers
             }
 
             return homeModel;
+        }
+
+        public ActionResult ChartProfile()
+        {
+            var dbContext = new ApplicationDbContext();
+            var user = dbContext.Users.FirstOrDefault(u => u.Email == User.Identity.Name);
+            var tempDate = DateTime.Now.AddMonths(-6);
+            var dateFilter = new DateTime(tempDate.Year, tempDate.Month, 1);
+            var userJobs = dbContext.JobDbModels.Where(j => j.IsDone && j.User.Id == user.Id && j.StartTime > dateFilter).ToList();
+
+            var chartModel = new ChartViewModel() { Data = new Dictionary<string, double>() };
+
+            foreach (var job in userJobs)
+            {
+                if ( !chartModel.Data.Keys.Contains(job.Month))
+                {
+                    chartModel.Data.Add(job.Month, job.Pay);
+                }
+                else
+                {
+                    chartModel.Data[job.Month] += job.Pay;
+                }
+            }
+
+            return PartialView("ChartProfile", chartModel);
         }
     }
 }

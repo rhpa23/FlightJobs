@@ -94,6 +94,13 @@ namespace FlightJobs.Models
             }
         }
 
+        [NotMapped]
+        [DisplayFormat(DataFormatString = "{0:yyyy/MM}")]
+        public string Month
+        {
+            get { return this.StartTime.ToString("MMM/yyyy"); }
+        }
+
         public virtual ApplicationUser User { get; set; }
     }
 }

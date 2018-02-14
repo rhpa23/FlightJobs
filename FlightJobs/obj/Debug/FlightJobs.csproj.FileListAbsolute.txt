@@ -233,7 +233,6 @@ C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs
 C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\bin\pt-br\Microsoft.Owin.Security.Google.resources.dll
 C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\bin\pt-br\Microsoft.Owin.Security.Twitter.resources.dll
 C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\bin\pt-br\Microsoft.Owin.Security.MicrosoftAccount.resources.dll
-C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\obj\Debug\FlightJobs.csprojResolveAssemblyReference.cache
 C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\obj\Debug\FlightJobs.Migrations.InitialCreate.resources
 C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\obj\Debug\FlightJobs.Migrations.AddUserOnJobs.resources
 C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\obj\Debug\FlightJobs.Migrations.RemoveUserID.resources
@@ -376,3 +375,7 @@ D:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.csproj.CoreCompileI
 D:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.dll
 D:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.pdb
 D:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.csprojResolveAssemblyReference.cache
+C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\bin\Chart.Mvc.dll
+C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\bin\Chart.Mvc.pdb
+C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\bin\Chart.Mvc.xml
+C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\obj\Debug\FlightJobs.csprojResolveAssemblyReference.cache

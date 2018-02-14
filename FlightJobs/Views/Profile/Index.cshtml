@@ -173,6 +173,11 @@
                     <li>
                         <b>@Html.DisplayNameFor(model => model.Statistics.FavoriteAirplane):</b> @Html.DisplayFor(model => model.Statistics.FavoriteAirplane)
                     </li>
+                    <li>
+                        <button id="buttonChart" type="button" class="btn btn btn-info">
+                            <span class="glyphicon glyphicon-barcode"></span> Chart
+                        </button>
+                    </li>
                 </ul>
             </div>
             <div class="col-sm-4 text-left">
@@ -245,6 +250,24 @@
 </div>
 
 
+<div class="modal" id="myModalChart" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" style="width: 100%;">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Payment/Month Chart</h4>
+                </div>
+                <div class="modal-body" >
+                    <div id="chart-content"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+        </div>
+    </div>
+</div>
+
+
 <script>
 $("#avatar-1").fileinput({
     overwriteInitial: true,
@@ -268,5 +291,24 @@ $("#avatar-1").fileinput({
     uploadUrl: '/Profile/Upload',
     allowedFileExtensions: ["jpg", "png", "gif"],
     maxFileCount: 1
+    });
+
+
+$('#buttonChart').click(function () {
+    $.ajax({
+        url: '@Url.Action("ChartProfile", "Profile")',
+        type: "Get",
+        data: '',
+        success: function (result) {
+            if (result != null) {
+                //alert(result)
+                $('#myModalChart').modal('show');
+                $("#chart-content").html(result);
+
+                
+            }
+        }
+    });
+    return true;
 });
 </script>
