@@ -56,9 +56,5 @@ namespace FlightJobs.Models
         [NotMapped]
         [DisplayName("Pilots hired")]
         public long AirlinePilotsHired { get; set; }
-
-        [NotMapped]
-        [DisplayName("Score")]
-        public long AirlineScore { get; set; }
     }
 }

@@ -180,7 +180,7 @@ namespace FlightJobs.Controllers
                         string emailTemplateFileName = System.Web.HttpContext.Current.Server.MapPath("~/Content/templates/Confirm Email.html");
                         var bodyText = System.IO.File.ReadAllText(emailTemplateFileName);
                         bodyText = string.Format(bodyText, callbackUrl);
-                        await UserManager.SendEmailAsync(user.Id, "Flight Jobs Manager - Verify your account (do not reply to this email)", bodyText);
+                        await UserManager.SendEmailAsync(user.Id, "FlightJobs - Verify your account (do not reply to this email)", bodyText);
 
                         //return RedirectToAction("VerifyRegistrationCode", new { message = ApplicationMessages.VerificationCodeSent });
                         //
@@ -239,7 +239,7 @@ namespace FlightJobs.Controllers
                 // Enviar um email com este link
                 string code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
                 var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);		
-                await UserManager.SendEmailAsync(user.Id, "Flight Jobs Manager - Redefine password (do not reply to this email)", "Reset your Flight Jobs password by clicking <a href=\"" + callbackUrl + "\">here</a>");
+                await UserManager.SendEmailAsync(user.Id, "FlightJobs - Redefine password (do not reply to this email)", "Reset your FlightJobs password by clicking <a href=\"" + callbackUrl + "\">here</a>");
                 return RedirectToAction("ForgotPasswordConfirmation", "Account");
             }
 

@@ -30,5 +30,12 @@ namespace FlightJobs.Models
 
         [DisplayName("Logo")]
         public string Logo { get; set; }
+
+        [DisplayFormat(DataFormatString = "{0:C0}")]
+        [DisplayName("Bank balance")]
+        public long BankBalance { get; set; }
+
+        [DisplayName("Airline score")]
+        public long AirlineScore { get; set; }
     }
 }

@@ -121,6 +121,7 @@ namespace FlightJobs.Controllers
                 job.FinishFuelWeight = fuelWeight;
 
                 UpdateStatistics(job, dbContext);
+                UpdateAirline(job, dbContext);
 
                 dbContext.SaveChanges();
 
@@ -152,6 +153,16 @@ namespace FlightJobs.Controllers
                     User = job.User
                 };
                 dbContext.StatisticsDbModels.Add(newStatistics);
+            }
+        }
+
+        private void UpdateAirline(JobDbModel job, ApplicationDbContext dbContext)
+        {
+            var statistics = dbContext.StatisticsDbModels.FirstOrDefault(s => s.User.Id == job.User.Id);
+            if (statistics != null && statistics.Airline != null)
+            {
+                statistics.Airline.AirlineScore += job.Dist / 14;
+                statistics.Airline.BankBalance += job.Pay + 50;
             }
         }
     }

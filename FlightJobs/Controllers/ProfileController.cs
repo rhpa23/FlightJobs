@@ -203,7 +203,6 @@ namespace FlightJobs.Controllers
                     {
                         var statisticsAirline = dbContext.StatisticsDbModels.Where(s => s.Airline != null && s.Airline.Id == statistics.Airline.Id);
                         statistics.AirlinePilotsHired = statisticsAirline.Count();
-                        statisticsAirline.ToList().ForEach(a => statistics.AirlineScore += a.PilotScore);
                     }
 
                     TimeSpan span = new TimeSpan();
@@ -252,6 +251,13 @@ namespace FlightJobs.Controllers
                 {
                     chartModel.Data[job.Month] += job.Pay;
                 }
+
+                chartModel.PayamentTotal += job.Pay;
+            }
+
+            if (chartModel.Data.Count > 0)
+            {
+                chartModel.PayamentMonthGoal = chartModel.Data.Values.Max() + 1000;
             }
 
             return PartialView("ChartProfile", chartModel);

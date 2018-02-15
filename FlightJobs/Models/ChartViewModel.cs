@@ -8,5 +8,9 @@ namespace FlightJobs.Models
     public class ChartViewModel
     {
         public Dictionary<string, double> Data { get; set; }
+
+        public double PayamentTotal { get; set; }
+
+        public double PayamentMonthGoal { get; set; }
     }
 }

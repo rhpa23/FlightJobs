@@ -1,7 +1,7 @@
 ﻿@model FlightJobs.Models.ChartViewModel
 
 
-
+@Styles.Render("~/Content/css")
 @Scripts.Render("~/bundles/chart")
 
 
@@ -30,9 +30,21 @@
     complexChart.ComplexData.Datasets.AddRange(data1);
     complexChart.ChartConfiguration.Responsive = true;
     complexChart.ChartConfiguration.TooltipTemplate = "$ <%= value %>";
-   
+
 
 }
 
 <canvas id="@Canvas" width="900" height="400" style="padding:20px;"></canvas>
 @Html.CreateChart(Canvas, complexChart)
+
+
+<div class="text-center text-info">
+    <div class="row">
+        <div class="col-sm-6">
+            <strong>Total of 6 months:</strong> $ @String.Format("{0:N0}", Model.PayamentTotal)
+        </div>
+        <div class="col-sm-6">
+            <strong>Month goal:</strong> $ @String.Format("{0:N0}", Model.PayamentMonthGoal)
+        </div>
+    </div>
+</div>
