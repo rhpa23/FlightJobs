@@ -262,5 +262,14 @@ namespace FlightJobs.Controllers
 
             return PartialView("ChartProfile", chartModel);
         }
+
+        public ActionResult RankingProfile()
+        {
+            var dbContext = new ApplicationDbContext();
+            var listAirlines = dbContext.AirlineDbModels.OrderByDescending(a => a.AirlineScore).Take(3);
+
+            var list = listAirlines.ToList();
+            return PartialView("Ranking", list);
+        }
     }
 }

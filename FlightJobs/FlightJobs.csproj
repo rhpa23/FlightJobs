@@ -370,6 +370,7 @@
     <Content Include="Content\img\logbook0001.jpg" />
     <Content Include="Content\img\logo\LogoDefault.png" />
     <Content Include="Content\img\lufthansa.jpg" />
+    <Content Include="Content\img\ranking.png" />
     <Content Include="Content\img\ryanair.png" />
     <Content Include="Content\img\southwest.png" />
     <Content Include="Content\img\TAP.jpg" />
@@ -551,6 +552,7 @@
     <Content Include="Views\Airlines\Add.cshtml" />
     <Content Include="Views\Shared\_HeaderInfo.cshtml" />
     <Content Include="Views\Profile\ChartProfile.cshtml" />
+    <Content Include="Views\Profile\Ranking.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201710111859366_InitialCreate.resx">

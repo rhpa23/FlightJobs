@@ -1,0 +1,23 @@
+﻿@model IEnumerable<FlightJobs.Models.AirlineDbModel>
+
+@Styles.Render("~/Content/css")
+
+
+@if (Model != null && Model.Count() == 3)
+{
+<div class="text-info" style="height:240px;">
+    <div style="margin:60px 0px 0px 70px; position:absolute; text-align:center;">
+        <div class="text-info">@Model.ToList()[1].Name</div>
+        <div class="text-info"><strong>Score: </strong>@Model.ToList()[1].AirlineScore</div>
+    </div>
+    <div style="margin:35px 0px 0px 220px; position:absolute; text-align:center;">
+        <div class="text-info">@Model.ToList()[0].Name</div>
+        <div class="text-info"><strong>Score: </strong>@Model.ToList()[0].AirlineScore</div>
+    </div>
+    <div style="margin:65px 0px 0px 400px; position:absolute; text-align:center;">
+        <div class="text-info">@Model.ToList()[2].Name</div>
+        <div class="text-info"><strong>Score: </strong>@Model.ToList()[2].AirlineScore</div>
+    </div>
+    <img src="~/Content/img/ranking.png" style="padding-top:70px" />
+</div>
+}
