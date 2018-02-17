@@ -48,7 +48,7 @@ namespace FlightJobs.Controllers
             }
             else
             {
-                TempData["Message"] = string.Format("You need {0} scores to sign contract with {0}.", airline.Score, airline.Name);
+                TempData["Message"] = string.Format("You need {0} scores to sign contract with {1}.", airline.Score, airline.Name);
                 return RedirectToAction("Index");
             }
         }
