@@ -8,7 +8,6 @@
 
 @{
     ViewBag.Title = "Result";
-    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 
@@ -21,9 +20,9 @@
 {
     if (Model.Count() > 0)
     {
-        <div class="navbar navbar-inverse navbar-fixed-top" style="margin-top:51px; text-align:center; color:#9d9d9d ">
+        <div class="navbar navbar-inverse navbar-fixed-top" style="margin-top:51px; text-align:center; color:#9d9d9d; height:125px; ">
             <p>
-                <h4>Select one or more jobs and click Next button</h4>
+                <h4>First verify your aircraft payload limits and select the available jobs departing from:</h4>
             </p>
             
             <p>
@@ -32,27 +31,27 @@
                 
                 
             </p>
-            <label id="paxSummary" style="font-size: 11px;"> </label>
-            <label id="cargoSummary" style="font-size: 11px; padding-left:100px"></label>
-            <label id="paymentSummary" style="font-size: 11px; padding-left:100px"></label>
+            <label id="paxSummary" style="font-size: 12px;"> </label>
+            <label id="cargoSummary" style="font-size: 12px; padding-left:100px"></label>
+            <label id="paymentSummary" style="font-size: 12px; padding-left:100px"></label>
         </div>
-        <div class="panel panel-default text-center">
+        <div class="panel panel-default text-center" style="margin-top:20px">
             
-            <table class="table table-bordered" style="font-size: 10px;margin-top:80px">
-                <tr style="background-color:darkgray">
-                    <th>
+            <table class="table table-bordered" style="font-size: 10px;">
+                <tr style="background-color:darkgray;">
+                    <th class="text-center">
                         @Html.DisplayNameFor(model => model.First().Selected)
                     </th>
-                    <th>
+                    <th class="text-center">
                         @Html.DisplayNameFor(model => model.First().Arrival)
                     </th>
-                    <th>
+                    <th class="text-center">
                         @Html.DisplayNameFor(model => model.First().Dist) (nm)
                     </th>
-                    <th>
+                    <th class="text-center">
                         Payload
                     </th>
-                    <th>
+                    <th class="text-center">
                         @Html.DisplayNameFor(model => model.First().Pay)
                     </th>
                 </tr>
