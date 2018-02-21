@@ -6,10 +6,17 @@
 @model FlightJobs.Models.HomeViewModel
 
 
+<style>
+    .pagination {
+        margin: 0px;
+    }
 
-<div class="jumbotron">
+</style>
+
+
+<div>
     <p class="lead">First active one job to do and after start your flight in FlightJobs Connector X-Plane plugin.</p>
-    <div class="panel panel-default text-center">
+    <div class="panel panel-default text-center" style="margin-bottom:5px">
         <p>
             <b>Your pedding jobs...</b>
         </p>
@@ -77,8 +84,12 @@
 
         </table>
     </div>
-        @Html.PagedListPager(Model.Jobs, pageNumber => Url.Action("Index", new  { pageNumber }))
 
-        <p>@Html.ActionLink("Add jobs", "Index", "SearchJobs", new object { }, new { @class = "btn btn-info  pull-right btn-md" })</p>
-    </div>
+</div>
+
+<button type="button" class="btn btn btn-info pull-right" onclick="location.href='@Url.Action("Index", "SearchJobs")'">
+    <span class="glyphicon glyphicon-plus"></span> Add jobs
+</button>
+
+@Html.PagedListPager(Model.Jobs, pageNumber => Url.Action("Index", new { pageNumber }))
 

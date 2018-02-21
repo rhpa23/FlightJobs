@@ -22,7 +22,7 @@
     {
         <div class="navbar navbar-inverse navbar-fixed-top" style="margin-top:51px; text-align:center; color:#9d9d9d; height:125px; ">
             <p>
-                <h4>First verify your aircraft payload limits and select the available jobs departing from:</h4>
+                <h4>First ckeck your aircraft payload limits and select the available jobs departing from:</h4>
             </p>
             
             <p>
@@ -35,7 +35,7 @@
             <label id="cargoSummary" style="font-size: 12px; padding-left:100px"></label>
             <label id="paymentSummary" style="font-size: 12px; padding-left:100px"></label>
         </div>
-        <div class="panel panel-default text-center" style="margin-top:20px">
+        <div class="panel panel-default text-center" style="margin-top:140px">
             
             <table class="table table-bordered" style="font-size: 10px;">
                 <tr style="background-color:darkgray;">
@@ -65,7 +65,7 @@
                         rowClass = "bg-info";
                     }
 
-                    <tr class="@rowClass">
+                    <tr class="@rowClass" style="cursor:pointer;">
 
                         <td>
                             @Html.CheckBoxFor(modelItem => item.Selected, new { Id = item.Id, Name = "sels", Value = item.Id })
@@ -156,11 +156,18 @@
             });
         });
 
+        $(document).ready(function () {
+            $('table tr').click(function (event) {
+                if (event.target.type !== 'checkbox') {
+                    $(':checkbox', this).trigger('click');
+                }
+            });
+            $('#banner').hide();
+        });
+        
         $(function () {
             $('td:first-child input').change(function () {
                 $(this).closest('tr').toggleClass("bg-success", this.checked);
-
-
 
                 var payLoad = $(this).closest('tr').find('td').eq(3).text();
                 var payloadNumber = payLoad.match(/\d+/);

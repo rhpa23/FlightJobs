@@ -30,6 +30,7 @@
                 <ul class="nav navbar-nav">
                     <li>@Html.ActionLink("Profile", "Index", "Profile")</li>
                     <li>@Html.ActionLink("Airlines", "Index", "Airlines")</li>
+                    <li><a target="_blank" href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=B2GHF8WFN95JW&lc=AU&item_name=Rudolf%20Hardy%20Plutarco%20Arag%C3%A3o&currency_code=USD&bn=PP-DonationsBF%3Abtn_donateCC_LG.gif%3ANonHosted">Donation</a></li>
                     <li>@Html.ActionLink("About", "About", "Home")</li>
                     <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
                 </ul>
@@ -37,7 +38,7 @@
             </div>
         </div>
     </div>
-    <div style="width:100%; position: relative;">
+    <div id="banner" style="width:100%; position: relative;">
         @{Html.RenderAction("RenderHeader", "Home");}
         <img src="~/Content/img/banner0001.jpg" style="width:100%" />
     </div>
