@@ -7,6 +7,10 @@
     .uppercase {
         text-transform: uppercase;
     }
+    .swap {
+        cursor: pointer;
+        color: #5bc0de;
+    }
 </style>
 
 
@@ -19,6 +23,9 @@
         <h4>Choose the parameters for generate jobs</h4>
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        <div id="swap-button" class="swap">Swap departure and destination</div>
+        
         <div class="form-group">
             <div class="col-md-2" style="padding-right:0px">
                 @Html.LabelFor(model => model.Departure, htmlAttributes: new { @class = "control-label" })
@@ -89,3 +96,13 @@
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
 }
+
+<script>
+    $('#swap-button').click(function () {
+        var dep = $('#Departure').val();
+        var arr = $('#Arrival').val();
+        $('#Departure').val(arr);
+        $('#Arrival').val(dep);
+        
+    });
+</script>

@@ -72,6 +72,7 @@ namespace FlightJobs.Controllers
                 dbContext.SaveChanges();
 
                 PopUpCertificateTest(certificate);
+                Session["HeaderStatistics"] = null;
             }
             else
             {
@@ -98,7 +99,7 @@ namespace FlightJobs.Controllers
             var certsUser = dbContext.StatisticCertificatesDbModels.Where(u => u.Statistic.Id == statistics.Id).ToList();
             foreach (var airCert in certsAirline)
             {
-                airCert.Certificate.Selected = certsUser.Any(u => u.Certificate.Id == airCert.Certificate.Id);
+                airCert.Certificate.Selected = certsUser.Any(u => u.Certificate != null && u.Certificate.Id == airCert.Certificate.Id);
                 certificateView.Certificates.Add(airCert.Certificate);
             }
 
@@ -113,6 +114,7 @@ namespace FlightJobs.Controllers
                 statistics.Airline = airline;
                 dbContext.SaveChanges();
                 ViewBag.Message = "Congratulations, you signed contract with " + airline.Name + " airline in " + airline.Country + ".";
+                Session["HeaderStatistics"] = null;
             }
 
             return View("Contract", certificateView);
@@ -202,6 +204,7 @@ namespace FlightJobs.Controllers
                 dbContext.SaveChanges();
 
                 TempData["Message"] = "Congratulation you created a new airline. Now you can invite pilots to work with you.";
+                Session["HeaderStatistics"] = null;
             }
             else
             {
