@@ -17,7 +17,7 @@
 
 
 <div>
-    <p class="lead">First active one job to do and after start your flight in FlightJobs Connector X-Plane plugin.</p>
+    <hr />
     <div class="panel panel-default text-center" style="margin-bottom:5px">
         <p>
             <b>Your pedding jobs...</b>
@@ -49,6 +49,7 @@
                     @Html.DisplayNameFor(model => model.Jobs.First().Pay)
                 </th>
                 <th></th>
+                <th></th>
             </tr>
 
 
@@ -77,7 +78,9 @@
                     <td>
                         @Html.DisplayFor(modelItem => item.Pay)
                     </td>
-                    <td style="text-align:center;"><a data-toggle="confirmation" data-title="Remove Job?" href="Home/DeleteJob/@item.Id"><i class="glyphicon glyphicon-remove"></i></a></td>
+                    <td style="text-align:center;">
+                        <a data-toggle="confirmation"  data-title="Remove Job?" href="Home/DeleteJob/@item.Id"><i class="glyphicon glyphicon-remove"></i></a>
+                    </td>
                     <td>
                         @Html.ActionLink("Activate", "ActivateJob", new { jobId = item.Id })
                     </td>

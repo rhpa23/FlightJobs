@@ -2,9 +2,9 @@
 @model FlightJobs.Models.StatisticsDbModel
 <style>
     .tag {
-        position: absolute;
+        text-align:right;
         right: 10px;
-        top: 10px;
+        top: 0px;
         z-index: 1000;
         color: deepskyblue;
         font-size: small;
@@ -13,6 +13,6 @@
 @if (Model != null)
 {
     <div class="tag"  style="padding-top: 10px;">@Html.DisplayNameFor(model => model.BankBalance): @Html.DisplayFor(model => model.BankBalance)</div>
-    <div class="tag" style="padding-top:25px ">@Html.DisplayNameFor(model => model.PilotScore): @Html.DisplayFor(model => model.PilotScore)</div>
+    <div class="tag">@Html.DisplayNameFor(model => model.PilotScore): @Html.DisplayFor(model => model.PilotScore)</div>
 }
 
