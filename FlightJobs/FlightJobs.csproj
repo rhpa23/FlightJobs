@@ -297,6 +297,10 @@
     <Compile Include="Migrations\201802151834268_AirlineProperties.Designer.cs">
       <DependentUpon>201802151834268_AirlineProperties.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201804071202563_AddAlternative.cs" />
+    <Compile Include="Migrations\201804071202563_AddAlternative.Designer.cs">
+      <DependentUpon>201804071202563_AddAlternative.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\AirlineViewModel.cs" />
@@ -367,6 +371,7 @@
     <Content Include="Content\img\FlightJobsLogo0002.png" />
     <Content Include="Content\img\FlightJobsLogo0004.png" />
     <Content Include="Content\img\FlightJobsLogo0006.png" />
+    <Content Include="Content\img\FlightJobsWeekend.png" />
     <Content Include="Content\img\flybe.png" />
     <Content Include="Content\img\gol.png" />
     <Content Include="Content\img\HomeThum01.png" />
@@ -621,6 +626,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201802151834268_AirlineProperties.resx">
       <DependentUpon>201802151834268_AirlineProperties.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201804071202563_AddAlternative.resx">
+      <DependentUpon>201804071202563_AddAlternative.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

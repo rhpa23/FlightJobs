@@ -258,7 +258,6 @@ D:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.csproj.GenerateReso
 D:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.csproj.CoreCompileInputs.cache
 D:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.dll
 D:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.pdb
-D:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.csprojResolveAssemblyReference.cache
 C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\bin\ApplicationInsights.config
 C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\bin\Content\templates\Confirm Email.html
 C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\bin\FlightJobs.dll.config
@@ -384,3 +383,5 @@ D:\DotNetProjects\FlightJobs\FlightJobs\bin\Chart.Mvc.dll
 D:\DotNetProjects\FlightJobs\FlightJobs\bin\Chart.Mvc.pdb
 D:\DotNetProjects\FlightJobs\FlightJobs\bin\Chart.Mvc.xml
 D:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.Migrations.AirlineProperties.resources
+D:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.csprojResolveAssemblyReference.cache
+D:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.Migrations.AddAlternative.resources

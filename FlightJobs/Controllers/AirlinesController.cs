@@ -166,7 +166,7 @@ namespace FlightJobs.Controllers
             var user = dbContext.Users.FirstOrDefault(u => u.Email == User.Identity.Name);
             var statistics = dbContext.StatisticsDbModels.FirstOrDefault(s => s.User.Id == user.Id);
 
-            if (statistics != null && statistics.Airline != null && statistics.BankBalance >= airlinePrice)
+            if (statistics != null && statistics.BankBalance >= airlinePrice)
             {
                 var dbModel = new AirlineDbModel()
                 {
@@ -239,7 +239,7 @@ namespace FlightJobs.Controllers
             var user = dbContext.Users.FirstOrDefault(u => u.Email == User.Identity.Name);
             var statistics = dbContext.StatisticsDbModels.FirstOrDefault(s => s.User.Id == user.Id);
             
-            if (statistics != null && statistics.Airline != null && statistics.BankBalance >= airlinePrice)
+            if (statistics != null && statistics.BankBalance >= airlinePrice)
             {
 
                 var airlineModel = new AirlineViewModel();

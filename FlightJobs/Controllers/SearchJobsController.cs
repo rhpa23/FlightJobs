@@ -14,10 +14,10 @@ namespace FlightJobs.Controllers
 {
     public class SearchJobsController : Controller
     {
-        private double taxEcon = 0.008; // por NM
-        private double taxFirstC = 0.012; // por NM
+        private double taxEcon = 0.009; // por NM
+        private double taxFirstC = 0.013; // por NM
 
-        private double taxCargo = 0.0003; // por NM
+        private double taxCargo = 0.0004; // por NM
 
         private ApplicationUserManager _userManager;
 
@@ -185,6 +185,15 @@ namespace FlightJobs.Controllers
                     selJob.User = user;
                     selJob.StartTime = DateTime.Now;
                     selJob.EndTime = DateTime.Now;
+
+                    if (Session["JobSerachModel"] != null)
+                    {
+                        JobSerachModel searchModel = (JobSerachModel)Session["JobSerachModel"];
+                        if (!string.IsNullOrEmpty(searchModel.Alternative) && searchModel.Alternative.Length == 4)
+                        {
+                            selJob.AlternativeICAO = searchModel.Alternative.ToUpper();
+                        }
+                    }
 
                     dbContext.JobDbModels.Add(selJob);
                 }
