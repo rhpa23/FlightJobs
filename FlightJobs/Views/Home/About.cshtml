@@ -1,12 +1,76 @@
 ﻿@{
-    ViewBag.Title = "About";
+    ViewBag.Title = "Flight-Jobs.net";
 }
-<h2>@ViewBag.Title.</h2>
-<h3>@ViewBag.Message</h3>
-
+<br /><br />
+<img  class="img-responsive center-block" src="~/Content/img/FlightJobsLogo0001.png" />
+<h4 class="text-center">@ViewBag.Title for</h4><br />
+<img  class="img-responsive center-block" src="~/Content/img/XPlane_11_logo.png" />
+<hr />
+<br />
 <p>
-    This application for X-Plane 11 simulate pilot and airliners jobs. 
-    If you like it, please consider to make a <a target="_blank" href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=B2GHF8WFN95JW&lc=AU&item_name=Rudolf%20Hardy%20Plutarco%20Arag%C3%A3o&currency_code=USD&bn=PP-DonationsBF%3Abtn_donateCC_LG.gif%3ANonHosted">Donation</a>. 
-    Donations will be spent paying the servers costs.
-    
+    This application was made for personal and shared use freely for X-Plane community, 
+    with the objective to improve the simulation experience from the point of view of the Pilots. 
+    Other similar tools place the user as an entrepreneur in aviation, buying aircraft and limiting 
+    their flights by type of aviation. The intention of FlightJobs is to simulate the pilot's work, 
+    earning money and experience to be hired by an airline company. Base on that, this tool was 
+    constructed and can be improved with the community suggestions. 
 </p>
+<hr />
+<div>
+    <strong> Below this list of current features:</strong>
+    <ul>
+        <li>Access your detailed Logbook anywhere through a website</li>
+        <li>
+            Start and finish your Flight Jobs in a friendly X-Plane plugin
+            (The window will pop up when you set the parking brake to remind you to finish the flight job)
+        </li>
+        <li>Scores and bank balance</li> 
+        <li>Payload your aircraft with a purpose. Learn more about carrying capacity of an aircraft</li>
+        <li>Plan your future flights on a list of pending flight jobs to choose from</li>
+        <li>
+            Pilot Statistics with relevant pieces of information from your flights like:
+            flight time, number of flights, payload carried, last flight date, last aircraft and favorite airplane
+        </li>
+        <li>A chart showing the last 6 months of your flights to evaluate your virtual money evolution per month</li>
+        <li>Airlines to sign a contract using your scores and virtual money</li>
+        <li>Aviation certificates with tests</li>
+        <li>Airliners ranking of higher scores. All the hired can help improve the classification</li>
+        <li>Create your own Airline when you have enough virtual money to buy</li>
+    </ul>
+</div>
+<br />
+<div class="text-center">
+    <p>
+        <strong>This video tutorial will help to use the website and the plugin:</strong>
+    </p>
+    <p>
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/zOAvb1jQaGY" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+    </p>
+    
+</div>
+<br />
+<div>
+    <strong>Some validations were not shown in the tutorial to not extend the video:</strong>
+    <ul>
+        <li>You can't start a job flight if there is no job activated in the Pending list</li>
+        <li>You can't start a job flight if you don't have any job activated for the aircraft location in XP</li>
+        <li>You can't start a job flight if the airplane payload is different from the active flight</li>
+        <li>You can't finish a job flight if the aircraft location in XP is different from the active job destination</li>
+        <li>You can't finish a job flight if the airplane payload is different from the active flight</li>
+        <li>
+            You can't finish a job flight if you accelerate the sim time or change the aircraft location.<br />
+            The application will validate the arrival at the destination in a short time, based on the distance.
+        </li>
+    </ul>
+</div>
+
+@*<div class="text-center">
+    <img class="img-thumbnail" src="~/Content/img/HomeThum01.png" style="height:150px; padding:15px;" />
+    <img class="img-thumbnail" src="~/Content/img/HomeThum02.png" style="height:150px; padding:15px;" />
+    <img class="img-thumbnail" src="~/Content/img/HomeThum03.png" style="height:150px; padding:15px;" />
+    <img class="img-thumbnail" src="~/Content/img/logbook0001.jpg" style="height:150px; padding:15px;" />
+    <img class="img-thumbnail" src="~/Content/img/contract2.jpg" style="height:150px; padding:15px;"/>
+    <img class="img-thumbnail" src="~/Content/img/Flight Jobs Info.png" style="height:150px; padding:15px;" />
+    <img class="img-thumbnail" src="~/Content/img/ranking.png" style="height:150px; padding:15px;" />
+
+</div>*@

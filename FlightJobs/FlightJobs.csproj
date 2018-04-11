@@ -307,6 +307,7 @@
     <Compile Include="Models\CertificateViewModel.cs" />
     <Compile Include="Models\ChartViewModel.cs" />
     <Compile Include="Models\ConfirmJobsViewModel.cs" />
+    <Compile Include="Models\GeneralInfoViewModel.cs" />
     <Compile Include="Models\StatisticCertificatesDbModel.cs" />
     <Compile Include="Models\AirlineCertificatesDbModel.cs" />
     <Compile Include="Models\CertificateDbModel.cs" />
@@ -325,7 +326,9 @@
     <Compile Include="Util\DataConversion.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="App_Data\GlobalAirportDatabase.txt" />
+    <Content Include="App_Data\GlobalAirportDatabase.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Content\bootstrap-fileinput\css\fileinput-rtl.css" />
     <Content Include="Content\bootstrap-fileinput\css\fileinput-rtl.min.css" />
     <Content Include="Content\bootstrap-fileinput\css\fileinput.css" />
@@ -367,6 +370,7 @@
     <Content Include="Content\img\easyJet.jpg" />
     <Content Include="Content\img\email-icon.png" />
     <Content Include="Content\img\fb.png" />
+    <Content Include="Content\img\Flight Jobs Info.png" />
     <Content Include="Content\img\FlightJobsLogo0001.png" />
     <Content Include="Content\img\FlightJobsLogo0002.png" />
     <Content Include="Content\img\FlightJobsLogo0004.png" />
@@ -386,6 +390,7 @@
     <Content Include="Content\img\ryanair.png" />
     <Content Include="Content\img\southwest.png" />
     <Content Include="Content\img\TAP.jpg" />
+    <Content Include="Content\img\XPlane_11_logo.png" />
     <Content Include="Content\PagedList.css" />
     <Content Include="Content\templates\Confirm Email.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -565,6 +570,7 @@
     <Content Include="Views\Shared\_HeaderInfo.cshtml" />
     <Content Include="Views\Profile\ChartProfile.cshtml" />
     <Content Include="Views\Profile\Ranking.cshtml" />
+    <Content Include="Views\Home\GeneralInfo.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201710111859366_InitialCreate.resx">

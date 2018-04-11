@@ -14,10 +14,10 @@ namespace FlightJobs.Controllers
 {
     public class SearchJobsController : Controller
     {
-        private double taxEcon = 0.009; // por NM
-        private double taxFirstC = 0.013; // por NM
+        private double taxEcon = 0.008; // por NM
+        private double taxFirstC = 0.012; // por NM
 
-        private double taxCargo = 0.0004; // por NM
+        private double taxCargo = 0.0003; // por NM
 
         private ApplicationUserManager _userManager;
 
@@ -210,80 +210,82 @@ namespace FlightJobs.Controllers
             try
             {
                 var dep = AirportDatabaseFile.FindAirportInfo(model.Departure);
+                var arrival = AirportDatabaseFile.FindAirportInfo(model.Arrival);
 
                 var depCoord = new GeoCoordinate(dep.Latitude, dep.Longitude);
                 var randomPob = new Random();
                 var randomCargo = new Random();
                 int id = 0;
 
-                foreach (var arrival in AirportDatabaseFile.GetAllAirportInfo())
+                
+                var arrCoord = new GeoCoordinate(arrival.Latitude, arrival.Longitude);
+                var distMeters = depCoord.GetDistanceTo(arrCoord);
+                var distMiles = (int)DataConversion.ConvertMetersToMiles(distMeters);
+
+//                    if (distMiles >= model.MinRange && distMiles <= model.MaxRange && arrival.ICAO.ToUpper() != dep.ICAO.ToUpper() &&
+//                        arrival.ICAO.ToUpper() == model.Arrival.ToUpper())
+
+                if (arrival.ICAO.ToUpper() != dep.ICAO.ToUpper() && 
+                    arrival.ICAO.ToUpper() == model.Arrival.ToUpper())
                 {
-                    
-                    var arrCoord = new GeoCoordinate(arrival.Latitude, arrival.Longitude);
-                    var distMeters = depCoord.GetDistanceTo(arrCoord);
-                    var distMiles = (int)DataConversion.ConvertMetersToMiles(distMeters);
-                    if (distMiles >= model.MinRange && distMiles <= model.MaxRange && arrival.ICAO.ToUpper() != dep.ICAO.ToUpper() && 
-                        arrival.ICAO.ToUpper() == model.Arrival.ToUpper())
+                    int index = randomPob.Next(14, 25);
+
+                    for (int i = 0; i < index; i++)
                     {
-                        int index = randomPob.Next(14, 25);
+                        int pob = 0;
+                        int cargo = 0;
+                        long profit = 0;
+                        bool isFisrtClass = Convert.ToBoolean(randomPob.Next(2));
 
-                        for (int i = 0; i < index; i++)
+
+                        int isCargo = randomPob.Next(2);
+                        if (isCargo == 0)
                         {
-                            int pob = 0;
-                            int cargo = 0;
-                            long profit = 0;
-                            bool isFisrtClass = Convert.ToBoolean(randomPob.Next(2));
-
-
-                            int isCargo = randomPob.Next(2);
-                            if (isCargo == 0)
+                            if (model.AviationType == "GeneralAviation")
                             {
-                                if (model.AviationType == "GeneralAviation")
-                                {
-                                    cargo = randomCargo.Next(10, 300);
-                                }
-                                else if (model.AviationType == "AirTransport")
-                                {
-                                    cargo = randomCargo.Next(100, 3000);
-                                }
-                                else // HeavyAirTransport
-                                {
-                                    cargo = randomCargo.Next(800, 6000);
-                                }
+                                cargo = randomCargo.Next(10, 300);
+                            }
+                            else if (model.AviationType == "AirTransport")
+                            {
+                                cargo = randomCargo.Next(100, 3000);
+                            }
+                            else // HeavyAirTransport
+                            {
+                                cargo = randomCargo.Next(800, 6000);
+                            }
                                 
-                                profit = Convert.ToInt32(taxCargo * distMiles * cargo);
-                            }
-                            else
-                            {
-                                if (model.AviationType == "GeneralAviation")
-                                {
-                                    pob = randomPob.Next(1, 10);
-                                }
-                                else if (model.AviationType == "AirTransport")
-                                {
-                                    pob = randomPob.Next(10, 80);
-                                }
-                                else // HeavyAirTransport
-                                {
-                                    pob = randomPob.Next(50, 140);
-                                }
-
-                                profit = isFisrtClass ? Convert.ToInt32(taxFirstC * distMiles * pob) : Convert.ToInt32(taxEcon * distMiles * pob);
-                            }
-
-                            listBoardJobs.Add(new JobListModel()
-                            {
-                                Id = id++,
-                                Departure = dep,
-                                Arrival = arrival.ICAO,
-                                Dist = distMiles,
-                                Pax = pob,
-                                Cargo = cargo,
-                                PayloadView = (isCargo == 0) ? "[Cargo] " + cargo + " Kg" : (isFisrtClass) ? "[Premium] " + pob + " Pax" : "[Promo] " + pob + " Pax",
-                                Pay = profit,
-                                FirstClass = isFisrtClass
-                            });
+                            profit = Convert.ToInt32(taxCargo * distMiles * cargo);
                         }
+                        else
+                        {
+                            if (model.AviationType == "GeneralAviation")
+                            {
+                                pob = randomPob.Next(1, 10);
+                            }
+                            else if (model.AviationType == "AirTransport")
+                            {
+                                pob = randomPob.Next(10, 80);
+                            }
+                            else // HeavyAirTransport
+                            {
+                                pob = randomPob.Next(50, 140);
+                            }
+
+                            profit = isFisrtClass ? Convert.ToInt32(taxFirstC * distMiles * pob) : Convert.ToInt32(taxEcon * distMiles * pob);
+                        }
+
+                        listBoardJobs.Add(new JobListModel()
+                        {
+                            Id = id++,
+                            Departure = dep,
+                            Arrival = arrival.ICAO,
+                            Dist = distMiles,
+                            Pax = pob,
+                            Cargo = cargo,
+                            PayloadView = (isCargo == 0) ? "[Cargo] " + cargo + " Kg" : (isFisrtClass) ? "[Premium] " + pob + " Pax" : "[Promo] " + pob + " Pax",
+                            Pay = profit,
+                            FirstClass = isFisrtClass
+                        });
                     }
                 }
             }

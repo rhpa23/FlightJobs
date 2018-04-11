@@ -385,3 +385,4 @@ D:\DotNetProjects\FlightJobs\FlightJobs\bin\Chart.Mvc.xml
 D:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.Migrations.AirlineProperties.resources
 D:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.csprojResolveAssemblyReference.cache
 D:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.Migrations.AddAlternative.resources
+D:\DotNetProjects\FlightJobs\FlightJobs\bin\App_Data\GlobalAirportDatabase.txt

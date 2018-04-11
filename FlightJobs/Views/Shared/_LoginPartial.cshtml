@@ -14,6 +14,11 @@
                 <li>@{Html.RenderAction("RenderHeader", "Home");}</li>
             </ul>
         </li>
+        <li><a id="InfoPopover" href="#" data-html="True" style="width:150px" 
+               data-toggle="popover"  title="General info" 
+               data-trigger="focus" data-placement="bottom" 
+               data-content="Loading...">Info</a> 
+        </li>
         
     </ul>
     }
@@ -25,3 +30,24 @@ else
         <li>@Html.ActionLink("Logon", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })</li>
     </ul>
 }
+
+<script type='text/javascript'>
+
+    $(function () {
+        $('[data-toggle="popover"]').popover()
+    });
+
+    $('#InfoPopover').click(function () {
+        $.ajax({
+            url: '@Url.Action("GeneralInfo", "Home")',
+            type: "Get",
+            success: function (result) {
+                if (result != null && result != '') {
+                    $("#InfoPopover").attr("data-content", result);
+                    $("#InfoPopover").popover('show');
+                }
+            }
+        });
+        return false;
+    });
+</script>
