@@ -23,6 +23,9 @@ namespace FlightJobs.Models
         [DisplayName("Destination")]
         public string ArrivalICAO { get; set; }
 
+        [DisplayName("Alternative")]
+        public string AlternativeICAO { get; set; }
+
         [DisplayName("Distance")]
         public long Dist { get; set; }
 

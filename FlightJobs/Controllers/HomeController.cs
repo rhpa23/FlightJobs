@@ -65,6 +65,7 @@ namespace FlightJobs.Controllers
             return RedirectToAction("Index");
         }
 
+        [AllowAnonymous]
         public ActionResult About()
         {
             ViewBag.Message = "Version beta. This site is under construction.";
@@ -101,6 +102,21 @@ namespace FlightJobs.Controllers
             {
                 return PartialView("_HeaderInfo", Session["HeaderStatistics"]);
             }
+        }
+
+        public ActionResult GeneralInfo()
+        {
+            var dbContext = new ApplicationDbContext();
+            var inf = new GeneralInfoViewModel()
+            {
+                UsersCount = dbContext.Users.Count(),
+                UsersBankBalance = dbContext.StatisticsDbModels.Sum(x => x.BankBalance),
+                JobsActive = dbContext.JobDbModels.Count(x => x.IsActivated),
+                JobsDone = dbContext.JobDbModels.Count(x => x.IsDone),
+                JobsInProgress = dbContext.JobDbModels.Count(x => x.InProgress),
+            };
+            
+            return PartialView("GeneralInfo", inf);
         }
     }
 }

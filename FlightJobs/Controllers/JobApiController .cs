@@ -86,7 +86,8 @@ namespace FlightJobs.Controllers
                 var dbContext = new ApplicationDbContext();
                 var job = dbContext.JobDbModels.FirstOrDefault(j => j.User.Id == usarIdStr &&  
                                                                     j.IsActivated && j.InProgress &&
-                                                                    j.ArrivalICAO.ToLower() == icaoStr.ToLower());
+                                                                    (j.ArrivalICAO.ToLower() == icaoStr.ToLower() ||
+                                                                    j.AlternativeICAO.ToLower() == icaoStr.ToLower()));
 
 
                 if (job == null)

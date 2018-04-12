@@ -20,6 +20,10 @@ namespace FlightJobs.Models
         [StringLength(4, MinimumLength = 4, ErrorMessage = "Minimum 4 characters required")]
         public string Arrival { get; set; }
 
+        [DisplayName("Alternative")]
+        [StringLength(4, MinimumLength = 4, ErrorMessage = "Minimum 4 characters required")]
+        public string Alternative { get; set; }
+
         [DisplayName("Distance Range")]
         [Required(ErrorMessage = "An Range in nautical mile is required")]
         public long MinRange { get; set; }

@@ -417,6 +417,7 @@ namespace FlightJobs.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult LogOff()
         {
+            Session["HeaderStatistics"] = null;
             AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
             return RedirectToAction("Index", "Home");
         }

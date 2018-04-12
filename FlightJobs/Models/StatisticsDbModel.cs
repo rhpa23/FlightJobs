@@ -22,7 +22,7 @@ namespace FlightJobs.Models
         public long BankBalance { get; set; }
 
         [DisplayFormat(DataFormatString = "{0:G0}")]
-        [DisplayName("Pilot score")]
+        [DisplayName("Score")]
         public long PilotScore { get; set; }
 
         [DisplayName("Logo")]

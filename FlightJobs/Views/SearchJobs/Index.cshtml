@@ -40,30 +40,17 @@
                     @Html.LabelFor(model => model.Arrival, htmlAttributes: new { @class = "control-label" })
                     @Html.EditorFor(model => model.Arrival, new { htmlAttributes = new { placeholder = "ICAO e.g. 'ED'", @class = "form-control uppercase", @maxlength = "4" } })
                     @Html.ValidationMessageFor(model => model.Arrival, "", new { @class = "text-danger" })
-                </div>
             </div>
+            
+        </div>
         <br />
         <div class="form-group">
-            <div class="row" style="margin-left:0px;">
-                <div class="col-md-5" style="padding-right:0px;">
-                    <label> Distance range (Min/Max) </label>
-                </div>
+            <div class="col-md-2">
+                @Html.LabelFor(model => model.Alternative, htmlAttributes: new { @class = "control-label" })
+                @Html.EditorFor(model => model.Alternative, new { htmlAttributes = new { placeholder = "ICAO", @class = "form-control uppercase", @maxlength = "4" } })
+                @Html.ValidationMessageFor(model => model.Alternative, "", new { @class = "text-danger" })
             </div>
-            <div class="col-md-2" style="padding-right:0px;">
-                @Html.EditorFor(model => model.MinRange, new { htmlAttributes = new { @class = "form-control", @maxlength = "4", @minlength = "1" } })
-            </div>
-            <div class="col-sm-1" style="padding-left:0px; padding-right:0px; width:auto;">
-                
-                <img src="~/Content/img/line.png" />
-            </div>
-            <div class="col-md-2" style="padding-left:0px">
-                
-                @Html.EditorFor(model => model.MaxRange, new { htmlAttributes = new { @class = "form-control", @maxlength = "4", @minlength = "1" } })
-            </div>
-
-
-                @Html.ValidationMessageFor(model => model.MaxRange, "", new { @class = "text-danger" })
-            </div>
+        </div>
 
         <br />
 

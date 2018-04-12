@@ -5,12 +5,21 @@
     {
     @Html.AntiForgeryToken()
 
-    <ul class="nav navbar-nav navbar-right">
-        <li>
-            @Html.ActionLink(User.Identity.GetUserName(), "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage" })
+    <ul class="nav navbar-nav navbar-left ">
+        <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">@User.Identity.GetUserName()<span class="caret"></span></a>
+            <ul class="dropdown-menu"  style="width:190px;">
+                <li>@Html.ActionLink("User manager", "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage" })</li>
+                <li><a href="javascript:document.getElementById('logoutForm').submit()">Logoff</a></li>
+                <li>@{Html.RenderAction("RenderHeader", "Home");}</li>
+            </ul>
         </li>
-        <li><a href="javascript:document.getElementById('logoutForm').submit()">Logoff</a></li>
-        <li style="padding-left:50px; padding-right:15px;" >@{Html.RenderAction("RenderHeader", "Home");}</li>
+        <li><a id="InfoPopover" href="#" data-html="True" style="width:150px" 
+               data-toggle="popover"  title="General info" 
+               data-trigger="focus" data-placement="bottom" 
+               data-content="Loading...">Info</a> 
+        </li>
+        
     </ul>
     }
 }
@@ -21,3 +30,24 @@ else
         <li>@Html.ActionLink("Logon", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })</li>
     </ul>
 }
+
+<script type='text/javascript'>
+
+    $(function () {
+        $('[data-toggle="popover"]').popover()
+    });
+
+    $('#InfoPopover').click(function () {
+        $.ajax({
+            url: '@Url.Action("GeneralInfo", "Home")',
+            type: "Get",
+            success: function (result) {
+                if (result != null && result != '') {
+                    $("#InfoPopover").attr("data-content", result);
+                    $("#InfoPopover").popover('show');
+                }
+            }
+        });
+        return false;
+    });
+</script>
