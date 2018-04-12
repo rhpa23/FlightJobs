@@ -98,14 +98,19 @@
 
     });
     $('#alternative-tips-button').click(function () {
+
         $("#alternative-tips-table").toggle(500);
         $.ajax({
             url: '@Url.Action("AlternativeTips", "SearchJobs")',
             type: "Get",
-            data: { destination: $('#Arrival').val() },
+            data: { destination: $('#Arrival').val(), range: 40 },
             success: function (result) {
                 if (result != null && result != '') {
                     $("#alternative-tips-table").html(result);
+                }
+                else {
+                    $("#alternative-tips-table").hide();
+                    $("#Arrival").focus();
                 }
             }
         });

@@ -305,36 +305,43 @@ namespace FlightJobs.Controllers
             return listBoardJobs.OrderBy(j => j.Arrival).ThenBy(x => x.PayloadView).ToList();
         }
 
-        public ActionResult AlternativeTips(string destination)
+        public ActionResult AlternativeTips(string destination, int range)
         {
             var listTips = new List<SearchJobTipsViewModel>();
-            var destinationInfo = AirportDatabaseFile.FindAirportInfo(destination);
-            var destCoord = new GeoCoordinate(destinationInfo.Latitude, destinationInfo.Longitude);
 
-            foreach (var airportInfo in AirportDatabaseFile.GetAllAirportInfo())
+            if (!string.IsNullOrEmpty(destination) && destination.Length > 2)
             {
-                if (airportInfo.ICAO.ToUpper() != destination.ToUpper())
-                {
-                    var airportInfoCoord = new GeoCoordinate(airportInfo.Latitude, airportInfo.Longitude);
-                    var distMeters = destCoord.GetDistanceTo(airportInfoCoord);
-                    var distMiles = (int)DataConversion.ConvertMetersToMiles(distMeters);
+                var destinationInfo = AirportDatabaseFile.FindAirportInfo(destination);
+                var destCoord = new GeoCoordinate(destinationInfo.Latitude, destinationInfo.Longitude);
 
-                    if (distMiles < 40)
+                foreach (var airportInfo in AirportDatabaseFile.GetAllAirportInfo().OrderByDescending(x => x.RunwaySize))
+                {
+                    if (airportInfo.ICAO.ToUpper() != destination.ToUpper())
                     {
-                        var viewModel = new SearchJobTipsViewModel()
+                        var airportInfoCoord = new GeoCoordinate(airportInfo.Latitude, airportInfo.Longitude);
+                        var distMeters = destCoord.GetDistanceTo(airportInfoCoord);
+                        var distMiles = (int)DataConversion.ConvertMetersToMiles(distMeters);
+
+                        if (distMiles < range)
                         {
-                            AirportICAO = airportInfo.ICAO,
-                            AirportName = airportInfo.Name,
-                            Distance = distMiles,
-                            AirportElevation = airportInfo.Elevation,
-                            AirportRunwaySize = airportInfo.RunwaySize,
-                            AirportTrasition = airportInfo.Trasition,
-                        };
-                        listTips.Add(viewModel);
+                            var viewModel = new SearchJobTipsViewModel()
+                            {
+                                AirportICAO = airportInfo.ICAO,
+                                AirportName = airportInfo.Name,
+                                Distance = distMiles,
+                                AirportElevation = airportInfo.Elevation,
+                                AirportRunwaySize = airportInfo.RunwaySize,
+                                AirportTrasition = airportInfo.Trasition,
+                            };
+                            listTips.Add(viewModel);
+                        }
                     }
                 }
             }
-
+            else
+            {
+                return null;
+            }
             
             return PartialView("AlternativeTipsPartialView", listTips);
         }
