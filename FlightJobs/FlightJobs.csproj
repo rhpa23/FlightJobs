@@ -308,6 +308,7 @@
     <Compile Include="Models\ChartViewModel.cs" />
     <Compile Include="Models\ConfirmJobsViewModel.cs" />
     <Compile Include="Models\GeneralInfoViewModel.cs" />
+    <Compile Include="Models\SearchJobTipsViewModel.cs" />
     <Compile Include="Models\StatisticCertificatesDbModel.cs" />
     <Compile Include="Models\AirlineCertificatesDbModel.cs" />
     <Compile Include="Models\CertificateDbModel.cs" />
@@ -360,6 +361,7 @@
     <Content Include="Content\img\austrian.png" />
     <Content Include="Content\img\azul.jpg" />
     <Content Include="Content\img\banner0001.jpg" />
+    <Content Include="Content\img\bell.png" />
     <Content Include="Content\img\britishairways.png" />
     <Content Include="Content\img\certificate.png" />
     <Content Include="Content\img\contract2.jpg" />
@@ -571,6 +573,7 @@
     <Content Include="Views\Profile\ChartProfile.cshtml" />
     <Content Include="Views\Profile\Ranking.cshtml" />
     <Content Include="Views\Home\GeneralInfo.cshtml" />
+    <Content Include="Views\SearchJobs\AlternativeTipsPartialView.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201710111859366_InitialCreate.resx">

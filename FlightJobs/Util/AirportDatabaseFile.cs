@@ -23,28 +23,54 @@ namespace FlightJobs.Util
             var airportInfo = lines.First(line => Regex.IsMatch(line, "(^A,"+ code.ToUpper() +".*$)"));
             Console.WriteLine(airportInfo);
 
-            string[] infoArray = airportInfo.Split(',');
+            return BindModel(airportInfo);
+        }
+
+        private static AirportModel BindModel(string line)
+        {
+            string[] lineArray = line.Split(',');
 
             double lat = 0;
             double log = 0;
-            if (!isPositionEmpty(infoArray))
+            if (!isPositionEmpty(lineArray))
             {
-                lat = double.Parse(infoArray[3]);
-                log = double.Parse(infoArray[4]);
+                lat = double.Parse(lineArray[3]);
+                log = double.Parse(lineArray[4]);
             }
 
             AirportModel airportBase = new AirportModel()
             {
-                ICAO = infoArray[1],
+                ICAO = lineArray[1],
                 IATA = "",
-                Name = infoArray[2],
-                City = infoArray[2],
+                Name = lineArray[2],
+                City = lineArray[2],
                 Country = "",
                 Latitude = lat,
                 Longitude = log,
-                Altitude = string.IsNullOrEmpty(infoArray[5]) ? 0 : int.Parse(infoArray[5])
+                Elevation = string.IsNullOrEmpty(lineArray[5]) ? 0 : int.Parse(lineArray[5]),
+                Trasition = string.IsNullOrEmpty(lineArray[6]) ? 0 : int.Parse(lineArray[6]),
+                RunwaySize = string.IsNullOrEmpty(lineArray[8]) ? 0 : int.Parse(lineArray[8]),
             };
             return airportBase;
+        }
+
+        public static List<AirportModel> GetAllAirportInfo()
+        {
+            var list = new List<AirportModel>();
+            foreach (var airportInfo in File.ReadLines(fileName).Where(s => s.StartsWith("A,")))
+            {
+                try
+                {
+                    var model = BindModel(airportInfo);
+
+                    list.Add(model);
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+            }
+            return list;
         }
 
         private static bool isPositionEmpty(string[] infoArray)

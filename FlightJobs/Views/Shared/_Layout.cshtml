@@ -99,7 +99,24 @@
             <br /><br />
         
     </footer>
-
+    <style>
+        .fixed-footer {
+            position: fixed;
+            height: 30px;
+            bottom: 0;
+            width: 100%;
+            background-color: #222;
+            color:aliceblue;
+            padding:2px;
+        }
+    </style>
+    <div class="fixed-footer">
+        <div class="text-center" >
+            <img src="~/Content/img/bell.png" style="width:35px; margin-top: -15px;" />
+            Fixed the profit for General Aviation jobs. Now enthusiasts of this type of flight can generate jobs more rentable.
+        </div>
+    </div>
+     
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)

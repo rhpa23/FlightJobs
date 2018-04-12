@@ -1,0 +1,71 @@
+﻿@model IEnumerable<FlightJobs.Models.SearchJobTipsViewModel>
+
+
+<div class="panel panel-default" style="font-size:xx-small;  ">
+@if (Model.Count() > 0)
+{
+    <table class="table table-sm table-striped table-bordered table-hover" style="padding:0px">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.AirportICAO)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.AirportName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Distance)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.AirportRunwaySize)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.AirportElevation)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.AirportTrasition)
+            </th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr style="cursor:pointer;">
+                <td>
+                    @Html.DisplayFor(modelItem => item.AirportICAO)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.AirportName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Distance) NM
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.AirportRunwaySize) ft
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.AirportElevation) ft
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.AirportTrasition) ft
+                </td>
+            </tr>
+        }
+
+    </table>
+}
+else
+{
+    <h3>No alternatives found.</h3>
+}
+</div>
+
+<script type='text/javascript'>
+
+    $(document).ready(function () {
+        $('table tr').click(function (event) {
+            var value = $(this).closest('tr').children('td:first').text();
+            $('#Alternative').val(value.trim());
+            $("#alternative-tips-table").hide(500);
+        });
+    });
+
+</script>

@@ -17,7 +17,11 @@ namespace FlightJobs.Models
         public double Latitude { get; set; }
         public double Longitude { get; set; }
 
-        public int Altitude { get; set; }
+        public int RunwaySize { get; set; }
+
+        public int Elevation { get; set; }
+
+        public int Trasition { get; set; }
 
         /*public List<AirportModel> GetAll()
         {

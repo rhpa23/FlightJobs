@@ -16,8 +16,11 @@ namespace FlightJobs.Controllers
     {
         private double taxEcon = 0.008; // por NM
         private double taxFirstC = 0.012; // por NM
-
         private double taxCargo = 0.0003; // por NM
+
+        private double taxEconGE = 0.085; // por NM
+        private double taxFirstGE = 0.095; // por NM
+        private double taxCargoGE = 0.012; // por NM
 
         private ApplicationUserManager _userManager;
 
@@ -228,7 +231,10 @@ namespace FlightJobs.Controllers
                 if (arrival.ICAO.ToUpper() != dep.ICAO.ToUpper() && 
                     arrival.ICAO.ToUpper() == model.Arrival.ToUpper())
                 {
+
                     int index = randomPob.Next(14, 25);
+                    if (model.AviationType == "GeneralAviation")
+                        index = randomPob.Next(9, 16);
 
                     for (int i = 0; i < index; i++)
                     {
@@ -244,34 +250,36 @@ namespace FlightJobs.Controllers
                             if (model.AviationType == "GeneralAviation")
                             {
                                 cargo = randomCargo.Next(10, 300);
+                                profit = Convert.ToInt32(taxCargoGE * distMiles * cargo);
                             }
                             else if (model.AviationType == "AirTransport")
                             {
                                 cargo = randomCargo.Next(100, 3000);
+                                profit = Convert.ToInt32(taxCargo * distMiles * cargo);
                             }
                             else // HeavyAirTransport
                             {
                                 cargo = randomCargo.Next(800, 6000);
+                                profit = Convert.ToInt32(taxCargo * distMiles * cargo);
                             }
-                                
-                            profit = Convert.ToInt32(taxCargo * distMiles * cargo);
                         }
                         else
                         {
                             if (model.AviationType == "GeneralAviation")
                             {
                                 pob = randomPob.Next(1, 10);
+                                profit = isFisrtClass ? Convert.ToInt32(taxFirstGE * distMiles * pob) : Convert.ToInt32(taxEconGE * distMiles * pob);
                             }
                             else if (model.AviationType == "AirTransport")
                             {
                                 pob = randomPob.Next(10, 80);
+                                profit = isFisrtClass ? Convert.ToInt32(taxFirstC * distMiles * pob) : Convert.ToInt32(taxEcon * distMiles * pob);
                             }
                             else // HeavyAirTransport
                             {
                                 pob = randomPob.Next(50, 140);
+                                profit = isFisrtClass ? Convert.ToInt32(taxFirstC * distMiles * pob) : Convert.ToInt32(taxEcon * distMiles * pob);
                             }
-
-                            profit = isFisrtClass ? Convert.ToInt32(taxFirstC * distMiles * pob) : Convert.ToInt32(taxEcon * distMiles * pob);
                         }
 
                         listBoardJobs.Add(new JobListModel()
@@ -295,6 +303,40 @@ namespace FlightJobs.Controllers
             }
 
             return listBoardJobs.OrderBy(j => j.Arrival).ThenBy(x => x.PayloadView).ToList();
+        }
+
+        public ActionResult AlternativeTips(string destination)
+        {
+            var listTips = new List<SearchJobTipsViewModel>();
+            var destinationInfo = AirportDatabaseFile.FindAirportInfo(destination);
+            var destCoord = new GeoCoordinate(destinationInfo.Latitude, destinationInfo.Longitude);
+
+            foreach (var airportInfo in AirportDatabaseFile.GetAllAirportInfo())
+            {
+                if (airportInfo.ICAO.ToUpper() != destination.ToUpper())
+                {
+                    var airportInfoCoord = new GeoCoordinate(airportInfo.Latitude, airportInfo.Longitude);
+                    var distMeters = destCoord.GetDistanceTo(airportInfoCoord);
+                    var distMiles = (int)DataConversion.ConvertMetersToMiles(distMeters);
+
+                    if (distMiles < 40)
+                    {
+                        var viewModel = new SearchJobTipsViewModel()
+                        {
+                            AirportICAO = airportInfo.ICAO,
+                            AirportName = airportInfo.Name,
+                            Distance = distMiles,
+                            AirportElevation = airportInfo.Elevation,
+                            AirportRunwaySize = airportInfo.RunwaySize,
+                            AirportTrasition = airportInfo.Trasition,
+                        };
+                        listTips.Add(viewModel);
+                    }
+                }
+            }
+
+            
+            return PartialView("AlternativeTipsPartialView", listTips);
         }
 
     }

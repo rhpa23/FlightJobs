@@ -50,8 +50,13 @@
                 @Html.EditorFor(model => model.Alternative, new { htmlAttributes = new { placeholder = "ICAO", @class = "form-control uppercase", @maxlength = "4" } })
                 @Html.ValidationMessageFor(model => model.Alternative, "", new { @class = "text-danger" })
             </div>
-        </div>
+            
+            <div  class="col-xs-1" style="padding:0px; width:auto;">
+                <input id="alternative-tips-button" type="button" value="Tips" class="btn btn-info" style="margin-top:26px" />
+            </div>
+            <div id="alternative-tips-table" style="display: none;" class="col-md-6">Loading...</div>
 
+        </div>
         <br />
 
         <div class="form-group">
@@ -90,6 +95,23 @@
         var arr = $('#Arrival').val();
         $('#Departure').val(arr);
         $('#Arrival').val(dep);
-        
+
     });
+    $('#alternative-tips-button').click(function () {
+        $("#alternative-tips-table").toggle(500);
+        $.ajax({
+            url: '@Url.Action("AlternativeTips", "SearchJobs")',
+            type: "Get",
+            data: { destination: $('#Arrival').val() },
+            success: function (result) {
+                if (result != null && result != '') {
+                    $("#alternative-tips-table").html(result);
+                }
+            }
+        });
+        return false;
+
+    });
+   
+
 </script>
