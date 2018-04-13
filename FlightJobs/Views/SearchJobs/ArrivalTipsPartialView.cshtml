@@ -14,7 +14,7 @@
 <div class="card">
     @if (Model.Count() > 0)
     {
-        <table class="table table-sm table-striped table-bordered table-hover" style="padding:0px">
+        <table class="table table-sm table-condensed table-bordered table-hover" style="padding:0px">
             <tr>
                 <th>
                     @Html.DisplayNameFor(model => model.AirportICAO)
@@ -34,36 +34,54 @@
                 <th>
                     @Html.DisplayNameFor(model => model.Pax)
                 </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Cargo)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Pay)
+                </th>
             </tr>
 
             @foreach (var item in Model)
             {
-                <tr style="cursor:pointer;">
+            <tr style="cursor:pointer;">
+                <td>
+                    @Html.DisplayFor(modelItem => item.AirportICAO)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.AirportName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Distance) NM
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.AirportRunwaySize) ft
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.AirportElevation) ft
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Pax)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Cargo)
+                </td>
+                <td>
+                    @string.Format("{0:C}", item.Pay)
+                </td>
+                @if (item.IdJob > 0)
+                {
                     <td>
-                        @Html.DisplayFor(modelItem => item.AirportICAO)
+                        <input onclick="location.href='@Url.Action("CloneJob", "SearchJobs", new { jobId = @item.IdJob })'" type="button" value="Clone" class="btn btn-default btn-xs" style="margin:0px; padding:0px;" />
                     </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.AirportName)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Distance) NM
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.AirportRunwaySize) ft
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.AirportElevation) ft
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Pax)
-                    </td>
-                </tr>
+                }
+            </tr>
             }
 
         </table>
         <div class="row" style="margin-right:0px;">
-            <div class="col-md-4">
-                <input id="arrival-tips-update" type="button" value="Update" class="btn btn-info btn-xs pull-right" />
+            <div class="col-md-12">
+                <input id="arrival-tips-update" type="button" value="Reload" class="btn btn-info btn-xs pull-right" />
             </div>
         </div>
     }
@@ -97,5 +115,7 @@
         return false;
 
     });
+
+
 
 </script>

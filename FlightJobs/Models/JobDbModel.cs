@@ -105,5 +105,23 @@ namespace FlightJobs.Models
         }
 
         public virtual ApplicationUser User { get; set; }
+
+        public static JobDbModel Clone(JobDbModel job, ApplicationUser user)
+        {
+            return new JobDbModel()
+            {
+                AlternativeICAO = job.AlternativeICAO,
+                DepartureICAO = job.DepartureICAO,
+                ArrivalICAO = job.ArrivalICAO,
+                Cargo = job.Cargo,
+                Dist = job.Dist,
+                FirstClass = job.FirstClass,
+                Pax = job.Pax,
+                Pay = job.Pay,
+                User = user,
+                StartTime = DateTime.Now,
+                EndTime = DateTime.Now,
+        };
+        }
     }
 }

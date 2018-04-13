@@ -362,6 +362,7 @@ namespace FlightJobs.Controllers
                     var jobAirportInfo = AirportDatabaseFile.FindAirportInfo(job.ArrivalICAO);
                     listTips.Add(new SearchJobTipsViewModel()
                     {
+                        IdJob = job.Id,
                         AirportICAO = job.ArrivalICAO,
                         Cargo = job.Cargo,
                         Pax = job.Pax,
@@ -413,6 +414,20 @@ namespace FlightJobs.Controllers
             }
 
             return PartialView("ArrivalTipsPartialView", listTips);
+        }
+
+        public ActionResult CloneJob(long jobId)
+        {
+            var dbContext = new ApplicationDbContext();
+            var user = dbContext.Users.FirstOrDefault(u => u.Email == User.Identity.Name);
+            var job = dbContext.JobDbModels.FirstOrDefault(x => x.Id == jobId);
+
+            var cloneJob = JobDbModel.Clone(job, user);
+
+            dbContext.JobDbModels.Add(cloneJob);
+            dbContext.SaveChanges();
+
+            return RedirectToAction("Index", "Home");
         }
 
 

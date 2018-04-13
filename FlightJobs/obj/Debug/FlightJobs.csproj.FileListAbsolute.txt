@@ -386,3 +386,5 @@ D:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.Migrations.AirlineP
 D:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.Migrations.AddAlternative.resources
 D:\DotNetProjects\FlightJobs\FlightJobs\bin\App_Data\GlobalAirportDatabase.txt
 D:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.csprojResolveAssemblyReference.cache
+C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\bin\App_Data\GlobalAirportDatabase.txt
+C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\obj\Debug\FlightJobs.Migrations.AddAlternative.resources

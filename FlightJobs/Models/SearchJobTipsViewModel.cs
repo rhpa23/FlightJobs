@@ -8,6 +8,8 @@ namespace FlightJobs.Models
 {
     public class SearchJobTipsViewModel
     {
+        public long IdJob { get; set; }
+
         [Display(Name = "ICAO")]
         public string AirportICAO { get; set; }
 
