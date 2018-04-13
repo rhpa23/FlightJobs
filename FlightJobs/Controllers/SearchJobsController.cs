@@ -353,6 +353,7 @@ namespace FlightJobs.Controllers
             if (!string.IsNullOrEmpty(departure) && departure.Length > 2)
             {
                 var departureInfo = AirportDatabaseFile.FindAirportInfo(departure);
+                var departureCoord = new GeoCoordinate(departureInfo.Latitude, departureInfo.Longitude);
                 var dbContext = new ApplicationDbContext();
                 var user = dbContext.Users.FirstOrDefault(u => u.Email == User.Identity.Name);
                 var allUserJobs = FilterJobs(user, "");
@@ -389,8 +390,7 @@ namespace FlightJobs.Controllers
                         job.ArrivalICAO != departure)
                     {
                         var jobArrivalAirportInfo = AirportDatabaseFile.FindAirportInfo(job.ArrivalICAO);
-
-                        var departureCoord = new GeoCoordinate(departureInfo.Latitude, departureInfo.Longitude);
+                        
                         var arrivalCoord = new GeoCoordinate(jobArrivalAirportInfo.Latitude, jobArrivalAirportInfo.Longitude);
                         var distMeters = departureCoord.GetDistanceTo(arrivalCoord);
                         var distMiles = (int)DataConversion.ConvertMetersToMiles(distMeters);
@@ -406,7 +406,42 @@ namespace FlightJobs.Controllers
                         });
                     }
                 }
-                
+
+                if (listTips.Count < 25)
+                {
+                    var tempListTips = new List<SearchJobTipsViewModel>();
+                    foreach (var airportInfo in AirportDatabaseFile.GetAllAirportInfo())
+                    {
+                        if (airportInfo.ICAO.ToUpper() != departureInfo.ICAO.ToUpper())
+                        {
+                            var airportInfoCoord = new GeoCoordinate(airportInfo.Latitude, airportInfo.Longitude);
+                            var distMeters = departureCoord.GetDistanceTo(airportInfoCoord);
+                            var distMiles = (int)DataConversion.ConvertMetersToMiles(distMeters);
+
+                            if (distMiles < 600)
+                            {
+                                var viewModel = new SearchJobTipsViewModel()
+                                {
+                                    AirportICAO = airportInfo.ICAO,
+                                    AirportName = airportInfo.Name,
+                                    Distance = distMiles,
+                                    AirportElevation = airportInfo.Elevation,
+                                    AirportRunwaySize = airportInfo.RunwaySize,
+                                    AirportTrasition = airportInfo.Trasition,
+                                };
+                                tempListTips.Add(viewModel);
+                            }
+                        }
+                        var random = new Random();
+                        var randomListTips = new List<SearchJobTipsViewModel>();
+                        for (int i = tempListTips.Count - 1; i >= 1; i--)
+                        {
+                            int other = random.Next(0, i + 1);
+                            randomListTips.Add(tempListTips[other]);
+                        }
+                        listTips.AddRange(randomListTips.Take(5));
+                    }
+                }
             }
             else
             {

@@ -210,7 +210,7 @@
 
                         /// payment ##############
                         var payment = $(this).closest('tr').find('td').eq(4).text();
-                        var paymentNumber = payment.match(/\d+/);
+                        var paymentNumber = payment.replace(',', '').replace('.', '').match(/\d+/);
 
                         var p = parseFloat($('#paymentSummary').val());
                         if (p) {
