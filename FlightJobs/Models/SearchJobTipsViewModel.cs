@@ -23,15 +23,15 @@ namespace FlightJobs.Models
         [Display(Name = "Trasition")]
         public int AirportTrasition { get; set; }
 
-        public int Distance { get; set; }
+        public long Distance { get; set; }
 
-        public int Pax { get; set; }
+        public long Pax { get; set; }
 
-        public int Cargo { get; set; }
+        public long Cargo { get; set; }
 
-        public int Payload { get; set; }
+        public long Payload { get; set; }
 
-        public int Pay { get; set; }
+        public long Pay { get; set; }
 
     }
 }

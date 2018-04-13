@@ -346,5 +346,87 @@ namespace FlightJobs.Controllers
             return PartialView("AlternativeTipsPartialView", listTips);
         }
 
+        public ActionResult ArrivalTips(string departure)
+        {
+            var listTips = new List<SearchJobTipsViewModel>();
+
+            if (!string.IsNullOrEmpty(departure) && departure.Length > 2)
+            {
+                var departureInfo = AirportDatabaseFile.FindAirportInfo(departure);
+                var dbContext = new ApplicationDbContext();
+                var user = dbContext.Users.FirstOrDefault(u => u.Email == User.Identity.Name);
+                var allUserJobs = FilterJobs(user, "");
+                var filteredUserJobs = FilterJobs(user, departure);
+                foreach (var job in filteredUserJobs)
+                {
+                    var jobAirportInfo = AirportDatabaseFile.FindAirportInfo(job.ArrivalICAO);
+                    listTips.Add(new SearchJobTipsViewModel()
+                    {
+                        AirportICAO = job.ArrivalICAO,
+                        Cargo = job.Cargo,
+                        Pax = job.Pax,
+                        Pay = job.Pay,
+                        Payload = job.Payload,
+                        AirportName = jobAirportInfo.Name,
+                        AirportElevation = jobAirportInfo.Elevation,
+                        AirportRunwaySize = jobAirportInfo.RunwaySize,
+                        AirportTrasition = jobAirportInfo.Trasition,
+                        Distance = job.Dist
+                    });
+                }
+
+                var countRandon = new Random();
+                var indexRandon = new Random();
+                
+                var index = indexRandon.Next(1, allUserJobs.Count() -1);
+
+                var count = countRandon.Next(1, allUserJobs.Count() - index);
+
+                foreach (var job in allUserJobs.GetRange(index, count).Take(7))
+                {
+                    if (listTips.Exists(x => x.AirportICAO != job.ArrivalICAO))
+                    {
+                        var jobArrivalAirportInfo = AirportDatabaseFile.FindAirportInfo(job.ArrivalICAO);
+
+                        var departureCoord = new GeoCoordinate(departureInfo.Latitude, departureInfo.Longitude);
+                        var arrivalCoord = new GeoCoordinate(jobArrivalAirportInfo.Latitude, jobArrivalAirportInfo.Longitude);
+                        var distMeters = departureCoord.GetDistanceTo(arrivalCoord);
+                        var distMiles = (int)DataConversion.ConvertMetersToMiles(distMeters);
+
+                        listTips.Add(new SearchJobTipsViewModel()
+                        {
+                            AirportICAO = job.ArrivalICAO,
+                            AirportName = jobArrivalAirportInfo.Name,
+                            AirportElevation = jobArrivalAirportInfo.Elevation,
+                            AirportRunwaySize = jobArrivalAirportInfo.RunwaySize,
+                            AirportTrasition = jobArrivalAirportInfo.Trasition,
+                            Distance = distMiles
+                        });
+                    }
+                }
+                
+            }
+            else
+            {
+                return null;
+            }
+
+            return PartialView("ArrivalTipsPartialView", listTips);
+        }
+
+
+        private List<JobDbModel> FilterJobs(ApplicationUser user, string departureICAO)
+        {
+            var dbContext = new ApplicationDbContext();
+            var allUserJobs = dbContext.JobDbModels.Where(j => j.IsDone && j.User.Id == user.Id);
+            if (!string.IsNullOrEmpty(departureICAO))
+            {
+                return allUserJobs.Where(j => j.DepartureICAO.Contains(departureICAO)).ToList();
+            }
+            else
+            {
+                return allUserJobs.ToList();
+            }
+        }
     }
 }

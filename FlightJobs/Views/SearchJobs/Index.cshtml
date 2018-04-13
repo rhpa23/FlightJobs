@@ -41,6 +41,11 @@
                     @Html.EditorFor(model => model.Arrival, new { htmlAttributes = new { placeholder = "ICAO e.g. 'ED'", @class = "form-control uppercase", @maxlength = "4" } })
                     @Html.ValidationMessageFor(model => model.Arrival, "", new { @class = "text-danger" })
             </div>
+
+            <div class="col-xs-1" style="padding:0px; width:auto;">
+                <input id="arrival-tips-button" type="button" value="Tips" class="btn btn-info btn-xs" style="margin-top:26px" />
+            </div>
+            <div id="arrival-tips-table" style="display: none;" class="col-md-6">Loading...</div>
             
         </div>
         <br />
@@ -52,7 +57,7 @@
             </div>
             
             <div  class="col-xs-1" style="padding:0px; width:auto;">
-                <input id="alternative-tips-button" type="button" value="Tips" class="btn btn-info" style="margin-top:26px" />
+                <input id="alternative-tips-button" type="button" value="Tips" class="btn btn-info btn-xs" style="margin-top:26px" />
             </div>
             <div id="alternative-tips-table" style="display: none;" class="col-md-6">Loading...</div>
 
@@ -97,6 +102,7 @@
         $('#Arrival').val(dep);
 
     });
+
     $('#alternative-tips-button').click(function () {
 
         $("#alternative-tips-table").toggle(500);
@@ -117,6 +123,27 @@
         return false;
 
     });
-   
+
+    $('#arrival-tips-button').click(function () {
+
+        $("#arrival-tips-table").toggle(500);
+        $.ajax({
+            url: '@Url.Action("ArrivalTips", "SearchJobs")',
+            type: "Get",
+            data: { departure: $('#Departure').val() },
+            success: function (result) {
+                if (result != null && result != '') {
+                    $("#arrival-tips-table").html(result);
+                }
+                else {
+                    $("#arrival-tips-table").hide();
+                    $("#Departure").focus();
+                }
+            }
+        });
+        return false;
+
+    });
+
 
 </script>
