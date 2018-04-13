@@ -384,7 +384,8 @@ namespace FlightJobs.Controllers
 
                 foreach (var job in allUserJobs.GetRange(index, count).Take(7))
                 {
-                    if (listTips.Exists(x => x.AirportICAO != job.ArrivalICAO))
+                    if (!listTips.Exists(x => x.AirportICAO == job.ArrivalICAO) &&
+                        job.ArrivalICAO != departure)
                     {
                         var jobArrivalAirportInfo = AirportDatabaseFile.FindAirportInfo(job.ArrivalICAO);
 
