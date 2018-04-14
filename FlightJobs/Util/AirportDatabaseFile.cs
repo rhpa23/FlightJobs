@@ -20,10 +20,17 @@ namespace FlightJobs.Util
             //A,EDDS,STUTTGART,48.689878,9.221964,1276,5000,0,10900,0
 
             var lines = File.ReadLines(fileName);
-            var airportInfo = lines.First(line => Regex.IsMatch(line, "(^A,"+ code.ToUpper() +".*$)"));
+            var airportInfo = lines.FirstOrDefault(line => Regex.IsMatch(line, "(^A,"+ code.ToUpper() +".*$)"));
             Console.WriteLine(airportInfo);
 
-            return BindModel(airportInfo);
+            if (airportInfo != null)
+            {
+                return BindModel(airportInfo);
+            }
+            else
+            {
+                return null;
+            }
         }
 
         private static AirportModel BindModel(string line)

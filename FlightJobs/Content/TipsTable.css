@@ -1,0 +1,87 @@
+﻿div.card {
+    box-shadow: 0 4px 8px 2px rgba(0, 0, 0, 0.2), 0 6px 20px 2px rgba(0, 0, 0, 0.19);
+    padding-bottom: 5px;
+    /*height: 200px;*/
+    /*overflow: auto;*/
+    font-size: xx-small;
+    position: absolute;
+    z-index: 10009;
+    background-color:white;
+}
+
+.table {
+    width: 100%;
+    margin-bottom: 5px;
+}
+
+thead, tbody, tr, td, th {
+    display: block;
+}
+
+thead {
+    background-color: #269abc;
+    color:white;
+}
+
+    tr:after {
+        content: ' ';
+        display: block;
+        visibility: hidden;
+        clear: both;
+    }
+
+    thead th {
+        height: 30px;
+        /*text-align: left;*/
+    }
+
+tbody {
+    height: 120px;
+    overflow-y: auto;
+}
+
+thead {
+    /* fallback */
+}
+
+
+    tbody td, thead th {
+        height: 28px;
+        float: left;
+    }
+
+.icaoCol {
+    width: 35px;
+}
+
+.nameCol {
+    width: 100px;
+}
+
+.distCol {
+    width: 50px;
+}
+
+.sizeCol {
+    width: 65px;
+}
+
+.elevCol {
+    width: 50px;
+}
+
+.paxCol {
+    width: 32px;
+}
+
+.cargoCol {
+    width: 38px;
+}
+
+.payCol {
+    width: 60px;
+}
+
+.cloneCol {
+    width: auto;
+}

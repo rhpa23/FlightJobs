@@ -27,42 +27,50 @@
         <div id="swap-button" class="swap">Swap departure and destination</div>
         
         <div class="form-group">
-            <div class="col-md-2" style="padding-right:0px">
-                @Html.LabelFor(model => model.Departure, htmlAttributes: new { @class = "control-label" })
-                @Html.EditorFor(model => model.Departure, new { htmlAttributes = new { placeholder = "ICAO e.g. 'EDDM'", @class = "form-control uppercase", @maxlength = "4" } })
-                @Html.ValidationMessageFor(model => model.Departure, "", new { @class = "text-danger" })
+            <div class="row">
+                <div class="col-md-2" style="padding-right:0px; width:12%;">
+                    @Html.LabelFor(model => model.Departure, htmlAttributes: new { @class = "control-label" })
+                    @Html.EditorFor(model => model.Departure, new { htmlAttributes = new { placeholder = "ICAO", @class = "form-control uppercase", @maxlength = "4" } })
+                    @Html.ValidationMessageFor(model => model.Departure, "", new { @class = "text-danger" })
+                </div>
+                <div class="col-sm-1" style="padding-left:0px; padding-right:0px; width:auto;">
+                    <br />
+                    <img src="~/Content/img/airplane.png" />
+
+                </div>
+
+                <div class="col-md-2" style="padding-left:0px; width:12%;">
+                    @Html.LabelFor(model => model.Arrival, htmlAttributes: new { @class = "control-label" })
+                    @Html.EditorFor(model => model.Arrival, new { htmlAttributes = new { placeholder = "ICAO", @class = "form-control uppercase", @maxlength = "4" } })
+                    @Html.ValidationMessageFor(model => model.Arrival, "", new { @class = "text-danger" })
+                </div>
+                <div class="col-xs-1" style="padding:0px; width:auto;">
+                    <input id="arrival-tips-button" type="button" value="Tips" class="btn btn-info btn-xs" style="margin-top:26px" />
+                </div>
+                <div id="departure-required" style="display: none;"><i class="glyphicon glyphicon-alert"></i>  First set a valid departure.</div>
+                <div id="arrival-tips-table" style="display: none;" class="col-md-6">Loading...</div>
             </div>
-            <div class="col-sm-1" style="padding-left:0px; padding-right:0px; width:auto;">
-                <br />
-                <img src="~/Content/img/airplane.png" />
-            </div>
-            <div class="col-md-2" style="padding-left:0px">
-                @Html.LabelFor(model => model.Arrival, htmlAttributes: new { @class = "control-label" })
-                @Html.EditorFor(model => model.Arrival, new { htmlAttributes = new { placeholder = "ICAO e.g. 'ED'", @class = "form-control uppercase", @maxlength = "4" } })
-                @Html.ValidationMessageFor(model => model.Arrival, "", new { @class = "text-danger" })
+            <div class="row">
+                <div class="col-md-4 text-center" style="padding-left:0px"> 
+                    <label id="Distance" style="font-size:small;" ></label>
+                </div>
             </div>
 
-            <div class="col-xs-1" style="padding:0px; width:auto;">
-                <input id="arrival-tips-button" type="button" value="Tips" class="btn btn-info btn-xs" style="margin-top:26px" />
-            </div>
-            <div id="departure-required" style="display: none;"><i class="glyphicon glyphicon-alert"></i>  First set departure.</div>
-            <div id="arrival-tips-table" style="display: none;" class="col-md-6">Loading...</div>
 
-        </div>
-        <br />
-        <div class="form-group">
-            <div class="col-md-2">
-                @Html.LabelFor(model => model.Alternative, htmlAttributes: new { @class = "control-label" })
-                @Html.EditorFor(model => model.Alternative, new { htmlAttributes = new { placeholder = "ICAO", @class = "form-control uppercase", @maxlength = "4" } })
-                @Html.ValidationMessageFor(model => model.Alternative, "", new { @class = "text-danger" })
-            </div>
+            <div class="row">
+                <div class="col-md-2" style="width:12%;">
+                    @Html.LabelFor(model => model.Alternative, htmlAttributes: new { @class = "control-label" })
+                    @Html.EditorFor(model => model.Alternative, new { htmlAttributes = new { placeholder = "ICAO", @class = "form-control uppercase", @maxlength = "4" } })
+                    @Html.ValidationMessageFor(model => model.Alternative, "", new { @class = "text-danger" })
+                </div>
 
-            <div class="col-xs-1" style="padding:0px; width:auto;">
-                <input id="alternative-tips-button" type="button" value="Tips" class="btn btn-info btn-xs" style="margin-top:26px" />
+                <div class="col-xs-1" style="padding:0px; width:auto;">
+                    <input id="alternative-tips-button" type="button" value="Tips" class="btn btn-info btn-xs" style="margin-top:26px" />
+                </div>
+                <div id="destination-required" style="display: none;"><i class="glyphicon glyphicon-alert"></i> First set a valid destination.</div>
+                <div id="alternative-tips-table" style="display: none;" class="col-md-6">Loading...</div>
 
             </div>
-            <div id="destination-required" style="display: none;"><i class="glyphicon glyphicon-alert"></i> First set destination.</div>
-            <div id="alternative-tips-table" style="display: none;" class="col-md-6">Loading...</div>
 
         </div>
         <br />
@@ -107,7 +115,7 @@
     });
 
     $('#alternative-tips-button').click(function () {
-
+        $("#arrival-tips-table").hide();
         $("#alternative-tips-table").toggle(500);
         $.ajax({
             url: '@Url.Action("AlternativeTips", "SearchJobs")',
@@ -130,7 +138,7 @@
     });
 
     $('#arrival-tips-button').click(function () {
-
+        $("#alternative-tips-table").hide();
         $("#arrival-tips-table").toggle(500);
         $.ajax({
             url: '@Url.Action("ArrivalTips", "SearchJobs")',
@@ -152,5 +160,38 @@
 
     });
 
+
+    $('#Arrival').change(function () {
+        if ($('#Departure').val().length == 4 && $('#Arrival').val().length == 4) {
+            CalcDistance();
+        }
+    });
+
+    $('#Arrival').keyup(function () {
+        
+        if ($('#Departure').val().length == 4 && $('#Arrival').val().length == 4) {
+            CalcDistance();
+        }
+    });
+
+    $('#Departure').keyup(function () {
+
+        if ($('#Departure').val().length == 4 && $('#Arrival').val().length == 4) {
+            CalcDistance();
+        }
+    });
+
+    function CalcDistance() {
+        $.ajax({
+            url: '@Url.Action("CalcDistance", "SearchJobs")',
+            type: "Get",
+            data: { departure: $('#Departure').val(), arrival: $('#Arrival').val() },
+            success: function (result) {
+                if (result != null && result != '') {
+                    $('#Distance').html(result + ' NM');
+                }
+            }
+        });
+    }
 
 </script>

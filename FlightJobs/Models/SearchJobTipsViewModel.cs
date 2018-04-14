@@ -16,7 +16,7 @@ namespace FlightJobs.Models
         [Display(Name = "Name")]
         public string AirportName { get; set; }
 
-        [Display(Name = "Runway Length")]
+        [Display(Name = "Rwy Length")]
         public int AirportRunwaySize { get; set; }
 
         [Display(Name = "Elevation")]

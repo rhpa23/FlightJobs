@@ -104,7 +104,7 @@ namespace FlightJobs.Controllers
 
                 var diffTime = DateTime.UtcNow - job.StartTime;
 
-                var minTime = (job.Dist * 15) / 100;
+                var minTime = (job.Dist * 11) / 100;
 
                 if (diffTime.TotalMinutes < minTime)
                 {

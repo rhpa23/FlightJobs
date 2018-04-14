@@ -1,66 +1,67 @@
 ﻿@model IEnumerable<FlightJobs.Models.SearchJobTipsViewModel>
 
-<style>
-    div.card {
-        box-shadow: 0 4px 8px 2px rgba(0, 0, 0, 0.2), 0 6px 20px 2px rgba(0, 0, 0, 0.19);
-        padding-bottom: 5px;
-        height: 140px;
-        overflow: auto;
-        font-size: xx-small;
-    }
-</style>
+<link href="~/Content/TipsTable.css" rel="stylesheet" />
 
 
-<div class="card">
+<div class="card" style="width:325px;">
     @if (Model.Count() > 0)
     {
         <table class="table table-sm table-condensed table-bordered table-hover" style="padding:0px">
-            <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.AirportICAO)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.AirportName)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Distance)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.AirportRunwaySize)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.AirportElevation)
-                </th>
-            </tr>
-
-            @foreach (var item in Model)
-            {
-                <tr style="cursor:pointer;">
-                    <td>
-                        @Html.DisplayFor(modelItem => item.AirportICAO)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.AirportName)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Distance) NM
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.AirportRunwaySize) ft
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.AirportElevation) ft
-                    </td>
+            <thead>
+                <tr>
+                    <th class="icaoCol">
+                        @Html.DisplayNameFor(model => model.AirportICAO)
+                    </th>
+                    <th class="nameCol">
+                        @Html.DisplayNameFor(model => model.AirportName)
+                    </th>
+                    <th class="distCol">
+                        @Html.DisplayNameFor(model => model.Distance)
+                    </th>
+                    <th class="sizeCol">
+                        @Html.DisplayNameFor(model => model.AirportRunwaySize)
+                    </th>
+                    <th class="elevCol">
+                        @Html.DisplayNameFor(model => model.AirportElevation)
+                    </th>
                 </tr>
-            }
-
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr style="cursor:pointer;">
+                        <td class="icaoCol">
+                            @Html.DisplayFor(modelItem => item.AirportICAO)
+                        </td>
+                        <td class="nameCol">
+                            @Html.DisplayFor(modelItem => item.AirportName)
+                        </td>
+                        <td class="distCol">
+                            @Html.DisplayFor(modelItem => item.Distance) NM
+                        </td>
+                        <td class="sizeCol">
+                            @Html.DisplayFor(modelItem => item.AirportRunwaySize) ft
+                        </td>
+                        <td class="elevCol">
+                            @Html.DisplayFor(modelItem => item.AirportElevation) ft
+                        </td>
+                    </tr>
+                }
+            </tbody>
         </table>
         <div class="row" style="margin-right:0px;">
             <div class="col-md-6"  style="padding-right:2px; ">
                 <label class="control-label pull-right" >Range:</label>
             </div>
             <div class="col-md-2" style="padding-left:5px;">
-                <input id="alternative-tips-range" type="number" value="40" min="10" max="250" required="required" style="width:50px; " />
+                @if (TempData["RangeValue"] == null)
+                {
+                    <input id="alternative-tips-range" type="number" value="40" min="10" max="250" required="required" style="width:50px; " />
+                }
+                else
+                {
+                    <input id="alternative-tips-range" type="number" value="@TempData["RangeValue"]" min="10" max="250" required="required" style="width:50px; " />
+                }
             </div>
             <div class="col-md-4">
                 <input id="alternative-tips-update" type="button" value="Update" class="btn btn-info btn-xs pull-right" />
