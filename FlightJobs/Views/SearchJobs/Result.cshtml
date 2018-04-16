@@ -27,13 +27,13 @@
             
             <p>
                 <b>@Html.DisplayFor(modelItem => Model.FirstOrDefault().Departure.ICAO)</b> @Html.DisplayFor(modelItem => Model.FirstOrDefault().Departure.Name) 
-                
-                
-                
             </p>
             <label id="paxSummary" style="font-size: 12px;"> </label>
             <label id="cargoSummary" style="font-size: 12px; padding-left:100px"></label>
             <label id="paymentSummary" style="font-size: 12px; padding-left:100px"></label>
+            <p>
+                <label id="payloadSummary" style="font-size: 13px;"></label>
+            </p>
         </div>
         <div class="panel panel-default text-center" style="margin-top:140px">
             
@@ -169,6 +169,7 @@
             $('td:first-child input').change(function () {
                 $(this).closest('tr').toggleClass("bg-success", this.checked);
 
+                var payloadSum = 0;
                 var payLoad = $(this).closest('tr').find('td').eq(3).text();
                 var payloadNumber = payLoad.match(/\d+/);
                 //alert(payLoad.startsWith("[Cargo]"));
@@ -187,7 +188,8 @@
                         $('#cargoSummary').val(payloadNumber);
                         }
 
-                    $('#cargoSummary').text("Total cargo: " + $('#cargoSummary').val());
+                    $('#cargoSummary').text("Total cargo: " + $('#cargoSummary').val() + " Kg");
+                    
                     }
                     else {
 
@@ -204,8 +206,19 @@
                         $('#paxSummary').val(payloadNumber);
                             }
 
-                    $('#paxSummary').text("Total pax: " + $('#paxSummary').val());
-                        }
+                        $('#paxSummary').text("Total pax: " + $('#paxSummary').val());
+                }
+
+                /// Payload Summary ############
+                if ($('#cargoSummary').val() != "") {
+                    payloadSum = parseFloat($('#cargoSummary').val());
+                }
+                if ($('#paxSummary').val() != "") {
+                    payloadSum = payloadSum + (parseFloat($('#paxSummary').val()) * 84);
+                }
+                
+                
+                $('#payloadSummary').text("Total payload: " + payloadSum + " Kg" ) ;
 
 
                         /// payment ##############

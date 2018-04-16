@@ -33,10 +33,19 @@ namespace FlightJobs.Controllers
                 string fuelWeightStr = Request.Headers.GetValues("FuelWeight").First();
 
                 var dbContext = new ApplicationDbContext();
-                var job = dbContext.JobDbModels.FirstOrDefault(j => j.User.Id == usarIdStr &&  
-                                                                    j.IsActivated && 
+                JobDbModel job = null;
+                if (icaoStr.Length == 3)
+                {
+                    job = dbContext.JobDbModels.FirstOrDefault(j => j.User.Id == usarIdStr &&
+                                                                    j.IsActivated &&
+                                                                    j.DepartureICAO.Substring(1).ToLower() == icaoStr.ToLower());
+                }
+                else
+                {
+                    job = dbContext.JobDbModels.FirstOrDefault(j => j.User.Id == usarIdStr &&
+                                                                    j.IsActivated &&
                                                                     j.DepartureICAO.ToLower() == icaoStr.ToLower());
-
+                }
 
                 if (job == null)
                 {
@@ -84,11 +93,21 @@ namespace FlightJobs.Controllers
                 string fuelWeightStr = Request.Headers.GetValues("FuelWeight").First();
 
                 var dbContext = new ApplicationDbContext();
-                var job = dbContext.JobDbModels.FirstOrDefault(j => j.User.Id == usarIdStr &&  
+                JobDbModel job = null;
+                if (icaoStr.Length == 3)
+                {
+                    job = dbContext.JobDbModels.FirstOrDefault(j => j.User.Id == usarIdStr &&
+                                                                    j.IsActivated && j.InProgress &&
+                                                                    (j.ArrivalICAO.Substring(1).ToLower() == icaoStr.ToLower() ||
+                                                                    j.AlternativeICAO.Substring(1).ToLower() == icaoStr.ToLower()));
+                }
+                else
+                {
+                    job = dbContext.JobDbModels.FirstOrDefault(j => j.User.Id == usarIdStr &&
                                                                     j.IsActivated && j.InProgress &&
                                                                     (j.ArrivalICAO.ToLower() == icaoStr.ToLower() ||
                                                                     j.AlternativeICAO.ToLower() == icaoStr.ToLower()));
-
+                }
 
                 if (job == null)
                 {
