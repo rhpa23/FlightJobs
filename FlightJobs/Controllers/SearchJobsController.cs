@@ -22,6 +22,8 @@ namespace FlightJobs.Controllers
         private double taxFirstGE = 0.095; // por NM
         private double taxCargoGE = 0.012; // por NM
 
+        public const string PassengersWeightCookie = "PassengersWeightCookie";
+
         private ApplicationUserManager _userManager;
 
         public ApplicationUserManager UserManager
@@ -66,6 +68,16 @@ namespace FlightJobs.Controllers
 
         public ActionResult Result(int? pageNumber, string ids)
         {
+            if (Request.Cookies[PassengersWeightCookie] != null 
+                && Request.Cookies[PassengersWeightCookie].Value != null)
+            {
+                TempData[PassengersWeightCookie] = Request.Cookies[PassengersWeightCookie].Value;
+            }
+            else
+            {
+                TempData[PassengersWeightCookie] = JobDbModel.PaxWeight;
+            }
+
             if (Session["JobSerachModel"] != null)
             {
                 IList<JobListModel> jobs = new List<JobListModel>();
@@ -104,6 +116,9 @@ namespace FlightJobs.Controllers
         {
             var ids = new List<int>();
             var pageSelsIds = form["sels"];
+            var passengersWeight = form["paxWeight-text"];
+            JobDbModel.PaxWeight = int.TryParse(passengersWeight, out JobDbModel.PaxWeight) ? JobDbModel.PaxWeight : 84;
+            Response.SetCookie(new HttpCookie(PassengersWeightCookie, JobDbModel.PaxWeight.ToString()));
             if (pageSelsIds != null)
             {
                 string[] sList = pageSelsIds.ToString().Split(',');
@@ -168,7 +183,7 @@ namespace FlightJobs.Controllers
                 TotalCargo = totalCargo,
                 TotalPay = string.Format("{0:C}", totalPay),
                 TotalPayload = string.Format("{0:G}", (totalPax * JobDbModel.PaxWeight) + totalCargo)
-        };
+            };
 
             //return View("Confirm", list.Values.ToList());
             //return Result(1, pageSelsIds);

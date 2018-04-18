@@ -54,7 +54,7 @@ namespace FlightJobs.Controllers
 
                 long payload = Convert.ToInt64(Math.Round(Convert.ToDouble(payloadStr, new CultureInfo("en-US")))); 
                 // Check payload
-                if (payload >= (job.Payload + 80) || payload <= (job.Payload - 80))
+                if (payload >= (job.Payload + 150) || payload <= (job.Payload - 150))
                 {
                     return Request.CreateResponse(HttpStatusCode.Forbidden, "Wrong payload. Active job payload is: " + job.Payload + "Kg");
                 }
@@ -116,7 +116,7 @@ namespace FlightJobs.Controllers
 
                 long payload = Convert.ToInt64(Math.Round(Convert.ToDouble(payloadStr, new CultureInfo("en-US"))));
                 // Check payload
-                if (payload >= (job.Payload + 50) || payload <= (job.Payload - 50))
+                if (payload >= (job.Payload + 150) || payload <= (job.Payload - 150))
                 {
                     return Request.CreateResponse(HttpStatusCode.Forbidden, "Wrong payload. Active job payload is: " + job.Payload + "Kg");
                 }

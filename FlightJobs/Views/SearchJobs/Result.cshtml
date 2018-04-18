@@ -20,21 +20,22 @@
 {
     if (Model.Count() > 0)
     {
-        <div class="navbar navbar-inverse navbar-fixed-top" style="margin-top:51px; text-align:center; color:#9d9d9d; height:125px; ">
-            <p>
-                <h4>First ckeck your aircraft payload limits and select the available jobs departing from:</h4>
-            </p>
-            
-            <p>
-                <b>@Html.DisplayFor(modelItem => Model.FirstOrDefault().Departure.ICAO)</b> @Html.DisplayFor(modelItem => Model.FirstOrDefault().Departure.Name) 
-            </p>
-            <label id="paxSummary" style="font-size: 12px;"> </label>
-            <label id="cargoSummary" style="font-size: 12px; padding-left:100px"></label>
-            <label id="paymentSummary" style="font-size: 12px; padding-left:100px"></label>
-            <p>
-                <label id="payloadSummary" style="font-size: 13px;"></label>
-            </p>
-        </div>
+<div class="navbar navbar-inverse navbar-fixed-top" style="margin-top:51px; text-align:center; color:#9d9d9d; height:125px; ">
+    <p>
+        <h4>First ckeck your aircraft payload limits and select the available jobs departing from:</h4>
+    </p>
+
+    <p>
+        <b>@Html.DisplayFor(modelItem => Model.FirstOrDefault().Departure.ICAO)</b> @Html.DisplayFor(modelItem => Model.FirstOrDefault().Departure.Name)
+    </p>
+
+    <label id="paxSummary" style="font-size: 12px;"> </label>
+    <label id="cargoSummary" style="font-size: 12px; padding-left:100px"></label>
+    <label id="paymentSummary" style="font-size: 12px; padding-left:100px"></label>
+    <p>
+        <label id="payloadSummary" style="font-size: 13px;"></label>
+    </p>
+</div>
         <div class="panel panel-default text-center" style="margin-top:140px">
             
             <table class="table table-bordered" style="font-size: 10px;">
@@ -88,9 +89,21 @@
             </div>
             //@Html.PagedListPager(Model, pageNumber => Url.Action("Result", new  {   pageNumber  }))
             <hr />
-            <div class="form-group" style="text-align:right">
-                <div class="col-md-offset-2 col-md-10">
-                    <input type="submit" value="Finish" class="btn btn-info  pull-right" />
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-3">
+                        @Html.ActionLink("Back to Search", "Index")
+                    </div>
+                    <div class="col-md-5">
+                        @{ var pWeightVal = @TempData["PassengersWeightCookie"]; }
+                        <label style="font-size: 12px; font-weight:normal;">Passenger weight for payload calculation: </label>
+                        <label id="paxWeight-label" style="font-size: 11px;">@pWeightVal Kg</label>
+                        <input id="paxWeight-text" name="paxWeight-text" type="number" value="@pWeightVal" maxlength="3" max="200" min="20" class="" style="display: none;" />
+                        <input id="change-paxWeight-button" type="button" value="Change" class="btn btn-info btn-xs" style="" />
+                    </div>
+                    <div class="col-md-1 pull-right">
+                        <input type="submit" value="Finish" class="btn btn-info  pull-right" />
+                    </div>
                 </div>
             </div>
             }
@@ -213,8 +226,10 @@
                 if ($('#cargoSummary').val() != "") {
                     payloadSum = parseFloat($('#cargoSummary').val());
                 }
+
+                var pWeight = parseInt($("#paxWeight-text").val()); 
                 if ($('#paxSummary').val() != "") {
-                    payloadSum = payloadSum + (parseFloat($('#paxSummary').val()) * 84);
+                    payloadSum = payloadSum + (parseFloat($('#paxSummary').val()) * pWeight);
                 }
                 
                 
@@ -240,17 +255,31 @@
 
                 $('#paymentSummary').text("Payment: $" + $('#paymentSummary').val());
 
-                        });
-                    });
+            });
 
+        });
+
+        $('#change-paxWeight-button').click(function () {
+            
+            if ($('#paxWeight-text:visible').length == 1) {
+                $("#paxWeight-text").hide();
+                $('#change-paxWeight-button').val("Change");
+                $("#paxWeight-label").show();
+                $("#paxWeight-label").text($("#paxWeight-text").val() + "Kg");
+            }
+            else {
+                $('#change-paxWeight-button').val("Confirm");
+                $("#paxWeight-label").hide();
+                $("#paxWeight-text").show();
+            }
+        });
+        
     </script>
 
 
 
 
-    <div>
-        @Html.ActionLink("Back to Search", "Index")
-    </div>
+
 
 
   }

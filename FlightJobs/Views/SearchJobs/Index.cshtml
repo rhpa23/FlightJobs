@@ -77,25 +77,29 @@
 
         <div class="form-group">
             <hr />
-            <div class="col-md-2" >
-                <label>
-                    @Html.RadioButtonFor(m => m.AviationType, "GeneralAviation")
-                    General aviation
-                </label>
+            <div class="row">
+                <div class="col-md-2">
+                    <label>
+                        @Html.RadioButtonFor(m => m.AviationType, "GeneralAviation")
+                        General aviation
+                    </label>
+                </div>
+                <div class="col-md-2">
+                    <label>
+                        @Html.RadioButtonFor(m => m.AviationType, "AirTransport", new { @checked = true })
+                        Air transport
+                    </label>
+                </div>
+                <div class="col-md-2">
+                    <label>
+                        @Html.RadioButtonFor(m => m.AviationType, "HeavyAirTransport ")
+                        Heavy
+                    </label>
+                </div>
+                <input type="submit" value="Generate" class="btn btn-info  pull-right" />
             </div>
-            <div class="col-md-2" >
-                <label>
-                    @Html.RadioButtonFor(m => m.AviationType, "AirTransport", new { @checked = true })
-                    Air transport
-                </label>
-            </div>
-            <div class="col-md-2" >
-                <label>
-                    @Html.RadioButtonFor(m => m.AviationType, "HeavyAirTransport ")
-                    Heavy
-                </label>
-            </div>
-            <input type="submit" value="Generate" class="btn btn-info  pull-right" />
+
+            
         </div>
     </div>
 }

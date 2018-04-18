@@ -33,5 +33,9 @@ namespace FlightJobs.Models
 
         [DisplayName("Aviation type")]
         public string AviationType { get; set; }
+
+        [DisplayName("Passenger weight")]
+        [Required(ErrorMessage = "Passenger weight is required")]
+        public long PassengerWeight { get; set; }
     }
 }
