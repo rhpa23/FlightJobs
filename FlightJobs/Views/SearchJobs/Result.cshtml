@@ -266,6 +266,13 @@
                 $('#change-paxWeight-button').val("Change");
                 $("#paxWeight-label").show();
                 $("#paxWeight-label").text($("#paxWeight-text").val() + "Kg");
+
+                $('table > tbody  > tr').each(function () {
+                    var checked = $(this).find("input:checkbox").prop("checked");
+                    if (checked) {
+                        $(this).trigger('click');
+                    }
+                });
             }
             else {
                 $('#change-paxWeight-button').val("Confirm");
