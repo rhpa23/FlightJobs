@@ -301,6 +301,10 @@
     <Compile Include="Migrations\201804071202563_AddAlternative.Designer.cs">
       <DependentUpon>201804071202563_AddAlternative.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201804190057188_PaxWeightInJob.cs" />
+    <Compile Include="Migrations\201804190057188_PaxWeightInJob.Designer.cs">
+      <DependentUpon>201804190057188_PaxWeightInJob.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\AirlineViewModel.cs" />
@@ -667,6 +671,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201804071202563_AddAlternative.resx">
       <DependentUpon>201804071202563_AddAlternative.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201804190057188_PaxWeightInJob.resx">
+      <DependentUpon>201804190057188_PaxWeightInJob.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

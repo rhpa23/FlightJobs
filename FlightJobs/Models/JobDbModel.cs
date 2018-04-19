@@ -11,8 +11,8 @@ namespace FlightJobs.Models
 {
     public class JobDbModel
     {
-        [NotMapped]
-        internal static int PaxWeight = 84;
+        
+        public int PaxWeight { get; set; }
 
         [Key]
         public int Id { get; set; }
@@ -41,7 +41,15 @@ namespace FlightJobs.Models
         {
             get
             {
-                return (Pax * PaxWeight) + Cargo;
+                if (PaxWeight > 0)
+                {
+                    return (Pax * PaxWeight) + Cargo;
+                }
+                else
+                {
+                    return (Pax * 84) + Cargo;
+                }
+                
             }
         }
 

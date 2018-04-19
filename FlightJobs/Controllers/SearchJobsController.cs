@@ -22,6 +22,8 @@ namespace FlightJobs.Controllers
         private double taxFirstGE = 0.095; // por NM
         private double taxCargoGE = 0.012; // por NM
 
+        private int PaxWeight = 84;
+
         public const string PassengersWeightCookie = "PassengersWeightCookie";
 
         private ApplicationUserManager _userManager;
@@ -75,7 +77,7 @@ namespace FlightJobs.Controllers
             }
             else
             {
-                TempData[PassengersWeightCookie] = JobDbModel.PaxWeight;
+                TempData[PassengersWeightCookie] = PaxWeight;
             }
 
             if (Session["JobSerachModel"] != null)
@@ -117,8 +119,8 @@ namespace FlightJobs.Controllers
             var ids = new List<int>();
             var pageSelsIds = form["sels"];
             var passengersWeight = form["paxWeight-text"];
-            JobDbModel.PaxWeight = int.TryParse(passengersWeight, out JobDbModel.PaxWeight) ? JobDbModel.PaxWeight : 84;
-            Response.SetCookie(new HttpCookie(PassengersWeightCookie, JobDbModel.PaxWeight.ToString()));
+            PaxWeight = int.TryParse(passengersWeight, out PaxWeight) ? PaxWeight : 84;
+            Response.SetCookie(new HttpCookie(PassengersWeightCookie, PaxWeight.ToString()));
             if (pageSelsIds != null)
             {
                 string[] sList = pageSelsIds.ToString().Split(',');
@@ -182,7 +184,7 @@ namespace FlightJobs.Controllers
                 TotalPax = totalPax,
                 TotalCargo = totalCargo,
                 TotalPay = string.Format("{0:C}", totalPay),
-                TotalPayload = string.Format("{0:G}", (totalPax * JobDbModel.PaxWeight) + totalCargo)
+                TotalPayload = string.Format("{0:G}", (totalPax * PaxWeight) + totalCargo)
             };
 
             //return View("Confirm", list.Values.ToList());
@@ -197,12 +199,19 @@ namespace FlightJobs.Controllers
             {
                 var dbContext = new ApplicationDbContext();
                 var user =  dbContext.Users.FirstOrDefault(u => u.Email == User.Identity.Name);
+                
+                if (Request.Cookies[PassengersWeightCookie] != null
+                && Request.Cookies[PassengersWeightCookie].Value != null)
+                {
+                    PaxWeight = int.Parse(Request.Cookies[PassengersWeightCookie].Value);
+                }
 
                 foreach (var selJob in (List<JobDbModel>)Session["ListSelJobs"])
                 {
                     selJob.User = user;
                     selJob.StartTime = DateTime.Now;
                     selJob.EndTime = DateTime.Now;
+                    selJob.PaxWeight = PaxWeight;
 
                     if (Session["JobSerachModel"] != null)
                     {
