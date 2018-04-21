@@ -14,12 +14,27 @@ namespace FlightJobs.Controllers
     {
         private int airlinePrice = 40000;
 
+        private string path = "/Content/img/logo/";
+
         // GET: Airlines
         public ActionResult Index()
         {
             ViewBag.Message = TempData["Message"];
             var dbContext = new ApplicationDbContext();
-            return View(dbContext.AirlineDbModels.ToList());
+            var list = dbContext.AirlineDbModels.ToList();
+            CheckAirlinerUsers(list);
+            return View(list);
+        }
+
+        private void CheckAirlinerUsers(List<AirlineDbModel> list)
+        {
+            var dbContext = new ApplicationDbContext();
+            var user = dbContext.Users.FirstOrDefault(u => u.Email == User.Identity.Name);
+            
+            foreach (var airline in list)
+            {
+                airline.AlowEdit = airline.UserId == user.Id;
+            }
         }
 
         public ActionResult Sign(int id)
@@ -148,7 +163,9 @@ namespace FlightJobs.Controllers
         public JsonResult AirlineNameAvailable(string name)
         {
             var dbContext = new ApplicationDbContext();
-            var nameUsed = dbContext.AirlineDbModels.Any(a => a.Name.ToUpper() == name.Trim().ToUpper());
+            var user = dbContext.Users.FirstOrDefault(u => u.Email == User.Identity.Name);
+
+            var nameUsed = dbContext.AirlineDbModels.Any(a => a.Name.ToUpper() == name.Trim().ToUpper() && a.UserId != user.Id);
 
             if (!nameUsed)
                 return Json(true, JsonRequestBehavior.AllowGet);
@@ -173,7 +190,8 @@ namespace FlightJobs.Controllers
                     Name = model.Name,
                     Country = model.Country,
                     Salary = 20,
-                    Score = model.Score
+                    Score = model.Score,
+                    UserId = user.Id
                 };
 
                 if (model.FilesInput != null && model.FilesInput.Any())
@@ -215,7 +233,6 @@ namespace FlightJobs.Controllers
 
         public string Upload(HttpPostedFileBase file)
         {
-            var path = "/Content/img/logo/";
             if (file != null && file.ContentLength > 0)
             {
                 var dbContext = new ApplicationDbContext();
@@ -250,6 +267,90 @@ namespace FlightJobs.Controllers
                 TempData["Message"] = "You don't have enough bank balance to buy new airline.";
                 return null;
             }
+        }
+
+        public ActionResult EditView(int id)
+        {
+            var dbContext = new ApplicationDbContext();
+            var user = dbContext.Users.FirstOrDefault(u => u.Email == User.Identity.Name);
+            var airline = dbContext.AirlineDbModels.FirstOrDefault(a => a.Id == id && a.UserId == user.Id);
+
+            if (airline != null)
+            {
+                var anyCertificates = dbContext.AirlineCertificatesDbModels.Any(c => c.Airline.Id == airline.Id);
+                var view = new AirlineViewModel()
+                {
+                    Id = airline.Id,
+                    Name = airline.Name,
+                    Country = airline.Country,
+                    Score = airline.Score,
+                    LogoPath = airline.Logo,
+                    RequireCertificates = anyCertificates
+                };
+                return PartialView("Edit", view);
+            }
+            else
+            {
+                TempData["Message"] = "You must be the owner of the airline to edit.";
+                return null;
+            }
+        }
+
+        [HttpPost]
+        public ActionResult Update(AirlineViewModel model)
+        {
+            var dbContext = new ApplicationDbContext();
+            var user = dbContext.Users.FirstOrDefault(u => u.Email == User.Identity.Name);
+            var airline = dbContext.AirlineDbModels.FirstOrDefault(a => a.Id == model.Id && a.UserId == user.Id);
+
+            if (airline != null)
+            {
+                var certsAirline = dbContext.AirlineCertificatesDbModels.Include("Certificate").Where(c => c.Airline.Id == airline.Id).ToList();
+                if (!model.RequireCertificates)
+                {
+                    dbContext.AirlineCertificatesDbModels.RemoveRange(certsAirline);
+                }
+                else
+                {
+                    foreach (var cert in dbContext.CertificateDbModels)
+                    {
+                        if (!certsAirline.Any(x => x.Certificate.Id == cert.Id))
+                        {
+                            var airlineCertificates = new AirlineCertificatesDbModel()
+                            {
+                                Certificate = cert,
+                                Airline = airline
+                            };
+                            dbContext.AirlineCertificatesDbModels.Add(airlineCertificates);
+                        }
+                    }
+                }
+
+                airline.Name = model.Name;
+                airline.Country = model.Country;
+                airline.Score = model.Score;
+
+                if (model.FilesInput != null && model.FilesInput.Any())
+                {
+                    var file = model.FilesInput.FirstOrDefault();
+                    if (file != null)
+                    {
+                        var filePath = Upload(file);
+                        airline.Logo = filePath;
+                    }
+                }
+
+
+                dbContext.SaveChanges();
+
+                TempData["Message"] = "You update the airline. Now you can invite pilots to work with you.";
+                Session["HeaderStatistics"] = null;
+            }
+            else
+            {
+                TempData["Message"] = "You must be the owner of the airline to edit.";
+            }
+            return RedirectToAction("Index");
         }
     }
 }

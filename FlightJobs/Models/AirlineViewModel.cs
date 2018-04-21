@@ -28,14 +28,14 @@ namespace FlightJobs.Models
 
         [Required(ErrorMessage = "Score is required")]
         [DisplayName("Score required to sign contract")]
-        public int Score { get; set; }
+        public long Score { get; set; }
 
         [DisplayName("Require Certificates")]
         public bool RequireCertificates { get; set; }
 
         [Required(ErrorMessage = "Airline logo is required")]
         public IEnumerable<HttpPostedFileBase> FilesInput { get; set; }
-        
 
+        public string LogoPath { get; set; }
     }
 }

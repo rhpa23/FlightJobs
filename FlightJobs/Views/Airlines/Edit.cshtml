@@ -7,17 +7,19 @@
 
 <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-    <h4 class="modal-title" id="myModalLabel">Create your own airline</h4>
+    <h4 class="modal-title" id="myModalLabel">Edit your airline</h4>
 </div>
 
 
-@using (Html.BeginForm("Add", "Airlines", FormMethod.Post, new { enctype = "multipart/form-data" }))
+@using (Html.BeginForm("Update", "Airlines", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
     @Html.AntiForgeryToken()
     <div class="modal-body">
         <div class="row">
             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-
+            
+            @Html.Hidden("Id", Model.Id, new { @id = "Id" })
+            
             <div class="col-lg-6 col-md-4 col-md-12 ">
 
                 <div class="form-group col-md-12">
@@ -58,7 +60,7 @@
 
         </div>
         <div class="modal-footer">
-            <input type="submit" value="Create" class="btn btn-info" />
+            <input type="submit" value="Save" class="btn btn-info" />
             <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
         </div>
     </div>
@@ -83,7 +85,7 @@
         removeTitle: 'Cancel or reset changes',
         elErrorContainer: '#kv-avatar-errors-1',
         msgErrorClass: 'alert alert-block alert-danger',
-        defaultPreviewContent: '<img src="/Content/img/logo/LogoDefault.png" alt="Airline Logo" style="width:115px">',
+        defaultPreviewContent: '<img src="@Model.LogoPath" alt="Airline Logo" style="width:115px">',
         layoutTemplates: { main2: '{preview} ' + btnCust + ' {remove} {browse}' },
         allowedFileExtensions: ["jpg", "png", "gif"]
     });

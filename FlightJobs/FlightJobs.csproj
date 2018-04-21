@@ -305,6 +305,10 @@
     <Compile Include="Migrations\201804190057188_PaxWeightInJob.Designer.cs">
       <DependentUpon>201804190057188_PaxWeightInJob.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201804211505523_AirlineOwnerId.cs" />
+    <Compile Include="Migrations\201804211505523_AirlineOwnerId.Designer.cs">
+      <DependentUpon>201804211505523_AirlineOwnerId.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\AirlineViewModel.cs" />
@@ -607,6 +611,7 @@
     <Content Include="Views\Home\GeneralInfo.cshtml" />
     <Content Include="Views\SearchJobs\AlternativeTipsPartialView.cshtml" />
     <Content Include="Views\SearchJobs\ArrivalTipsPartialView.cshtml" />
+    <Content Include="Views\Airlines\Edit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201710111859366_InitialCreate.resx">
@@ -674,6 +679,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201804190057188_PaxWeightInJob.resx">
       <DependentUpon>201804190057188_PaxWeightInJob.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201804211505523_AirlineOwnerId.resx">
+      <DependentUpon>201804211505523_AirlineOwnerId.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

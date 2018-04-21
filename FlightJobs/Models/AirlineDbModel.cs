@@ -37,5 +37,10 @@ namespace FlightJobs.Models
 
         [DisplayName("Airline score")]
         public long AirlineScore { get; set; }
+
+        [NotMapped]
+        public bool AlowEdit { get; set; }
+
+        public string UserId { get; set; }
     }
 }

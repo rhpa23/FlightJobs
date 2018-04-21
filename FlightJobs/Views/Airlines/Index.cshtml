@@ -47,7 +47,17 @@
                         @Html.DisplayFor(modelItem => item.Score)
                     </td>
                     <td style="padding-left: 20px; vertical-align: middle; text-align:center;">
-                        <img src="~/Content/img/contract_ico.jpg" title="Sign contract" style="cursor: pointer;" onclick="location.href='@Url.Action("Sign", new { id = item.Id })'" />
+                        
+                        @if (item.AlowEdit)
+                        {
+                            <button id="@item.Id" type="button" class="btn btn-default btn-sm edit-airline">
+                                <span class="glyphicon glyphicon-edit"></span> Edit
+                            </button>
+                        }
+                        else
+                        {
+                            <img src="~/Content/img/contract_ico.jpg" title="Sign contract" style="cursor: pointer;" onclick="location.href='@Url.Action("Sign", new { id = item.Id })'" />
+                        }
                     </td>
                 </tr>
             }
@@ -61,10 +71,6 @@
 <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog" role="document">
         <div class="modal-content" style="width: 700px;">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="myModalLabel">Create your own airline</h4>
-            </div>
 
             <div id="add-airline-content"></div>
         </div>
@@ -78,6 +84,24 @@
         $.ajax({
             url: '@Url.Action("AddView", "Airlines")',
             type: "Get",
+            success: function (result) {
+                if (result != null && result != '') {
+                    $("#add-airline-content").html(result);
+                    $('#addModal').modal('show');
+                }
+                else {
+                    location.reload();
+                }
+            }
+        });
+        return false;
+    });
+
+    $('.edit-airline').click(function () {
+        $.ajax({
+            url: '@Url.Action("EditView", "Airlines")',
+            type: "Get",
+            data: { id: $(this).attr('id') },
             success: function (result) {
                 if (result != null && result != '') {
                     $("#add-airline-content").html(result);
