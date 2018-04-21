@@ -414,6 +414,21 @@
     <Content Include="Content\img\FlightJobsWeekend.png" />
     <Content Include="Content\img\flybe.png" />
     <Content Include="Content\img\gol.png" />
+    <Content Include="Content\img\graduation\02.png" />
+    <Content Include="Content\img\graduation\03.png" />
+    <Content Include="Content\img\graduation\04.png" />
+    <Content Include="Content\img\graduation\05.png" />
+    <Content Include="Content\img\graduation\06.png" />
+    <Content Include="Content\img\graduation\07.png" />
+    <Content Include="Content\img\graduation\08.png" />
+    <Content Include="Content\img\graduation\09.png" />
+    <Content Include="Content\img\graduation\10.png" />
+    <Content Include="Content\img\graduation\11.png" />
+    <Content Include="Content\img\graduation\12.png" />
+    <Content Include="Content\img\graduation\13.png" />
+    <Content Include="Content\img\graduation\14.png" />
+    <Content Include="Content\img\graduation\15.png" />
+    <Content Include="Content\img\graduation\16.png" />
     <Content Include="Content\img\HomeThum01.png" />
     <Content Include="Content\img\HomeThum02.png" />
     <Content Include="Content\img\HomeThum03.png" />
@@ -612,6 +627,7 @@
     <Content Include="Views\SearchJobs\AlternativeTipsPartialView.cshtml" />
     <Content Include="Views\SearchJobs\ArrivalTipsPartialView.cshtml" />
     <Content Include="Views\Airlines\Edit.cshtml" />
+    <Content Include="Views\Profile\GraduationView.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201710111859366_InitialCreate.resx">

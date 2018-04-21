@@ -1,0 +1,141 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlightJobs</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/jqueryui")
+
+    <!-- the main fileinput plugin file -->
+    @Scripts.Render("~/bundles/fileinput")
+
+    <link rel="apple-touch-icon" sizes="57x57" href="/Content/icon/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="/Content/icon/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/Content/icon/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="/Content/icon/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/Content/icon/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="/Content/icon/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/Content/icon/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/Content/icon/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/Content/icon/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/Content/icon/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/Content/icon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/Content/icon/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/Content/icon/favicon-16x16.png">
+    <link rel="manifest" href="/Content/icon/manifest.json">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="/Content/icon/ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+
+</head>
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a href="@Url.Action("Index", "Home")">
+                    <img src="~/Content/img/FlightJobsLogo0006.png" style="height:45px; padding-top:5px;" />
+                </a>
+                @Html.Partial("_LoginPartial")
+            </div>
+            <div class="navbar-collapse collapse">
+                
+                <ul class="nav navbar-nav  navbar-right">
+                    <li>@Html.ActionLink("Profile", "Index", "Profile")</li>
+                    <li>@Html.ActionLink("Airlines", "Index", "Airlines")</li>
+                    <li>@Html.ActionLink("Add Jobs", "Index", "SearchJobs")</li>
+                    <li><a target="_blank" href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=B2GHF8WFN95JW&lc=US&item_name=FlightJobs&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted">Donation</a></li>
+                    <li>@Html.ActionLink("About", "About", "Home")</li>
+                    <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
+                </ul>
+                
+                
+            </div>
+        </div>
+    </div>
+    <div id="banner" style="width:100%; position: relative;">
+        
+        <img src="~/Content/img/banner0001.jpg" style="width:100%" />
+    </div>
+    <div class="container body-content">
+        @RenderBody()
+    </div>
+
+    <hr />
+    <footer>
+        <div class="container">
+            <div class="row">
+                
+                <div class="col-md-6" style="width:47%">
+                    <p>
+                        This application for X-Plane 11 simulate pilot and airliners jobs. 
+                        For use you will need to download and install the <b>FlightJobs Connector Plugin</b> (only Windows for now). <a href="https://drive.google.com/file/d/1fLUGeqHsC1ba3_Iho-gsBwoMRQ7gt4OG/view?usp=sharing" target="_blank">Click here to download the last version.</a> (Unzip the file in your X-Plane11 folder)<br><br>
+                    </p>
+                </div>
+                <div class="col-md-1">
+                    <img src="~/Content/img/FlightJobsLogo0002.png" style="width:70px;" />
+                </div>
+
+                <div class="col-md-5 pull-right">
+                    <p>FlightJobs is free. If you like it, please consider to make a donation. Donations will be spent paying the servers costs.</p>
+                </div>
+                
+            </div>
+            <div class="row">
+                <div class="text-center">
+                    <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
+                        <input type="hidden" name="cmd" value="_s-xclick">
+                        <input type="hidden" name="encrypted" value="-----BEGIN PKCS7-----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-----END PKCS7-----">
+                        <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+                        <img alt="" border="0" src="https://www.paypalobjects.com/pt_BR/i/scr/pixel.gif" width="1" height="1">
+                    </form>
+                </div>
+            </div>
+            <div class="text-center"><p>Developed by rhpa23 </p></div><br />
+            <br /><hr />
+            <div class="text-center"><p><strong> Thank you for visiting FlightJobs &copy; @DateTime.Now.Year </strong></p></div><br />
+            <div class="text-center">
+                <a href="https://fb.me/rhpa23" target="_self">
+                    <img src="~/Content/img/fb.png" style="width:40px;" />
+                </a>
+                <a href="mailto:rhpa23@gmail.com?Subject=FlightJobs" target="_self">
+                    <img src="~/Content/img/email-icon.png" style="width:35px;" />
+                </a>
+            </div>
+            
+            <div class="text-center small"><p> Disable anti-popup in your browser for a better experience  </p></div><br />
+        </div>
+            <br /><br />
+        
+    </footer>
+    <style>
+        .fixed-footer {
+            position: fixed;
+            height: 30px;
+            bottom: 0;
+            width: 100%;
+            background-color: #222;
+            color:aliceblue;
+            padding:2px;
+        }
+    </style>
+    <div class="fixed-footer">
+        <div class="text-center" >
+            <img src="~/Content/img/bell.png" style="width:35px; margin-top: -15px;" />
+            * If you bought Airlines, now you can edit it. And remember to invite pilots to work with you to grow up the company fast.
+        </div>
+    </div>
+     
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+</body>
+</html>
