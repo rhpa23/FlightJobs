@@ -285,43 +285,43 @@ namespace FlightJobs.Controllers
             if (Enumerable.Range(0, 39).Contains(hours))
                 return new KeyValuePair<string, string>("Junior Flight Officer", string.Concat(path, "02.png"));
 
-            if (Enumerable.Range(40, 79).Contains(hours))
+            if (Enumerable.Range(40, 40).Contains(hours))
                 return new KeyValuePair<string, string>("Flight Officer", string.Concat(path, "03.png"));
 
-            if (Enumerable.Range(80, 159).Contains(hours))
+            if (Enumerable.Range(80, 80).Contains(hours))
                 return new KeyValuePair<string, string>("First Officer", string.Concat(path, "04.png"));
 
-            if (Enumerable.Range(160, 249).Contains(hours))
+            if (Enumerable.Range(160, 90).Contains(hours))
                 return new KeyValuePair<string, string>("Captain", string.Concat(path, "05.png"));
 
-            if (Enumerable.Range(250, 359).Contains(hours))
+            if (Enumerable.Range(250, 110).Contains(hours))
                 return new KeyValuePair<string, string>("Senior Captain", string.Concat(path, "06.png"));
 
-            if (Enumerable.Range(360, 429).Contains(hours))
+            if (Enumerable.Range(360, 70).Contains(hours))
                 return new KeyValuePair<string, string>("Commercial First Officer", string.Concat(path, "07.png"));
 
-            if (Enumerable.Range(430, 539).Contains(hours))
+            if (Enumerable.Range(430, 110).Contains(hours))
                 return new KeyValuePair<string, string>("Commercial Captain", string.Concat(path, "08.png"));
 
-            if (Enumerable.Range(540, 749).Contains(hours))
+            if (Enumerable.Range(540, 210).Contains(hours))
                 return new KeyValuePair<string, string>("Commercial Senior Captain", string.Concat(path, "09.png"));
 
-            if (Enumerable.Range(750, 999).Contains(hours))
+            if (Enumerable.Range(750, 250).Contains(hours))
                 return new KeyValuePair<string, string>("Commercial Commander", string.Concat(path, "10.png"));
 
-            if (Enumerable.Range(1000, 1499).Contains(hours))
+            if (Enumerable.Range(1000, 500).Contains(hours))
                 return new KeyValuePair<string, string>("Commercial Senior Commander", string.Concat(path, "11.png"));
 
-            if (Enumerable.Range(1500, 1999).Contains(hours))
+            if (Enumerable.Range(1500, 500).Contains(hours))
                 return new KeyValuePair<string, string>("ATP First Officer", string.Concat(path, "12.png"));
 
-            if (Enumerable.Range(2000, 2999).Contains(hours))
+            if (Enumerable.Range(2000, 1000).Contains(hours))
                 return new KeyValuePair<string, string>("ATP Captain", string.Concat(path, "13.png"));
 
-            if (Enumerable.Range(3000, 3999).Contains(hours))
+            if (Enumerable.Range(3000, 1000).Contains(hours))
                 return new KeyValuePair<string, string>("ATP Senior Captain", string.Concat(path, "14.png"));
 
-            if (Enumerable.Range(4000, 4999).Contains(hours))
+            if (Enumerable.Range(4000, 1000).Contains(hours))
                 return new KeyValuePair<string, string>("ATP Commander", string.Concat(path, "15.png"));
 
             if (hours >= 5000)
