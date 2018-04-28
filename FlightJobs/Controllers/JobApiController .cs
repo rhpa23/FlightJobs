@@ -176,13 +176,57 @@ namespace FlightJobs.Controllers
             }
         }
 
+        [System.Web.Http.HttpGet]
+        public async Task<HttpResponseMessage> UpdateAirlineTest()
+        {
+            var dbContext = new ApplicationDbContext();
+            var user = dbContext.Users.FirstOrDefault(u => u.Email == User.Identity.Name);
+            JobDbModel job = new JobDbModel()
+            {
+                Pay = 1500,
+                User = user,
+                Dist = 285
+            };
+
+            UpdateAirline(job, dbContext);
+
+            return Request.CreateResponse(HttpStatusCode.OK);
+        }
+
         private void UpdateAirline(JobDbModel job, ApplicationDbContext dbContext)
         {
             var statistics = dbContext.StatisticsDbModels.FirstOrDefault(s => s.User.Id == job.User.Id);
             if (statistics != null && statistics.Airline != null)
             {
-                statistics.Airline.AirlineScore += job.Dist / 14;
-                statistics.Airline.BankBalance += job.Pay + 50;
+                long airlinePay = job.Pay + 35;
+
+                if (statistics.Airline.DebtValue > 0 && statistics.Airline.DebtMaturityDate < DateTime.Now)
+                {
+                    // tem dívida, não pontua e perde dinheiro
+                    statistics.Airline.BankBalance -= (airlinePay / 2);
+
+                    if (statistics.Airline.BankBalance <= 0)
+                        statistics.Airline.BankBalance = 0;
+                }
+                else
+                {
+                    // Pontua e ganha
+                    statistics.Airline.AirlineScore += job.Dist / 14;
+                    statistics.Airline.BankBalance += airlinePay;
+                }
+
+                // Aplica débitos somente airlines compradas
+                if (!string.IsNullOrEmpty(statistics.Airline.UserId))
+                {
+                    if (statistics.Airline.DebtValue == 0)
+                    {
+                        // Aplica o vencimento
+                        statistics.Airline.DebtMaturityDate = DateTime.Now.AddDays(5);
+                    }
+
+                    // Aplica o débito
+                    statistics.Airline.DebtValue += airlinePay * 20 / 100;
+                }
             }
         }
     }

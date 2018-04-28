@@ -203,6 +203,8 @@ namespace FlightJobs.Controllers
                     {
                         var statisticsAirline = dbContext.StatisticsDbModels.Where(s => s.Airline != null && s.Airline.Id == statistics.Airline.Id);
                         statistics.AirlinePilotsHired = statisticsAirline.Count();
+
+                        statistics.Airline.AlowEdit = statistics.Airline.UserId == user.Id;
                     }
 
                     TimeSpan span = new TimeSpan();
@@ -329,5 +331,46 @@ namespace FlightJobs.Controllers
 
             return new KeyValuePair<string, string>("Junior Flight Officer", string.Concat(path, "02.png"));
         }
+
+        public ActionResult PayDebt(int id)
+        {
+            var dbContext = new ApplicationDbContext();
+            var user = dbContext.Users.FirstOrDefault(u => u.Email == User.Identity.Name);
+            var airline = dbContext.AirlineDbModels.FirstOrDefault(a => a.Id == id && a.UserId == user.Id);
+
+            if (airline != null)
+            {
+                //          500                 200
+                if (airline.DebtValue > airline.BankBalance)
+                {
+                    airline.DebtValue = airline.DebtValue - airline.BankBalance;
+                    airline.BankBalance = 0;
+                    var statistics = dbContext.StatisticsDbModels.FirstOrDefault(s => s.User.Id == user.Id);
+                    if (airline.DebtValue > statistics.BankBalance)
+                    {
+                        airline.DebtValue = airline.DebtValue - statistics.BankBalance;
+                        statistics.BankBalance = 0;
+                    }
+                    else
+                    {
+                        statistics.BankBalance -= airline.DebtValue;
+                        airline.DebtValue = 0;
+                    }
+                }
+                else
+                {
+                    airline.BankBalance -= airline.DebtValue;
+                    airline.DebtValue = 0;
+                }
+
+                dbContext.SaveChanges();
+            }
+            else
+            {
+                TempData["Message"] = "You must be the owner of the airline to pay debts.";
+            }
+            return RedirectToAction("Index");
+        }
+        
     }
 }

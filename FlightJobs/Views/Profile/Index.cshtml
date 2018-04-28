@@ -191,7 +191,7 @@
                     </li>
                 </ul>
             </div>
-            <div class="col-sm-4 text-left">
+            <div class="col-sm-5 text-left">
                 <h4><strong>Airline statistics</strong></h4>
                 <ul class="myList">
                     @if (Model.Statistics.Airline != null)
@@ -214,6 +214,36 @@
                         <li>Try to sign contract with an Airline.</li>
                     }
                 </ul>
+                @if (Model.Statistics.Airline != null && Model.Statistics.Airline.DebtValue > 0)
+                {
+                    <div class="pull-right" style="background-color:azure; padding:7px;">
+                        @if (Model.Statistics.Airline.DebtMaturityDate < DateTime.Now)
+                        {
+                            <div class="row">
+                                <div class="col-md-1"><img src="~/Content/img/Alert001.gif" style="width:30px; height:30px;" /></div>
+                                <div class="col-md-11"> <h4 style="color:tomato; margin-left:5px;">This airline has overdue bills to pay. </h4></div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="row">
+                                <div class="col-md-1"><img src="~/Content/img/barcode.png" style="width:30px; height:30px;" /></div>
+                                <div class="col-md-11"><h4 style="color:tomato; margin-left:5px;">This airline has bills to pay. </h4></div>
+                            </div>
+                        }
+                        <h6>Fees, taxes and charges are generated with the Jobs. If you are the owner, pay your bills before the due date.</h6>
+                        <h6>Otherwise, this airline will not score, and the Jobs will generate more debts which could lead to the bankruptcy of the company.</h6>
+                        @if (Model.Statistics.Airline.AlowEdit)
+                        {
+                            <input id="pay-debts-button" type="button" value="Pay" onclick="location.href='@Url.Action("PayDebt", "Profile", new { id = Model.Statistics.Airline.Id } )'" class="btn btn-danger pull-right btn-sm" style="margin-top:5px" />
+                        }  
+                        <ul style="color:tomato;">
+                            <li><strong>Debt value: </strong> @string.Format("{0:C}", Model.Statistics.Airline.DebtValue)</li>
+                            <li><strong>Debt maturity date: </strong> @Model.Statistics.Airline.DebtMaturityDate.ToShortDateString()</li>
+                        </ul>
+                                              
+                    </div>
+                }
             </div>
         </div>
     </div>

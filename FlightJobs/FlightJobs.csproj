@@ -309,6 +309,10 @@
     <Compile Include="Migrations\201804211505523_AirlineOwnerId.Designer.cs">
       <DependentUpon>201804211505523_AirlineOwnerId.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201804262150042_AirlineDebt.cs" />
+    <Compile Include="Migrations\201804262150042_AirlineDebt.Designer.cs">
+      <DependentUpon>201804262150042_AirlineDebt.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\AirlineViewModel.cs" />
@@ -390,11 +394,13 @@
     <Content Include="Content\img\aireuropa.png" />
     <Content Include="Content\img\airfrance.png" />
     <Content Include="Content\img\airplane.png" />
+    <Content Include="Content\img\Alert001.gif" />
     <Content Include="Content\img\alitalia.png" />
     <Content Include="Content\img\americanAirlines.jpg" />
     <Content Include="Content\img\austrian.png" />
     <Content Include="Content\img\azul.jpg" />
     <Content Include="Content\img\banner0001.jpg" />
+    <Content Include="Content\img\barcode.png" />
     <Content Include="Content\img\bell.png" />
     <Content Include="Content\img\britishairways.png" />
     <Content Include="Content\img\certificate.png" />
@@ -698,6 +704,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201804211505523_AirlineOwnerId.resx">
       <DependentUpon>201804211505523_AirlineOwnerId.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201804262150042_AirlineDebt.resx">
+      <DependentUpon>201804262150042_AirlineDebt.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

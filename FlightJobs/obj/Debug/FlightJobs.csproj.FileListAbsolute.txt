@@ -390,3 +390,4 @@ C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs
 D:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.csprojResolveAssemblyReference.cache
 D:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.Migrations.PaxWeightInJob.resources
 D:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.Migrations.AirlineOwnerId.resources
+D:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.Migrations.AirlineDebt.resources

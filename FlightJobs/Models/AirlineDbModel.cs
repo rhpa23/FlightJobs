@@ -42,5 +42,11 @@ namespace FlightJobs.Models
         public bool AlowEdit { get; set; }
 
         public string UserId { get; set; }
+
+        [DisplayName("Airline debt")]
+        public long DebtValue { get; set; }
+
+        [DisplayName("Debt maturity date")]
+        public DateTime DebtMaturityDate { get; set; }
     }
 }
