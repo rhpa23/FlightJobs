@@ -202,7 +202,7 @@ namespace FlightJobs.Controllers
                     if (statistics.Airline != null)
                     {
                         var statisticsAirline = dbContext.StatisticsDbModels.Where(s => s.Airline != null && s.Airline.Id == statistics.Airline.Id);
-                        statistics.AirlinePilotsHired = statisticsAirline.Count();
+                        statistics.AirlinePilotsHired = statisticsAirline.Select(s => s.User).ToList();
 
                         statistics.Airline.AlowEdit = statistics.Airline.UserId == user.Id;
                     }

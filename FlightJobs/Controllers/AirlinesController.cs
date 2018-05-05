@@ -21,7 +21,16 @@ namespace FlightJobs.Controllers
         {
             ViewBag.Message = TempData["Message"];
             var dbContext = new ApplicationDbContext();
-            var list = dbContext.AirlineDbModels.ToList();
+            var list = dbContext.AirlineDbModels.OrderByDescending(a => a.Id).ToList();
+            foreach (var airline in list)
+            {
+                var user = dbContext.Users.FirstOrDefault(u => airline.UserId != null && u.Id == airline.UserId);
+                if (user != null)
+                {
+                    airline.OwnerNickname = user.UserName;
+                }
+                   
+            }
             CheckAirlinerUsers(list);
             return View(list);
         }

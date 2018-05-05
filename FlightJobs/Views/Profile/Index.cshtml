@@ -199,7 +199,15 @@
                         <li><b>@Html.DisplayNameFor(model => model.Statistics.Airline):</b> @Html.DisplayFor(model => model.Statistics.Airline.Name)</li>
                         <li><img class="pull-right" src="@Model.Statistics.Airline.Logo" style="width:110px; height:110px; margin-top:-60px; margin-right:10px" /></li>
 
-                        <li><b>@Html.DisplayNameFor(model => model.Statistics.AirlinePilotsHired):</b> @Html.DisplayFor(model => model.Statistics.AirlinePilotsHired)</li>
+                        <li><b>@Html.DisplayNameFor(model => model.Statistics.AirlinePilotsHired):</b> @Model.Statistics.AirlinePilotsHired.Count()
+                            <a href="#" data-html="True" 
+                               data-toggle="popover" title="Pilots"
+                               data-trigger="hover" data-placement="bottom"
+                               data-content="@foreach (var item in @Model.Statistics.AirlinePilotsHired)
+                               {
+                                   @item.UserName; <br />
+                               }">  <span class="glyphicon glyphicon-eye-open" style="margin-left:10px;"></span></a> 
+                        </li>
                         <li><b>@Html.DisplayNameFor(model => model.Statistics.Airline.AirlineScore):</b> @Html.DisplayFor(model => model.Statistics.Airline.AirlineScore)</li>
                         <li><b>@Html.DisplayNameFor(model => model.Statistics.Airline.BankBalance):</b> @Html.DisplayFor(model => model.Statistics.Airline.BankBalance)</li>
                         <li>

@@ -55,7 +55,7 @@ namespace FlightJobs.Models
 
         [NotMapped]
         [DisplayName("Pilots hired")]
-        public long AirlinePilotsHired { get; set; }
+        public List<ApplicationUser> AirlinePilotsHired { get; set; }
 
         [NotMapped]
         public string GraduationPath { get; set; }
