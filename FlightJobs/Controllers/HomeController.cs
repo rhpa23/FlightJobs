@@ -16,7 +16,7 @@ namespace FlightJobs.Controllers
         {
             var homeModel = new HomeViewModel();
             var dbContext = new ApplicationDbContext();
-            var user = dbContext.Users.FirstOrDefault(u => u.Email == User.Identity.Name);
+            var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
             if (user != null)
             {
                 var statistics = dbContext.StatisticsDbModels.FirstOrDefault(s => s.User.Id == user.Id);
@@ -34,7 +34,7 @@ namespace FlightJobs.Controllers
         public ActionResult ActivateJob(int? jobId)
         {
             var dbContext = new ApplicationDbContext();
-            var user = dbContext.Users.FirstOrDefault(u => u.Email == User.Identity.Name);
+            var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
             if (user != null)
             {
                 var jobList = dbContext.JobDbModels.Where(j => !j.IsDone && j.User.Id == user.Id);
@@ -51,7 +51,7 @@ namespace FlightJobs.Controllers
         public ActionResult DeleteJob(int id)
         {
             var dbContext = new ApplicationDbContext();
-            var user = dbContext.Users.FirstOrDefault(u => u.Email == User.Identity.Name);
+            var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
             if (user != null)
             {
                 JobDbModel job = dbContext.JobDbModels.FirstOrDefault(j => j.Id == id && j.User.Id == user.Id);
@@ -80,13 +80,37 @@ namespace FlightJobs.Controllers
             return View();
         }
 
+        
+        public PartialViewResult NickName()
+        {
+            var dbContext = new ApplicationDbContext();
+            var user = dbContext.Users.FirstOrDefault(u => u.Email == User.Identity.Name);
+            if (user != null && string.Equals(user.Email, user.UserName))
+            {
+                var regUserView = new RegisterViewModel();
+                regUserView.Email = user.Email;
+
+                return PartialView("_NickName", regUserView);
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public PartialViewResult NickNameForce()
+        {
+            var regUserView = new RegisterViewModel();
+            return PartialView("_NickName", regUserView);
+        }
+
         [AllowAnonymous]
         public PartialViewResult RenderHeader()
         {
             if (Session["HeaderStatistics"] == null)
             {
                 var dbContext = new ApplicationDbContext();
-                var user = dbContext.Users.FirstOrDefault(u => u.Email == User.Identity.Name);
+                var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
                 if (user != null)
                 {
                     var statistics = dbContext.StatisticsDbModels.FirstOrDefault(s => s.User.Id == user.Id);

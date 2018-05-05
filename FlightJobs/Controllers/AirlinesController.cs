@@ -29,7 +29,7 @@ namespace FlightJobs.Controllers
         private void CheckAirlinerUsers(List<AirlineDbModel> list)
         {
             var dbContext = new ApplicationDbContext();
-            var user = dbContext.Users.FirstOrDefault(u => u.Email == User.Identity.Name);
+            var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
             
             foreach (var airline in list)
             {
@@ -44,7 +44,7 @@ namespace FlightJobs.Controllers
 
             var dbContext = new ApplicationDbContext();
             var airline = dbContext.AirlineDbModels.FirstOrDefault(a => a.Id == id);
-            var user = dbContext.Users.FirstOrDefault(u => u.Email == User.Identity.Name);
+            var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
             var statistics = dbContext.StatisticsDbModels.FirstOrDefault(s => s.User.Id == user.Id);
             if (statistics != null && statistics.PilotScore >= airline.Score)
             {
@@ -71,7 +71,7 @@ namespace FlightJobs.Controllers
         public ActionResult Buy(int id, int airlineId)
         {
             var dbContext = new ApplicationDbContext();
-            var user = dbContext.Users.FirstOrDefault(u => u.Email == User.Identity.Name);
+            var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
             var statistics = dbContext.StatisticsDbModels.FirstOrDefault(s => s.User.Id == user.Id);
             var certificate = dbContext.CertificateDbModels.FirstOrDefault(c => c.Id == id);
 
@@ -104,7 +104,7 @@ namespace FlightJobs.Controllers
 
             var dbContext = new ApplicationDbContext();
             var airline = dbContext.AirlineDbModels.FirstOrDefault(a => a.Id == id);
-            var user = dbContext.Users.FirstOrDefault(u => u.Email == User.Identity.Name);
+            var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
 
             var statistics = dbContext.StatisticsDbModels.FirstOrDefault(s => s.User.Id == user.Id);
             certificateView.Airline = airline;
@@ -163,7 +163,7 @@ namespace FlightJobs.Controllers
         public JsonResult AirlineNameAvailable(string name)
         {
             var dbContext = new ApplicationDbContext();
-            var user = dbContext.Users.FirstOrDefault(u => u.Email == User.Identity.Name);
+            var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
 
             var nameUsed = dbContext.AirlineDbModels.Any(a => a.Name.ToUpper() == name.Trim().ToUpper() && a.UserId != user.Id);
 
@@ -180,7 +180,7 @@ namespace FlightJobs.Controllers
         public ActionResult Add(AirlineViewModel model)
         {
             var dbContext = new ApplicationDbContext();
-            var user = dbContext.Users.FirstOrDefault(u => u.Email == User.Identity.Name);
+            var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
             var statistics = dbContext.StatisticsDbModels.FirstOrDefault(s => s.User.Id == user.Id);
 
             if (statistics != null && statistics.BankBalance >= airlinePrice)
@@ -236,7 +236,7 @@ namespace FlightJobs.Controllers
             if (file != null && file.ContentLength > 0)
             {
                 var dbContext = new ApplicationDbContext();
-                var user = dbContext.Users.FirstOrDefault(u => u.Email == User.Identity.Name);
+                var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
                 var fileName = Path.GetFileName(user.Id + Path.GetExtension(file.FileName));
 
                 path = Path.Combine(path, fileName);
@@ -253,7 +253,7 @@ namespace FlightJobs.Controllers
         public ActionResult AddView()
         {
             var dbContext = new ApplicationDbContext();
-            var user = dbContext.Users.FirstOrDefault(u => u.Email == User.Identity.Name);
+            var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
             var statistics = dbContext.StatisticsDbModels.FirstOrDefault(s => s.User.Id == user.Id);
             
             if (statistics != null && statistics.BankBalance >= airlinePrice)
@@ -272,7 +272,7 @@ namespace FlightJobs.Controllers
         public ActionResult EditView(int id)
         {
             var dbContext = new ApplicationDbContext();
-            var user = dbContext.Users.FirstOrDefault(u => u.Email == User.Identity.Name);
+            var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
             var airline = dbContext.AirlineDbModels.FirstOrDefault(a => a.Id == id && a.UserId == user.Id);
 
             if (airline != null)
@@ -300,7 +300,7 @@ namespace FlightJobs.Controllers
         public ActionResult Update(AirlineViewModel model)
         {
             var dbContext = new ApplicationDbContext();
-            var user = dbContext.Users.FirstOrDefault(u => u.Email == User.Identity.Name);
+            var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
             var airline = dbContext.AirlineDbModels.FirstOrDefault(a => a.Id == model.Id && a.UserId == user.Id);
 
             if (airline != null)

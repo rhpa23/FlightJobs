@@ -6,6 +6,10 @@ namespace FlightJobs.Models
     public class ExternalLoginConfirmationViewModel
     {
         [Required]
+        [Display(Name = "Nick Name")]
+        public string Name { get; set; }
+
+        [Required]
         [Display(Name = "Email")]
         public string Email { get; set; }
     }
@@ -64,6 +68,10 @@ namespace FlightJobs.Models
 
     public class RegisterViewModel
     {
+        [Required]
+        [Display(Name = "Nick Name")]
+        public string Name { get; set; }
+
         [Required]
         [EmailAddress]
         [Display(Name = "Email")]

@@ -198,7 +198,7 @@ namespace FlightJobs.Controllers
             if (Session["ListSelJobs"] != null)
             {
                 var dbContext = new ApplicationDbContext();
-                var user =  dbContext.Users.FirstOrDefault(u => u.Email == User.Identity.Name);
+                var user =  dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
                 
                 if (Request.Cookies[PassengersWeightCookie] != null
                 && Request.Cookies[PassengersWeightCookie].Value != null)
@@ -384,7 +384,7 @@ namespace FlightJobs.Controllers
 
                 var departureCoord = new GeoCoordinate(departureInfo.Latitude, departureInfo.Longitude);
                 var dbContext = new ApplicationDbContext();
-                var user = dbContext.Users.FirstOrDefault(u => u.Email == User.Identity.Name);
+                var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
                 var allUserJobs = FilterJobs(user, "");
                 var filteredUserJobs = FilterJobs(user, departure);
                 foreach (var job in filteredUserJobs)
@@ -482,7 +482,7 @@ namespace FlightJobs.Controllers
         public ActionResult CloneJob(long jobId)
         {
             var dbContext = new ApplicationDbContext();
-            var user = dbContext.Users.FirstOrDefault(u => u.Email == User.Identity.Name);
+            var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
             var job = dbContext.JobDbModels.FirstOrDefault(x => x.Id == jobId);
 
             var cloneJob = JobDbModel.Clone(job, user);

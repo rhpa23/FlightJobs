@@ -47,7 +47,7 @@ namespace FlightJobs.Controllers
                 if (file != null && file.ContentLength > 0)
                 {
                     var dbContext = new ApplicationDbContext();
-                    var user = dbContext.Users.FirstOrDefault(u => u.Email == User.Identity.Name);
+                    var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
                     var fileName = Path.GetFileName(user.Id + Path.GetExtension(file.FileName));
 
                     var path = Path.Combine(Server.MapPath("~/Content/img/avatar/"), fileName);
@@ -191,7 +191,7 @@ namespace FlightJobs.Controllers
             var homeModel = new HomeViewModel();
             var dbContext = new ApplicationDbContext();
 
-            var user = dbContext.Users.FirstOrDefault(u => u.Email == User.Identity.Name);
+            var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
             if (user != null)
             {
                 var allUserJobs = FilterJobs(user, filterModel);
@@ -241,7 +241,7 @@ namespace FlightJobs.Controllers
         public ActionResult ChartProfile()
         {
             var dbContext = new ApplicationDbContext();
-            var user = dbContext.Users.FirstOrDefault(u => u.Email == User.Identity.Name);
+            var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
             var tempDate = DateTime.Now.AddMonths(-6);
             var dateFilter = new DateTime(tempDate.Year, tempDate.Month, 1);
             var userJobs = dbContext.JobDbModels.Where(j => j.IsDone && j.User.Id == user.Id && j.StartTime > dateFilter).ToList();
@@ -335,7 +335,7 @@ namespace FlightJobs.Controllers
         public ActionResult PayDebt(int id)
         {
             var dbContext = new ApplicationDbContext();
-            var user = dbContext.Users.FirstOrDefault(u => u.Email == User.Identity.Name);
+            var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
             var airline = dbContext.AirlineDbModels.FirstOrDefault(a => a.Id == id && a.UserId == user.Id);
 
             if (airline != null)

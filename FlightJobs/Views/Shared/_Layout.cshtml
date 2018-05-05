@@ -66,6 +66,13 @@
         <img src="~/Content/img/banner0001.jpg" style="width:100%" />
     </div>
     <div class="container body-content">
+        @if (TempData["MessageLayout"] != null)
+        {
+            <div class="alert alert-info">
+                <strong>Info!</strong> @TempData["MessageLayout"]
+            </div>
+        }
+
         @RenderBody()
     </div>
 
@@ -137,5 +144,49 @@
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)
+
+
+    <div class="modal" id="modalNickName" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content" style="width: 400px;">
+                <div class="modal-header">
+                    <div class="row">
+                        <div class="col-md-2">
+                            <img src="~/Content/img/FlightJobsLogo0006.png" style="width:150px;" />
+                        </div>
+                        <div class="col-md-8">
+                            <h4 class="modal-title" id="myModalLabel">Please set your Nick Name</h4>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div id="nick-name-content"></div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            $.ajax({
+                url: '@Url.Action("NickName", "Home")',
+                type: "Get",
+                data: '',
+                success: function (result) {
+                    if (result.trim() != '') {
+                        $('#modalNickName').modal('show');
+                        $("#nick-name-content").html(result);
+                    }
+                    else {
+                        $('#modalNickName').hide();
+                    }
+                }
+            });
+        });
+
+    </script>
+
 </body>
 </html>

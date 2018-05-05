@@ -180,7 +180,7 @@ namespace FlightJobs.Controllers
         public async Task<HttpResponseMessage> UpdateAirlineTest()
         {
             var dbContext = new ApplicationDbContext();
-            var user = dbContext.Users.FirstOrDefault(u => u.Email == User.Identity.Name);
+            var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
             JobDbModel job = new JobDbModel()
             {
                 Pay = 1500,

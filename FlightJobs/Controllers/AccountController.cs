@@ -73,7 +73,7 @@ namespace FlightJobs.Controllers
                 return View(model);
             }
 
-            var user = await UserManager.FindByNameAsync(model.Email);
+            var user = await UserManager.FindByEmailAsync(model.Email);
             if (user == null)
             {
                 ModelState.AddModelError("", "Invalid login attempt.");
@@ -88,7 +88,7 @@ namespace FlightJobs.Controllers
 
             // Isso não conta falhas de login em relação ao bloqueio de conta
             // Para permitir que falhas de senha acionem o bloqueio da conta, altere para shouldLockout: true
-            var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: true);
+            var result = await SignInManager.PasswordSignInAsync(user.UserName, model.Password, model.RememberMe, shouldLockout: false);
             switch (result)
             {
                 case SignInStatus.Success:
@@ -166,7 +166,7 @@ namespace FlightJobs.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+                    var user = new ApplicationUser { UserName = model.Name, Email = model.Email };
                     var result = await UserManager.CreateAsync(user, model.Password);
                     if (result.Succeeded)
                     {
@@ -228,7 +228,7 @@ namespace FlightJobs.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = await UserManager.FindByNameAsync(model.Email);
+                var user = await UserManager.FindByEmailAsync(model.Email);
                 if (user == null || !(await UserManager.IsEmailConfirmedAsync(user.Id)))
                 {
                     // Não revelar que o usuário não existe ou não está confirmado
@@ -274,7 +274,7 @@ namespace FlightJobs.Controllers
             {
                 return View(model);
             }
-            var user = await UserManager.FindByNameAsync(model.Email);
+            var user = await UserManager.FindByEmailAsync(model.Email);
             if (user == null)
             {
                 // Não revelar que o usuário não existe
@@ -393,7 +393,7 @@ namespace FlightJobs.Controllers
                 {
                     return View("ExternalLoginFailure");
                 }
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+                var user = new ApplicationUser { UserName = model.Name, Email = model.Email };
                 var result = await UserManager.CreateAsync(user);
                 if (result.Succeeded)
                 {
@@ -419,6 +419,42 @@ namespace FlightJobs.Controllers
         {
             Session["HeaderStatistics"] = null;
             AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
+            return RedirectToAction("Index", "Home");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> NickName(RegisterViewModel model)
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                if (!string.IsNullOrEmpty(model.Name))
+                {
+                    if (this.UserManager.Users.Any(u => string.Equals(u.UserName, model.Name)))
+                    {
+                        TempData["MessageLayout"] = "This Nick Name is already in use, please try another one.";
+                    }
+                    else
+                    {
+                        var user = UserManager.FindById(User.Identity.GetUserId());
+                        if (user != null || await UserManager.IsEmailConfirmedAsync(user.Id))
+                        {
+
+                            user.UserName = model.Name;
+                            var result = await UserManager.UpdateAsync(user);
+                            if (result.Succeeded)
+                            {
+                                TempData["MessageLayout"] = "Your Nick Name was defined with success.";
+                                LogOff();
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    TempData["MessageLayout"] = "Inválid Nick Name.";
+                }
+            }
             return RedirectToAction("Index", "Home");
         }
 

@@ -1,0 +1,43 @@
+﻿@using FlightJobs.Models
+@model RegisterViewModel
+@{
+    Layout = null;
+}
+
+@if (Request.IsAuthenticated)
+{
+    using (Html.BeginForm("NickName", "Account", FormMethod.Post, new { id = "nickNameForm" }))
+    {
+        @Html.AntiForgeryToken()
+        <div class="panel panel-default" style="padding:25px; max-width: 400px  ">
+            <p style="font-size:medium;">
+                New features are coming in FlightJobs. For that, you'll need to set your Nick Name. 
+                It will be how you will be identified in FlightJobs. After that, you will need login again.
+            </p>
+            <div class="row">
+                    <div class="form-group">
+                        <div class="col-md-5">
+                            @Html.LabelFor(m => m.Name, new { @class = "control-label" })
+                        </div>
+                        
+                        <div class="col-md-10">
+                            @Html.TextBoxFor(m => m.Name, new { @class = "form-control", @maxlength = "30" })
+                            @Html.ValidationMessageFor(m => m.Name, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+        </div>
+        <div class="modal-footer">
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-4 pull-right">
+
+                    <input type="submit" value="Save" class="btn btn-default" />
+
+
+                </div>
+
+            </div>
+        </div>
+    }
+}
+

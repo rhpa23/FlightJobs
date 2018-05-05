@@ -54,7 +54,7 @@ namespace FlightJobs.Controllers
                 string email = Request.Headers.GetValues("Email").First();
                 string password = Request.Headers.GetValues("Password").First();
 
-                var userModel = await UserManager.FindByNameAsync(email);
+                var userModel = await UserManager.FindByEmailAsync(email);
                 if (userModel == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.Unauthorized, "Invalid login attempt.");
@@ -67,7 +67,7 @@ namespace FlightJobs.Controllers
 
                 // Isso não conta falhas de login em relação ao bloqueio de conta
                 // Para permitir que falhas de senha acionem o bloqueio da conta, altere para shouldLockout: true
-                var result = await SignInManager.PasswordSignInAsync(email, password, true, shouldLockout: false);
+                var result = await SignInManager.PasswordSignInAsync(userModel.UserName, password, true, shouldLockout: false);
                 switch (result)
                 {
                     case SignInStatus.Success:

@@ -634,6 +634,7 @@
     <Content Include="Views\SearchJobs\ArrivalTipsPartialView.cshtml" />
     <Content Include="Views\Airlines\Edit.cshtml" />
     <Content Include="Views\Profile\GraduationView.cshtml" />
+    <Content Include="Views\Shared\_NickName.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201710111859366_InitialCreate.resx">

@@ -1,4 +1,5 @@
 ﻿@model FlightJobs.Models.IndexViewModel
+@using Microsoft.AspNet.Identity
 @{
     ViewBag.Title = "Manage";
 }
@@ -21,6 +22,12 @@
             {
                 @Html.ActionLink("Set your password", "SetPassword")
             }
+            ]
+        </dd>
+        <dt>Nickname: @User.Identity.GetUserName() </dt>
+        <dd>
+            [
+                <a href="#" id="ForceNickname">Change your Nickname</a>
             ]
         </dd>
         @*
@@ -59,3 +66,24 @@
         *@
     </dl>
 </div>
+
+
+<script>
+    $('#ForceNickname').click(function () {
+            $.ajax({
+                url: '@Url.Action("NickNameForce", "Home")',
+                type: "Get",
+                data: '',
+                success: function (result) {
+                    if (result.trim() != '') {
+                        $('#modalNickName').modal('show');
+                        $("#nick-name-content").html(result);
+                    }
+                    else {
+                        $('#modalNickName').hide();
+                    }
+                }
+            });
+        });
+
+</script>
