@@ -65,6 +65,16 @@ namespace FlightJobs.Models
             }
         }
 
+        [NotMapped]
+        public int FlightTimeHours
+        {
+            get
+            {
+                TimeSpan span = (EndTime - StartTime);
+                return span.Hours;
+            }
+        }
+
         [DisplayFormat(DataFormatString = "{0:C0}")]
         [DisplayName("Pay")]
         public long Pay { get; set; }

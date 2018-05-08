@@ -243,13 +243,31 @@
                         <h6>Otherwise, this airline will not score, and the Jobs will generate more debts which could lead to the bankruptcy of the company.</h6>
                         @if (Model.Statistics.Airline.AlowEdit)
                         {
-                            <input id="pay-debts-button" type="button" value="Pay" onclick="location.href='@Url.Action("PayDebt", "Profile", new { id = Model.Statistics.Airline.Id } )'" class="btn btn-danger pull-right btn-sm" style="margin-top:5px" />
+                            <input id="pay-debts-button" type="button" value="Pay" onclick="location.href='@Url.Action("PayDebt", "Profile", new { id = Model.Statistics.Airline.Id })'" class="btn btn-danger pull-right btn-sm" style="margin-top:5px" />
+                            <input id="show-ledger-button" type="button" value="Ledger" class="btn btn-default pull-right btn-sm" style="margin-top:5px" />
                         }  
                         <ul style="color:tomato;">
                             <li><strong>Debt value: </strong> @string.Format("{0:C}", Model.Statistics.Airline.DebtValue)</li>
                             <li><strong>Debt maturity date: </strong> @Model.Statistics.Airline.DebtMaturityDate.ToShortDateString()</li>
                         </ul>
                                               
+                    </div>
+
+                    <div class="modal" id="myModalLedger" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                        <div class="modal-dialog" role="document" style="width:auto;">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                    <h4 class="modal-title">@Model.Statistics.Airline.Name ledger</h4>
+                                </div>
+                                <div class="modal-body" style="overflow: auto; height:350px;">
+                                    <div id="ledger-content"></div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 }
             </div>
@@ -322,6 +340,8 @@
         </div>
     </div>
 </div>
+
+
 
 
 <div class="modal" id="myModalRanking" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
@@ -397,4 +417,20 @@ $('#buttonRanking').click(function () {
     });
     return true;
 });
+
+$('#show-ledger-button').click(function () {
+    $.ajax({
+        url: '@Url.Action("LedgerProfile", "Profile")',
+        type: "Get",
+        data: { airlineId: @( Model.Statistics != null && Model.Statistics.Airline != null ? Model.Statistics.Airline.Id : 0 )  },
+        success: function (result) {
+            if (result != null) {
+                $('#myModalLedger').modal('show');
+                $("#ledger-content").html(result);
+            }
+        }
+    });
+    return true;
+});
+
 </script>

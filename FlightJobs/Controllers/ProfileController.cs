@@ -279,6 +279,16 @@ namespace FlightJobs.Controllers
             return PartialView("Ranking", list);
         }
 
+        public ActionResult LedgerProfile(int airlineId)
+        {
+            var dbContext = new ApplicationDbContext();
+            var airlineJobs = dbContext.JobAirlineDbModels.Where(j => j.Job.IsDone && j.Airline.Id == airlineId).ToList();
+
+            airlineJobs.ForEach(a => a.CalcAirlineJob());
+
+            return PartialView("AirlineLedgerView", airlineJobs);
+        }
+                
         private KeyValuePair<string, string> GetGraduationInfo(TimeSpan flightTimeSpan)
         {
             string path = "/Content/img/graduation/";

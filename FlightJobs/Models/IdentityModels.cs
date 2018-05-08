@@ -26,6 +26,7 @@ namespace FlightJobs.Models
         public DbSet<StatisticCertificatesDbModel> StatisticCertificatesDbModels { get; set; }
         public DbSet<CertificateDbModel> CertificateDbModels { get; set; }
         public DbSet<StatisticsDbModel> StatisticsDbModels { get; set; }
+        public DbSet<JobAirlineDbModel> JobAirlineDbModels { get; set; }
 
         public ApplicationDbContext()
             : base("DefaultConnection", throwIfV1Schema: false)

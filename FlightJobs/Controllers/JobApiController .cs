@@ -176,34 +176,23 @@ namespace FlightJobs.Controllers
             }
         }
 
-        [System.Web.Http.HttpGet]
-        public async Task<HttpResponseMessage> UpdateAirlineTest()
-        {
-            var dbContext = new ApplicationDbContext();
-            var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
-            JobDbModel job = new JobDbModel()
-            {
-                Pay = 1500,
-                User = user,
-                Dist = 285
-            };
-
-            UpdateAirline(job, dbContext);
-
-            return Request.CreateResponse(HttpStatusCode.OK);
-        }
-
         private void UpdateAirline(JobDbModel job, ApplicationDbContext dbContext)
         {
             var statistics = dbContext.StatisticsDbModels.FirstOrDefault(s => s.User.Id == job.User.Id);
             if (statistics != null && statistics.Airline != null)
             {
-                long airlinePay = job.Pay + 35;
+                //long airlinePay = job.Pay + 35;
+                var jobAirline = new JobAirlineDbModel()
+                {
+                    Airline = statistics.Airline,
+                    Job = job
+                };
+                jobAirline.CalcAirlineJob();
 
                 if (statistics.Airline.DebtValue > 0 && statistics.Airline.DebtMaturityDate < DateTime.Now)
                 {
                     // tem dívida, não pontua e perde dinheiro
-                    statistics.Airline.BankBalance -= (airlinePay / 2);
+                    statistics.Airline.BankBalance -= (long)(jobAirline.FlightIncome / 2);
 
                     if (statistics.Airline.BankBalance <= 0)
                         statistics.Airline.BankBalance = 0;
@@ -212,7 +201,7 @@ namespace FlightJobs.Controllers
                 {
                     // Pontua e ganha
                     statistics.Airline.AirlineScore += job.Dist / 14;
-                    statistics.Airline.BankBalance += airlinePay;
+                    statistics.Airline.BankBalance += (long)jobAirline.RevenueEarned;
                 }
 
                 // Aplica débitos somente airlines compradas
@@ -225,8 +214,9 @@ namespace FlightJobs.Controllers
                     }
 
                     // Aplica o débito
-                    statistics.Airline.DebtValue += airlinePay * 20 / 100;
+                    statistics.Airline.DebtValue += (long)jobAirline.TotalFlightCost;
                 }
+                dbContext.JobAirlineDbModels.Add(jobAirline);
             }
         }
     }
