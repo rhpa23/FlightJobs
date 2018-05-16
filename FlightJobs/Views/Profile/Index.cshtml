@@ -215,6 +215,32 @@
                                 <span class="glyphicon glyphicon-equalizer"></span> Ranking
                             </button>
                         </li>
+                        <li>
+                            <button id="show-ledger-button" type="button" class="btn btn-default" style="margin-top:5px" >
+                                <span class="glyphicon glyphicon-info-sign"></span> Ledger
+                            </button>
+
+                            <div class="modal" id="myModalLedger" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                                <div class="modal-dialog" role="document" style="width:auto;">
+                                    <div class="modal-content">
+                                        <div class="modal-header" style="padding-bottom:0px;">
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                            
+                                            <h2 class="modal-title">
+                                                <img src="@Model.Statistics.Airline.Logo" style="width:50px; height:50px; margin-right:5px" />
+                                                @Model.Statistics.Airline.Name ledger
+                                            </h2>
+                                        </div>
+                                        <div class="modal-body" style="overflow: auto; height:350px;">
+                                            <div id="ledger-content"></div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
                     }
                     else
                     {
@@ -224,6 +250,7 @@
                 </ul>
                 @if (Model.Statistics.Airline != null && Model.Statistics.Airline.DebtValue > 0)
                 {
+                    <hr />
                     <div class="pull-right" style="background-color:azure; padding:7px;">
                         @if (Model.Statistics.Airline.DebtMaturityDate < DateTime.Now)
                         {
@@ -244,30 +271,13 @@
                         @if (Model.Statistics.Airline.AlowEdit)
                         {
                             <input id="pay-debts-button" type="button" value="Pay" onclick="location.href='@Url.Action("PayDebt", "Profile", new { id = Model.Statistics.Airline.Id })'" class="btn btn-danger pull-right btn-sm" style="margin-top:5px" />
-                            <input id="show-ledger-button" type="button" value="Ledger" class="btn btn-default pull-right btn-sm" style="margin-top:5px" />
+                            
                         }  
                         <ul style="color:tomato;">
                             <li><strong>Debt value: </strong> @string.Format("{0:C}", Model.Statistics.Airline.DebtValue)</li>
                             <li><strong>Debt maturity date: </strong> @Model.Statistics.Airline.DebtMaturityDate.ToShortDateString()</li>
                         </ul>
                                               
-                    </div>
-
-                    <div class="modal" id="myModalLedger" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-                        <div class="modal-dialog" role="document" style="width:auto;">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                    <h4 class="modal-title">@Model.Statistics.Airline.Name ledger</h4>
-                                </div>
-                                <div class="modal-body" style="overflow: auto; height:350px;">
-                                    <div id="ledger-content"></div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 }
             </div>
