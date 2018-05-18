@@ -445,6 +445,7 @@
     <Content Include="Content\img\HomeThum03.png" />
     <Content Include="Content\img\KLM.png" />
     <Content Include="Content\img\line.png" />
+    <Content Include="Content\img\loading.gif" />
     <Content Include="Content\img\logbook0001.jpg" />
     <Content Include="Content\img\logo\LogoDefault.png" />
     <Content Include="Content\img\lufthansa.jpg" />
@@ -536,6 +537,8 @@
     <None Include="Scripts\jquery.validate-vsdoc.js" />
     <Content Include="Scripts\jquery-ui-1.12.1.js" />
     <Content Include="Scripts\jquery-ui-1.12.1.min.js" />
+    <Content Include="Scripts\jquery.unobtrusive-ajax.js" />
+    <Content Include="Scripts\jquery.unobtrusive-ajax.min.js" />
     <Content Include="Scripts\jquery.validate.js" />
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />

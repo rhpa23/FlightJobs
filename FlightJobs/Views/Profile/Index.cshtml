@@ -7,6 +7,8 @@
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
+
 <link href="/Content/bootstrap-fileinput/css/fileinput.min.css" rel="stylesheet">
 <style>
 
@@ -219,9 +221,10 @@
                             <button id="show-ledger-button" type="button" class="btn btn-default" style="margin-top:5px" >
                                 <span class="glyphicon glyphicon-info-sign"></span> Ledger
                             </button>
+                            <img id="ledger-loading-img" src="~/Content/img/loading.gif" style="width:20px; display:none;" />
 
                             <div class="modal" id="myModalLedger" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-                                <div class="modal-dialog" role="document" style="width:auto;">
+                                <div class="modal-dialog" role="document" style="width:auto; height:auto;">
                                     <div class="modal-content">
                                         <div class="modal-header" style="padding-bottom:0px;">
                                             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -231,11 +234,22 @@
                                                 @Model.Statistics.Airline.Name ledger
                                             </h2>
                                         </div>
-                                        <div class="modal-body" style="overflow: auto; height:350px;">
+                                        <div class="modal-body" height:auto;">
                                             <div id="ledger-content"></div>
                                         </div>
                                         <div class="modal-footer">
-                                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                            <div class="row" style="padding-right:10px;">
+                                                <div class="col-sm-1">
+                                                    <input id="ledger-departure-filter" placeholder="Departure" class="form-control input-sm text-uppercase" maxlength="4" type="text" />
+                                                </div>
+                                                <div class="col-sm-1">
+                                                    <input id="ledger-arrival-filter" placeholder="Arrival" class="form-control input-sm text-uppercase" maxlength="4" type="text" />
+                                                </div>
+                                                <div class="col-sm-1">
+                                                    <button id="filter-ledger-button" type="button" class="btn btn-default btn-sm pull-left" >Filter</button>
+                                                </div>
+                                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -429,6 +443,7 @@ $('#buttonRanking').click(function () {
 });
 
 $('#show-ledger-button').click(function () {
+    $('#ledger-loading-img').show();
     $.ajax({
         url: '@Url.Action("LedgerProfile", "Profile")',
         type: "Get",
@@ -437,10 +452,33 @@ $('#show-ledger-button').click(function () {
             if (result != null) {
                 $('#myModalLedger').modal('show');
                 $("#ledger-content").html(result);
+                $('#ledger-loading-img').hide();
             }
         }
     });
     return true;
 });
 
+$('#filter-ledger-button').click(function () {
+    $.ajax({
+        url: '@Url.Action("FilterLedger", "Profile")',
+        type: "Get",
+        data: {
+            airlineId: @( Model.Statistics != null && Model.Statistics.Airline != null ? Model.Statistics.Airline.Id : 0 )  ,
+            departure: $('#ledger-departure-filter').val(),
+            arrival: $('#ledger-arrival-filter').val()
+        },
+        success: function (result) {
+            if (result != null) {
+                $("#ledger-content").html(result);
+            }
+        }
+    });
+    return true;
+});
+    
+
 </script>
+@section Scripts{
+    <script type="text/javascript" src="/Scripts/jquery.unobtrusive-ajax.js"></script>
+}

@@ -279,16 +279,45 @@ namespace FlightJobs.Controllers
             return PartialView("Ranking", list);
         }
 
-        public ActionResult LedgerProfile(int airlineId)
+        public ActionResult LedgerProfile(int airlineId, int page = 1)
         {
             var dbContext = new ApplicationDbContext();
-            var airlineJobs = dbContext.JobAirlineDbModels.Where(j => j.Job.IsDone && j.Airline.Id == airlineId).ToList();
+            var airlineJobs = dbContext.JobAirlineDbModels.Where(j => j.Job.IsDone && 
+                                                                 j.Airline.Id == airlineId).OrderByDescending(o => o.Id).ToList();
 
-            airlineJobs.ForEach(a => a.CalcAirlineJob());
-
-            return PartialView("AirlineLedgerView", airlineJobs);
+            return GetAirlineLedgerView(airlineJobs, page);
         }
-                
+
+        public ActionResult FilterLedger(int airlineId, string departure, string arrival)
+        {
+            var dbContext = new ApplicationDbContext();
+            var airlineJobs = dbContext.JobAirlineDbModels.Where(j => j.Job.IsDone && 
+                                                                      j.Airline.Id == airlineId);
+            if (!string.IsNullOrEmpty(departure) && departure.Length == 4)
+            {
+                airlineJobs = airlineJobs.Where(j => j.Job.DepartureICAO == departure);
+            }
+
+            if (!string.IsNullOrEmpty(arrival) && arrival.Length == 4)
+            {
+                airlineJobs = airlineJobs.Where(j => j.Job.ArrivalICAO == arrival);
+            }
+
+            return GetAirlineLedgerView(airlineJobs.OrderByDescending(o => o.Id).ToList(), 1);
+        }
+
+        private ActionResult GetAirlineLedgerView(List<JobAirlineDbModel> airlineJobs, int page)
+        {
+            var dbContext = new ApplicationDbContext();
+            int pageSize = 6;
+
+            var pgList = airlineJobs.ToPagedList<JobAirlineDbModel>(page, pageSize);
+
+            pgList.ToList().ForEach(a => a.CalcAirlineJob());
+
+            return (ActionResult)PartialView("AirlineLedgerView", pgList);
+        }
+
         private KeyValuePair<string, string> GetGraduationInfo(TimeSpan flightTimeSpan)
         {
             string path = "/Content/img/graduation/";
