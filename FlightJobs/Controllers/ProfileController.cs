@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Data.Entity;
 using System.Web;
 using System.Web.Mvc;
 using PagedList;
@@ -315,7 +316,7 @@ namespace FlightJobs.Controllers
 
             pgList.ToList().ForEach(a => a.CalcAirlineJob());
 
-            return (ActionResult)PartialView("AirlineLedgerView", pgList);
+            return PartialView("AirlineLedgerView", pgList);
         }
 
         private KeyValuePair<string, string> GetGraduationInfo(TimeSpan flightTimeSpan)
@@ -410,6 +411,96 @@ namespace FlightJobs.Controllers
             }
             return RedirectToAction("Index");
         }
-        
+
+        public ActionResult PilotLicenseProfile()
+        {
+            var dbContext = new ApplicationDbContext();
+            InsertUserPilotLicense(dbContext);
+
+            var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
+
+            var list = dbContext.PilotLicenseExpensesUser.Include(x => x.PilotLicenseExpense).Where(p => p.User.Id == user.Id);
+
+            return PartialView("PilotLicenseView", list.ToList());
+        }
+
+        public ActionResult SelectLicenceExpense(int licenseExpenseId)
+        {
+            var dbContext = new ApplicationDbContext();
+            var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
+            var list = dbContext.LicenseItemUser.Include(x => x.PilotLicenseItem)
+                                                .Include(x => x.PilotLicenseItem.PilotLicenseExpense)
+                                                .Where(p => p.PilotLicenseItem.PilotLicenseExpense.Id == licenseExpenseId && p.User.Id == user.Id);
+
+            return PartialView("PilotLicenseItemView", list.ToList());
+        }
+
+        public JsonResult BuyLicenceItem(int licenseItemId)
+        {
+            var dbContext = new ApplicationDbContext();
+            var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
+            var uStatistics = dbContext.StatisticsDbModels.FirstOrDefault(s => s.User.Id == user.Id);
+
+            var item = dbContext.LicenseItemUser.Include(x => x.PilotLicenseItem).Include(x => x.PilotLicenseItem.PilotLicenseExpense)
+                                                 .FirstOrDefault(i => i.PilotLicenseItem.Id == licenseItemId && !i.IsBought && i.User.Id == user.Id);
+            if (item != null)
+            {
+                item.IsBought = true;
+                uStatistics.BankBalance -= item.PilotLicenseItem.Price;
+                Session["HeaderStatistics"] = null;
+
+                bool notAllBought = dbContext.LicenseItemUser.Any(i => !i.IsBought && i.PilotLicenseItem.Id != licenseItemId);
+                if (!notAllBought)
+                {
+                    var expenseUser = dbContext.PilotLicenseExpensesUser.Include(x => x.PilotLicenseExpense).FirstOrDefault(e => 
+                                                    e.PilotLicenseExpense.Id == item. PilotLicenseItem.PilotLicenseExpense.Id && 
+                                                    e.User.Id == user.Id);
+
+                    expenseUser.MaturityDate = DateTime.UtcNow.AddDays(expenseUser.PilotLicenseExpense.DaysMaturity);
+                }
+                dbContext.SaveChanges();
+
+                return Json(string.Format("{0:C}", uStatistics.BankBalance), JsonRequestBehavior.AllowGet);
+            }
+            return Json(null, JsonRequestBehavior.AllowGet);
+        }
+
+        private void InsertUserPilotLicense(ApplicationDbContext dbContext)
+        {
+            var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
+
+            var existItem = dbContext.LicenseItemUser.Any(i => i.User.Id == user.Id);
+            if (!existItem)
+            {
+                foreach (var item in dbContext.PilotLicenseItem.ToList())
+                {
+                    var itemUser = new LicenseItemUserDbModel()
+                    {
+                        User = user,
+                        PilotLicenseItem = item,
+                        IsBought = false
+                    };
+                    dbContext.LicenseItemUser.Add(itemUser);
+                }
+            }
+
+            var existExpense = dbContext.PilotLicenseExpensesUser.Any(i => i.User.Id == user.Id);
+
+            if (!existExpense)
+            {
+                foreach (var expense in dbContext.PilotLicenseExpenses.ToList())
+                {
+                    var expenseUser = new PilotLicenseExpensesUserDbModel()
+                    {
+                        User = user,
+                        PilotLicenseExpense = expense,
+                        MaturityDate = DateTime.UtcNow.AddDays(expense.DaysMaturity)
+                    };
+                    dbContext.PilotLicenseExpensesUser.Add(expenseUser);
+                }
+            }
+
+            dbContext.SaveChanges();
+        }
     }
 }

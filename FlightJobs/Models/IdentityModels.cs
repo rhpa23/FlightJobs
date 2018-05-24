@@ -27,7 +27,11 @@ namespace FlightJobs.Models
         public DbSet<CertificateDbModel> CertificateDbModels { get; set; }
         public DbSet<StatisticsDbModel> StatisticsDbModels { get; set; }
         public DbSet<JobAirlineDbModel> JobAirlineDbModels { get; set; }
-
+        public DbSet<PilotLicenseExpensesDbModel> PilotLicenseExpenses { get; set; }
+        public DbSet<PilotLicenseItemDbModel> PilotLicenseItem { get; set; }
+        public DbSet<LicenseItemUserDbModel> LicenseItemUser { get; set; }
+        public DbSet<PilotLicenseExpensesUserDbModel> PilotLicenseExpensesUser { get; set; }
+        
         public ApplicationDbContext()
             : base("DefaultConnection", throwIfV1Schema: false)
         {

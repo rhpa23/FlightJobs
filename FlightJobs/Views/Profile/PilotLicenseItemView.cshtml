@@ -1,0 +1,65 @@
+﻿@model IEnumerable<FlightJobs.Models.LicenseItemUserDbModel>
+    <style>
+        .bought {
+            width: 100px;
+            margin-top: 150px;
+            margin-left: -40px;
+        }
+    </style>
+    @foreach (var item in Model)
+    {
+        <div style="width:auto; ">
+            <div class="row">
+                <div class="col-sm-8">
+                    <img class="img-thumbnail" src="@item.PilotLicenseItem.Image"  />
+                </div>
+                <div class="col-sm-3">
+                    @if (item.IsBought)
+                    {
+                        <img id="already-bought-ico-@item.PilotLicenseItem.Id" src="~/Content/img/checked_icon.png" class="bought" />
+                    }
+                    else
+                    {
+                        <img id="already-bought-ico-@item.PilotLicenseItem.Id" style="display:none;" src="~/Content/img/checked_icon.png" class="bought" />
+                    }
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-10">
+                    <span style="color:dimgrey;">@item.PilotLicenseItem.Name</span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-9">
+                    <span style="font-weight:bold; font-size:medium;">@string.Format("{0:C}", item.PilotLicenseItem.Price)</span>
+                    @if (!item.IsBought)
+                    {
+                    <button id="buy-license-item-button-@item.PilotLicenseItem.Id" onclick="buyLicenseItem(@item.PilotLicenseItem.Id)" class="btn btn-info btn-xs">Buy</button>
+                    }
+                </div>
+            </div>
+        </div>
+        <hr />
+    }
+
+<script type='text/javascript'>
+    function buyLicenseItem(id) {
+
+        $.ajax({
+            url: '@Url.Action("BuyLicenceItem", "Profile")',
+            type: "Get",
+            data: { licenseItemId: + id },
+            success: function (result) {
+                if (result != null) {
+                    $('#license-user-bank-balance').html(result);
+                    var icoId = "#already-bought-ico-" + id;
+                    var buttonId = '#buy-license-item-button-' + id;
+
+                    $(icoId).show();
+                    $(buttonId).prop("disabled", true);;
+                }
+            }
+        });
+        return true;
+    }
+</script>

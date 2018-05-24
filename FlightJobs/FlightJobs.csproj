@@ -317,6 +317,10 @@
     <Compile Include="Migrations\201805061205133_JobAirlineModel.Designer.cs">
       <DependentUpon>201805061205133_JobAirlineModel.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201805221630222_PilotLicenseExpenses.cs" />
+    <Compile Include="Migrations\201805221630222_PilotLicenseExpenses.Designer.cs">
+      <DependentUpon>201805221630222_PilotLicenseExpenses.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\AirlineViewModel.cs" />
@@ -325,6 +329,10 @@
     <Compile Include="Models\ConfirmJobsViewModel.cs" />
     <Compile Include="Models\GeneralInfoViewModel.cs" />
     <Compile Include="Models\JobAirlineDbModel.cs" />
+    <Compile Include="Models\LicenseItemUserDbModel.cs" />
+    <Compile Include="Models\PilotLicenseExpensesDbModel.cs" />
+    <Compile Include="Models\PilotLicenseExpensesUserDbModel.cs" />
+    <Compile Include="Models\PilotLicenseItemDbModel.cs" />
     <Compile Include="Models\SearchJobTipsViewModel.cs" />
     <Compile Include="Models\StatisticCertificatesDbModel.cs" />
     <Compile Include="Models\AirlineCertificatesDbModel.cs" />
@@ -409,6 +417,7 @@
     <Content Include="Content\img\bell.png" />
     <Content Include="Content\img\britishairways.png" />
     <Content Include="Content\img\certificate.png" />
+    <Content Include="Content\img\checked_icon.png" />
     <Content Include="Content\img\contract2.jpg" />
     <Content Include="Content\img\contract_ico.jpg" />
     <Content Include="Content\img\default.jpg" />
@@ -449,6 +458,23 @@
     <Content Include="Content\img\logbook0001.jpg" />
     <Content Include="Content\img\logo\LogoDefault.png" />
     <Content Include="Content\img\lufthansa.jpg" />
+    <Content Include="Content\img\PilotExpenses\AdvancedAvionicsHandbook.jpg" />
+    <Content Include="Content\img\PilotExpenses\AerodynamicsExam.jpg" />
+    <Content Include="Content\img\PilotExpenses\AerodynamicsTechnicalManual.jpg" />
+    <Content Include="Content\img\PilotExpenses\AeronauticalInformationManual.jpg" />
+    <Content Include="Content\img\PilotExpenses\AircraftOperationalKnowledge.jpg" />
+    <Content Include="Content\img\PilotExpenses\AirplaneFlyingHandbook.jpg" />
+    <Content Include="Content\img\PilotExpenses\AuthorizedAviationMedicalExam.jpg" />
+    <Content Include="Content\img\PilotExpenses\CommercialPilotPracticalTest.jpg" />
+    <Content Include="Content\img\PilotExpenses\FederalAviationRegulations.jpg" />
+    <Content Include="Content\img\PilotExpenses\FlightNavigatorHandbook.jpg" />
+    <Content Include="Content\img\PilotExpenses\FlyingSkillsPraticalExam.jpg" />
+    <Content Include="Content\img\PilotExpenses\GroundSchoolExam.jpg" />
+    <Content Include="Content\img\PilotExpenses\JetPilotExam.jpg" />
+    <Content Include="Content\img\PilotExpenses\JetTransitionCourse.jpg" />
+    <Content Include="Content\img\PilotExpenses\PilotCourseTraining.jpg" />
+    <Content Include="Content\img\PilotExpenses\SimulatorTraining.jpg" />
+    <Content Include="Content\img\PilotExpenses\WeatherExam.jpg" />
     <Content Include="Content\img\ranking.png" />
     <Content Include="Content\img\ryanair.png" />
     <Content Include="Content\img\southwest.png" />
@@ -644,6 +670,8 @@
     <Content Include="Views\Profile\GraduationView.cshtml" />
     <Content Include="Views\Shared\_NickName.cshtml" />
     <Content Include="Views\Profile\AirlineLedgerView.cshtml" />
+    <Content Include="Views\Profile\PilotLicenseView.cshtml" />
+    <Content Include="Views\Profile\PilotLicenseItemView.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201710111859366_InitialCreate.resx">
@@ -720,6 +748,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201805061205133_JobAirlineModel.resx">
       <DependentUpon>201805061205133_JobAirlineModel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201805221630222_PilotLicenseExpenses.resx">
+      <DependentUpon>201805221630222_PilotLicenseExpenses.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
