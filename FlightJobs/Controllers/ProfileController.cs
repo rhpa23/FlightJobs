@@ -8,6 +8,7 @@ using System.Web.Mvc;
 using PagedList;
 using System.IO;
 using Chart.Mvc.ComplexChart;
+using System.Text;
 
 namespace FlightJobs.Controllers
 {
@@ -234,9 +235,51 @@ namespace FlightJobs.Controllers
                 }
                 var jobList = GetSortedJobs(allUserJobs, sortOrder, CurrentSort, pageNumber, user);
                 homeModel.Jobs = jobList;
+
+                homeModel.PilotStatisticsDescription = GetPilotDescription(statistics, dbContext);
             }
 
             return homeModel;
+        }
+
+        private string GetPilotDescription(StatisticsDbModel statistics, ApplicationDbContext dbContext)
+        {
+            var stBuilder = new StringBuilder();
+            var listOverdue = dbContext.PilotLicenseExpensesUser.Include(x => x.PilotLicenseExpense).Where(e => 
+                                                            e.MaturityDate < DateTime.UtcNow && 
+                                                            e.User.Id == statistics.User.Id).ToList();
+            if (listOverdue.Count() > 0)
+            {
+                stBuilder.Append(string.Format(@"<h5><img src='/Content/img/Alert001.gif' style='width: 30px; height: 30px;'/>"));
+                stBuilder.Append(string.Format("<strong>"));
+                stBuilder.Append(string.Format("  Hi captain {0}, your pilot license is expired. ", statistics.User.UserName));
+                stBuilder.Append(string.Format("</strong></h5><hr />"));
+                stBuilder.Append(string.Format("There are {0} license(s) requirements overdue. ", listOverdue.Count()));
+                stBuilder.Append(string.Format("The next Jobs will not score and paid until you renew your license. "));
+                stBuilder.Append(string.Format("Click on License button to check your license requirements."));
+                foreach (var expenseOverdue in listOverdue.Where(o => !o.OverdueProcessed))
+                {
+                    var list = dbContext.LicenseItemUser.Where(x => x.User.Id == statistics.User.Id && 
+                                                               x.PilotLicenseItem.PilotLicenseExpense.Id == expenseOverdue.PilotLicenseExpense.Id);
+                    foreach (var item in list.ToList())
+                    {
+                        item.IsBought = false;
+                    }
+                    expenseOverdue.OverdueProcessed = true;
+                }
+                dbContext.SaveChanges();
+            }
+            else
+            {
+                stBuilder.Append(string.Format("<h5><strong>"));
+                stBuilder.Append(string.Format("Hi captain {0}. ", statistics.User.UserName));
+                stBuilder.Append(string.Format("</strong></h5><hr />"));
+                stBuilder.Append(string.Format("Your pilot license is up to date. "));
+                stBuilder.Append(string.Format("Keep an eye on your license requirements maturity dates. "));
+                stBuilder.Append(string.Format("Click on License button to check your license requirements."));
+            }
+
+            return stBuilder.ToString();
         }
 
         public ActionResult ChartProfile()
@@ -449,14 +492,21 @@ namespace FlightJobs.Controllers
                 uStatistics.BankBalance -= item.PilotLicenseItem.Price;
                 Session["HeaderStatistics"] = null;
 
-                bool notAllBought = dbContext.LicenseItemUser.Any(i => !i.IsBought && i.PilotLicenseItem.Id != licenseItemId);
+                var auxList = dbContext.LicenseItemUser.Where(i =>  
+                                                              i.User.Id == user.Id &&
+                                                              i.PilotLicenseItem.Id != item.Id &&
+                                                              i.PilotLicenseItem.PilotLicenseExpense.Id == item.PilotLicenseItem.PilotLicenseExpense.Id).ToList();
+
+                bool notAllBought = auxList.Any(x => x.IsBought == false);
                 if (!notAllBought)
                 {
+                    // todos comprados
                     var expenseUser = dbContext.PilotLicenseExpensesUser.Include(x => x.PilotLicenseExpense).FirstOrDefault(e => 
-                                                    e.PilotLicenseExpense.Id == item. PilotLicenseItem.PilotLicenseExpense.Id && 
+                                                    e.PilotLicenseExpense.Id == item.PilotLicenseItem.PilotLicenseExpense.Id && 
                                                     e.User.Id == user.Id);
 
                     expenseUser.MaturityDate = DateTime.UtcNow.AddDays(expenseUser.PilotLicenseExpense.DaysMaturity);
+                    expenseUser.OverdueProcessed = false;
                 }
                 dbContext.SaveChanges();
 

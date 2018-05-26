@@ -28,8 +28,9 @@
 
     div.card {
         box-shadow: 0 4px 8px 2px rgba(0, 0, 0, 0.2), 0 6px 20px 2px rgba(0, 0, 0, 0.19);
-        padding-top: 15px;
-        padding-bottom: 15px;
+        padding-top: 0px;
+        padding-bottom: 0px;
+        background-color:lightgray;
     }
     .popover {
         width: 500px;
@@ -37,11 +38,24 @@
     .negativeBankBalance {
         color:red;
     }
+    .textLimited {
+        display: block;
+        width: 250px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+    .krajee-default.file {
+        max-width:100px;
+    }
 </style>
 
 <hr />
-<div class="panel panel-default text-center" style="margin-bottom:5px">
-    <p><b>PILOT LOGBOOK</b></p>
+<div style="background-color:dimgray; width:100%; text-align:center; height:40px; padding-top:5px; border-radius: 5px;"> 
+    <b><span style="color:darkgray">P I L O T</span><samp style="color:lightgray">    L O G B O O K</samp></b>
+</div>
+
+<div class="panel panel-default text-center" style="margin-bottom:5px; margin-top:-8px; ">
     <table class="table table-striped table-bordered table-hover" style="font-size: 10px; padding:0px">
         <tr>
             <th>
@@ -143,64 +157,76 @@
 @if (Model.Statistics != null)
 {
     <div class="row">
-        <div class="card col-md-12">
-            <div class="col-sm-3 text-center">
-                <div class="col-sm-4 ">
-                    @using (Html.BeginForm("Upload", "Profile", FormMethod.Post, new { enctype = "multipart/form-data" }))
-                    {
-                        <div class="kv-avatar">
-                            <div class="file-loading">
-                                <input id="avatar-1" name="FilesInput" type="file" required>
+        <div class="card col-md-12" style="padding:0px;">
+            <div class="col-sm-6" style="padding-right:1px;">
+                <div style="height:35px; background-color:dimgray;text-align:center; ">
+                    <h2><strong><span style="color:lightgray">Pilot</span><samp style="color:darkgray"> statistics</samp></strong></h2>
+                </div>
+                <div class="row text-left" style="background-color:white; min-height:270px; margin:inherit;">
+                    <div class="col-sm-4 text-center" style="width:30%;">
+                        <div class="col-sm-4" style="padding-left:0px;">
+                            @using (Html.BeginForm("Upload", "Profile", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                            {
+                                <div class="kv-avatar">
+                                    <div class="file-loading">
+                                        <input id="avatar-1" name="FilesInput" type="file" required>
 
-                            </div>
+                                    </div>
+                                </div>
+
+                                <div id="kv-avatar-errors-1" class="center-block" style="font-size:8pt; width:400px;display:none"></div>
+                            }
                         </div>
-
-                        <div id="kv-avatar-errors-1" class="center-block" style="font-size:8pt; width:400px;display:none"></div>
-                    }
-                </div>
-            </div>
-
-            <div class="col-sm-4 text-left">
-                <div class="pull-right text-center img-thumbnail" style="margin-right:  20px;width:  130px; border: 1px dashed lightgray;" >
-                        <img src="@Model.Statistics.GraduationPath" data-html="True" 
-                       data-toggle="popover" title="Pilot graduation"
-                       data-trigger="hover" data-placement="top"
-                       data-content="@Html.Partial("GraduationView")" />
-
-                    <div style="font-size: 10px; margin-top:9px;">@Model.Statistics.GraduationDesc</div>
-                </div>
-                <h4><strong>Pilot statistics</strong></h4>
-                <ul class="myList">
-                    <li>
-                        <b>@Html.DisplayNameFor(model => model.Statistics.FlightTimeTotal):</b> @Html.DisplayFor(model => model.Statistics.FlightTimeTotal)
-                    </li>
-                    <li>
-                        <b>@Html.DisplayNameFor(model => model.Statistics.NumberFlights):</b> @Html.DisplayFor(model => model.Statistics.NumberFlights)
-                    </li>
-                    <li>
-                        <b>@Html.DisplayNameFor(model => model.Statistics.PayloadTotal):</b> @Html.DisplayFor(model => model.Statistics.PayloadTotal) Kg
-                    </li>
-                    <li>
-                        <b>@Html.DisplayNameFor(model => model.Statistics.LastFlight):</b> @Html.DisplayFor(model => model.Statistics.LastFlight)
-                    </li>
-                    <li>
-                        <b>@Html.DisplayNameFor(model => model.Statistics.LastAircraft):</b> @Html.DisplayFor(model => model.Statistics.LastAircraft)
-                    </li>
-                    <li>
-                        <b>@Html.DisplayNameFor(model => model.Statistics.FavoriteAirplane):</b> @Html.DisplayFor(model => model.Statistics.FavoriteAirplane)
-                    </li>
-                    <li>
-                        <button id="buttonChart" type="button" class="btn btn btn-info">
+                    </div>
+                    <div class="col-sm-6">
+                        <ul class="myList">
+                            <li>
+                                <b>@Html.DisplayNameFor(model => model.Statistics.FlightTimeTotal):</b> @Html.DisplayFor(model => model.Statistics.FlightTimeTotal)
+                            </li>
+                            <li>
+                                <b>@Html.DisplayNameFor(model => model.Statistics.NumberFlights):</b> @Html.DisplayFor(model => model.Statistics.NumberFlights)
+                            </li>
+                            <li>
+                                <b>@Html.DisplayNameFor(model => model.Statistics.PayloadTotal):</b> @Html.DisplayFor(model => model.Statistics.PayloadTotal) Kg
+                            </li>
+                            <li>
+                                <b>@Html.DisplayNameFor(model => model.Statistics.LastFlight):</b> @Html.DisplayFor(model => model.Statistics.LastFlight)
+                            </li>
+                            <li>
+                                <b>@Html.DisplayNameFor(model => model.Statistics.LastAircraft):</b> <span class="textLimited"> @Html.DisplayFor(model => model.Statistics.LastAircraft)</span>
+                            </li>
+                            <li>
+                                <b>@Html.DisplayNameFor(model => model.Statistics.FavoriteAirplane):</b><span class="textLimited"> @Html.DisplayFor(model => model.Statistics.FavoriteAirplane) </span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-sm-2" style="padding-left:  0px;">
+                        <button id="buttonChart" type="button" class="btn btn btn-info" style="margin-top:10px; width:100px;">
                             <span class="glyphicon glyphicon-random"></span> Chart
                         </button>
-                        <button id="buttonLicense" type="button" class="btn btn btn-info">
-                            <span class="glyphicon glyphicon-bitcoin"></span> License
+                        <button id="buttonLicense" type="button" class="btn btn btn-info" style="margin-top:10px; width:100px;">
+                            <span class="glyphicon glyphicon-shopping-cart"></span> License
                         </button>
                         <img id="license-loading-img" src="~/Content/img/loading.gif" style="width:20px; display:none;" />
-                    </li>
-                </ul>
-            </div>
+                    </div>
+                </div>
 
+                <div class="row" style="height:170px; background-color:dimgray;text-align:center; margin:inherit;">
+                    <div class="col-sm-3">
+                        <div class="pull-left text-center img-thumbnail" style="margin: 10px;width:  130px; background-color:darkgray;">
+                            <img src="@Model.Statistics.GraduationPath" data-html="True"
+                                 data-toggle="popover" title="Pilot graduation"
+                                 data-trigger="hover" data-placement="top"
+                                 data-content="@Html.Partial("GraduationView")" />
+
+                            <div style="font-size: 10px; margin-top:9px; color:snow;">@Model.Statistics.GraduationDesc</div>
+                        </div>
+                    </div>
+                    <div class="col-sm-9" style="text-align:justify; color:white; padding:8px;">
+                         @Html.Raw(Model.PilotStatisticsDescription) 
+                    </div>
+                </div>
+            </div>
             <div class="modal" id="myModalLicense" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content" style="width: auto;">
@@ -215,48 +241,55 @@
                             <div class="pull-left"><strong>Your bank balance:</strong> 
                                 <span id="license-user-bank-balance" class="@(Model.Statistics.BankBalance < 0 ? "negativeBankBalance" : "")" >@string.Format("{0:C}", Model.Statistics.BankBalance)</span>
                             </div>
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button type="button" onclick="@("window.location.href='" + @Url.Action("Index") + "'");" class="btn btn-default" data-dismiss="modal">Close</button>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="col-sm-5 text-left">
-                <h4><strong>Airline statistics</strong></h4>
-                <ul class="myList">
-                    @if (Model.Statistics.Airline != null)
-                    {
-                        <li><b>@Html.DisplayNameFor(model => model.Statistics.Airline):</b> @Html.DisplayFor(model => model.Statistics.Airline.Name)</li>
-                        <li><img class="pull-right" src="@Model.Statistics.Airline.Logo" style="width:110px; height:110px; margin-top:-60px; margin-right:10px" /></li>
 
-                        <li><b>@Html.DisplayNameFor(model => model.Statistics.AirlinePilotsHired):</b> @Model.Statistics.AirlinePilotsHired.Count()
-                            <a href="#" data-html="True" 
-                               data-toggle="popover" title="Pilots"
-                               data-trigger="hover" data-placement="bottom"
-                               data-content="@foreach (var item in @Model.Statistics.AirlinePilotsHired)
-                               {
-                                   @item.UserName; <br />
-                               }">  <span class="glyphicon glyphicon-eye-open" style="margin-left:10px;"></span></a> 
-                        </li>
-                        <li><b>@Html.DisplayNameFor(model => model.Statistics.Airline.AirlineScore):</b> @Html.DisplayFor(model => model.Statistics.Airline.AirlineScore)</li>
-                        <li><b>@Html.DisplayNameFor(model => model.Statistics.Airline.BankBalance):</b> @Html.DisplayFor(model => model.Statistics.Airline.BankBalance)</li>
-                        <li>
-                            <button id="buttonRanking" type="button" class="btn btn btn-info">
+            <div class="col-sm-6" style="padding-left:1px;">
+                <div style="height:35px; background-color:dimgray;text-align:center; ">
+                    <h2><strong><span style="color:lightgray">Airline</span><samp style="color:darkgray"> statistics</samp></strong></h2>
+                </div>
+                @if (Model.Statistics.Airline != null)
+                {
+                    <div class="row text-left" style="background-color:white; min-height:270px; margin:inherit;">
+                        <div class="col-sm-4" style="padding-right: 0px;width:30%;">
+                            <img class="img-thumbnail" src="@Model.Statistics.Airline.Logo" style="width:170px; margin-top:5px;" />
+                        </div>
+                        <div class="col-sm-6">
+                            <ul class="myList">
+                                <li><b>@Html.DisplayNameFor(model => model.Statistics.Airline):</b> @Html.DisplayFor(model => model.Statistics.Airline.Name)</li>
+                                <li>
+                                    <b>@Html.DisplayNameFor(model => model.Statistics.AirlinePilotsHired):</b> @Model.Statistics.AirlinePilotsHired.Count()
+                                    <a href="#" data-html="True"
+                                        data-toggle="popover" title="Pilots"
+                                        data-trigger="hover" data-placement="bottom"
+                                        data-content="@foreach (var item in @Model.Statistics.AirlinePilotsHired)
+                                        {
+                                    @item.UserName; <br />
+                                        }"><span class="glyphicon glyphicon-eye-open" style="margin-left:10px;"></span></a>
+                                </li>
+                                <li><b>@Html.DisplayNameFor(model => model.Statistics.Airline.AirlineScore):</b> @Html.DisplayFor(model => model.Statistics.Airline.AirlineScore)</li>
+                                <li><b>@Html.DisplayNameFor(model => model.Statistics.Airline.BankBalance):</b> @Html.DisplayFor(model => model.Statistics.Airline.BankBalance)</li>
+                            </ul>
+                        </div>
+                        <div class="col-sm-2" style="padding-left: 0px;">
+                            <button id="buttonRanking" type="button" class="btn btn btn-info" style="margin-top:10px; width:100px;">
                                 <span class="glyphicon glyphicon-equalizer"></span> Ranking
                             </button>
-                        </li>
-                        <li>
-                            <button id="show-ledger-button" type="button" class="btn btn-default" style="margin-top:5px" >
-                                <span class="glyphicon glyphicon-info-sign"></span> Ledger
+
+                            <button id="show-ledger-button" type="button" class="btn btn-info" style="margin-top:10px; width:100px;">
+                                <span class="glyphicon glyphicon-book"></span> Ledger
                             </button>
                             <img id="ledger-loading-img" src="~/Content/img/loading.gif" style="width:20px; display:none;" />
-
                             <div class="modal" id="myModalLedger" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
                                 <div class="modal-dialog" role="document" style="width:auto; height:auto;">
                                     <div class="modal-content">
                                         <div class="modal-header" style="padding-bottom:0px;">
                                             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                            
+
                                             <h2 class="modal-title">
                                                 <img src="@Model.Statistics.Airline.Logo" style="width:50px; height:50px; margin-right:5px" />
                                                 @Model.Statistics.Airline.Name ledger
@@ -274,7 +307,7 @@
                                                     <input id="ledger-arrival-filter" placeholder="Arrival" class="form-control input-sm text-uppercase" maxlength="4" type="text" />
                                                 </div>
                                                 <div class="col-sm-1">
-                                                    <button id="filter-ledger-button" type="button" class="btn btn-default btn-sm pull-left" >Filter</button>
+                                                    <button id="filter-ledger-button" type="button" class="btn btn-default btn-sm pull-left">Filter</button>
                                                 </div>
                                                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                                             </div>
@@ -282,48 +315,65 @@
                                     </div>
                                 </div>
                             </div>
-                        </li>
-                    }
-                    else
-                    {
-                        <li><b>@Html.DisplayNameFor(model => model.Statistics.Airline):</b> Unemployed</li>
-                        <li>Try to sign contract with an Airline.</li>
-                    }
-                </ul>
-                @if (Model.Statistics.Airline != null && Model.Statistics.Airline.DebtValue > 0)
-                {
-                    <hr />
-                    <div class="pull-right" style="background-color:azure; padding:7px;">
-                        @if (Model.Statistics.Airline.DebtMaturityDate < DateTime.Now)
+                        </div>
+                        
+                    </div>
+                    <div class="row" style="height:170px; background-color:dimgray;margin:inherit;">
+                        @if (Model.Statistics.Airline != null && Model.Statistics.Airline.DebtValue > 0)
                         {
-                            <div class="row">
-                                <div class="col-md-1"><img src="~/Content/img/Alert001.gif" style="width:30px; height:30px;" /></div>
-                                <div class="col-md-11"> <h4 style="color:tomato; margin-left:5px;">This airline has overdue bills to pay. </h4></div>
+                            <div class="pull-right" style="padding:7px;">
+                                <div class="row">
+                                    @if (Model.Statistics.Airline.DebtMaturityDate < DateTime.Now)
+                                    {
+                                            <div class="col-md-1"><img src="~/Content/img/Alert001.gif" style="width:30px; height:30px;" /></div>
+                                            <div class="col-sm-5" style="padding:0px;"> <h4 style="color:tomato; margin-left:5px;">This airline has overdue bills to pay. </h4></div>
+                                    }
+                                    else
+                                    {
+                                        <div class="col-md-1"><img src="~/Content/img/barcode.png" style="width:30px; height:30px;" /></div>
+                                        <div class="col-sm-5" style="padding:0px;" ><h4 style="color:tomato; margin-left:5px;">This airline has bills to pay. </h4></div>
+                                    }
+                                    <div class="col-md-6">
+                                        <ul style="color:white;">
+                                            <li><strong>Debt value: </strong> @string.Format("{0:C}", Model.Statistics.Airline.DebtValue)</li>
+                                            <li><strong>Debt maturity date: </strong> @Model.Statistics.Airline.DebtMaturityDate.ToShortDateString()</li>
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                <div style="text-align:justify; color:white; padding:8px;">
+                                    <h5>Fees, taxes and charges are generated with the Jobs. If you are the owner, pay your bills before the due date. 
+                                    Otherwise, this airline will not score, and the Jobs will generate more debts which could lead to the bankruptcy of the company.</h5>
+                                </div>
+                                @if (Model.Statistics.Airline.AlowEdit)
+                                {
+                                    <input id="pay-debts-button" type="button" value="Pay" onclick="location.href='@Url.Action("PayDebt", "Profile", new { id = Model.Statistics.Airline.Id })'" class="btn btn-danger pull-right btn-sm" style="margin-top:5px" />
+
+                                }
                             </div>
                         }
                         else
                         {
-                            <div class="row">
-                                <div class="col-md-1"><img src="~/Content/img/barcode.png" style="width:30px; height:30px;" /></div>
-                                <div class="col-md-11"><h4 style="color:tomato; margin-left:5px;">This airline has bills to pay. </h4></div>
+                            <div class="col-sm-12" style="text-align:justify; color:white; padding:8px;">
+                                <h5><strong>@Model.Statistics.Airline.Name don't have any bills to pay. The balance of the company is healthy.</strong></h5>
+                                <hr />
+                                <h5>Fees, taxes and charges are generated with the Jobs. </h5>
+                                <h5>If the owner does not pay bills before the due date the airline will not score, and the Jobs will generate more debts which could lead to the bankruptcy of the company.</h5>
                             </div>
                         }
-                        <h6>Fees, taxes and charges are generated with the Jobs. If you are the owner, pay your bills before the due date.</h6>
-                        <h6>Otherwise, this airline will not score, and the Jobs will generate more debts which could lead to the bankruptcy of the company.</h6>
-                        @if (Model.Statistics.Airline.AlowEdit)
-                        {
-                            <input id="pay-debts-button" type="button" value="Pay" onclick="location.href='@Url.Action("PayDebt", "Profile", new { id = Model.Statistics.Airline.Id })'" class="btn btn-danger pull-right btn-sm" style="margin-top:5px" />
-                            
-                        }  
-                        <ul style="color:tomato;">
-                            <li><strong>Debt value: </strong> @string.Format("{0:C}", Model.Statistics.Airline.DebtValue)</li>
-                            <li><strong>Debt maturity date: </strong> @Model.Statistics.Airline.DebtMaturityDate.ToShortDateString()</li>
-                        </ul>
-                                              
                     </div>
                 }
+                else
+                {
+                    <div class="row text-left" style="background-color:white; min-height:270px; margin:inherit; padding:50px;">
+                        <ul class="myList">
+                            <li><b>@Html.DisplayNameFor(model => model.Statistics.Airline):</b> Unemployed </li>
+                            <li> You don't have any airline info. Try to sign a contract or buy an Airline.</li>
+                       </ul>
+                   </div>
+                }
             </div>
-        </div>
+       </div>
     </div>
 }
 <hr />

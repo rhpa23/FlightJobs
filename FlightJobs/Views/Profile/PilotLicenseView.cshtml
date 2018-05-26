@@ -5,12 +5,17 @@
         background-color: #269abc;
         color:white;
     }
+    .expenseOverdue {
+        color:red;
+    }
 </style>
 <div class="row">
     <div class="col-md-7">
-        <div id="license-item-content" style="height:300px; overflow-y:scroll; overflow-x:hidden;"></div>
+        <div id="license-item-content" style="height:350px; overflow-y:scroll; overflow-x:hidden;"></div>
+        <div class="expenseOverdue" style="font-size:x-small;">* Buy all items to up to date the license requirements overdue.</div>
     </div>
     <div class="col-md-5">
+        <h4>License requirements</h4>
         <div class="panel panel-default text-center" style="margin-bottom:5px;">
             <table class="table table-bordered" style="font-size: 10px; padding:0px">
                 <tr>
@@ -19,7 +24,7 @@
                 </tr>
                 @foreach (var item in Model)
                 {
-                    <tr style="cursor:pointer;">
+                    <tr class="@(item.MaturityDate < DateTime.UtcNow ? "expenseOverdue" : "")" style="cursor:pointer;">
                         <td>
                             @Html.DisplayFor(modelItem => item.PilotLicenseExpense.Name)
                         </td>
@@ -33,6 +38,8 @@
                 }
             </table>
         </div>
+        <hr />
+        <div class="expenseOverdue" style="font-size:x-small;" >* License requirements in red are overdue.</div>
     </div>
 </div>
 
@@ -42,6 +49,7 @@
 
             var selected = $(this).hasClass("expense-selected");
             $("table tbody tr").removeClass("expense-selected");
+            $(this).removeClass("expenseOverdue");
             if (!selected) {
                 $(this).addClass("expense-selected");
                 var id = $(this).find('td:last').text();

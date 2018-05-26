@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Data.Entity;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
@@ -140,12 +141,16 @@ namespace FlightJobs.Controllers
                 long fuelWeight = Convert.ToInt64(Math.Round(Convert.ToDouble(fuelWeightStr, new CultureInfo("en-US"))));
                 job.FinishFuelWeight = fuelWeight;
 
-                UpdateStatistics(job, dbContext);
+                var licenseExpired = UpdateStatistics(job, dbContext);
                 UpdateAirline(job, dbContext);
 
                 dbContext.SaveChanges();
 
-                return Request.CreateResponse(HttpStatusCode.OK, "Job finish successfully at: " + job.EndTime.ToShortTimeString() + "  (UTC)");
+                string resultMsg = "Job finish successfully at: " + job.EndTime.ToShortTimeString() + "  (UTC)";
+                if (licenseExpired)
+                    resultMsg = "Job finish. Your license is expired. Check Profile page.";
+
+                return Request.CreateResponse(HttpStatusCode.OK, resultMsg);
             }
             catch (Exception)
             {
@@ -155,13 +160,18 @@ namespace FlightJobs.Controllers
             return response;
         }
 
-        private void UpdateStatistics(JobDbModel job, ApplicationDbContext dbContext)
+        private bool UpdateStatistics(JobDbModel job, ApplicationDbContext dbContext)
         {
+            var licenseOverdue = false;
             var statistics = dbContext.StatisticsDbModels.FirstOrDefault(s => s.User.Id == job.User.Id);
             if (statistics != null)
             {
-                statistics.PilotScore += job.Dist / 15;
-                statistics.BankBalance += job.Pay;
+                licenseOverdue = IsLicenseOverdue(dbContext, job.User.Id);
+                if (!licenseOverdue)
+                {
+                    statistics.PilotScore += job.Dist / 15;
+                    statistics.BankBalance += job.Pay;
+                }
             }
             else
             {
@@ -174,6 +184,7 @@ namespace FlightJobs.Controllers
                 };
                 dbContext.StatisticsDbModels.Add(newStatistics);
             }
+            return licenseOverdue;
         }
 
         private void UpdateAirline(JobDbModel job, ApplicationDbContext dbContext)
@@ -218,6 +229,14 @@ namespace FlightJobs.Controllers
                 }
                 dbContext.JobAirlineDbModels.Add(jobAirline);
             }
+        }
+
+        private bool IsLicenseOverdue(ApplicationDbContext dbContext, string userId)
+        {
+            var listOverdue = dbContext.PilotLicenseExpensesUser.Where(e =>
+                                                            e.MaturityDate < DateTime.UtcNow &&
+                                                            e.User.Id == userId).ToList();
+            return (listOverdue.Count() > 0);
         }
     }
 }

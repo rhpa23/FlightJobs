@@ -14,5 +14,7 @@ namespace FlightJobs.Models
         public PilotLicenseExpensesDbModel PilotLicenseExpense { get; set; }
 
         public DateTime MaturityDate { get; set; }
+
+        public bool OverdueProcessed { get; set; }
     }
 }

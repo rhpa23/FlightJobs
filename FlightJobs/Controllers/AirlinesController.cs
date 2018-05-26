@@ -200,7 +200,8 @@ namespace FlightJobs.Controllers
                     Country = model.Country,
                     Salary = 20,
                     Score = model.Score,
-                    UserId = user.Id
+                    UserId = user.Id,
+                    DebtMaturityDate = DateTime.UtcNow
                 };
 
                 if (model.FilesInput != null && model.FilesInput.Any())

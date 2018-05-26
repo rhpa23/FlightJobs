@@ -321,6 +321,10 @@
     <Compile Include="Migrations\201805221630222_PilotLicenseExpenses.Designer.cs">
       <DependentUpon>201805221630222_PilotLicenseExpenses.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201805242150018_OverdueProcessed.cs" />
+    <Compile Include="Migrations\201805242150018_OverdueProcessed.Designer.cs">
+      <DependentUpon>201805242150018_OverdueProcessed.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\AirlineViewModel.cs" />
@@ -751,6 +755,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201805221630222_PilotLicenseExpenses.resx">
       <DependentUpon>201805221630222_PilotLicenseExpenses.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201805242150018_OverdueProcessed.resx">
+      <DependentUpon>201805242150018_OverdueProcessed.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
