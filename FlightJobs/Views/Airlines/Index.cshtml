@@ -1,7 +1,14 @@
 ﻿@model IEnumerable<FlightJobs.Models.AirlineDbModel>
 
 
-
+<style>
+    .tdLimited {
+        max-width: 250px; /* Customise it accordingly */
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+</style>
 
 @if (ViewBag.Message != null)
 {
@@ -14,21 +21,24 @@
 <h3><b>Available airlines to sign contract</b></h3>
 <h5>Remember to allow popups in your browser settings before buy certificates.</h5>
 <hr />
-<div class="jumbotron">
+<div>
     <div class="panel panel-default ">
-        <table class="table table-striped table-bordered table-hover" style="font-size: 15px;">
+        <table class="table table-striped table-bordered table-hover" style="font-size:small;">
             <tr>
                 <th style="text-align:center;">Logo</th>
-                <th style="padding-left: 20px;">
+                <th style="padding-left: 10px;">
                     @Html.DisplayNameFor(model => model.Name)
                 </th>
-                <th style="padding-left: 20px;">
+                <th style="padding-left: 10px;">
+                    @Html.DisplayNameFor(model => model.Description)
+                </th>
+                <th style="padding-left: 10px;">
                     @Html.DisplayNameFor(model => model.Country)
                 </th>
                 <th style="padding-left: 10px;">
                     Score
                 </th>
-                <th style="padding-left: 20px;">
+                <th style="padding-left: 10px;">
                     Owner
                 </th>
                 <th></th>
@@ -37,22 +47,25 @@
             @foreach (var item in Model)
             {
                 <tr>
-                    <td style="padding-left: 20px; vertical-align: middle; text-align:center;">
+                    <td style="padding-left: 10px; vertical-align: middle; text-align:center;">
                         <img src="@item.Logo" style="width:50px; height:50px; " />
                     </td>
-                    <td style="padding-left: 20px; vertical-align: middle;">
+                    <td style="padding-left: 10px; vertical-align: middle;">
                         @Html.DisplayFor(modelItem => item.Name)
                     </td>
-                    <td style="padding-left: 20px; vertical-align: middle;">
+                    <td style="padding-left: 10px; vertical-align: middle; max-width:250px;">
+                        @Html.DisplayFor(modelItem => item.Description)
+                    </td>
+                    <td style="padding-left: 10px; vertical-align: middle;">
                         @Html.DisplayFor(modelItem => item.Country)
                     </td>
-                    <td style="padding-left: 20px; vertical-align: middle;">
+                    <td style="padding-left: 10px; vertical-align: middle;">
                         @Html.DisplayFor(modelItem => item.Score)
                     </td>
-                    <td style="padding-left: 20px; vertical-align: middle;">
+                    <td style="padding-left: 10px; vertical-align: middle;">
                         @Html.DisplayFor(modelItem => item.OwnerNickname)
                     </td>
-                    <td style="padding-left: 20px; vertical-align: middle; text-align:center;">
+                    <td style="padding-left: 10px; vertical-align: middle; text-align:center;">
                         
                         @if (item.AlowEdit)
                         {

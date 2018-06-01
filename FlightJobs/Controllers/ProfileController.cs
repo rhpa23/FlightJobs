@@ -232,11 +232,13 @@ namespace FlightJobs.Controllers
                                                                  .Select(g => g.Key).FirstOrDefault();
                     }
                     homeModel.Statistics = statistics;
+
+                    homeModel.PilotStatisticsDescription = GetPilotDescription(statistics, dbContext);
                 }
                 var jobList = GetSortedJobs(allUserJobs, sortOrder, CurrentSort, pageNumber, user);
                 homeModel.Jobs = jobList;
 
-                homeModel.PilotStatisticsDescription = GetPilotDescription(statistics, dbContext);
+                
             }
 
             return homeModel;

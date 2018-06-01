@@ -197,6 +197,7 @@ namespace FlightJobs.Controllers
                 var dbModel = new AirlineDbModel()
                 {
                     Name = model.Name,
+                    Description = model.Description,
                     Country = model.Country,
                     Salary = 20,
                     Score = model.Score,
@@ -292,6 +293,7 @@ namespace FlightJobs.Controllers
                 {
                     Id = airline.Id,
                     Name = airline.Name,
+                    Description = airline.Description,
                     Country = airline.Country,
                     Score = airline.Score,
                     LogoPath = airline.Logo,
@@ -337,6 +339,7 @@ namespace FlightJobs.Controllers
                 }
 
                 airline.Name = model.Name;
+                airline.Description = model.Description;
                 airline.Country = model.Country;
                 airline.Score = model.Score;
 

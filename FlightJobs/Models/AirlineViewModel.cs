@@ -21,6 +21,11 @@ namespace FlightJobs.Models
         [DisplayName("Airline name")]
         public string Name { get; set; }
 
+        [DataType(DataType.MultilineText)]
+        [StringLength(250, ErrorMessage = "Maximum lenght is 250 characters")]
+        [DisplayName("Description")]
+        public string Description { get; set; }
+
         [StringLength(35, ErrorMessage = "Maximum lenght is 35 characters")]
         [Required(ErrorMessage = "Country is required")]
         [DisplayName("Country (headquarters office)")]
