@@ -28,5 +28,7 @@ namespace FlightJobs.Models
         public bool FirstClass { get; set; }
 
         public bool Selected { get; set; }
+
+        public string AviationType { get; set; }
     }
 }

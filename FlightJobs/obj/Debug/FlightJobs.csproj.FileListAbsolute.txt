@@ -395,3 +395,4 @@ D:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.Migrations.JobAirli
 D:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.Migrations.PilotLicenseExpenses.resources
 D:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.Migrations.OverdueProcessed.resources
 D:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.Migrations.AirlineDescription.resources
+D:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.Migrations.AviationType.resources

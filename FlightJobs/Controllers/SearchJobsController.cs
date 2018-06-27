@@ -151,7 +151,8 @@ namespace FlightJobs.Controllers
                             Pax = job.Pax,
                             Cargo = job.Cargo,
                             Pay = job.Pay,
-                            FirstClass = job.FirstClass
+                            FirstClass = job.FirstClass,
+                            AviationType = GetAviationTypeId(job.AviationType)
                         };
 
                         list.Add(job.Arrival, jobDB);
@@ -191,6 +192,21 @@ namespace FlightJobs.Controllers
             //return Result(1, pageSelsIds);
             //return Json(new { Data = form, success = ModelState.IsValid ? true : false }, JsonRequestBehavior.AllowGet);
             return PartialView("Confirm", viewModel);
+        }
+
+        private int GetAviationTypeId(string aviationType)
+        {
+            switch (aviationType)
+            {
+                case "GeneralAviation":
+                    return 1;
+                case "AirTransport":
+                    return 2;
+                case "HeavyAirTransport":
+                    return 3;
+                default:
+                    return 0;
+            }
         }
 
         public async Task<ActionResult> Confirm()
@@ -316,7 +332,8 @@ namespace FlightJobs.Controllers
                             Cargo = cargo,
                             PayloadView = (isCargo == 0) ? "[Cargo] " + cargo + " Kg" : (isFisrtClass) ? "[Premium] " + pob + " Pax" : "[Promo] " + pob + " Pax",
                             Pay = profit,
-                            FirstClass = isFisrtClass
+                            FirstClass = isFisrtClass,
+                            AviationType = model.AviationType
                         });
                     }
                 }

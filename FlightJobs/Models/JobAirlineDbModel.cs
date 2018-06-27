@@ -51,7 +51,7 @@ namespace FlightJobs.Models
 
         public void CalcAirlineJob()
         {
-            this.FuelPrice = 5.70;
+            this.FuelPrice = this.Job.AviationType > 1 ? 5.20 : 5.70;
             // FuelCost = (StartFuelWeight - FinishFuelWeight) * FuelPrice
             this.FuelCost = (this.Job.StartFuelWeight - this.Job.FinishFuelWeight) * this.FuelPrice;
 

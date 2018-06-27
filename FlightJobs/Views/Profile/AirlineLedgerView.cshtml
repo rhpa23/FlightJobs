@@ -16,8 +16,12 @@
         overflow: hidden;
         text-overflow: ellipsis;
     }
+    .smaller-text {
+        font-size: smaller;
+        padding: 0px;
+        margin: 0px;
+    }
 </style>
-<p>Fuel price per Kg: $ 5.70</p> 
 
     @if (Model != null && Model.Count > 0)
     {
@@ -33,6 +37,7 @@
                     <th>Total payload</th>
                     <th>Fuel loaded</th>
                     <th>Fuel burned</th>
+                    <th>Fuel price/Kg</th>
                     <th class="debit">Fuel cost</th>
                     <th>Fuel cost per NM</th>
                     <th class="debit">Ground crew</th>
@@ -73,6 +78,14 @@
                         </td>
                         <td>
                             @Html.DisplayFor(modelItem => item.Job.UsedFuelWeight)
+                        </td>
+                        <td>
+                            @string.Format("{0:C}", item.FuelPrice)
+                            @if (item.Job.AviationType > 1) {
+                                <div class="smaller-text">(Jet-A)</div> 
+                            } else {
+                                <div class="smaller-text">(AVGAS)</div> 
+                            }
                         </td>
                         <td class="debit">
                             @string.Format("{0:C}", item.FuelCost)

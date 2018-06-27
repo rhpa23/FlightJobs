@@ -329,6 +329,10 @@
     <Compile Include="Migrations\201805262343110_AirlineDescription.Designer.cs">
       <DependentUpon>201805262343110_AirlineDescription.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201806011423450_AviationType.cs" />
+    <Compile Include="Migrations\201806011423450_AviationType.Designer.cs">
+      <DependentUpon>201806011423450_AviationType.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\AirlineViewModel.cs" />
@@ -431,6 +435,7 @@
     <Content Include="Content\img\default.jpg" />
     <Content Include="Content\img\delta.jpg" />
     <Content Include="Content\img\Departing.png" />
+    <Content Include="Content\img\discordapp.png" />
     <Content Include="Content\img\easyJet.jpg" />
     <Content Include="Content\img\email-icon.png" />
     <Content Include="Content\img\fb.png" />
@@ -765,6 +770,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201805262343110_AirlineDescription.resx">
       <DependentUpon>201805262343110_AirlineDescription.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201806011423450_AviationType.resx">
+      <DependentUpon>201806011423450_AviationType.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

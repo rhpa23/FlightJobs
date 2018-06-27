@@ -107,6 +107,8 @@ namespace FlightJobs.Models
         [DisplayName("Fuel weight")]
         public long FinishFuelWeight { get; set; }
 
+        public int AviationType { get; set; }
+
         [NotMapped]
         [DisplayName("Burned fuel")]
         public string UsedFuelWeight {
@@ -139,7 +141,8 @@ namespace FlightJobs.Models
                 User = user,
                 StartTime = DateTime.Now,
                 EndTime = DateTime.Now,
-        };
+            };
         }
+
     }
 }
