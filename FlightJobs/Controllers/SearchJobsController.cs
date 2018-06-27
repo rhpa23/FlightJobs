@@ -16,7 +16,7 @@ namespace FlightJobs.Controllers
     {
         private double taxEcon = 0.008; // por NM
         private double taxFirstC = 0.012; // por NM
-        private double taxCargo = 0.0003; // por NM
+        private double taxCargo = 0.0004; // por NM
 
         private double taxEconGE = 0.085; // por NM
         private double taxFirstGE = 0.095; // por NM
@@ -283,19 +283,25 @@ namespace FlightJobs.Controllers
                         long profit = 0;
                         bool isFisrtClass = Convert.ToBoolean(randomPob.Next(2));
 
-
-                        int isCargo = randomPob.Next(2);
-                        if (isCargo == 0)
+                        var flightType = model.AviationType.Trim();
+                        int alternateCargo = randomPob.Next(2);
+                        bool isCargo = alternateCargo == 0 || flightType == "Cargo";
+                        if (isCargo)
                         {
-                            if (model.AviationType == "GeneralAviation")
+                            if (flightType == "GeneralAviation")
                             {
                                 cargo = randomCargo.Next(10, 300);
                                 profit = Convert.ToInt32(taxCargoGE * distMiles * cargo);
                             }
-                            else if (model.AviationType == "AirTransport")
+                            else if (flightType == "AirTransport")
                             {
                                 cargo = randomCargo.Next(100, 3000);
                                 profit = Convert.ToInt32(taxCargo * distMiles * cargo);
+                            }
+                            else if (flightType == "Cargo")
+                            {
+                                cargo = randomCargo.Next(80, 3500);
+                                profit = Convert.ToInt32((taxCargo + 0.0005) * distMiles * cargo);
                             }
                             else // HeavyAirTransport
                             {
@@ -305,12 +311,12 @@ namespace FlightJobs.Controllers
                         }
                         else
                         {
-                            if (model.AviationType == "GeneralAviation")
+                            if (flightType == "GeneralAviation")
                             {
                                 pob = randomPob.Next(1, 10);
                                 profit = isFisrtClass ? Convert.ToInt32(taxFirstGE * distMiles * pob) : Convert.ToInt32(taxEconGE * distMiles * pob);
                             }
-                            else if (model.AviationType == "AirTransport")
+                            else if (flightType == "AirTransport")
                             {
                                 pob = randomPob.Next(10, 80);
                                 profit = isFisrtClass ? Convert.ToInt32(taxFirstC * distMiles * pob) : Convert.ToInt32(taxEcon * distMiles * pob);
@@ -330,7 +336,7 @@ namespace FlightJobs.Controllers
                             Dist = distMiles,
                             Pax = pob,
                             Cargo = cargo,
-                            PayloadView = (isCargo == 0) ? "[Cargo] " + cargo + " Kg" : (isFisrtClass) ? "[Premium] " + pob + " Pax" : "[Promo] " + pob + " Pax",
+                            PayloadView = (isCargo) ? "[Cargo] " + cargo + " Kg" : (isFisrtClass) ? "[Premium] " + pob + " Pax" : "[Promo] " + pob + " Pax",
                             Pay = profit,
                             FirstClass = isFisrtClass,
                             AviationType = model.AviationType
