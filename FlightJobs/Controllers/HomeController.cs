@@ -7,6 +7,7 @@ using System.Web.Mvc;
 using PagedList;
 using System.Data.SqlClient;
 using System.Data;
+using FlightJobs.Util;
 
 namespace FlightJobs.Controllers
 {
@@ -128,9 +129,11 @@ namespace FlightJobs.Controllers
             }
         }
 
-        public ActionResult GeneralInfo()
+        public ActionResult Analysis()
         {
             var dbContext = new ApplicationDbContext();
+            
+
             var inf = new GeneralInfoViewModel()
             {
                 UsersCount = dbContext.Users.Count(),
@@ -138,9 +141,96 @@ namespace FlightJobs.Controllers
                 JobsActive = dbContext.JobDbModels.Count(x => x.IsActivated),
                 JobsDone = dbContext.JobDbModels.Count(x => x.IsDone),
                 JobsInProgress = dbContext.JobDbModels.Count(x => x.InProgress),
+                ModelRanking = GetModelRanking(dbContext),
+                UsersRankingScore = GetUsersRankingScore(dbContext),
+                AviationTypeRanking = GetAviationTypeRanking(dbContext),
+                DepartureRanking = GetDepartureRanking(dbContext),
+                DestinationRanking = GetArrivalRanking(dbContext),
+                AirlineRankingScore = GetAirlineRankingScore(dbContext),
+                AirlinesChart = GetAirlinesChart(dbContext)
             };
+
+            return View("Analysis", inf);
+            //return PartialView("GeneralInfo", inf);
+        }
+
+        private Dictionary<string, long> GetModelRanking(ApplicationDbContext dbContext)
+        {
+            var jobsDone = dbContext.JobDbModels.Where(j => j.IsDone);
+            var s = jobsDone.GroupBy(q => q.ModelDescription)
+                            .OrderByDescending(gp => gp.Count())
+                            .Select(g => g.Key)
+                            .Take(10).ToList();
+            var dic = new Dictionary<string, long>();
+            int count = 1;
+            s.ForEach(x => dic.Add(count++ + " - " + x, jobsDone.Count(j => j.ModelDescription == x)));
+            return dic;
+        }
+
+        private Dictionary<string, long> GetUsersRankingScore(ApplicationDbContext dbContext)
+        {
+            var s = dbContext.StatisticsDbModels.OrderByDescending(u => u.PilotScore).Take(5).ToList();
+            var dic = new Dictionary<string, long>();
+            s.ForEach(x => dic.Add(x.User.UserName, x.PilotScore));
+            return dic;
+        }
+
+        private Dictionary<string, long> GetAviationTypeRanking(ApplicationDbContext dbContext)
+        {
+            var jobs = dbContext.JobDbModels.Where(u => u.IsDone && u.StartTime > new DateTime(2018, 6, 1));                                        ;
+            var dic = new Dictionary<string, long>();
+            dic.Add("General aviation", jobs.Where(j => j.AviationType == 1).Count());
+            dic.Add("Air transport", jobs.Where(j => j.AviationType == 2).Count());
+            dic.Add("Heavy", jobs.Where(j => j.AviationType == 3).Count());
+            dic.Add("Cargo", jobs.Where(j => j.AviationType == 4).Count());
             
-            return PartialView("GeneralInfo", inf);
+            return dic;
+        }
+
+        private Dictionary<string, long> GetDepartureRanking(ApplicationDbContext dbContext)
+        {
+            var jobsDone = dbContext.JobDbModels.Where(j => j.IsDone);
+            var s = jobsDone.GroupBy(q => q.DepartureICAO)
+                            .OrderByDescending(gp => gp.Count())
+                            .Select(g => g.Key)
+                            .Take(10).ToList();
+            var dic = new Dictionary<string, long>();
+            s.ForEach(x => dic.Add(x + " - " + AirportDatabaseFile.FindAirportInfo(x).Name, jobsDone.Count(j => j.DepartureICAO == x)));
+            return dic;
+        }
+
+        private Dictionary<string, long> GetArrivalRanking(ApplicationDbContext dbContext)
+        {
+            var jobsDone = dbContext.JobDbModels.Where(j => j.IsDone);
+            var s = jobsDone.GroupBy(q => q.ArrivalICAO)
+                            .OrderByDescending(gp => gp.Count())
+                            .Select(g => g.Key)
+                            .Take(10).ToList();
+            var dic = new Dictionary<string, long>();
+            s.ForEach(x => dic.Add(x + " - " + AirportDatabaseFile.FindAirportInfo(x).Name, jobsDone.Count(j => j.ArrivalICAO == x)));
+            return dic;
+        }
+
+        private Dictionary<string, long> GetAirlineRankingScore(ApplicationDbContext dbContext)
+        {
+            var airlineList = dbContext.AirlineDbModels.OrderByDescending(gp => gp.AirlineScore)
+                                                    .Take(10).ToList();
+            var dic = new Dictionary<string, long>();
+            int count = 1;
+            airlineList.ForEach(x => dic.Add(count++ + " - " + x.Name, x.AirlineScore));
+            return dic;
+        }
+
+        private Dictionary<string, double> GetAirlinesChart(ApplicationDbContext dbContext)
+        {
+            var dic = new Dictionary<string, double>();
+            var jobAirlineList = dbContext.JobAirlineDbModels.GroupBy(q => q.Airline.Id)
+                                                             .OrderByDescending(gp => gp.Count())
+                                                             .Select(g => g)
+                                                             .Take(10).ToList();
+            jobAirlineList.ForEach(x => dic.Add(x.FirstOrDefault().Airline.Name, x.Count()));
+
+            return dic.OrderBy(x=>x.Key).ToDictionary(k => k.Key, v => v.Value);
         }
     }
 }

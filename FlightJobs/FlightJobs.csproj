@@ -685,6 +685,7 @@
     <Content Include="Views\Profile\AirlineLedgerView.cshtml" />
     <Content Include="Views\Profile\PilotLicenseView.cshtml" />
     <Content Include="Views\Profile\PilotLicenseItemView.cshtml" />
+    <Content Include="Views\Home\Analysis.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201710111859366_InitialCreate.resx">

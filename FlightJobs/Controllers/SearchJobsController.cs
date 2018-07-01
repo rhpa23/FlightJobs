@@ -204,6 +204,8 @@ namespace FlightJobs.Controllers
                     return 2;
                 case "HeavyAirTransport":
                     return 3;
+                case "Cargo":
+                    return 4;
                 default:
                     return 0;
             }

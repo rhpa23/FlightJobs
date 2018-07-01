@@ -1,0 +1,210 @@
+﻿@model FlightJobs.Models.GeneralInfoViewModel
+
+@Styles.Render("~/Content/css")
+@Scripts.Render("~/bundles/chart")
+
+
+
+<style>
+    div.card {
+        box-shadow: 0 4px 6px 2px rgba(0, 0, 0, 0.2), 0 4px 10px 2px rgba(0, 0, 0, 0.19);
+        padding-top: 0px;
+        padding-bottom: 0px;
+        margin-left:25px;
+        margin-top:25px;
+    }
+</style>
+<h3>FlightJobs Analysis</h3>
+<h6>Only concluded Jobs are used in this informations</h6>
+<hr />
+
+<div class="body-content">
+    @{
+        var data1 = new List<ComplexDataset>
+        {
+            new ComplexDataset
+            {
+                Data = Model.AirlinesChart.Values.ToList(),
+                Label = "My Dataset",
+                FillColor = "rgba(151,187,205,0.2)",
+                StrokeColor = "rgba(151,187,205,1)",
+                PointColor = "rgba(151,187,205,1)",
+                PointStrokeColor = "#fff",
+                PointHighlightFill = "#fff",
+                PointHighlightStroke = "rgba(151,187,205,1)",
+            }
+        };
+
+        const string Canvas = "LineChart";
+        var complexChart = new LineChart();
+        complexChart.ComplexData.Labels.AddRange(Model.AirlinesChart.Keys.ToArray());
+        complexChart.ComplexData.Datasets.AddRange(data1);
+        complexChart.ChartConfiguration.Responsive = true;
+    }
+    <div class="row">
+        <div class="col-md-8 center-block">
+            <h5>Chart: number of jobs for the 10 most actives Airlines. (Jobs from May 2018)</h5>
+            <canvas id="@Canvas" width="1200" height="500" style="padding:10px;"></canvas>
+            @Html.CreateChart(Canvas, complexChart)
+        </div>
+    </div>
+    <hr />
+
+    <div class="row">
+        <div class="card col-md-3">
+            <table class="table table-hover" style="font-size:x-small;">
+                <tr>
+                    <th>Info</th>
+                    <th>Value</th>
+                </tr>
+                <tr>
+                    <td>Users</td>
+                    <td>@Model.UsersCount</td>
+                </tr>
+                <tr>
+                    <td>Users bank balance</td>
+                    <td>@string.Format("{0:C}", Model.UsersBankBalance)</td>
+                </tr>
+                <tr>
+                    <td>Jobs in progress</td>
+                    <td>@Model.JobsInProgress</td>
+                </tr>
+                <tr>
+                    <td>Jobs done</td>
+                    <td>@Model.JobsDone</td>
+                </tr>
+                <tr>
+                    <td>Active Jobs</td>
+                    <td>@Model.JobsActive</td>
+                </tr>
+            </table>
+        </div>
+        <div class="card col-md-3">
+            <table class="table table-hover" style="font-size:x-small;">
+                <tr>
+                    <th>The 5 pilots with the bests scores</th>
+                    <th style="text-align:center;">Score</th>
+                </tr>
+                @foreach (var item in Model.UsersRankingScore)
+            {
+                    <tr>
+                        <td style="padding-left: 10px; vertical-align: middle;">
+                            @Html.DisplayFor(modelItem => item.Key)
+                        </td>
+                        <td style="padding-left: 10px; vertical-align: middle; text-align:center;">
+                            @Html.DisplayFor(modelItem => item.Value)
+                        </td>
+                    </tr>
+                }
+
+            </table>
+        </div>
+        <div class="card col-md-2">
+            <table class="table table-hover" style="font-size:x-small;">
+                <tr>
+                    <th>Aviation type</th>
+                    <th style="text-align:center;">Jobs count</th>
+                </tr>
+                @foreach (var item in Model.AviationTypeRanking)
+            {
+                    <tr>
+                        <td style="padding-left: 10px; vertical-align: middle;">
+                            @Html.DisplayFor(modelItem => item.Key)
+                        </td>
+                        <td style="padding-left: 10px; vertical-align: middle; text-align:center;">
+                            @Html.DisplayFor(modelItem => item.Value)
+                        </td>
+                    </tr>
+                }
+
+            </table>
+            <span style="font-size:xx-small;">* Jobs from June 2018</span>
+        </div>
+    </div>
+    <div class="row">
+
+        <div class="card col-md-4">
+            <table class="table table-hover" style="font-size:x-small;">
+                <tr>
+                    <th>The 10 most departure airports used</th>
+                    <th style="text-align:center;">Jobs count</th>
+                </tr>
+                @foreach (var item in Model.DepartureRanking)
+            {
+                    <tr>
+                        <td style="padding-left: 10px; vertical-align: middle;">
+                            @Html.DisplayFor(modelItem => item.Key)
+                        </td>
+                        <td style="padding-left: 10px; vertical-align: middle; text-align:center;">
+                            @Html.DisplayFor(modelItem => item.Value)
+                        </td>
+                    </tr>
+                }
+
+            </table>
+        </div>
+        <div class="card col-md-4">
+            <table class="table table-hover" style="font-size:x-small;">
+                <tr>
+                    <th>The 10 most destination airports used</th>
+                    <th style="text-align:center;">Jobs count</th>
+                </tr>
+                @foreach (var item in Model.DestinationRanking)
+            {
+                    <tr>
+                        <td style="padding-left: 10px; vertical-align: middle;">
+                            @Html.DisplayFor(modelItem => item.Key)
+                        </td>
+                        <td style="padding-left: 10px; vertical-align: middle; text-align:center;">
+                            @Html.DisplayFor(modelItem => item.Value)
+                        </td>
+                    </tr>
+                }
+
+            </table>
+        </div>
+    </div>
+    <div class="row">
+        <div class="card col-md-4">
+            <table class="table table-hover" style="font-size:x-small;">
+                <tr>
+                    <th>The most used models</th>
+                    <th style="text-align:center;">Jobs count</th>
+                </tr>
+                @foreach (var item in Model.ModelRanking)
+            {
+                    <tr>
+                        <td style="padding-left: 10px; vertical-align: middle;">
+                            @Html.DisplayFor(modelItem => item.Key)
+                        </td>
+                        <td style="padding-left: 10px; vertical-align: middle; text-align:center;">
+                            @Html.DisplayFor(modelItem => item.Value)
+                        </td>
+                    </tr>
+                }
+
+            </table>
+        </div>
+        <div class="card col-md-4">
+            <table class="table table-hover" style="font-size:x-small;">
+                <tr>
+                    <th>Airlines with the bests scores</th>
+                    <th style="text-align:center;">Score</th>
+                </tr>
+                @foreach (var item in Model.AirlineRankingScore)
+                {
+                    <tr>
+                        <td style="padding-left: 10px; vertical-align: middle;">
+                            @Html.DisplayFor(modelItem => item.Key)
+                        </td>
+                        <td style="padding-left: 10px; vertical-align: middle; text-align:center;">
+                            @Html.DisplayFor(modelItem => item.Value)
+                        </td>
+                    </tr>
+                }
+
+            </table>
+        </div>
+    </div>
+
+</div>

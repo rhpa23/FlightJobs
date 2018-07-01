@@ -19,5 +19,29 @@ namespace FlightJobs.Models
         [DisplayFormat(DataFormatString = "{0:C0}")]
         public long UsersBankBalance { get; set; }
 
+        public string JobsDoneCurrentMonth { get; set; }
+
+        public Dictionary<string, long> ModelRanking { get; set; }
+
+        public Dictionary<string, long> UsersRankingScore { get; set; }
+
+        public List<string> UsersRankingCash { get; set; }
+
+        public List<string> UsersRankingGraduation { get; set; }
+
+        public Dictionary<string, long> AirlineRankingScore { get; set; }
+
+        public List<string> AirlineRankingCash { get; set; }
+
+        public Dictionary<string, long> DepartureRanking { get; set; }
+
+        public Dictionary<string, long> DestinationRanking { get; set; }
+
+        public Dictionary<string, long> AviationTypeRanking { get; set; }
+
+        public Dictionary<string, double> AirlinesChart { get; set; }
+
+
+
     }
 }
