@@ -67,7 +67,14 @@ namespace FlightJobs.Controllers
                 job.StartTime = DateTime.UtcNow;
                 dbContext.SaveChanges();
 
-                return Request.CreateResponse(HttpStatusCode.OK, "Job to " + job.ArrivalICAO + " started at: " + job.StartTime.ToShortTimeString() + " (UTC)");
+                var licenseOverdue = IsLicenseOverdue(dbContext, job.User.Id);
+                var resultMsg = "Job to " + job.ArrivalICAO + " started at: " + job.StartTime.ToShortTimeString() + " (UTC)";
+                if (licenseOverdue)
+                {
+                    resultMsg = "Job started. Warn: Your pilot license is expired. Check profile page.";
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, resultMsg);
             }
             catch (Exception)
             {
