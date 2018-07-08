@@ -285,6 +285,12 @@
                                 <span class="glyphicon glyphicon-book"></span> Ledger
                             </button>
                             <img id="ledger-loading-img" src="~/Content/img/loading.gif" style="width:20px; display:none;" />
+
+                            <button id="show-fbo-button" type="button" class="btn btn-info" style="margin-top:10px; width:100px;">
+                                <span class="glyphicon glyphicon-shopping-cart"></span> FBO
+                            </button>
+                            <img id="fbo-loading-img" src="~/Content/img/loading.gif" style="width:20px; display:none;" />
+                            
                             <div class="modal" id="myModalLedger" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
                                 <div class="modal-dialog" role="document" style="width:auto; height:auto;">
                                     <div class="modal-content">
@@ -316,6 +322,29 @@
                                     </div>
                                 </div>
                             </div>
+                        
+                            <div class="modal" id="myModalFBO" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                                <div class="modal-dialog" role="document" style="width:auto; height:auto;">
+                                    <div class="modal-content">
+                                        <div class="modal-header" style="padding-bottom:0px;">
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                            <h2 class="modal-title">
+                                                Fixed-Base Operator to hire
+                                            </h2>
+                                        </div>
+                                        <div class="modal-body" height:auto;">
+                                            <div id="fbo-content"></div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <div class="row" style="padding-right:10px;">
+                                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        
                         </div>
                         
                     </div>
@@ -532,6 +561,23 @@ $('#buttonRanking').click(function () {
             if (result != null) {
                 $('#myModalRanking').modal('show');
                 $("#ranking-content").html(result);
+            }
+        }
+    });
+    return true;
+});
+
+$('#show-fbo-button').click(function () {
+    $('#fbo-loading-img').show();
+    $.ajax({
+        url: '@Url.Action("FboProfile", "Profile")',
+        type: "Get",
+        data: { airlineId: @( Model.Statistics != null && Model.Statistics.Airline != null ? Model.Statistics.Airline.Id : 0 )  },
+        success: function (result) {
+            if (result != null) {
+                $('#myModalFBO').modal('show');
+                $("#fbo-content").html(result);
+                $('#fbo-loading-img').hide();
             }
         }
     });

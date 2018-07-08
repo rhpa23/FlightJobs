@@ -396,3 +396,6 @@ D:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.Migrations.PilotLic
 D:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.Migrations.OverdueProcessed.resources
 D:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.Migrations.AirlineDescription.resources
 D:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.Migrations.AviationType.resources
+D:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.Migrations.AirlineFbo.resources
+D:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.Migrations.AirlineFboNotMapped.resources
+D:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.Migrations.ChangeDiscountToDouble.resources

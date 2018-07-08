@@ -49,20 +49,29 @@ namespace FlightJobs.Models
         [NotMapped]
         public double FlightIncome { get; set; }
 
-        public void CalcAirlineJob()
+        public void CalcAirlineJob(AirlineFboDbModel departureFbo)
         {
             this.FuelPrice = this.Job.AviationType > 1 ? 5.20 : 5.70;
-            // FuelCost = (StartFuelWeight - FinishFuelWeight) * FuelPrice
-            this.FuelCost = (this.Job.StartFuelWeight - this.Job.FinishFuelWeight) * this.FuelPrice;
-
-            // FuelCostPerNM = FuelCost / Dist
-            this.FuelCostPerNM = this.FuelCost / this.Job.Dist;
 
             // FlightCrewCost = JobPay + (JobPay * 0.8)
             this.FlightCrewCost = this.Job.Pay + (this.Job.Pay * 0.8);
 
             // GroundCrewCost = FlightCrewCost * 0.3;
             this.GroundCrewCost = this.FlightCrewCost * 0.3;
+
+            if (departureFbo != null)
+            {
+                double fuelDiscount = this.FuelPrice * departureFbo.FuelPriceDiscount;
+                this.FuelPrice -= fuelDiscount;
+
+                double grCrewDiscount = this.GroundCrewCost * departureFbo.GroundCrewDiscount;
+                this.GroundCrewCost -= grCrewDiscount;
+            }
+
+            this.FuelCost = (this.Job.StartFuelWeight - this.Job.FinishFuelWeight) * this.FuelPrice;
+
+            // FuelCostPerNM = FuelCost / Dist
+            this.FuelCostPerNM = this.FuelCost / this.Job.Dist;
 
             // FlightAttendantCost = (JobPax / 60) * (21 * JobFlightTimeHours)
             this.FlightAttendantCost = (this.Job.Pax / 60) * (21 * this.Job.FlightTimeHours);

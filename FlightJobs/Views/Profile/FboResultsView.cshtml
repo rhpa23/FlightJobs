@@ -1,0 +1,119 @@
+﻿@model FlightJobs.Models.AirlineFboView
+
+
+@if (Model != null && Model.FboResults != null && Model.FboResults.Count > 0)
+{
+    <div class="panel panel-default" style="margin-bottom:5px;">
+        <table class="table table-striped table-bordered table-hover" style="font-size: 10px;  padding:0px">
+            <tr>
+                <th>Airport</th>
+                <th class="text-center">Elevation</th>
+                <th class="text-center">Runway</th>
+                <th class="text-center">Availability</th>
+                <th class="text-center">Score increase</th>
+                <th class="text-center">Fuel price <br />(% discount)</th>
+                <th class="text-center">Ground crew <br />(% discount)</th>
+                <th class="text-center">FOB Price</th>
+                <th></th>
+            </tr>
+
+            @foreach (var item in Model.FboResults.ToList())
+            {
+                <tr>
+                    <td class="tdLimited">
+                        @Html.DisplayFor(modelItem => item.Icao) - @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+                    <td class="text-center">
+                        @Html.DisplayFor(modelItem => item.Elevation) ft
+                    </td>
+                    <td class="text-center">
+                        @Html.DisplayFor(modelItem => item.RunwaySize) ft
+                    </td>
+                    <td class="text-center">
+                        @Html.DisplayFor(modelItem => item.Availability)
+                    </td>
+                    <td class="text-center">
+                        @Html.DisplayFor(modelItem => item.ScoreIncrease)
+                    </td>
+                    <td class="text-center">
+                        @Html.DisplayFor(modelItem => item.FuelPriceDiscount)
+                    </td>
+                    <td class="text-center">
+                        @Html.DisplayFor(modelItem => item.GroundCrewDiscount)
+                    </td>
+                    <td class="text-center">
+                        @string.Format("{0:C}", item.Price)
+                    </td>
+                    <td>
+                        <button id="btnHire" onclick="btnHireClickEvent('@item.Icao')" class="btn btn-info btn-xs" style="margin:0px;">Hire</button>
+                    </td>
+                </tr>
+            }
+
+        </table>
+    </div>
+    <div class="modal" id="myConfirnHireModal" tabindex="-2" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document" style="width:450px; height:auto;">
+            <div class="modal-content">
+                <div class="modal-header" style="padding-bottom:0px;">
+                    <h2 class="modal-title">
+                        Confirm
+                    </h2>
+                </div>
+                <div class="modal-body" height:auto;">
+                    <ul>
+                        <li>Only the owner has the permition to hire a FOB.</li>
+                        <li>@Model.CurrentAirline.Name has @string.Format("{0:C}", Model.CurrentAirline.BankBalance) of bank balance to hire FBOs.</li>
+                    </ul>
+                        
+                    <p> Do you really want to hire this FOB?</p>
+                </div>
+                <div class="modal-footer">
+                    <div class="row" style="padding-right:10px;">
+                        <button id="confirmHire" type="button" data-number="1" class="btn btn-danger">Yes</button>
+                        <button type="button" class="btn btn-default" data-number="2">No</button>
+                        <input id="tempIcao" type="hidden" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+<script>
+
+    function btnHireClickEvent(icao) {
+        $('#myConfirnHireModal').modal('show');
+        $('#tempIcao').val(icao);
+    }
+    $("button[data-number=1]").click(function () {
+        var _icao = $('#tempIcao').val();
+
+        $.ajax({
+            url: '@Url.Action("HireFbo", "Profile")',
+            type: "Get",
+            data: { icao: _icao },
+            success: function (result) {
+                if (result.error) {
+                    $("#msgHireFbo").show();
+                    $("#msgHireFbo").html(result.responseText);
+                }
+                else
+                {
+                    $("#fbo-airline-content").html(result);
+
+                    $("#msgHireFbo").show();
+                    $("#msgHireFbo").html('Congratulations, you just hired ' + _icao + '.');
+                }
+
+            }
+        });
+        $('#myConfirnHireModal').modal('hide');
+    });
+
+    $("button[data-number=2]").click(function () {
+        $('#myConfirnHireModal').modal('hide');
+    });
+
+</script>

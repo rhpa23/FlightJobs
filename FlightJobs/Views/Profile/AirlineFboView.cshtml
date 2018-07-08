@@ -1,0 +1,63 @@
+﻿@model FlightJobs.Models.AirlineFboView
+
+<style>
+    .tdLimited {
+        max-width: 200px; /* Customise it accordingly */
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+</style>
+
+    @if (Model != null)
+    {
+        <div class="row" style="margin-bottom:15px;">
+            
+            
+            <div id="fbo-results-content" class="col-md-7" style="height:365px; overflow-y:auto;">
+                @Html.Partial("FboResultsView", Model)
+            </div>
+            <div id="fbo-airline-content" class="col-md-5" style="height:365px; overflow-y:auto;">
+                @Html.Partial("FboAirlineView", Model)
+            </div>
+            
+        </div>
+        <input id="airlineId" type="hidden" value="@Model.CurrentAirline.Id" />
+        <div class="row">
+            <div class="col-sm-1">
+                <input id="fbo-icao-search" placeholder="ICAO" class="form-control input-sm text-uppercase" maxlength="4" type="text" />
+            </div>
+            <div class="col-sm-1" style="padding-left:0px;">
+                <button id="filter-fbo-button" type="button" class="btn btn-default btn-sm pull-left">Search</button>
+            </div>
+        </div>
+        <div class="row" style="padding:0px;margin-left:5px;">
+            <span id="fbo-search-validation" style="font-size:xx-small; color:red; display:none;">Minimum 3 characters required</span>
+        </div>
+
+    }
+
+        
+
+<script>
+    $('#filter-fbo-button').click(function () {
+
+        if ($("#fbo-icao-search").val().length <= 2) {
+            $('#fbo-search-validation').show();
+        }
+        else {
+            $('#fbo-search-validation').hide();
+            $.ajax({
+                url: '@Url.Action("FilterFboList", "Profile")',
+                type: "Get",
+                data: { icao: $("#fbo-icao-search").val(), airlineId: $('#airlineId').val() },
+                success: function (result) {
+                    if (result != null) {
+                        $("#fbo-results-content").html(result);
+                    }
+                }
+            });
+        }
+    return true;
+});
+</script>

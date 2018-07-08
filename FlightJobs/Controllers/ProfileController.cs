@@ -9,6 +9,7 @@ using PagedList;
 using System.IO;
 using Chart.Mvc.ComplexChart;
 using System.Text;
+using FlightJobs.Util;
 
 namespace FlightJobs.Controllers
 {
@@ -238,7 +239,7 @@ namespace FlightJobs.Controllers
                 var jobList = GetSortedJobs(allUserJobs, sortOrder, CurrentSort, pageNumber, user);
                 homeModel.Jobs = jobList;
 
-                
+
             }
 
             return homeModel;
@@ -247,8 +248,8 @@ namespace FlightJobs.Controllers
         private string GetPilotDescription(StatisticsDbModel statistics, ApplicationDbContext dbContext)
         {
             var stBuilder = new StringBuilder();
-            var listOverdue = dbContext.PilotLicenseExpensesUser.Include(x => x.PilotLicenseExpense).Where(e => 
-                                                            e.MaturityDate < DateTime.UtcNow && 
+            var listOverdue = dbContext.PilotLicenseExpensesUser.Include(x => x.PilotLicenseExpense).Where(e =>
+                                                            e.MaturityDate < DateTime.UtcNow &&
                                                             e.User.Id == statistics.User.Id).ToList();
             if (listOverdue.Count() > 0)
             {
@@ -261,7 +262,7 @@ namespace FlightJobs.Controllers
                 stBuilder.Append(string.Format("Click on License button to check your license requirements."));
                 foreach (var expenseOverdue in listOverdue.Where(o => !o.OverdueProcessed))
                 {
-                    var list = dbContext.LicenseItemUser.Where(x => x.User.Id == statistics.User.Id && 
+                    var list = dbContext.LicenseItemUser.Where(x => x.User.Id == statistics.User.Id &&
                                                                x.PilotLicenseItem.PilotLicenseExpense.Id == expenseOverdue.PilotLicenseExpense.Id);
                     foreach (var item in list.ToList())
                     {
@@ -296,7 +297,7 @@ namespace FlightJobs.Controllers
 
             foreach (var job in userJobs)
             {
-                if ( !chartModel.Data.Keys.Contains(job.Month))
+                if (!chartModel.Data.Keys.Contains(job.Month))
                 {
                     chartModel.Data.Add(job.Month, job.Pay);
                 }
@@ -328,7 +329,7 @@ namespace FlightJobs.Controllers
         public ActionResult LedgerProfile(int airlineId, int page = 1)
         {
             var dbContext = new ApplicationDbContext();
-            var airlineJobs = dbContext.JobAirlineDbModels.Where(j => j.Job.IsDone && 
+            var airlineJobs = dbContext.JobAirlineDbModels.Where(j => j.Job.IsDone &&
                                                                  j.Airline.Id == airlineId).OrderByDescending(o => o.Id).ToList();
 
             return GetAirlineLedgerView(airlineJobs, page);
@@ -337,7 +338,7 @@ namespace FlightJobs.Controllers
         public ActionResult FilterLedger(int airlineId, string departure, string arrival)
         {
             var dbContext = new ApplicationDbContext();
-            var airlineJobs = dbContext.JobAirlineDbModels.Where(j => j.Job.IsDone && 
+            var airlineJobs = dbContext.JobAirlineDbModels.Where(j => j.Job.IsDone &&
                                                                       j.Airline.Id == airlineId);
             if (!string.IsNullOrEmpty(departure) && departure.Length == 4)
             {
@@ -359,7 +360,11 @@ namespace FlightJobs.Controllers
 
             var pgList = airlineJobs.ToPagedList<JobAirlineDbModel>(page, pageSize);
 
-            pgList.ToList().ForEach(a => a.CalcAirlineJob());
+            foreach (var item in pgList)
+            {
+                var departureFbo = dbContext.AirlineFbo.FirstOrDefault(x => x.Airline.Id == item.Airline.Id && x.Icao == item.Job.DepartureICAO);
+                item.CalcAirlineJob(departureFbo);
+            }
 
             return PartialView("AirlineLedgerView", pgList);
         }
@@ -494,7 +499,7 @@ namespace FlightJobs.Controllers
                 uStatistics.BankBalance -= item.PilotLicenseItem.Price;
                 Session["HeaderStatistics"] = null;
 
-                var auxList = dbContext.LicenseItemUser.Where(i =>  
+                var auxList = dbContext.LicenseItemUser.Where(i =>
                                                               i.User.Id == user.Id &&
                                                               i.PilotLicenseItem.Id != item.Id &&
                                                               i.PilotLicenseItem.PilotLicenseExpense.Id == item.PilotLicenseItem.PilotLicenseExpense.Id).ToList();
@@ -503,8 +508,8 @@ namespace FlightJobs.Controllers
                 if (!notAllBought)
                 {
                     // todos comprados
-                    var expenseUser = dbContext.PilotLicenseExpensesUser.Include(x => x.PilotLicenseExpense).FirstOrDefault(e => 
-                                                    e.PilotLicenseExpense.Id == item.PilotLicenseItem.PilotLicenseExpense.Id && 
+                    var expenseUser = dbContext.PilotLicenseExpensesUser.Include(x => x.PilotLicenseExpense).FirstOrDefault(e =>
+                                                    e.PilotLicenseExpense.Id == item.PilotLicenseItem.PilotLicenseExpense.Id &&
                                                     e.User.Id == user.Id);
 
                     expenseUser.MaturityDate = DateTime.UtcNow.AddDays(expenseUser.PilotLicenseExpense.DaysMaturity);
@@ -553,6 +558,115 @@ namespace FlightJobs.Controllers
             }
 
             dbContext.SaveChanges();
+        }
+
+        public ActionResult FboProfile(int airlineId)
+        {
+            var dbContext = new ApplicationDbContext();
+
+            var jobsDone = dbContext.JobDbModels.Where(j => j.IsDone);
+            var topArrival = jobsDone.GroupBy(q => q.ArrivalICAO)
+                            .OrderByDescending(gp => gp.Count())
+                            .Select(g => g.Key)
+                            .Take(8).ToList();
+            var topAirports = new List<AirportModel>();
+            topArrival.ForEach(x => topAirports.Add(AirportDatabaseFile.FindAirportInfo(x)));
+
+            var test = topAirports.Select(t => t.ICAO).ToList();
+            var fboInDB = dbContext.AirlineFbo.Where(x => test.Contains(x.Icao)).ToList();
+
+            var airlineFboView = GetFboView(topAirports, fboInDB);
+
+            var hiredFBOs = dbContext.AirlineFbo.Where(x => x.Airline.Id == airlineId).ToList();
+            hiredFBOs.ForEach(x => x.Name = AirportDatabaseFile.FindAirportInfo(x.Icao).Name);
+            airlineFboView.FboHired = new List<AirlineFboDbModel>();
+            airlineFboView.FboHired.AddRange(hiredFBOs);
+            airlineFboView.CurrentAirline = dbContext.AirlineDbModels.FirstOrDefault(x => x.Id == airlineId);
+            return PartialView("AirlineFboView", airlineFboView);
+        }
+
+        private AirlineFboView GetFboView(List<AirportModel> airports, List<AirlineFboDbModel> fboInDB)
+        {
+            var airlineFboView = new AirlineFboView();
+            airlineFboView.FboResults = new List<AirlineFboDbModel>();
+            foreach (var airport in airports)
+            {
+                var countFbosInDB = fboInDB.Count(f => f.Icao == airport.ICAO);
+
+                airlineFboView.FboResults.Add(GetCalcAirlineFbo(airport, countFbosInDB));
+            }
+            return airlineFboView;
+        }
+
+        public ActionResult FilterFboList(string icao, int airlineId)
+        {
+            var dbContext = new ApplicationDbContext();
+            var airports = AirportDatabaseFile.GetAllAirportInfo().Where(x => x.ICAO.ToLower().StartsWith(icao.ToLower())).ToList();
+            var temp = airports.Select(t => t.ICAO).ToList();
+            var fboInDB = dbContext.AirlineFbo.Where(x => temp.Contains(x.Icao)).ToList();
+
+            var airlineFboView = GetFboView(airports, fboInDB);
+            airlineFboView.CurrentAirline = dbContext.AirlineDbModels.FirstOrDefault(x => x.Id == airlineId);
+
+            return PartialView("FboResultsView", airlineFboView);
+        }
+
+        public ActionResult HireFbo(string icao)
+        {
+            var dbContext = new ApplicationDbContext();
+            var airport = AirportDatabaseFile.FindAirportInfo(icao);
+            var fboInDB = dbContext.AirlineFbo.Where(x => x.Icao == icao);
+            if (fboInDB.Count() > 5)
+            {
+                return Json(new { error = true, responseText = "This FBO is not available. All contracts were hired." }, JsonRequestBehavior.AllowGet);
+            }
+            var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
+            var userStatistics = dbContext.StatisticsDbModels.FirstOrDefault(x => x.User.Id == user.Id);
+            var airline = dbContext.AirlineDbModels.FirstOrDefault(a => a.Id == userStatistics.Airline.Id && a.UserId == user.Id);
+
+            if (airline == null)
+            {
+                return Json(new { error = true, responseText = "You must be the owner of the airline to hire FBOs." }, JsonRequestBehavior.AllowGet);
+            }
+            if (fboInDB.Any(x => x.Airline.Id == airline.Id))
+            {
+                return Json(new { error = true, responseText = "This airline already hired the " + icao + " FBO." }, JsonRequestBehavior.AllowGet);
+            }
+
+            var airlineFbo = GetCalcAirlineFbo(airport, 0);
+            airlineFbo.Airline = airline;
+
+            if (airline.BankBalance < airlineFbo.Price)
+            {
+                return Json(new { error = true, responseText = "Your airline doesn't have enough money to hire this FBO." }, JsonRequestBehavior.AllowGet);
+            }
+            airline.BankBalance = airline.BankBalance - airlineFbo.Price;
+            // debito na airline
+
+            dbContext.AirlineFbo.Add(airlineFbo);
+            dbContext.SaveChanges();
+
+            var airlineFboView = new AirlineFboView();
+            airlineFboView.FboHired = dbContext.AirlineFbo.Where(x => x.Airline.Id == airline.Id).ToList();
+            airlineFboView.CurrentAirline = airline;
+
+            return PartialView("FboAirlineView", airlineFboView);
+        }
+
+        private AirlineFboDbModel GetCalcAirlineFbo(AirportModel airport, int countFbosInDB)
+        {
+            return new AirlineFboDbModel()
+            {
+                Name = airport.Name,
+                Elevation = airport.Elevation,
+                RunwaySize = airport.RunwaySize,
+                Icao = airport.ICAO,
+                Availability = 5 - countFbosInDB,
+                FuelPriceDiscount = Math.Round(airport.RunwaySize / (double)62423, 2),
+                GroundCrewDiscount = Math.Round(airport.RunwaySize / (double)41093, 2),
+                ScoreIncrease = airport.RunwaySize / 1123,
+                Price = (airport.RunwaySize * 78)
+            };
         }
     }
 }

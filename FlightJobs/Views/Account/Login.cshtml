@@ -4,61 +4,110 @@
     ViewBag.Title = "Sign in";
 }
 
-<h2>@ViewBag.Title</h2>
-<div class="panel panel-default" style="padding:25px; max-width:650px  ">
-    <div class="row">
-        <div class="col-md-8">
-            <section id="loginForm">
-                @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
-            {
-                    @Html.AntiForgeryToken()
-                    <h4>Use a local account to log in.</h4>
-                    <hr />
-                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-                    <div class="form-group">
-                        @Html.LabelFor(m => m.Email, new { @class = "col-md-2 control-label" })
-                        <div class="col-md-10">
-                            @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
-                            @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        @Html.LabelFor(m => m.Password, new { @class = "col-md-2 control-label" })
-                        <div class="col-md-10">
-                            @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
-                            @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="col-md-offset-2 col-md-10">
-                            <div class="checkbox">
-                                @Html.CheckBoxFor(m => m.RememberMe)
-                                @Html.LabelFor(m => m.RememberMe)
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="col-md-offset-2 col-md-4 pull-right">
-                            <input type="submit" value="Sign in" class="btn btn-default" />
-                        </div>
-                    </div>
-                    <p>
-                        @Html.ActionLink("Register as a new user", "Register")
-                    </p>
-                    @* Ativar isso assim que você tiver a confirmação de conta ativada para a funcionalidade de redefinição de senha *@
-                    <p>
-                        @Html.ActionLink("Forgot your password?", "ForgotPassword")
-                    </p>
-                }
-            </section>
+<hr />
+<div class="row">
+    <div class="col-md-7">
+        <div style="padding:10px;">
+            <img class="img-responsive center-block" src="~/Content/img/FlightJobsLogo0001.png" />
+            <br />
+            <p style="text-align:justify;">
+                This is an application for X-Plane(Flight Simulator) shared with the community with the objective to improve the flight simulation experience from the point of view of the Pilots. Other similar tools place the user as an entrepreneur in aviation, buying aircraft and limiting their flights by type of aviation. The intention of FlightJobs is to simulate the pilot's work, earning money, scores, hours of flight and experience to be hired by an airline company. In the below video tutorial will help you to use and install the X-Plane plugin.
+            </p>
+            <p>
+                <iframe style="width:100%; height:350px;" src="https://www.youtube.com/embed/zOAvb1jQaGY" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+            </p>
+            <hr />
+            <strong> Below this list of current features:</strong>
+            <ul>
+                <li>Access your detailed Logbook anywhere through a website</li>
+                <li>
+                    Start and finish your Flight Jobs in a friendly X-Plane plugin
+                    (The window will pop up when you set the parking brake to remind you to finish the flight job)
+                </li>
+                <li>Scores and bank balance</li>
+                <li>Payload your aircraft with a purpose. Learn more about carrying capacity of an aircraft</li>
+                <li>Plan your future flights on a list of pending flight jobs to choose from</li>
+                <li>
+                    Pilot Statistics with relevant pieces of information from your flights like:
+                    flight time, number of flights, payload carried, last flight date, last aircraft and favorite airplane
+                </li>
+                <li>A chart showing the last 6 months of your flights to evaluate your virtual money evolution per month</li>
+                <li>Airlines to sign a contract using your scores and virtual money</li>
+                <li>Aviation certificates with tests</li>
+                <li>Airliners ranking of higher scores. All the hired can help improve the classification</li>
+                <li>Create your own Airline when you have enough virtual money to buy</li>
+                <li>[NEW] Pilot graduation.</li>
+                <li>[NEW] Airline leadger with all flights data generated by the airline jobs. Fees, taxes and charges are generated with the jobs.</li>
+                <li>[NEW] Pilot license requirements.</li>
+                <li>[NEW] Destination and alternate tips.</li>
+                <li>[NEW] Information about FlightJobs on Analysis page.</li>
+            </ul>
+            <hr />
+            <h4 class="text-center">FlightJobs for</h4><br />
+            <img class="img-responsive center-block" src="~/Content/img/XPlane_11_logo.png" />
+            <p>
+                <a href="http://localhost:5646/Home/About"><h4 style="text-align:center; width:100%;">About</h4></a>
+            </p>
         </div>
-        <div class="col-md-4">
-            <section id="socialLoginForm">
-                @Html.Partial("_ExternalLoginsListPartial", new ExternalLoginListViewModel { ReturnUrl = ViewBag.ReturnUrl })
-            </section>
+    </div>
+    <div class="col-md-4">
+        <div class="panel panel-default" style="padding:25px; max-width:430px  ">
+            <div class="row">
+                <div class="col-md-12">
+                    <section id="loginForm">
+                        @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+                        {
+                            @Html.AntiForgeryToken()
+                            <h4>Use you account to log in.</h4>
+                            <hr />
+                            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.Email, new { @class = "col-md-3 control-label" })
+                                <div class="col-md-9">
+                                    @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.Password, new { @class = "col-md-3 control-label" })
+                                <div class="col-md-9">
+                                    @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-offset-2 col-md-10">
+                                    <div class="checkbox">
+                                        @Html.CheckBoxFor(m => m.RememberMe)
+                                        @Html.LabelFor(m => m.RememberMe)
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-offset-2 col-md-4 pull-right">
+                                    <input type="submit" value="Sign in" class="btn btn-default" />
+                                </div>
+                            </div>
+                            <p>
+                                @Html.ActionLink("Register as a new user", "Register")
+                            </p>
+                            @* Ativar isso assim que você tiver a confirmação de conta ativada para a funcionalidade de redefinição de senha *@
+                            <p>
+                                @Html.ActionLink("Forgot your password?", "ForgotPassword")
+                            </p>
+                        }
+                    </section>
+                </div>
+                <div class="col-md-4">
+                    <section id="socialLoginForm">
+                        @Html.Partial("_ExternalLoginsListPartial", new ExternalLoginListViewModel { ReturnUrl = ViewBag.ReturnUrl })
+                    </section>
+                </div>
+            </div>
         </div>
     </div>
 </div>
+
     @section Scripts {
         @Scripts.Render("~/bundles/jqueryval")
     }

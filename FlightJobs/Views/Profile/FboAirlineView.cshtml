@@ -1,0 +1,33 @@
+﻿@model FlightJobs.Models.AirlineFboView
+
+
+@if (Model.FboHired != null && Model.FboHired.Count > 0)
+{
+    <h3>FBOs already hired by @Model.CurrentAirline.Name</h3>
+    <div id="msgHireFbo" style="display:none; font-size:x-small;color:red;">The hire has been successfully completed.</div>
+    foreach (var item in Model.FboHired.ToList())
+    {
+        <div class="panel panel-default" style="margin-bottom:5px; padding:5px;">
+            <h5><b>@Html.DisplayFor(modelItem => item.Icao) - @Html.DisplayFor(modelItem => item.Name)</b></h5>
+            <div class="row" style="font-size:x-small;">
+                <div class="col-sm-4">
+                    <b>Score increase: </b> @Html.DisplayFor(modelItem => item.ScoreIncrease)<br />
+                </div>
+                <div class="col-sm-4">
+                    <b>Fuel price(discount): </b> @Html.DisplayFor(modelItem => item.FuelPriceDiscount)
+                </div>
+                <div class="col-sm-4">
+                    <b>Ground crew(discount): </b> @Html.DisplayFor(modelItem => item.GroundCrewDiscount)
+                </div>
+            </div>
+        </div>
+    }
+
+}
+else
+{
+    <div class="panel panel-default" style="margin-bottom:5px; padding:5px;">
+        <h3>No FBO hired!</h3>
+        <h5>Search your favorite airport on the left panel. When the airline hire one FBO the next Jobs departing from this airport will increase the score and give the discount on fuel and ground crew.</h5>
+    </div>
+}

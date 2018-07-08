@@ -333,8 +333,22 @@
     <Compile Include="Migrations\201806011423450_AviationType.Designer.cs">
       <DependentUpon>201806011423450_AviationType.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201807062204491_AirlineFbo.cs" />
+    <Compile Include="Migrations\201807062204491_AirlineFbo.Designer.cs">
+      <DependentUpon>201807062204491_AirlineFbo.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201807062232255_AirlineFboNotMapped.cs" />
+    <Compile Include="Migrations\201807062232255_AirlineFboNotMapped.Designer.cs">
+      <DependentUpon>201807062232255_AirlineFboNotMapped.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201807081344186_ChangeDiscountToDouble.cs" />
+    <Compile Include="Migrations\201807081344186_ChangeDiscountToDouble.Designer.cs">
+      <DependentUpon>201807081344186_ChangeDiscountToDouble.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\AirlineFboView.cs" />
+    <Compile Include="Models\AirlineFboDbModel.cs" />
     <Compile Include="Models\AirlineViewModel.cs" />
     <Compile Include="Models\CertificateViewModel.cs" />
     <Compile Include="Models\ChartViewModel.cs" />
@@ -686,6 +700,9 @@
     <Content Include="Views\Profile\PilotLicenseView.cshtml" />
     <Content Include="Views\Profile\PilotLicenseItemView.cshtml" />
     <Content Include="Views\Home\Analysis.cshtml" />
+    <Content Include="Views\Profile\AirlineFboView.cshtml" />
+    <Content Include="Views\Profile\FboResultsView.cshtml" />
+    <Content Include="Views\Profile\FboAirlineView.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201710111859366_InitialCreate.resx">
@@ -774,6 +791,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201806011423450_AviationType.resx">
       <DependentUpon>201806011423450_AviationType.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201807062204491_AirlineFbo.resx">
+      <DependentUpon>201807062204491_AirlineFbo.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201807062232255_AirlineFboNotMapped.resx">
+      <DependentUpon>201807062232255_AirlineFboNotMapped.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201807081344186_ChangeDiscountToDouble.resx">
+      <DependentUpon>201807081344186_ChangeDiscountToDouble.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

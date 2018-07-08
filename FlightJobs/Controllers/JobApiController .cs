@@ -205,7 +205,8 @@ namespace FlightJobs.Controllers
                     Airline = statistics.Airline,
                     Job = job
                 };
-                jobAirline.CalcAirlineJob();
+                var departureFbo = dbContext.AirlineFbo.FirstOrDefault(x => x.Airline.Id == jobAirline.Airline.Id && x.Icao == job.DepartureICAO);
+                jobAirline.CalcAirlineJob(departureFbo);
 
                 if (statistics.Airline.DebtValue > 0 && statistics.Airline.DebtMaturityDate < DateTime.Now)
                 {
@@ -219,6 +220,7 @@ namespace FlightJobs.Controllers
                 {
                     // Pontua e ganha
                     statistics.Airline.AirlineScore += job.Dist / 14;
+                    statistics.Airline.AirlineScore += departureFbo != null ? departureFbo.ScoreIncrease : 0;
                     statistics.Airline.BankBalance += (long)jobAirline.RevenueEarned;
                 }
 
@@ -244,6 +246,19 @@ namespace FlightJobs.Controllers
                                                             e.MaturityDate < DateTime.UtcNow &&
                                                             e.User.Id == userId).ToList();
             return (listOverdue.Count() > 0);
+        }
+
+
+        [System.Web.Http.HttpGet]
+        [System.Web.Mvc.AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<HttpResponseMessage> Test()
+        {
+            var dbContext = new ApplicationDbContext();
+            var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
+            JobDbModel job = dbContext.JobDbModels.FirstOrDefault(x => x.User.Id == user.Id && x.IsActivated);
+            UpdateAirline(job, dbContext);
+            return Request.CreateResponse(HttpStatusCode.OK, "UpdateAirline OK");
         }
     }
 }
