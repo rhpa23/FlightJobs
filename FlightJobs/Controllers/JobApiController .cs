@@ -247,18 +247,5 @@ namespace FlightJobs.Controllers
                                                             e.User.Id == userId).ToList();
             return (listOverdue.Count() > 0);
         }
-
-
-        [System.Web.Http.HttpGet]
-        [System.Web.Mvc.AllowAnonymous]
-        [ValidateAntiForgeryToken]
-        public async Task<HttpResponseMessage> Test()
-        {
-            var dbContext = new ApplicationDbContext();
-            var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
-            JobDbModel job = dbContext.JobDbModels.FirstOrDefault(x => x.User.Id == user.Id && x.IsActivated);
-            UpdateAirline(job, dbContext);
-            return Request.CreateResponse(HttpStatusCode.OK, "UpdateAirline OK");
-        }
     }
 }

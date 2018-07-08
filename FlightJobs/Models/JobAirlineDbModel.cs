@@ -59,12 +59,16 @@ namespace FlightJobs.Models
             // GroundCrewCost = FlightCrewCost * 0.3;
             this.GroundCrewCost = this.FlightCrewCost * 0.3;
 
+            double grCrewDiscount = 0.0;
+            double FuelCostWithoutDiscount = 0.0;
             if (departureFbo != null)
             {
+                FuelCostWithoutDiscount = (this.Job.StartFuelWeight - this.Job.FinishFuelWeight) * this.FuelPrice;
+
                 double fuelDiscount = this.FuelPrice * departureFbo.FuelPriceDiscount;
                 this.FuelPrice -= fuelDiscount;
 
-                double grCrewDiscount = this.GroundCrewCost * departureFbo.GroundCrewDiscount;
+                grCrewDiscount = this.GroundCrewCost * departureFbo.GroundCrewDiscount;
                 this.GroundCrewCost -= grCrewDiscount;
             }
 
@@ -83,7 +87,12 @@ namespace FlightJobs.Models
             this.TotalFlightCost = this.TotalCrewCostLabor + this.FuelCost + this.GroundCrewCost;
 
             // RevenueEarned = TotalFlightCost * 1.35;
-            this.RevenueEarned = this.TotalFlightCost * 1.35;
+            this.RevenueEarned = (this.TotalFlightCost * 1.35);
+            if (departureFbo != null)
+            {
+                this.RevenueEarned += grCrewDiscount;
+                this.RevenueEarned += (FuelCostWithoutDiscount - this.FuelCost);
+            }
 
             // FlightIncome = RevenueEarned - TotalFlightCost;
             this.FlightIncome = this.RevenueEarned - this.TotalFlightCost;

@@ -485,6 +485,10 @@
     <Content Include="Content\img\logbook0001.jpg" />
     <Content Include="Content\img\logo\LogoDefault.png" />
     <Content Include="Content\img\lufthansa.jpg" />
+    <Content Include="Content\img\pictures\air-transport.jpg" />
+    <Content Include="Content\img\pictures\cargo.jpg" />
+    <Content Include="Content\img\pictures\general-aviation.jpg" />
+    <Content Include="Content\img\pictures\heavy.jpg" />
     <Content Include="Content\img\PilotExpenses\AdvancedAvionicsHandbook.jpg" />
     <Content Include="Content\img\PilotExpenses\AerodynamicsExam.jpg" />
     <Content Include="Content\img\PilotExpenses\AerodynamicsTechnicalManual.jpg" />
