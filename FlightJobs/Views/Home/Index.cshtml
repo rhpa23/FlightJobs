@@ -13,6 +13,33 @@
     .panel {
         font-size:13pt;
     }
+    .job-line {
+        height: 120px;
+        background-color: dimgray;
+        text-align: center;
+        margin: inherit;
+        border-radius: 9px;
+        padding-left: 5px;
+        border: 1px solid #D1D3D4;
+        cursor:pointer;
+    }
+    .job-line:hover {
+        border: 2px solid #5bc0de;
+    }
+    .job-line-activated {
+        height: 120px;
+        background-color: #5bc0de;
+        text-align: center;
+        margin: inherit;
+        border-radius: 9px;
+        padding-left: 5px;
+        border: 1px solid #696969;
+        cursor: pointer;
+    }
+    .glyphicon {
+        font-size: 50px;
+        color: #fff;
+    }
 </style>
 
 @*<div style="height:65px">
@@ -39,89 +66,104 @@
     }
     else
     {
-    <div class="panel panel-default text-center" style="margin-bottom:5px;  ">
+    <div style="margin-bottom:5px;  ">
         <p>
-            <b>Your pending jobs...</b>
+            <h3 style=" width:100%; text-align:center; color:dimgray"><b>Pending Jobs</b></h3>
         </p>
-        <table class="table table-striped table-bordered table-hover" style="padding:0px">
-            <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.Jobs.First().IsActivated)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Jobs.First().DepartureICAO)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Jobs.First().ArrivalICAO)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Jobs.First().AlternativeICAO)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Jobs.First().Dist)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Jobs.First().Pax)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Jobs.First().Cargo)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Jobs.First().Payload)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Jobs.First().Pay)
-                </th>
-                <th></th>
-                <th></th>
-            </tr>
+        <br />
+        @foreach (var item in Model.Jobs)
+        {
+            var styleClass = (item.IsActivated) ? "job-line-activated" : "job-line";
 
+            <div class="row @styleClass" onclick="location.href='@Url.Action("ActivateJob", "Home", new { jobId = item.Id })'">
+                <div class="row">
+                    <div class="col-xs-1" style="text-align:justify; color:white; padding-top:8px;">
+                        <h3><strong>@item.DepartureICAO</strong></h3>
+                    </div>
+                    <div class="col-sm-1" style="padding-top:20px;padding-left:0px; padding-right:0px; width:auto;">
+                        <img src="~/Content/img/airplane2.png" />
+                    </div>
+                    <div class="col-sm-1" style="text-align:justify; color:white; padding:8px;">
+                        <h3><strong>@item.ArrivalICAO</strong></h3>
+                    </div>
+                    
+                </div>
+                <div class="row">
+                    <div class="col-sm-2" style="text-align:right; color:white; margin-left:25px; ">
+                        @item.Dist Nm
+                    </div>
+                    <div class="col-sm-1" style="text-align:center; color:gray; margin-left:10px; ">
+                        <h3 style="margin-top:0px;"><strong>@item.AlternativeICAO</strong></h3>
+                    </div>
+                    <div class="col-sm-2" style="text-align:justify; color:white; margin-left:30px; margin-top:-40px; width:14%; padding-right:0px; padding-left:0px;">
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <img src="~/Content/img/passenger2.png" style="width:40px;" />
+                            </div>
+                            <div class="col-sm-5">
+                                <h4><strong>@item.Pax</strong></h4><h5> Passengers</h5>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-2" style="text-align:justify; color:white; margin-top:-40px; padding-right:0px;">
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <img src="~/Content/img/baggage.png" style="width:40px;padding-right:0px;" />
+                            </div>
+                            <div class="col-sm-9" style="margin-top:-55px; margin-left:60px;" >
+                                <h5 style="margin-bottom:0px;"><strong>@item.Cargo Kg</strong></h5><h6 style="margin-top:0px;"> Cargo</h6>
+                                <h5 style="margin-bottom:0px;"><strong>@item.Payload Kg</strong></h5><h6 style="margin-top:0px;"> Total payload</h6>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-2" style="text-align:justify; color:white; margin-top:-47px; padding-left:0px;">
+                        <div class="row">
+                            <div class="col-sm-3" style="padding-left:5px;">
+                                <img src="~/Content/img/pilot2.png" style="width:40px;" />
+                            </div>
+                            <div class="col-sm-9" style="margin-top:-10px;" >
+                                <h5 style="margin-bottom:0px;"><strong>@item.User.UserName</strong></h5><h6 style="margin-top:0px;"> Pilot</h6>
+                                
+                                @if (TempData["PilotMessage"] != null)
+                                {
+                                    <h6 style="color:gold">@TempData["PilotMessage"]</h6>
+                                }
+                                else
+                                {
+                                   <h6>License is up to date</h6>
+                                }
+                            </div>
+                        </div>
+                        <div class="row">
+                                <h6 style="margin-top:-15px; margin-bottom:0px;"><strong>@string.Format("{0:C}", item.Pay)</strong></h6><h6 style="margin-top:0px;"> Payament</h6>
+                        </div>
+                    </div>
+                    <div class="col-sm-1" style="text-align:center; color:white; margin-top:-50px; padding-left:20px;">
+                        <div class="row">
+                            @if (item.IsActivated)
+                            {
+                                <span class="glyphicon glyphicon-check"></span><h6>Activated</h6>
+                            }
+                            else
+                            {
+                                <span class="glyphicon glyphicon-hourglass"></span><h6>Click me</h6>
+                            }
+                        </div>
+                    </div>
+                    <div class="col-sm-1" style="text-align:right; color:white; margin-top:-20px; padding-left:20px;">
+                        <a data-toggle="confirmation" data-title="Remove Job?" href="Home/DeleteJob/@item.Id"><i style="font-size: 20px;" class="glyphicon glyphicon-remove"></i></a>
+                    </div>
+                </div>
+            </div>
+        }
 
-            @foreach (var item in Model.Jobs)
-            {
-                var style = (item.IsActivated) ? "font-weight:bold" : "";
-
-                <tr style="@style">
-                    <td>
-                        @Html.CheckBoxFor(modelItem => item.IsActivated, new { @disabled = "disabled" })
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.DepartureICAO, new { @class = "control-label col-md-6" })
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.ArrivalICAO)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.AlternativeICAO)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Dist) NM
-                    </td>
-                    <td> @Html.DisplayFor(modelItem => item.Pax) </td>
-                    <td> @Html.DisplayFor(modelItem => item.Cargo) Kg </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Payload) Kg
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Pay)
-                    </td>
-                    <td style="text-align:center;">
-                        <a data-toggle="confirmation"  data-title="Remove Job?" href="Home/DeleteJob/@item.Id"><i class="glyphicon glyphicon-remove"></i></a>
-                    </td>
-                    <td>
-                        @Html.ActionLink("Activate", "ActivateJob", new { jobId = item.Id })
-                    </td>
-                </tr>
-            }
-
-        </table>
     </div>
     }
 
 </div>
 
 <button type="button" class="btn btn btn-info pull-right" onclick="location.href='@Url.Action("Index", "SearchJobs")'">
-    <span class="glyphicon glyphicon-plus"></span> Add jobs
+    <span style="font-size: 20px;" class="glyphicon glyphicon-plus"></span> Add jobs
 </button>
 
 

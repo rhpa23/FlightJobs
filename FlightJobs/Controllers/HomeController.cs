@@ -26,7 +26,11 @@ namespace FlightJobs.Controllers
                     homeModel.Statistics = statistics;
                 }
             }
-            var jobList = dbContext.JobDbModels.Where(j => !j.IsDone && j.User.Id == user.Id).OrderBy(j => j.Id).ToPagedList(pageNumber ?? 1, 7);
+            var jobList = dbContext.JobDbModels.Where(j => !j.IsDone && j.User.Id == user.Id).OrderBy(j => j.Id).ToPagedList(pageNumber ?? 1, 4);
+            var listOverdue = dbContext.PilotLicenseExpensesUser.Where(e =>
+                                                            e.MaturityDate < DateTime.UtcNow &&
+                                                            e.User.Id == user.Id).ToList();
+            TempData["PilotMessage"] = (listOverdue.Count() > 0) ? "License is expired" : null;
             homeModel.Jobs = jobList;
             return View(homeModel);
         }
