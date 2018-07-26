@@ -37,5 +37,15 @@ namespace FlightJobs.Models
         [DisplayName("Passenger weight")]
         [Required(ErrorMessage = "Passenger weight is required")]
         public long PassengerWeight { get; set; }
+
+        [DisplayName("Passenger capacity")]
+        [Required(ErrorMessage = "Passenger capacity is required")]
+        [Range(0, 40, ErrorMessage = "Value for {0} must be between {1} and {2}")]
+        public int GaPassengerCapacity { get; set; }
+
+        [DisplayName("Cargo capacity weight")]
+        [Required(ErrorMessage = "Cargo capacity weight is required")]
+        //[Range(0, 1000, ErrorMessage = "Value for {0} must be between {1} and {2}")]
+        public int GaCargoCapacityWeight { get; set; }
     }
 }

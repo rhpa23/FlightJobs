@@ -12,8 +12,7 @@
         color: #5bc0de;
     }
 </style>
-
-@using (Html.BeginForm()) 
+@using (Html.BeginForm("Index", "SearchJobs", FormMethod.Post, new { id = "searchForm" }))
 {
     @Html.AntiForgeryToken()
     
@@ -106,9 +105,43 @@
                     </div>
                 </div>
             </div>
-                
-            
-            
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content" style="width: 390px;">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">General Aviation model data</h4>
+                </div>
+
+                <div class="modal-body">
+                    <h5 style="color:gray">* This information will be used to calculate the Job Profit.</h5>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-md-9">
+                                @Html.LabelFor(model => model.GaPassengerCapacity, htmlAttributes: new { @class = "control-label" })
+                                @Html.EditorFor(model => model.GaPassengerCapacity, new { htmlAttributes = new { @class = "form-control", @Value = "5" } })
+                                @Html.ValidationMessageFor(model => model.GaPassengerCapacity, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <br />
+                        <div class="row">
+                            <div class="col-md-9">
+                                @Html.LabelFor(model => model.GaCargoCapacityWeight, htmlAttributes: new { @class = "control-label" }) (Kg)
+                                @Html.EditorFor(model => model.GaCargoCapacityWeight, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.GaCargoCapacityWeight, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-info" id="ConfirmGeneralAviation">Confirm</button>
+                </div>
+            </div>
         </div>
     </div>
 }
@@ -119,6 +152,23 @@
 }
 
 <script>
+
+    $('#searchForm').submit(function () {
+
+        if ($('#GeneralAviation').prop("checked")) {
+            $('#myModal').modal('show');
+            return false;
+        }
+        else {
+            $('#searchForm').submit();
+        }
+    });
+
+    
+    $('#ConfirmGeneralAviation').click(function () {
+        $('#searchForm').submit();
+    });
+
     $('#swap-button').click(function () {
         var dep = $('#Departure').val();
         var arr = $('#Arrival').val();
@@ -181,7 +231,7 @@
     });
 
     $('#Arrival').keyup(function () {
-        
+
         if ($('#Departure').val().length == 4 && $('#Arrival').val().length == 4) {
             CalcDistance();
         }

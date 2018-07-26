@@ -176,7 +176,15 @@ namespace FlightJobs.Controllers
                 licenseOverdue = IsLicenseOverdue(dbContext, job.User.Id);
                 if (!licenseOverdue)
                 {
-                    statistics.PilotScore += job.Dist / 15;
+                    if (job.AviationType == 1)
+                    {
+                        statistics.PilotScore += job.Dist / 10;
+                    }
+                    else
+                    {
+                        statistics.PilotScore += job.Dist / 15;
+                    }
+                    
                     statistics.BankBalance += job.Pay;
                 }
             }
@@ -185,7 +193,7 @@ namespace FlightJobs.Controllers
                 var newStatistics = new StatisticsDbModel()
                 {
                     BankBalance = job.Pay,
-                    PilotScore = job.Dist / 15,
+                    PilotScore = job.AviationType == 1 ? job.Dist / 10 : job.Dist / 15,
                     Logo = "/Content/img/default.jpg",
                     User = job.User
                 };

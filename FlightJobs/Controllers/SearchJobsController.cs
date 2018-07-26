@@ -18,9 +18,9 @@ namespace FlightJobs.Controllers
         private double taxFirstC = 0.012; // por NM
         private double taxCargo = 0.0004; // por NM
 
-        private double taxEconGE = 0.085; // por NM
-        private double taxFirstGE = 0.095; // por NM
-        private double taxCargoGE = 0.012; // por NM
+        private double taxEconGE = 0.165; // por NM
+        private double taxFirstGE = 0.175; // por NM
+        private double taxCargoGE = 0.0041; // por NM
 
         private int PaxWeight = 84;
 
@@ -276,7 +276,9 @@ namespace FlightJobs.Controllers
 
                     int index = randomPob.Next(14, 25);
                     if (model.AviationType == "GeneralAviation")
-                        index = randomPob.Next(9, 16);
+                        index = 50;
+
+                    int gePobCount = 0, geCargoCount = 0;
 
                     for (int i = 0; i < index; i++)
                     {
@@ -292,8 +294,20 @@ namespace FlightJobs.Controllers
                         {
                             if (flightType == "GeneralAviation")
                             {
-                                cargo = randomCargo.Next(10, 300);
+                                cargo = randomCargo.Next(5, model.GaCargoCapacityWeight);
+                                if (geCargoCount + cargo > model.GaCargoCapacityWeight)
+                                {
+                                    cargo = model.GaCargoCapacityWeight - geCargoCount;
+                                    if (cargo == 0) continue;
+                                    geCargoCount = model.GaCargoCapacityWeight;
+                                }
+                                else
+                                {
+                                    geCargoCount += cargo;
+                                }
+
                                 profit = Convert.ToInt32(taxCargoGE * distMiles * cargo);
+                                profit += (140 / model.GaCargoCapacityWeight);
                             }
                             else if (flightType == "AirTransport")
                             {
@@ -315,8 +329,20 @@ namespace FlightJobs.Controllers
                         {
                             if (flightType == "GeneralAviation")
                             {
-                                pob = randomPob.Next(1, 10);
+                                pob = randomPob.Next(1, model.GaPassengerCapacity);
+                                if (gePobCount + pob > model.GaPassengerCapacity)
+                                {
+                                    pob = model.GaPassengerCapacity - gePobCount;
+                                    if (pob == 0) continue;
+                                    gePobCount = model.GaPassengerCapacity;
+                                }
+                                else
+                                {
+                                    gePobCount += pob;
+                                }
+                                isFisrtClass = true; /// Always premium for GA
                                 profit = isFisrtClass ? Convert.ToInt32(taxFirstGE * distMiles * pob) : Convert.ToInt32(taxEconGE * distMiles * pob);
+                                profit += ((distMiles * 2) / model.GaPassengerCapacity);
                             }
                             else if (flightType == "AirTransport")
                             {
