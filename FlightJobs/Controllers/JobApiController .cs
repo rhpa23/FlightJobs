@@ -53,6 +53,12 @@ namespace FlightJobs.Controllers
                     return Request.CreateResponse(HttpStatusCode.Forbidden, "You don't have any job activated for this location.");
                 }
 
+                // Check GUEST
+                if (job.User != null && job.User.Email == AccountController.GuestEmail)
+                {
+                    return Request.CreateResponse(HttpStatusCode.Forbidden, AccountController.GuestMessage);
+                }
+
                 long payload = Convert.ToInt64(Math.Round(Convert.ToDouble(payloadStr, new CultureInfo("en-US")))); 
                 // Check payload
                 if (payload >= (job.Payload + 150) || payload <= (job.Payload - 150))
@@ -120,6 +126,12 @@ namespace FlightJobs.Controllers
                 if (job == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.Forbidden, "Wrong destination to finish this job.");
+                }
+
+                // Check GUEST
+                if (job.User != null && job.User.Email == AccountController.GuestEmail)
+                {
+                    return Request.CreateResponse(HttpStatusCode.Forbidden, AccountController.GuestMessage);
                 }
 
                 long payload = Convert.ToInt64(Math.Round(Convert.ToDouble(payloadStr, new CultureInfo("en-US"))));

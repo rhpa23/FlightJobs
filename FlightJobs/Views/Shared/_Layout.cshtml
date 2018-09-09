@@ -1,7 +1,7 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
-    
+    <!-- Google AdSense -->
     <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
     <script>
         (adsbygoogle = window.adsbygoogle || []).push({
@@ -84,6 +84,18 @@
         
         <img src="~/Content/img/banner0001.jpg" style="width:100%" />
     </div>
+    @if (User.Identity.Name == "Guest")
+    {
+    <div class="card" style="padding:5px; text-align:center; margin:0px; ">
+        <div>Using a guest account. If you already have an account click 
+            @Html.ActionLink("Login", "Login", "Account", new object { }, new { @class = "btn btn-info btn-xs" })
+             to sign in. Or click 
+            @Html.ActionLink("Register", "Register", "Account", new object { }, new { @class = "btn btn-default btn-xs" })
+            to register yourself.
+        </div>
+    </div>
+    }
+
     <div class="container body-content">
         @if (TempData["MessageLayout"] != null)
         {
@@ -92,9 +104,16 @@
             </div>
         }
 
-        @RenderBody()
-    </div>
+        
 
+        @RenderBody()
+
+        
+    </div>
+    
+
+
+    
     <hr />
     <footer>
         <div class="container">
@@ -159,7 +178,7 @@
     <div class="fixed-footer">
         <div class="text-center">
             <img src="~/Content/img/bell.png" style="width:35px; margin-top: -15px;" />
-            New General Aviation profit is on test fase. Feedbacks in  <a href="https://discordapp.com/invite/xmpAWz7" target="_blank">Discord Channel</a>.
+            Connector version 0.4.0 released. Introduces the 'Reset Job' in the settings window that allows changing the Job without exit of X-Plane.
         </div>
     </div>
      

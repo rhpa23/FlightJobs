@@ -32,10 +32,20 @@ namespace FlightJobs.Controllers
         public ActionResult Delete(int id)
         {
             var dbContext = new ApplicationDbContext();
+            var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
+            if (user != null && user.Email == AccountController.GuestEmail)
+            {
+                TempData["GuestMessage"] = AccountController.GuestMessage;
+                return RedirectToAction("Register", "Account");
+            }
+
             JobDbModel job = new JobDbModel() { Id = id };
-            dbContext.JobDbModels.Attach(job);
-            dbContext.JobDbModels.Remove(job);
-            dbContext.SaveChanges();
+            if (job.User?.Id == user.Id)
+            {
+                dbContext.JobDbModels.Attach(job);
+                dbContext.JobDbModels.Remove(job);
+                dbContext.SaveChanges();
+            }
 
             return RedirectToAction("Index");
         }
@@ -43,14 +53,19 @@ namespace FlightJobs.Controllers
         [HttpPost]
         public string Upload(IEnumerable<HttpPostedFileBase> FilesInput)
         {
+            var dbContext = new ApplicationDbContext();
+            var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
+            if (user != null && user.Email == AccountController.GuestEmail)
+            {
+                return "{ Erro:" + AccountController.GuestMessage + "}";
+            }
+
             if (Request.Files.Count > 0)
             {
                 var file = Request.Files[0];
 
                 if (file != null && file.ContentLength > 0)
                 {
-                    var dbContext = new ApplicationDbContext();
-                    var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
                     var fileName = Path.GetFileName(user.Id + Path.GetExtension(file.FileName));
 
                     var path = Path.Combine(Server.MapPath("~/Content/img/avatar/"), fileName);
@@ -489,6 +504,10 @@ namespace FlightJobs.Controllers
         {
             var dbContext = new ApplicationDbContext();
             var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
+            if (user != null && user.Email == AccountController.GuestEmail)
+            {
+                return Json(null, JsonRequestBehavior.AllowGet);
+            }
             var uStatistics = dbContext.StatisticsDbModels.FirstOrDefault(s => s.User.Id == user.Id);
 
             var item = dbContext.LicenseItemUser.Include(x => x.PilotLicenseItem).Include(x => x.PilotLicenseItem.PilotLicenseExpense)

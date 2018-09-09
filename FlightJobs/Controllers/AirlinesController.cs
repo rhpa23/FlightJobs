@@ -48,12 +48,19 @@ namespace FlightJobs.Controllers
 
         public ActionResult Sign(int id)
         {
+            var dbContext = new ApplicationDbContext();
+            // Check GUEST
+            var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
+            if (user != null && user.Email == AccountController.GuestEmail)
+            {
+                TempData["GuestMessage"] = AccountController.GuestMessage;
+                return RedirectToAction("Register", "Account");
+            }
+
             var certificateView = new CertificateViewModel();
             certificateView.Certificates = new List<CertificateDbModel>();
 
-            var dbContext = new ApplicationDbContext();
             var airline = dbContext.AirlineDbModels.FirstOrDefault(a => a.Id == id);
-            var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
             var statistics = dbContext.StatisticsDbModels.FirstOrDefault(s => s.User.Id == user.Id);
             if (statistics != null && statistics.PilotScore >= airline.Score)
             {
@@ -80,7 +87,13 @@ namespace FlightJobs.Controllers
         public ActionResult Buy(int id, int airlineId)
         {
             var dbContext = new ApplicationDbContext();
+            // Check GUEST
             var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
+            if (user != null && user.Email == AccountController.GuestEmail)
+            {
+                TempData["GuestMessage"] = AccountController.GuestMessage;
+                return RedirectToAction("Register", "Account");
+            }
             var statistics = dbContext.StatisticsDbModels.FirstOrDefault(s => s.User.Id == user.Id);
             var certificate = dbContext.CertificateDbModels.FirstOrDefault(c => c.Id == id);
 
@@ -108,12 +121,18 @@ namespace FlightJobs.Controllers
 
         public ActionResult Confirm(int id)
         {
+            var dbContext = new ApplicationDbContext();
+            // Check GUEST
+            var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
+            if (user != null && user.Email == AccountController.GuestEmail)
+            {
+                TempData["GuestMessage"] = AccountController.GuestMessage;
+                return RedirectToAction("Register", "Account");
+            }
             var certificateView = new CertificateViewModel();
             certificateView.Certificates = new List<CertificateDbModel>();
 
-            var dbContext = new ApplicationDbContext();
             var airline = dbContext.AirlineDbModels.FirstOrDefault(a => a.Id == id);
-            var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
 
             var statistics = dbContext.StatisticsDbModels.FirstOrDefault(s => s.User.Id == user.Id);
             certificateView.Airline = airline;
@@ -189,7 +208,13 @@ namespace FlightJobs.Controllers
         public ActionResult Add(AirlineViewModel model)
         {
             var dbContext = new ApplicationDbContext();
+            // Check GUEST
             var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
+            if (user != null && user.Email == AccountController.GuestEmail)
+            {
+                TempData["GuestMessage"] = AccountController.GuestMessage;
+                return RedirectToAction("Register", "Account");
+            }
             var statistics = dbContext.StatisticsDbModels.FirstOrDefault(s => s.User.Id == user.Id);
 
             if (statistics != null && statistics.BankBalance >= airlinePrice)
@@ -312,7 +337,13 @@ namespace FlightJobs.Controllers
         public ActionResult Update(AirlineViewModel model)
         {
             var dbContext = new ApplicationDbContext();
+            // Check GUEST
             var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
+            if (user != null && user.Email == AccountController.GuestEmail)
+            {
+                TempData["GuestMessage"] = AccountController.GuestMessage;
+                return RedirectToAction("Register", "Account");
+            }
             var airline = dbContext.AirlineDbModels.FirstOrDefault(a => a.Id == model.Id && a.UserId == user.Id);
 
             if (airline != null)

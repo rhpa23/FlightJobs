@@ -54,6 +54,13 @@ namespace FlightJobs.Controllers
         // GET: /Manage/Index
         public async Task<ActionResult> Index(ManageMessageId? message)
         {
+            var user = UserManager.FindByName(User.Identity.Name);
+            if (user != null && user.Email == AccountController.GuestEmail)
+            {
+                TempData["GuestMessage"] = AccountController.GuestMessage;
+                return RedirectToAction("Register", "Account");
+            }
+
             ViewBag.StatusMessage =
                 message == ManageMessageId.ChangePasswordSuccess ? "Your password has been changed."
                 : message == ManageMessageId.SetPasswordSuccess ? "Your password has been set."

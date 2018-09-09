@@ -95,7 +95,7 @@
                     <div class="col-sm-1" style="text-align:center; color:gray; margin-left:10px; ">
                         <h3 style="margin-top:0px;"><strong>@item.AlternativeICAO</strong></h3>
                     </div>
-                    <div class="col-sm-2" style="text-align:justify; color:white; margin-left:30px; margin-top:-40px; width:14%; padding-right:0px; padding-left:0px;">
+                    <div class="col-sm-2" style="text-align:justify; color:white; margin-left:30px; margin-top:-40px; width:12%; padding-right:0px; padding-left:0px;">
                         <div class="row">
                             <div class="col-sm-3">
                                 <img src="~/Content/img/passenger2.png" style="width:40px;" />
@@ -105,8 +105,8 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-sm-2" style="text-align:justify; color:white; margin-top:-40px; padding-right:0px;">
-                        <div class="row">
+                    <div class="col-sm-2" style="text-align:justify; width:19%; color:white; margin-top:-40px; padding-right:0px;">
+
                             <div class="col-sm-3">
                                 <img src="~/Content/img/baggage.png" style="width:40px;padding-right:0px;" />
                             </div>
@@ -114,14 +114,15 @@
                                 <h5 style="margin-bottom:0px;"><strong>@item.Cargo Kg</strong></h5><h6 style="margin-top:0px;"> Cargo</h6>
                                 <h5 style="margin-bottom:0px;"><strong>@item.Payload Kg</strong></h5><h6 style="margin-top:0px;"> Total payload</h6>
                             </div>
-                        </div>
+
                     </div>
-                    <div class="col-sm-2" style="text-align:justify; color:white; margin-top:-47px; padding-left:0px;">
-                        <div class="row">
-                            <div class="col-sm-3" style="padding-left:5px;">
-                                <img src="~/Content/img/pilot2.png" style="width:40px;" />
+                    <div class="col-sm-2" style="text-align:justify; color:white; margin-top:-47px; padding-left:0px; width:20%;">
+ 
+                            <div class="col-sm-5" style="padding-left:0px;">
+                                <img src="~/Content/img/pilot2.png" style="width:40px; margin-left:5px;" />
+                                <h6 style="margin-top:5px; margin-bottom:0px;"><strong>@string.Format("{0:C}", item.Pay)</strong></h6><h6 style="margin-top:0px;"> Payament</h6>
                             </div>
-                            <div class="col-sm-9" style="margin-top:-10px;" >
+                            <div class="col-sm-7" style="margin-top:-12px; padding-left:0px; padding-right:0px;" >
                                 <h5 style="margin-bottom:0px;"><strong>@item.User.UserName</strong></h5><h6 style="margin-top:0px;"> Pilot</h6>
                                 
                                 @if (TempData["PilotMessage"] != null)
@@ -133,10 +134,7 @@
                                    <h6>License is up to date</h6>
                                 }
                             </div>
-                        </div>
-                        <div class="row">
-                                <h6 style="margin-top:-15px; margin-bottom:0px;"><strong>@string.Format("{0:C}", item.Pay)</strong></h6><h6 style="margin-top:0px;"> Payament</h6>
-                        </div>
+
                     </div>
                     <div class="col-sm-1" style="text-align:center; color:white; margin-top:-50px; padding-left:20px;">
                         <div class="row">
@@ -150,7 +148,7 @@
                             }
                         </div>
                     </div>
-                    <div class="col-sm-1" style="text-align:right; color:white; margin-top:-20px; padding-left:20px;">
+                    <div class="col-sm-1" style="text-align:right; color:white; margin-top:-20px; padding-left:0px;">
                         <a data-toggle="confirmation" data-title="Remove Job?" href="Home/DeleteJob/@item.Id"><i style="font-size: 20px;" class="glyphicon glyphicon-remove"></i></a>
                     </div>
                 </div>

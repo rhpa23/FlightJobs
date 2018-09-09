@@ -56,9 +56,17 @@ namespace FlightJobs.Controllers
         public ActionResult DeleteJob(int id)
         {
             var dbContext = new ApplicationDbContext();
+            // Check GUEST
             var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
+
             if (user != null)
             {
+                if (user.Email == AccountController.GuestEmail)
+                {
+                    TempData["GuestMessage"] = AccountController.GuestMessage;
+                    return RedirectToAction("Register", "Account");
+                }
+
                 JobDbModel job = dbContext.JobDbModels.FirstOrDefault(j => j.Id == id && j.User.Id == user.Id);
                 if (job != null)
                 {

@@ -9,12 +9,17 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using FlightJobs.Models;
+using System.Configuration;
 
 namespace FlightJobs.Controllers
 {
     [Authorize]
     public class AccountController : Controller
     {
+        public static string GuestMessage = "You are using a guest account. Please register a personal account.";
+        public static string GuestEmail = "rhpa23@yahoo.com.br";
+        public static string GuestPassword = ConfigurationManager.AppSettings.Get("guestpassword");
+
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
 
@@ -58,7 +63,40 @@ namespace FlightJobs.Controllers
         public ActionResult Login(string returnUrl)
         {
             ViewBag.ReturnUrl = returnUrl;
+            
+            if (!User.Identity.IsAuthenticated)
+            {
+                if (LoginGest(returnUrl))
+                    return RedirectToLocal(returnUrl);
+            }
+
             return View();
+        }
+
+        public bool LoginGest(string returnUrl)
+        {
+            var model = new LoginViewModel()
+            {
+                Email = GuestEmail,
+                Password = GuestPassword,
+                RememberMe = false
+            };
+
+            if (!ModelState.IsValid)
+            {
+                return false;
+            }
+
+            var user = UserManager.FindByEmail(model.Email);
+            if (user == null)
+            {
+                return false;
+            }
+
+            // Isso não conta falhas de login em relação ao bloqueio de conta
+            // Para permitir que falhas de senha acionem o bloqueio da conta, altere para shouldLockout: true
+            var result = SignInManager.PasswordSignIn(user.UserName, model.Password, model.RememberMe, shouldLockout: false);
+            return result == SignInStatus.Success;
         }
 
         //
@@ -92,7 +130,10 @@ namespace FlightJobs.Controllers
             switch (result)
             {
                 case SignInStatus.Success:
-                    return RedirectToLocal(returnUrl);
+                    {
+                        Session["HeaderStatistics"] = null;
+                        return RedirectToLocal(returnUrl);
+                    }
                 case SignInStatus.LockedOut:
                     return View("Lockout");
                 case SignInStatus.RequiresVerification:
@@ -180,18 +221,18 @@ namespace FlightJobs.Controllers
                         string emailTemplateFileName = System.Web.HttpContext.Current.Server.MapPath("~/Content/templates/Confirm Email.html");
                         var bodyText = System.IO.File.ReadAllText(emailTemplateFileName);
                         bodyText = string.Format(bodyText, callbackUrl);
-                        await UserManager.SendEmailAsync(user.Id, "FlightJobs - Verify your account (do not reply to this email)", bodyText);
+                        await UserManager.SendEmailAsync(user.Id, "FlightJobs - Confirm your account (do not reply to this email)", bodyText);
 
                         //return RedirectToAction("VerifyRegistrationCode", new { message = ApplicationMessages.VerificationCodeSent });
-                        //
-                        return RedirectToAction("Index", "Home");
+                        TempData["ConfirmMessage"] = "Almost there. Check your email to confirm your account.";
+                        return RedirectToAction("Login");
                     }
                     AddErrors(result);
                 }
             }
             catch (Exception ex)
             {
-                ViewBag.Message = ex.Message;
+                ViewBag.Message = $"Failed to send email. {ex.Message}";
             }
 
             // Se chegamos até aqui e houver alguma falha, exiba novamente o formulário
@@ -417,8 +458,15 @@ namespace FlightJobs.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult LogOff()
         {
+            var user = UserManager.FindByName(User.Identity.Name);
+            if (user != null && user.Email == GuestEmail)
+            {
+                TempData["GuestMessage"] = GuestMessage;
+                return RedirectToAction("Register");
+            }
             Session["HeaderStatistics"] = null;
             AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
+            
             return RedirectToAction("Index", "Home");
         }
 

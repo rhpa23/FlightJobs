@@ -22,7 +22,7 @@ namespace FlightJobs
         {
             SmtpClient client = new SmtpClient();
 
-            MailAddress from = new MailAddress("dvd.f0953@gmail.com", "FlightJobs");
+            MailAddress from = new MailAddress("noreply@flight-jobs.net", "FlightJobs");
             MailAddress to = new MailAddress(message.Destination);
 
             var msg = new MailMessage(from, to);

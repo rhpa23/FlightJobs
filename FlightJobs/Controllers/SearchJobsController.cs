@@ -213,10 +213,17 @@ namespace FlightJobs.Controllers
 
         public async Task<ActionResult> Confirm()
         {
+            var dbContext = new ApplicationDbContext();
+            // Check GUEST
+            var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
+            if (user != null && user.Email == AccountController.GuestEmail)
+            {
+                TempData["GuestMessage"] = AccountController.GuestMessage;
+                return RedirectToAction("Register", "Account");
+            }
+
             if (Session["ListSelJobs"] != null)
             {
-                var dbContext = new ApplicationDbContext();
-                var user =  dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
                 
                 if (Request.Cookies[PassengersWeightCookie] != null
                 && Request.Cookies[PassengersWeightCookie].Value != null)
