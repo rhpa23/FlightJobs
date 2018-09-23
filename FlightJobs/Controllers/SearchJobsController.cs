@@ -48,12 +48,14 @@ namespace FlightJobs.Controllers
             if (Session["JobSerachModel"] != null)
             {
                 JobSerachModel model = (JobSerachModel)Session["JobSerachModel"];
+                model.WeightUnit = DataConversion.GetWeightUnit(Request);
                 return View(model);
             }
             else
             {
                 var model = new JobSerachModel() {
-                    MaxRange = 450, MinRange = 10
+                    MaxRange = 450, MinRange = 10,
+                    WeightUnit = DataConversion.GetWeightUnit(Request)
                 };
                 return View(model);
             }
@@ -73,12 +75,15 @@ namespace FlightJobs.Controllers
             if (Request.Cookies[PassengersWeightCookie] != null 
                 && Request.Cookies[PassengersWeightCookie].Value != null)
             {
-                TempData[PassengersWeightCookie] = Request.Cookies[PassengersWeightCookie].Value;
+                long weight = Convert.ToInt32(Request.Cookies[PassengersWeightCookie].Value);
+                TempData[PassengersWeightCookie] = DataConversion.GetWeight(Request, weight);
             }
             else
             {
-                TempData[PassengersWeightCookie] = PaxWeight;
+                TempData[PassengersWeightCookie] = DataConversion.GetWeight(Request, PaxWeight);
             }
+
+            TempData["PassengersWeightUnit"] = DataConversion.GetWeightUnit(Request);
 
             if (Session["JobSerachModel"] != null)
             {
@@ -119,8 +124,18 @@ namespace FlightJobs.Controllers
             var ids = new List<int>();
             var pageSelsIds = form["sels"];
             var passengersWeight = form["paxWeight-text"];
-            PaxWeight = int.TryParse(passengersWeight, out PaxWeight) ? PaxWeight : 84;
-            Response.SetCookie(new HttpCookie(PassengersWeightCookie, PaxWeight.ToString()));
+            bool isPounds = DataConversion.GetWeightUnit(Request) == DataConversion.UnitPounds;
+
+            if (isPounds)
+            {
+                PaxWeight = int.TryParse(passengersWeight, out PaxWeight) ? PaxWeight : 185;
+            }
+            else
+            {
+                PaxWeight = int.TryParse(passengersWeight, out PaxWeight) ? PaxWeight : 84;
+            }
+            
+            
             if (pageSelsIds != null)
             {
                 string[] sList = pageSelsIds.ToString().Split(',');
@@ -188,9 +203,10 @@ namespace FlightJobs.Controllers
                 TotalPayload = string.Format("{0:G}", (totalPax * PaxWeight) + totalCargo)
             };
 
-            //return View("Confirm", list.Values.ToList());
-            //return Result(1, pageSelsIds);
-            //return Json(new { Data = form, success = ModelState.IsValid ? true : false }, JsonRequestBehavior.AllowGet);
+            var pxWeight = isPounds ? DataConversion.ConvertPoundsToKilograms(PaxWeight) : PaxWeight;
+            Response.SetCookie(new HttpCookie(PassengersWeightCookie, pxWeight.ToString()));
+            TempData["PassengersWeightUnit"] = DataConversion.GetWeightUnit(Request);
+
             return PartialView("Confirm", viewModel);
         }
 
@@ -237,6 +253,13 @@ namespace FlightJobs.Controllers
                     selJob.StartTime = DateTime.Now;
                     selJob.EndTime = DateTime.Now;
                     selJob.PaxWeight = PaxWeight;
+
+                    bool isPounds = DataConversion.GetWeightUnit(Request) == DataConversion.UnitPounds;
+
+                    if (isPounds)
+                    {
+                        selJob.Cargo = DataConversion.ConvertPoundsToKilograms(selJob.Cargo);
+                    }
 
                     if (Session["JobSerachModel"] != null)
                     {
@@ -285,12 +308,12 @@ namespace FlightJobs.Controllers
                     if (model.AviationType == "GeneralAviation")
                         index = 50;
 
-                    int gePobCount = 0, geCargoCount = 0;
+                    long gePobCount = 0, geCargoCount = 0;
 
                     for (int i = 0; i < index; i++)
                     {
-                        int pob = 0;
-                        int cargo = 0;
+                        long pob = 0;
+                        long cargo = 0;
                         long profit = 0;
                         bool isFisrtClass = Convert.ToBoolean(randomPob.Next(2));
 
@@ -301,12 +324,19 @@ namespace FlightJobs.Controllers
                         {
                             if (flightType == "GeneralAviation")
                             {
-                                cargo = randomCargo.Next(5, model.GaCargoCapacityWeight);
-                                if (geCargoCount + cargo > model.GaCargoCapacityWeight)
+                                var cargoCapacity = model.GaCargoCapacityWeight;
+
+                                if (DataConversion.GetWeightUnit(Request) == DataConversion.UnitPounds)
                                 {
-                                    cargo = model.GaCargoCapacityWeight - geCargoCount;
+                                    cargoCapacity = DataConversion.ConvertPoundsToKilograms(model.GaCargoCapacityWeight);
+                                }
+
+                                cargo = randomCargo.Next(5, cargoCapacity);
+                                if (geCargoCount + cargo > cargoCapacity)
+                                {
+                                    cargo = cargoCapacity - geCargoCount;
                                     if (cargo == 0) continue;
-                                    geCargoCount = model.GaCargoCapacityWeight;
+                                    geCargoCount = cargoCapacity;
                                 }
                                 else
                                 {
@@ -314,7 +344,7 @@ namespace FlightJobs.Controllers
                                 }
 
                                 profit = Convert.ToInt32(taxCargoGE * distMiles * cargo);
-                                profit += (140 / model.GaCargoCapacityWeight);
+                                profit += (140 / cargoCapacity);
                             }
                             else if (flightType == "AirTransport")
                             {
@@ -363,6 +393,9 @@ namespace FlightJobs.Controllers
                             }
                         }
 
+                        cargo = DataConversion.GetWeight(Request, cargo);
+                        var weightUnit = DataConversion.GetWeightUnit(Request);
+
                         listBoardJobs.Add(new JobListModel()
                         {
                             Id = id++,
@@ -371,7 +404,7 @@ namespace FlightJobs.Controllers
                             Dist = distMiles,
                             Pax = pob,
                             Cargo = cargo,
-                            PayloadView = (isCargo) ? "[Cargo] " + cargo + " Kg" : (isFisrtClass) ? "[Premium] " + pob + " Pax" : "[Promo] " + pob + " Pax",
+                            PayloadView = (isCargo) ? "[Cargo] " + cargo + weightUnit : (isFisrtClass) ? "[Premium] " + pob + " Pax" : "[Promo] " + pob + " Pax",
                             Pay = profit,
                             FirstClass = isFisrtClass,
                             AviationType = model.AviationType

@@ -49,9 +49,13 @@ namespace FlightJobs.Models
                 {
                     return (Pax * 84) + Cargo;
                 }
-                
             }
         }
+
+        [NotMapped]
+        [DisplayName("Payload")]
+        public long PayloadDisplay { get; set; }
+        
 
         [NotMapped]
         [DisplayName("Flight time")]
@@ -104,6 +108,10 @@ namespace FlightJobs.Models
         [DisplayName("Fuel weight")]
         public long StartFuelWeight { get; set; }
 
+        [NotMapped]
+        [DisplayName("Fuel weight")]
+        public long StartFuelWeightDisplay { get; set; }
+
         [DisplayName("Fuel weight")]
         public long FinishFuelWeight { get; set; }
 
@@ -111,11 +119,15 @@ namespace FlightJobs.Models
 
         [NotMapped]
         [DisplayName("Burned fuel")]
-        public string UsedFuelWeight {
+        public long UsedFuelWeight {
             get {
-                return (StartFuelWeight - FinishFuelWeight) + "kg";
+                return (StartFuelWeight - FinishFuelWeight);
             }
         }
+
+        [NotMapped]
+        [DisplayName("Burned fuel")]
+        public long UsedFuelWeightDisplay { get; set; }
 
         [NotMapped]
         [DisplayFormat(DataFormatString = "{0:yyyy/MM}")]
@@ -143,6 +155,5 @@ namespace FlightJobs.Models
                 EndTime = DateTime.Now,
             };
         }
-
     }
 }

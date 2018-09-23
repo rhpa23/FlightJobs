@@ -130,7 +130,7 @@
                         <br />
                         <div class="row">
                             <div class="col-md-9">
-                                @Html.LabelFor(model => model.GaCargoCapacityWeight, htmlAttributes: new { @class = "control-label" }) (Kg)
+                                @Html.LabelFor(model => model.GaCargoCapacityWeight, htmlAttributes: new { @class = "control-label" }) ( @Model.WeightUnit )
                                 @Html.EditorFor(model => model.GaCargoCapacityWeight, new { htmlAttributes = new { @class = "form-control" } })
                                 @Html.ValidationMessageFor(model => model.GaCargoCapacityWeight, "", new { @class = "text-danger" })
                             </div>

@@ -71,13 +71,13 @@
                             @Html.DisplayFor(modelItem => item.Job.Pax)
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.Job.Payload) Kg
+                            @Html.DisplayFor(modelItem => item.Job.PayloadDisplay) @item.WeightUnit
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.Job.StartFuelWeight) Kg
+                            @Html.DisplayFor(modelItem => item.Job.StartFuelWeightDisplay) @item.WeightUnit
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.Job.UsedFuelWeight)
+                            @Html.DisplayFor(modelItem => item.Job.UsedFuelWeightDisplay) @item.WeightUnit
                         </td>
                         <td>
                             @string.Format("{0:C}", item.FuelPrice)

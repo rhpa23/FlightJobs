@@ -49,6 +49,9 @@ namespace FlightJobs.Models
         [NotMapped]
         public double FlightIncome { get; set; }
 
+        [NotMapped]
+        public string WeightUnit { get; set; }
+
         public void CalcAirlineJob(AirlineFboDbModel departureFbo)
         {
             this.FuelPrice = this.Job.AviationType > 1 ? 5.20 : 5.70;

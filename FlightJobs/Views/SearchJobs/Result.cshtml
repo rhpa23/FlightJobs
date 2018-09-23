@@ -97,7 +97,8 @@
                     <div class="col-md-5">
                         @{ var pWeightVal = @TempData["PassengersWeightCookie"]; }
                         <label style="font-size: 12px; font-weight:normal;">Passenger weight for payload calculation: </label>
-                        <label id="paxWeight-label" style="font-size: 11px;">@pWeightVal Kg</label>
+                        <label id="paxWeight-label" style="font-size: 11px;">@pWeightVal </label>
+                        <label id="paxWeight-unit-label" style="font-size: 11px;">@TempData["PassengersWeightUnit"]</label>
                         <input id="paxWeight-text" name="paxWeight-text" type="number" value="@pWeightVal" maxlength="3" max="200" min="20" class="" style="display: none;" />
                         <input id="change-paxWeight-button" type="button" value="Change" class="btn btn-info btn-xs" style="" />
                     </div>
@@ -201,7 +202,8 @@
                         $('#cargoSummary').val(payloadNumber);
                         }
 
-                    $('#cargoSummary').text("Total cargo: " + $('#cargoSummary').val() + " Kg");
+                    var unit = $('#paxWeight-unit-label').text();
+                    $('#cargoSummary').text("Total cargo: " + $('#cargoSummary').val() + unit);
                     
                     }
                     else {
@@ -232,8 +234,8 @@
                     payloadSum = payloadSum + (parseFloat($('#paxSummary').val()) * pWeight);
                 }
                 
-                
-                $('#payloadSummary').text("Total payload: " + payloadSum + " Kg" ) ;
+                var unit = $('#paxWeight-unit-label').text();
+                $('#payloadSummary').text("Total payload: " + payloadSum + unit ) ;
 
 
                         /// payment ##############
@@ -265,7 +267,8 @@
                 $("#paxWeight-text").hide();
                 $('#change-paxWeight-button').val("Change");
                 $("#paxWeight-label").show();
-                $("#paxWeight-label").text($("#paxWeight-text").val() + "Kg");
+                var unit = $('#paxWeight-unit-label').text();
+                $("#paxWeight-label").text($("#paxWeight-text").val() + unit);
 
                 $('table > tbody  > tr').each(function () {
                     var checked = $(this).find("input:checkbox").prop("checked");

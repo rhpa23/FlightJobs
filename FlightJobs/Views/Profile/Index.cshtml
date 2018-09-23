@@ -114,10 +114,10 @@
                     @Html.DisplayFor(modelItem => item.Pax)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Cargo) Kg
+                    @Html.DisplayFor(modelItem => item.Cargo) @Model.WeightUnit
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Payload) Kg
+                    @Html.DisplayFor(modelItem => item.PayloadDisplay) @Model.WeightUnit
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Pay)
@@ -126,7 +126,7 @@
                     @Html.DisplayFor(modelItem => item.FlightTime)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.UsedFuelWeight)
+                    @Html.DisplayFor(modelItem => item.UsedFuelWeightDisplay) @Model.WeightUnit
                 </td>
                 <td style="text-align:center;"><a data-toggle="confirmation" data-title="Remove Job?" href="Profile/Delete/@item.Id"><i class="glyphicon glyphicon-remove"></i></a></td>
             </tr>
@@ -182,7 +182,7 @@
                                 <b>@Html.DisplayNameFor(model => model.Statistics.NumberFlights):</b> @Html.DisplayFor(model => model.Statistics.NumberFlights)
                             </li>
                             <li>
-                                <b>@Html.DisplayNameFor(model => model.Statistics.PayloadTotal):</b> @Html.DisplayFor(model => model.Statistics.PayloadTotal) Kg
+                                <b>@Html.DisplayNameFor(model => model.Statistics.PayloadTotal):</b> @Html.DisplayFor(model => model.Statistics.PayloadTotal)
                             </li>
                             <li>
                                 <b>@Html.DisplayNameFor(model => model.Statistics.LastFlight):</b> @Html.DisplayFor(model => model.Statistics.LastFlight)

@@ -38,7 +38,7 @@ namespace FlightJobs.Models
 
         [NotMapped]
         [DisplayName("Payload carried")]
-        public long PayloadTotal { get; set; }
+        public string PayloadTotal { get; set; }
 
         [NotMapped]
         [DisplayFormat(DataFormatString = "{0:yyyy/MM/dd HH:mm}")]

@@ -31,10 +31,17 @@ namespace FlightJobs.Controllers
                                                             e.MaturityDate < DateTime.UtcNow &&
                                                             e.User.Id == user.Id).ToList();
             TempData["PilotMessage"] = (listOverdue.Count() > 0) ? "License is expired" : null;
+            jobList.ToList().ForEach(delegate(JobDbModel j) {
+                var cargo = DataConversion.GetWeight(Request, j.Cargo);
+                var paxWeight = DataConversion.GetWeight(Request, j.PaxWeight);
+                var passengesWeight = j.Pax * paxWeight;
+                j.PayloadDisplay = cargo + passengesWeight;
+                j.Cargo = cargo;
+            });
             homeModel.Jobs = jobList;
+            homeModel.WeightUnit = DataConversion.GetWeightUnit(Request);
             return View(homeModel);
         }
-
 
         public ActionResult ActivateJob(int? jobId)
         {
@@ -243,6 +250,20 @@ namespace FlightJobs.Controllers
             jobAirlineList.ForEach(x => dic.Add(x.FirstOrDefault().Airline.Name, x.Count()));
 
             return dic.OrderBy(x=>x.Key).ToDictionary(k => k.Key, v => v.Value);
+        }
+
+        [HttpPost]
+        public JsonResult SetWeightUnit(bool pounds)
+        {
+            if (pounds)
+            {
+                Response.SetCookie(new HttpCookie(DataConversion.WeightUnitCookie, DataConversion.WeightPounds));
+            }
+            else
+            {
+                Response.SetCookie(new HttpCookie(DataConversion.WeightUnitCookie, DataConversion.WeightKilograms));
+            }
+            return Json("{}", JsonRequestBehavior.AllowGet);
         }
     }
 }

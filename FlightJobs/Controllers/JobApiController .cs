@@ -13,6 +13,7 @@ using System.Web.Mvc;
 using System.Threading.Tasks;
 using FlightJobs.Models;
 using System.Globalization;
+using FlightJobs.Util;
 
 namespace FlightJobs.Controllers
 {
@@ -63,7 +64,8 @@ namespace FlightJobs.Controllers
                 // Check payload
                 if (payload >= (job.Payload + 150) || payload <= (job.Payload - 150))
                 {
-                    return Request.CreateResponse(HttpStatusCode.Forbidden, "Wrong payload. Active job payload is: " + job.Payload + "Kg");
+                    var payloadInPounds = DataConversion.ConvertKilogramsToPounds(job.Payload);
+                    return Request.CreateResponse(HttpStatusCode.Forbidden, $"Wrong. Active job payload is: {job.Payload}kg / {payloadInPounds}lbs");
                 }
 
                 long fuelWeight = Convert.ToInt64(Math.Round(Convert.ToDouble(fuelWeightStr, new CultureInfo("en-US"))));
@@ -138,7 +140,8 @@ namespace FlightJobs.Controllers
                 // Check payload
                 if (payload >= (job.Payload + 150) || payload <= (job.Payload - 150))
                 {
-                    return Request.CreateResponse(HttpStatusCode.Forbidden, "Wrong payload. Active job payload is: " + job.Payload + "Kg");
+                    var payloadInPounds = DataConversion.ConvertKilogramsToPounds(job.Payload);
+                    return Request.CreateResponse(HttpStatusCode.Forbidden, $"Wrong. Active job payload is: {job.Payload}kg / {payloadInPounds}lbs");
                 }
 
                 var diffTime = DateTime.UtcNow - job.StartTime;

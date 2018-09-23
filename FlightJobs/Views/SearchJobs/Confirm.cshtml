@@ -66,7 +66,7 @@
                             @Html.DisplayFor(modelItem => item.Dist) NM
                         </td>
                         <td> @Html.DisplayFor(modelItem => item.Pax)</td>
-                        <td> @Html.DisplayFor(modelItem => item.Cargo) Kg (Cargo)  </td>
+                        <td> @Html.DisplayFor(modelItem => item.Cargo) @TempData["PassengersWeightUnit"] (Cargo)  </td>
                         <td>
                             @Html.DisplayFor(modelItem => item.Pay)
                         </td>
@@ -96,7 +96,7 @@
                         </div>
                         <div class="col-md-6">
                             <div class="summary-label">Payload (Pax + Cargo)</div>
-                            <div class="summary-value">@Model.TotalPayload Kg</div>
+                            <div class="summary-value">@Model.TotalPayload @TempData["PassengersWeightUnit"]</div>
                         </div>
                     </div>
                 </div>

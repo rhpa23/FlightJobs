@@ -228,12 +228,17 @@ namespace FlightJobs.Controllers
                     TimeSpan span = new TimeSpan();
                     long payloadTotal = 0;
 
-                    allUserJobs.ToList().ForEach(j => span += (j.EndTime - j.StartTime));
-                    allUserJobs.ToList().ForEach(j => payloadTotal += j.Payload);
+                    allUserJobs.ToList().ForEach(j => {
+                        span += (j.EndTime - j.StartTime);
+                        payloadTotal += j.Payload;
+                        j.PayloadDisplay = DataConversion.GetWeight(Request, j.Payload);
+                        j.Cargo = DataConversion.GetWeight(Request, j.Cargo);
+                        j.UsedFuelWeightDisplay = DataConversion.GetWeight(Request, j.UsedFuelWeight);
+                    });
 
                     statistics.NumberFlights = allUserJobs.Count();
                     statistics.FlightTimeTotal = String.Format("{0}h {1}m", (int)span.TotalHours, span.Minutes);
-                    statistics.PayloadTotal = payloadTotal;
+                    statistics.PayloadTotal = DataConversion.GetWeight(Request, payloadTotal) + DataConversion.GetWeightUnit(Request);
 
                     var grad = GetGraduationInfo(span);
                     statistics.GraduationPath = grad.Value;
@@ -253,7 +258,7 @@ namespace FlightJobs.Controllers
                 }
                 var jobList = GetSortedJobs(allUserJobs, sortOrder, CurrentSort, pageNumber, user);
                 homeModel.Jobs = jobList;
-
+                homeModel.WeightUnit = DataConversion.GetWeightUnit(Request);
 
             }
 
@@ -377,6 +382,10 @@ namespace FlightJobs.Controllers
 
             foreach (var item in pgList)
             {
+                item.Job.PayloadDisplay = DataConversion.GetWeight(Request, item.Job.Payload);
+                item.Job.StartFuelWeightDisplay = DataConversion.GetWeight(Request, item.Job.StartFuelWeight);
+                item.Job.UsedFuelWeightDisplay = DataConversion.GetWeight(Request, item.Job.UsedFuelWeight);
+                item.WeightUnit = DataConversion.GetWeightUnit(Request);
                 var departureFbo = dbContext.AirlineFbo.FirstOrDefault(x => x.Airline.Id == item.Airline.Id && x.Icao == item.Job.DepartureICAO);
                 item.CalcAirlineJob(departureFbo);
             }

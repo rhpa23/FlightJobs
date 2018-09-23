@@ -24,5 +24,6 @@ namespace FlightJobs.Models
 
         public string PilotStatisticsDescription { get; set; }
 
+        public string WeightUnit { get; set; }
     }
 }

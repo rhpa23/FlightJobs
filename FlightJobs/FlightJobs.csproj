@@ -381,6 +381,20 @@
     <Content Include="App_Data\GlobalAirportDatabase.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Content\bootstrap-checkbox\dist\js\bootstrap-checkbox.js" />
+    <Content Include="Content\bootstrap-checkbox\dist\js\bootstrap-checkbox.min.js" />
+    <Content Include="Content\bootstrap-checkbox\dist\js\i18n\bg.js" />
+    <Content Include="Content\bootstrap-checkbox\dist\js\i18n\bg.min.js" />
+    <Content Include="Content\bootstrap-checkbox\dist\js\i18n\es.js" />
+    <Content Include="Content\bootstrap-checkbox\dist\js\i18n\es.min.js" />
+    <Content Include="Content\bootstrap-checkbox\dist\js\i18n\pl.js" />
+    <Content Include="Content\bootstrap-checkbox\dist\js\i18n\pl.min.js" />
+    <Content Include="Content\bootstrap-checkbox\dist\js\i18n\pt.js" />
+    <Content Include="Content\bootstrap-checkbox\dist\js\i18n\pt.min.js" />
+    <Content Include="Content\bootstrap-checkbox\dist\js\i18n\ru.js" />
+    <Content Include="Content\bootstrap-checkbox\dist\js\i18n\ru.min.js" />
+    <Content Include="Content\bootstrap-checkbox\dist\js\i18n\tr.js" />
+    <Content Include="Content\bootstrap-checkbox\dist\js\i18n\tr.min.js" />
     <Content Include="Content\bootstrap-fileinput\css\fileinput-rtl.css" />
     <Content Include="Content\bootstrap-fileinput\css\fileinput-rtl.min.css" />
     <Content Include="Content\bootstrap-fileinput\css\fileinput.css" />

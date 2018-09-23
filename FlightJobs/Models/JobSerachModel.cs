@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Web;
 
@@ -47,5 +48,8 @@ namespace FlightJobs.Models
         [Required(ErrorMessage = "Cargo capacity weight is required")]
         //[Range(0, 1000, ErrorMessage = "Value for {0} must be between {1} and {2}")]
         public int GaCargoCapacityWeight { get; set; }
+
+        [NotMapped]
+        public string WeightUnit { get; set; }
     }
 }

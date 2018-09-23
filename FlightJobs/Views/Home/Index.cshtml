@@ -111,8 +111,8 @@
                                 <img src="~/Content/img/baggage.png" style="width:40px;padding-right:0px;" />
                             </div>
                             <div class="col-sm-9" style="margin-top:-55px; margin-left:60px;" >
-                                <h5 style="margin-bottom:0px;"><strong>@item.Cargo Kg</strong></h5><h6 style="margin-top:0px;"> Cargo</h6>
-                                <h5 style="margin-bottom:0px;"><strong>@item.Payload Kg</strong></h5><h6 style="margin-top:0px;"> Total payload</h6>
+                                <h5 style="margin-bottom:0px;"><strong>@item.Cargo @Model.WeightUnit</strong></h5><h6 style="margin-top:0px;"> Cargo</h6>
+                                <h5 style="margin-bottom:0px;"><strong>@item.PayloadDisplay @Model.WeightUnit</strong></h5><h6 style="margin-top:0px;"> Total payload</h6>
                             </div>
 
                     </div>
