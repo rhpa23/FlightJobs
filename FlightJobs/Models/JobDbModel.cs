@@ -138,6 +138,13 @@ namespace FlightJobs.Models
 
         public virtual ApplicationUser User { get; set; }
 
+        [DisplayName("Video URL")]
+        public string VideoUrl { get; set; }
+
+        [DataType(DataType.MultilineText)]
+        [DisplayName("Video description")]
+        public string VideoDescription { get; set; }
+
         public static JobDbModel Clone(JobDbModel job, ApplicationUser user)
         {
             return new JobDbModel()

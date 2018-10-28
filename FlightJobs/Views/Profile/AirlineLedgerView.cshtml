@@ -47,6 +47,7 @@
                     <th class="debit">Total flight</th>
                     <th>Revenue earned</th>
                     <th class="credit">Flight income</th>
+                    <th></th>
                 </tr>
 
                 @foreach (var item in Model.ToList())
@@ -113,6 +114,19 @@
                         </td>
                         <td class="credit">
                             @string.Format("{0:C}", item.FlightIncome)
+                        </td>
+                        <td style="text-align:center;">
+                            @if (!string.IsNullOrEmpty(item.Job.VideoUrl))
+                            {
+
+                                <a target="_blank" href="@item.Job.VideoUrl"
+                                   data-toggle="popover" data-placement="top" title="@item.Job.VideoDescription"
+                                   data-content="@item.Job.VideoDescription" data-trigger="hover"
+                                   data-id="@item.Job.VideoUrl">
+                                    <i class="glyphicon glyphicon-film"></i>
+                                </a>
+
+                            }
                         </td>
                     </tr>
                 }

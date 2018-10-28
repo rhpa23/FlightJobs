@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using FlightJobs.Models;
 using System.Globalization;
 using FlightJobs.Util;
+using Elmah;
 
 namespace FlightJobs.Controllers
 {
@@ -84,8 +85,9 @@ namespace FlightJobs.Controllers
 
                 return Request.CreateResponse(HttpStatusCode.OK, resultMsg);
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                ErrorLog.GetDefault(null).Log(new Error(e));
                 response = Request.CreateResponse(HttpStatusCode.BadRequest, "Process error.");
             }
 
@@ -174,8 +176,9 @@ namespace FlightJobs.Controllers
 
                 return Request.CreateResponse(HttpStatusCode.OK, resultMsg);
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                ErrorLog.GetDefault(null).Log(new Error(e));
                 response = Request.CreateResponse(HttpStatusCode.BadRequest, "Process error.");
             }
 

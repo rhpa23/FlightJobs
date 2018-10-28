@@ -399,3 +399,6 @@ D:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.Migrations.Aviation
 D:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.Migrations.AirlineFbo.resources
 D:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.Migrations.AirlineFboNotMapped.resources
 D:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.Migrations.ChangeDiscountToDouble.resources
+D:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.Migrations.JobVideo.resources
+D:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.Migrations.JobVideoDelRequired.resources
+D:\DotNetProjects\FlightJobs\FlightJobs\bin\Elmah.dll

@@ -1,0 +1,90 @@
+﻿@model FlightJobs.Models.JobDbModel
+
+<style>
+    textarea.form-control {
+        height:180px;
+    }
+</style>
+<div class="container"  style="margin-top:25px;"> 
+    
+    @if (Model != null)
+    {
+        if (ViewBag.ResponseMessage != null)
+        {
+            <div class="alert alert-success" role="alert">
+                <strong>Well done!</strong> @ViewBag.ResponseMessage
+            </div>
+        }
+        if (ViewBag.ResponseError != null)
+        {
+            <div class="alert alert-danger" role="alert">
+                <strong>Erro</strong> @ViewBag.ResponseError
+            </div>
+        }
+
+        <div class="row">
+            <div class="col-xs-12">
+                <label>
+                    You can add a Url video to this flight that departed from
+                    @Model.DepartureICAO
+                </label>
+                <label> and landed on  </label>
+                <label>
+                    @Model.ArrivalICAO
+                    at @Model.EndTime
+                </label>
+            </div>
+        </div>
+        <hr />
+        <div class="row">
+            <div class="col-xs-5">
+                <div class="row">
+                    <label>
+                        Video Url:
+                    </label>
+                    @Html.HiddenFor(model => model.Id)
+                    @Html.EditorFor(model => model.VideoUrl, new { htmlAttributes = new { placeholder= "https://www.youtube.com/watch?v=_NA9vHnNgu4", @class = "form-control", @maxlength = "200", style = "max-width:620px;" } })
+                    @Html.ValidationMessageFor(model => model.VideoUrl, "", new { @class = "text-danger" })
+                </div>
+                <div class="row" style="margin-top:20px;">
+                    <label>
+                        Video Description:
+                    </label>
+                    @Html.EditorFor(model => model.VideoDescription, new { htmlAttributes = new { @class = "form-control", @maxlength = "500", style = "max-width:620px;" } })
+                </div>
+            </div>
+            <div class="col-xs-6">
+                <iframe id="videoFrame" width="550" height="305" src="@Model.VideoUrl" frameborder="1" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <div class="row">
+                <button type="button" class="btn btn-info" id="ConfirmJobVideo">Confirm</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+        }
+
+</div>
+<script>
+    $('#ConfirmJobVideo').click(function () {
+        $.ajax({
+            url: '@Url.Action("SaveJobVideo", "Profile")',
+            type: "Get",
+            data: {
+                jobId: $('#Id').val()  ,
+                description: $('#VideoDescription').val(),
+                videoUrl: $('#VideoUrl').val()
+            },
+            success: function (result) {
+                if (result != null) {
+                    $("#video-content").html(result);
+                }
+            }
+        });
+        return true;
+
+        //$('#jobVideoForm').submit();
+    });
+
+</script>

@@ -10,6 +10,7 @@ using System.IO;
 using Chart.Mvc.ComplexChart;
 using System.Text;
 using FlightJobs.Util;
+using System.Text.RegularExpressions;
 
 namespace FlightJobs.Controllers
 {
@@ -695,6 +696,68 @@ namespace FlightJobs.Controllers
                 ScoreIncrease = airport.RunwaySize / 1123,
                 Price = (airport.RunwaySize * 78)
             };
+        }
+
+        public ActionResult JobVideo(int jobId)
+        {
+            var dbContext = new ApplicationDbContext();
+            var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
+            var job = dbContext.JobDbModels.FirstOrDefault(j => j.Id == jobId);
+            if (job != null && job.User?.Id == user.Id)
+            {
+                return PartialView("JobVideoView", job);
+            }
+
+            return PartialView("JobVideoView");
+        }
+
+        public ActionResult SaveJobVideo(int jobId, string description, string videoUrl)
+        {
+            var dbContext = new ApplicationDbContext();
+            try
+            {
+                var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
+                var job = dbContext.JobDbModels.FirstOrDefault(j => j.Id == jobId);
+                if (job != null && job.User?.Id == user.Id)
+                {
+                    var uri = new Uri(videoUrl);
+                    if (uri.Host == "www.youtube.com" || uri.Host == "youtu.be")
+                    {
+                        if (!videoUrl.Contains("embed"))
+                        {
+                            var code = ExtractYoutubeCode(uri);
+                            videoUrl = "https://www.youtube.com/embed/" + code;
+                        }
+
+                        job.VideoUrl = videoUrl;
+                        job.VideoDescription = description;
+                        dbContext.SaveChanges();
+                        ViewBag.ResponseMessage = "Video data saved and shared in Airline Ledger table.";
+                        return PartialView("JobVideoView", job);
+                    }
+                    else
+                    {
+                        ViewBag.ResponseError = "Invalid video URL.";
+                        return PartialView("JobVideoView", job);
+                    }
+                }
+                else
+                {
+                    ViewBag.ResponseError = "Job id isn't valid";
+                }
+            }
+            catch (Exception ex)
+            {
+                ViewBag.ResponseError = $"Error saving job: {ex.ToString()}";
+            }
+
+            return View("Index");
+        }
+
+        private string ExtractYoutubeCode(Uri uri)
+        {
+            var query = HttpUtility.ParseQueryString(uri.Query);
+            return query["v"];
         }
     }
 }

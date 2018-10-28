@@ -43,6 +43,9 @@
     .krajee-default.file {
         max-width:100px;
     }
+    .show-video-button {
+        cursor:pointer;
+    }
 </style>
 
 <hr />
@@ -87,6 +90,7 @@
                 @Html.DisplayNameFor(model => model.Jobs.First().UsedFuelWeight)
             </th>
             <th></th>
+            <th></th>
         </tr>
 
         @foreach (var item in Model.Jobs)
@@ -128,6 +132,7 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.UsedFuelWeightDisplay) @Model.WeightUnit
                 </td>
+                <td style="text-align:center;"><a class="show-video-button"  data-id="@item.Id"><i class="glyphicon glyphicon-film"></i></a></td>
                 <td style="text-align:center;"><a data-toggle="confirmation" data-title="Remove Job?" href="Profile/Delete/@item.Id"><i class="glyphicon glyphicon-remove"></i></a></td>
             </tr>
         }
@@ -338,8 +343,6 @@
                                     </div>
                                 </div>
                             </div>
-
-                        
                         </div>
                         
                     </div>
@@ -489,6 +492,24 @@
 </div>
 
 
+<div class="modal" id="myModalVideo" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document" style="width:auto; height:auto; margin:150px;">
+        <div class="modal-content">
+            <div class="modal-header" style="padding-bottom:0px;">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+
+                <h2 class="modal-title">
+                    Job vídeo
+                </h2>
+            </div>
+            <div class="modal-body" height:auto;">
+                <div id="video-content"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <script>
 $("#avatar-1").fileinput({
     overwriteInitial: true,
@@ -596,6 +617,28 @@ $('#show-ledger-button').click(function () {
     return true;
 });
 
+
+
+$('.show-video-button').click(function (e) {
+    e.preventDefault();
+    var model = {
+        jobId: $(this).data("id")
+    }
+
+    $.ajax({
+        url: '@Url.Action("JobVideo", "Profile")',
+        type: "Get",
+        data: model,
+        success: function (result) {
+            if (result != null) {
+                $('#myModalVideo').modal('show');
+                $("#video-content").html(result);
+            }
+        }
+    });
+    return true;
+});
+
 $('#filter-ledger-button').click(function () {
     $.ajax({
         url: '@Url.Action("FilterLedger", "Profile")',
@@ -614,6 +657,9 @@ $('#filter-ledger-button').click(function () {
     return true;
 });
 
+$(function () {
+    $('[data-toggle="tooltip"]').tooltip()
+});
 
 </script>
 @section Scripts{
