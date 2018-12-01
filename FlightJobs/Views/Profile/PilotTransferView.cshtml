@@ -1,0 +1,106 @@
+﻿@model FlightJobs.Models.PilotTransferViewModel
+<div class="modal-body">
+    @if (Model != null && Model.Statistics != null && Model.Statistics.Airline != null)
+    {
+        <div class="row">
+            <div class="col-md-7">
+                @Html.HiddenFor(model => model.Statistics.BankBalance)
+                @Html.HiddenFor(model => model.Statistics.Airline.BankBalance)
+                <div style="font-size:medium;">Pilot bank balance: @string.Format("{0:C}", Model.Statistics.BankBalance)</div>
+                <div style="font-size:medium;">Bank costs and tax (15%): @string.Format("{0:C}", (Model.Statistics.BankBalance * 0.15)) </div>
+            </div>
+            <div class="col-md-3" style="padding-right:0px;">
+                Transfer percent
+                @Html.EditorFor(model => model.PilotTransferPercent, new { htmlAttributes = new { @class = "form-control", @maxlength = "3", min = 1, max = 100 } })
+                @Html.ValidationMessageFor(model => model.PilotTransferPercent, "", new { @class = "text-danger" })
+            </div>
+            <div class="col-md-7">
+
+            </div>
+        </div>
+        <hr />
+        <div class="row">
+            <div class="col-md-7">
+                <div style="font-size:medium;">
+                    Pilot bank balance projection:
+                    <span id="pilot_projection"> @string.Format("{0:C}", ((Model.Statistics.BankBalance - (Model.Statistics.BankBalance * (Model.PilotTransferPercent / 100)))))</span>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-7">
+                <div style="font-size:medium;">
+                    Airline financial projection:
+                    <span id="airline_projection"> @string.Format("{0:C}", ((Model.Statistics.BankBalance - (Model.Statistics.BankBalance * 0.15)) + Model.Statistics.Airline.BankBalance))</span>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button id="pilot-transfer-button" type="button" class="btn btn-info" data-dismiss="modal">Transfer</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+
+    }
+</div>
+
+<script>
+    calcValues();
+
+
+    $("#PilotTransferPercent").change(function () {
+        calcValues();
+        return true;
+    });
+
+    $('#pilot-transfer-button').click(function () {
+        var pct = parseInt($("#PilotTransferPercent").val());
+        $.ajax({
+            url: '@Url.Action("PilotTransferFunds", "Profile")',
+            type: "Get",
+            data: {
+                percent: pct
+            },
+            success: function (results) {
+                window.location.href = '/Profile';
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log("Erro:" + errorThrown);
+                $('#buttonTransfer').attr("data-content", errorThrown);
+                $('#buttonTransfer').popover('show');
+            }
+        });
+        return true;
+    });
+
+    function formatCurrency(total) {
+        var neg = false;
+        if (total < 0) {
+            neg = true;
+            total = Math.abs(total);
+        }
+        return (neg ? "-$" : '$') + parseFloat(total, 10).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString();
+    }
+
+    function calcValues() {
+        var bankBalance = parseInt($("#Statistics_BankBalance").val());
+        var airlineBankBalance = parseInt($("#Statistics_Airline_BankBalance").val());
+
+        var percent = parseInt($("#PilotTransferPercent").val());
+        if (percent > 100) {
+            $("#PilotTransferPercent").val('100');
+            percent = 100;
+        }
+        if (percent <= 0) {
+            $("#PilotTransferPercent").val('1');
+            percent = 1;
+        }
+
+        var newBB = bankBalance * (percent / 100);
+        var aProjection = (newBB + airlineBankBalance);
+        $("#airline_projection").html(formatCurrency(aProjection));
+
+        var pProjection = bankBalance - newBB - (bankBalance * 0.15);
+        $("#pilot_projection").html(formatCurrency(pProjection));
+    }
+
+</script>

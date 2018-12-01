@@ -47,7 +47,6 @@
         cursor:pointer;
     }
 </style>
-
 <hr />
 <div style="background-color:dimgray; width:100%; text-align:center; height:40px; padding-top:5px; border-radius: 5px;"> 
     <b><span style="color:darkgray">P I L O T</span><samp style="color:lightgray">    L O G B O O K</samp></b>
@@ -208,6 +207,9 @@
                             <span class="glyphicon glyphicon-shopping-cart"></span> License
                         </button>
                         <img id="license-loading-img" src="~/Content/img/loading.gif" style="width:20px; display:none;" />
+                        <button id="buttonTransfer" type="button" data-toggle="popover" title="Warning" data-content="" data-trigger="focus" class="btn btn btn-info" style="margin-top:10px; width:100px;">
+                            <span class="glyphicon glyphicon-transfer"></span> Transfer
+                        </button>
                     </div>
                 </div>
 
@@ -246,6 +248,18 @@
                     </div>
                 </div>
             </div>
+            <div class="modal" id="myModalTransfer" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content" style="width: auto;">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title" id="myModalLabel">Transfer pilot funds to Airline</h4>
+                        </div>
+                        <div id="transfer-content"></div>
+                    </div>
+                </div>
+            </div>
+            
 
 
             <div class="col-sm-6" style="padding-left:1px;">
@@ -551,6 +565,29 @@ $('#buttonChart').click(function () {
     return true;
     });
 
+
+    $('#buttonTransfer').click(function () {
+        $('#buttonTransfer').popover('hide');
+    $.ajax({
+        url: '@Url.Action("PilotTransferProfile", "Profile")',
+        type: "Get",
+        data: '',
+        success: function (result) {
+            $('#buttonTransfer').popover('hide');
+            if (result != null) {
+                $('#myModalTransfer').modal('show');
+                $("#transfer-content").html(result);
+            }
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            console.log("Erro:" + errorThrown);
+            $('#buttonTransfer').attr("data-content", errorThrown);
+            $('#buttonTransfer').popover('show');
+        }
+    });
+    return true;
+    });
+
 $('#buttonLicense').click(function () {
     $('#license-loading-img').show();
     $.ajax({
@@ -659,7 +696,9 @@ $('#filter-ledger-button').click(function () {
 
 $(function () {
     $('[data-toggle="tooltip"]').tooltip()
-});
+    });
+
+
 
 </script>
 @section Scripts{

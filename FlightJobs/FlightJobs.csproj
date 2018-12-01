@@ -372,6 +372,7 @@
     <Compile Include="Models\PilotLicenseExpensesDbModel.cs" />
     <Compile Include="Models\PilotLicenseExpensesUserDbModel.cs" />
     <Compile Include="Models\PilotLicenseItemDbModel.cs" />
+    <Compile Include="Models\PilotTransferViewModel.cs" />
     <Compile Include="Models\SearchJobTipsViewModel.cs" />
     <Compile Include="Models\StatisticCertificatesDbModel.cs" />
     <Compile Include="Models\AirlineCertificatesDbModel.cs" />
@@ -742,6 +743,7 @@
     <Content Include="Views\Profile\FboResultsView.cshtml" />
     <Content Include="Views\Profile\FboAirlineView.cshtml" />
     <Content Include="Views\Profile\JobVideoView.cshtml" />
+    <Content Include="Views\Profile\PilotTransferView.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201710111859366_InitialCreate.resx">

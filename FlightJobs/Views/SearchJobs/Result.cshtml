@@ -11,7 +11,11 @@
 }
 
 
-
+<style>
+    .popover {
+        max-width: 100%; /* Max Width of the popover (depending on the container!) */
+    }
+</style>
 @*<p style="color:red">
 @Html.ValidationMessage("error")
 </p>*@
@@ -41,7 +45,7 @@
             <table class="table table-bordered" style="font-size: 10px;">
                 <tr style="background-color:darkgray;">
                     <th class="text-center">
-                        @Html.DisplayNameFor(model => model.First().Selected)
+                        <span style="cursor:pointer; text-decoration:underline;" id="select-all"> Select all</span>
                     </th>
                     <th class="text-center">
                         @Html.DisplayNameFor(model => model.First().Arrival)
@@ -94,13 +98,22 @@
                     <div class="col-md-3">
                         @Html.ActionLink("Back to Search", "Index")
                     </div>
-                    <div class="col-md-5">
+                    
+                    <div class="col-md-4">
                         @{ var pWeightVal = @TempData["PassengersWeightCookie"]; }
                         <label style="font-size: 12px; font-weight:normal;">Passenger weight for payload calculation: </label>
                         <label id="paxWeight-label" style="font-size: 11px;">@pWeightVal </label>
                         <label id="paxWeight-unit-label" style="font-size: 11px;">@TempData["PassengersWeightUnit"]</label>
                         <input id="paxWeight-text" name="paxWeight-text" type="number" value="@pWeightVal" maxlength="3" max="200" min="20" class="" style="display: none;" />
                         <input id="change-paxWeight-button" type="button" value="Change" class="btn btn-info btn-xs" style="" />
+                    </div>
+                    <div class="col-md-4">
+                        <a href="#" data-html="True"
+                           data-toggle="popover" title="Aircraft passenger weight info (human + luggage)"
+                           data-trigger="hover" data-placement="bottom"
+                           data-content="FlightFactor Airbus A320-214 Ultimate - <b>84Kg (185lbs)</b><br />Boeing 767 300ER with PW4062 - <b>95Kg (209lbs)</b><br />ToLiss A319 - <b>100Kg (220lbs)</b><br />">
+                            <span class="glyphicon glyphicon-eye-open" style="margin-left:5px;"></span>
+                        </a>
                     </div>
                     <div class="col-md-1 pull-right">
                         <input type="submit" value="Finish" class="btn btn-info  pull-right" />
@@ -259,6 +272,12 @@
 
             });
 
+        });
+
+        $('#select-all').click(function () {
+             $("input[type='checkbox']").each(function () {
+                 $(this).trigger('click');
+            });
         });
 
         $('#change-paxWeight-button').click(function () {

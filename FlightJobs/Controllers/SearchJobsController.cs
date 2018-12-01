@@ -500,31 +500,34 @@ namespace FlightJobs.Controllers
                 var countRandon = new Random();
                 var indexRandon = new Random();
 
-                var index = indexRandon.Next(1, allUserJobs.Count() - 1);
-
-                var count = countRandon.Next(1, allUserJobs.Count() - index);
-
-                /*  Get destinations from all user jobs */
-                foreach (var job in allUserJobs.GetRange(index, count).Take(7))
+                if (allUserJobs.Count() > 1)
                 {
-                    if (!listTips.Exists(x => x.AirportICAO == job.ArrivalICAO) &&
-                        job.ArrivalICAO != departure)
+                    var index = indexRandon.Next(1, allUserJobs.Count() - 1);
+
+                    var count = countRandon.Next(1, allUserJobs.Count() - index);
+
+                    /*  Get destinations from all user jobs */
+                    foreach (var job in allUserJobs.GetRange(index, count).Take(7))
                     {
-                        var jobArrivalAirportInfo = AirportDatabaseFile.FindAirportInfo(job.ArrivalICAO);
-
-                        var arrivalCoord = new GeoCoordinate(jobArrivalAirportInfo.Latitude, jobArrivalAirportInfo.Longitude);
-                        var distMeters = departureCoord.GetDistanceTo(arrivalCoord);
-                        var distMiles = (int)DataConversion.ConvertMetersToMiles(distMeters);
-
-                        listTips.Add(new SearchJobTipsViewModel()
+                        if (!listTips.Exists(x => x.AirportICAO == job.ArrivalICAO) &&
+                            job.ArrivalICAO != departure)
                         {
-                            AirportICAO = job.ArrivalICAO,
-                            AirportName = jobArrivalAirportInfo.Name,
-                            AirportElevation = jobArrivalAirportInfo.Elevation,
-                            AirportRunwaySize = jobArrivalAirportInfo.RunwaySize,
-                            AirportTrasition = jobArrivalAirportInfo.Trasition,
-                            Distance = distMiles
-                        });
+                            var jobArrivalAirportInfo = AirportDatabaseFile.FindAirportInfo(job.ArrivalICAO);
+
+                            var arrivalCoord = new GeoCoordinate(jobArrivalAirportInfo.Latitude, jobArrivalAirportInfo.Longitude);
+                            var distMeters = departureCoord.GetDistanceTo(arrivalCoord);
+                            var distMiles = (int)DataConversion.ConvertMetersToMiles(distMeters);
+
+                            listTips.Add(new SearchJobTipsViewModel()
+                            {
+                                AirportICAO = job.ArrivalICAO,
+                                AirportName = jobArrivalAirportInfo.Name,
+                                AirportElevation = jobArrivalAirportInfo.Elevation,
+                                AirportRunwaySize = jobArrivalAirportInfo.RunwaySize,
+                                AirportTrasition = jobArrivalAirportInfo.Trasition,
+                                Distance = distMiles
+                            });
+                        }
                     }
                 }
 

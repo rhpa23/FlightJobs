@@ -11,6 +11,7 @@ using Chart.Mvc.ComplexChart;
 using System.Text;
 using FlightJobs.Util;
 using System.Text.RegularExpressions;
+using System.Net;
 
 namespace FlightJobs.Controllers
 {
@@ -497,6 +498,68 @@ namespace FlightJobs.Controllers
             var list = dbContext.PilotLicenseExpensesUser.Include(x => x.PilotLicenseExpense).Where(p => p.User.Id == user.Id);
 
             return PartialView("PilotLicenseView", list.ToList());
+        }
+
+        public ActionResult PilotTransferProfile()
+        {
+            var dbContext = new ApplicationDbContext();
+
+            var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
+            var uStatistics = dbContext.StatisticsDbModels.FirstOrDefault(s => s.User.Id == user.Id);
+            if (uStatistics.Airline == null)
+            {
+                var msg = $"You need to sign a contract with an airline to transfer funds.";
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest, msg);
+            }
+            if (uStatistics.BankBalance <= 0)
+            {
+                var msg = $"Insufficient balance to make a transfer. Your current bank balance is: {string.Format("{0:C}", uStatistics.BankBalance)}";
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest, msg);
+            }
+
+            var pilotTransfer = new PilotTransferViewModel()
+            {
+                PilotTransferPercent = 10,
+                Statistics = uStatistics
+            };
+            return PartialView("PilotTransferView", pilotTransfer);
+        }
+
+        public ActionResult PilotTransferFunds(int percent)
+        {
+            if (percent > 100 || percent <= 0)
+            {
+                var msg = $"Transfer percent out of range [1-100].";
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest, msg);
+            }
+
+            var dbContext = new ApplicationDbContext();
+
+            var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
+            var uStatistics = dbContext.StatisticsDbModels.FirstOrDefault(s => s.User.Id == user.Id);
+            if (uStatistics.Airline == null)
+            {
+                var msg = $"You need to sign a contract with an airline to transfer funds.";
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest, msg);
+            }
+
+            var transferBB = uStatistics.BankBalance * (percent / (double)100);
+            var newPilotBalance = uStatistics.BankBalance - transferBB - (uStatistics.BankBalance * 0.15);
+
+            if (newPilotBalance <= 0)
+            {
+                var msg = $"Insufficient balance to make a transfer. Your current bank balance is: {string.Format("{0:C}", uStatistics.BankBalance)}";
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest, msg);
+            }
+
+            uStatistics.BankBalance = (long) newPilotBalance;
+            uStatistics.Airline.BankBalance = (long) transferBB + uStatistics.Airline.BankBalance;
+
+            dbContext.SaveChanges();
+
+            Session["HeaderStatistics"] = null;
+
+            return RedirectToAction("Index");
         }
 
         public ActionResult SelectLicenceExpense(int licenseExpenseId)
