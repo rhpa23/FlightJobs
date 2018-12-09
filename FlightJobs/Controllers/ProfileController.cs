@@ -12,6 +12,8 @@ using System.Text;
 using FlightJobs.Util;
 using System.Text.RegularExpressions;
 using System.Net;
+using Microsoft.AspNet.Identity;
+using System.Threading.Tasks;
 
 namespace FlightJobs.Controllers
 {
@@ -589,6 +591,7 @@ namespace FlightJobs.Controllers
             {
                 item.IsBought = true;
                 uStatistics.BankBalance -= item.PilotLicenseItem.Price;
+                uStatistics.LicenseWarningSent = false;
                 Session["HeaderStatistics"] = null;
 
                 var auxList = dbContext.LicenseItemUser.Where(i =>
@@ -821,6 +824,16 @@ namespace FlightJobs.Controllers
         {
             var query = HttpUtility.ParseQueryString(uri.Query);
             return query["v"];
+        }
+
+        public void OnChangeSendLicenseWarning(bool cked)
+        {
+            var dbContext = new ApplicationDbContext();
+            var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
+            var userStatistics = dbContext.StatisticsDbModels.FirstOrDefault(x => x.User.Id == user.Id);
+            userStatistics.SendLicenseWarning = cked;
+            userStatistics.LicenseWarningSent = false;
+            dbContext.SaveChanges();
         }
     }
 }

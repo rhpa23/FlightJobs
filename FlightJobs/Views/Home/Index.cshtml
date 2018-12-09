@@ -40,6 +40,14 @@
         font-size: 50px;
         color: #fff;
     }
+    .carousel-indicators li {
+        background-color: #999;
+        background-color: rgba(70,70,70,.25);
+    }
+
+    .carousel-indicators .active {
+        background-color: #444;
+    }
 </style>
 
 @*<div style="height:65px">
@@ -48,6 +56,7 @@
 
 <div>
     <hr />
+    
     
     @if (Model.Jobs.Count == 0)
     {
@@ -167,4 +176,132 @@
 
 @Html.PagedListPager(Model.Jobs, pageNumber => Url.Action("Index", new { pageNumber }))
 
+<br />
+<br />
+<br />
+<br />
+
+<div align="center">
+    <div style="background-color:dimgray; width:80px; height:5px; border-radius: 5px;" ></div>
+</div>
+<br /><br />
+<br /><br />
+<div class="row">
+    <div class="col-lg-6" >
+        <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel" align="center" style="width:550px; height:650px; ">
+            <div style="background-color:#5bc0de; height:10px;">
+                <ol class="carousel-indicators">
+                    <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+                    <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
+                    <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
+                    <li data-target="#carouselExampleIndicators" data-slide-to="3"></li>
+                    <li data-target="#carouselExampleIndicators" data-slide-to="4"></li>
+                    <li data-target="#carouselExampleIndicators" data-slide-to="5"></li>
+                    <li data-target="#carouselExampleIndicators" data-slide-to="6"></li>
+                    <li data-target="#carouselExampleIndicators" data-slide-to="7"></li>
+                    <li data-target="#carouselExampleIndicators" data-slide-to="8"></li>
+                </ol>
+            </div>
+            <div class="carousel-inner">
+                <div class="item active">
+                    <img class="d-block w-100" src="~/Content/img/Slider/pilot-statistics.JPG" alt="Pilot Statistics">
+                </div>
+                <div class="item">
+                    <img class="d-block w-100" src="~/Content/img/Slider/airline-statistics.JPG" alt="Airline Statistics">
+                </div>
+                <div class="item">
+                    <img class="d-block w-100" src="~/Content/img/Slider/license.JPG" alt="License">
+                </div>
+                <div class="item">
+                    <img class="d-block w-100" src="~/Content/img/Slider/airlines.JPG" alt="Airlines">
+                </div>
+                <div class="item">
+                    <img class="d-block w-100" src="~/Content/img/Slider/analysis.JPG" alt="Analysis">
+                </div>
+                <div class="item">
+                    <img class="d-block w-100" src="~/Content/img/Slider/fbos.JPG" alt="FOBs">
+                </div>
+                <div class="item">
+                    <img class="d-block w-100" src="~/Content/img/Slider/ranking.JPG" alt="Ranking">
+                </div>
+                <div class="item">
+                    <img class="d-block w-100" src="~/Content/img/Slider/pilot-chart.JPG" alt="Pilot Chart">
+                </div>
+                <div class="item">
+                    <img class="d-block w-100" src="~/Content/img/Slider/ledger.JPG" alt="Airline Ledger">
+                </div>
+            </div>
+            
+        </div>
+
+    </div>
+    <div class="col-lg-5">
+        <div>
+            <div style="background-color:#5bc0de; height:10px;"></div>
+            <strong> Below this list of current features:</strong>
+            <ul>
+                <li>Access your detailed Logbook anywhere through a website</li>
+                <li>
+                    Start and finish your Flight Jobs in a friendly X-Plane plugin
+                    (The window will pop up when you set the parking brake to remind you to finish the flight job)
+                </li>
+                <li>Scores and bank balance</li>
+                <li>Payload your aircraft with a purpose. Learn more about carrying capacity of an aircraft</li>
+                <li>Plan your future flights on a list of pending flight jobs to choose from</li>
+                <li>
+                    Pilot Statistics with relevant pieces of information from your flights like:
+                    flight time, number of flights, payload carried, last flight date, last aircraft and favorite airplane
+                </li>
+                <li>A chart showing the last 6 months of your flights to evaluate your virtual money evolution per month</li>
+                <li>Airlines to sign a contract using your scores and virtual money</li>
+                <li>Aviation certificates with tests</li>
+                <li>Airliners ranking of higher scores. All the hired can help improve the classification</li>
+                <li>Create your own Airline when you have enough virtual money to buy</li>
+                <li>Pilot graduation.</li>
+                <li>Airline leadger with all flights data generated by the airline jobs. Fees, taxes and charges are generated with the jobs.</li>
+                <li>Pilot license requirements.</li>
+                <li>Destination and alternate tips.</li>
+                <li>Information about FlightJobs on Analysis page.</li>
+                <li>Ability to buy FBOs (Field Base of Operations)</li>
+                <li>Jobs more rentable for FBOs unlocked</li>
+                <li>Unique GA profit</li>
+                <li>Option to reset Connector plugin</li>
+                <li>Labels of weights in Kg and pounds</li>
+                <li>Add flight video Url for shared in Airline Ledger table</li>
+                <li>Transfer funds from personal account to the (group)Airline/Charter service account.</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+
+<br />
+<br />
+<div align="center">
+    <div style="background-color:dimgray; width:80px; height:5px; border-radius: 5px;"></div>
+</div>
+<br />
+<br />
+<br />
+
+<div class="text-center">
+    <p>
+        <strong>This video tutorial will help to use the website and the plugin:</strong>
+    </p>
+    <p>
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/zOAvb1jQaGY" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+    </p>
+</div>
+
+<img class="img-responsive center-block" style="width:200px;" src="~/Content/img/FlightJobsLogo0001.png" />
+
+<a href="https://drive.google.com/file/d/1fLUGeqHsC1ba3_Iho-gsBwoMRQ7gt4OG/view?usp=sharing">
+    <h4 class="text-center">Download the plugin for</h4><br />
+    <img class="img-responsive center-block" src="~/Content/img/XPlane_11_logo.png" />
+</a>
+
+
+
+
+<hr />
 <br />

@@ -402,3 +402,8 @@ D:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.Migrations.ChangeDi
 D:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.Migrations.JobVideo.resources
 D:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.Migrations.JobVideoDelRequired.resources
 D:\DotNetProjects\FlightJobs\FlightJobs\bin\Elmah.dll
+D:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.Migrations.AddSendEmailWarning.resources
+D:\DotNetProjects\FlightJobs\FlightJobs\bin\Quartz.dll
+D:\DotNetProjects\FlightJobs\FlightJobs\bin\Quartz.pdb
+D:\DotNetProjects\FlightJobs\FlightJobs\bin\Quartz.xml
+D:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.Migrations.AddWarningSent.resources

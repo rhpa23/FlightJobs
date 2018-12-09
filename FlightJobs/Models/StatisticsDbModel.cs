@@ -28,6 +28,18 @@ namespace FlightJobs.Models
         [DisplayName("Logo")]
         public string Logo { get; set; }
 
+        [DisplayName("Send email expired license warning")]
+        public bool SendLicenseWarning { get; set; }
+
+        [DisplayName("Send email airline bills warning")]
+        public bool SendAirlineBillsWarning { get; set; }
+
+        [DisplayName("License e-mail warning sent flag")]
+        public bool LicenseWarningSent { get; set; }
+
+        [DisplayName("Airline bills e-mail warning sent flag")]
+        public bool AirlineBillsWarningSent { get; set; }
+
         [NotMapped]
         [DisplayName("Number of flights")]
         public long NumberFlights { get; set; }

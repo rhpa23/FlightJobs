@@ -238,6 +238,14 @@
                         </div>
                         <div class="modal-body">
                             <div id="license-content"></div>
+                            <div class="form-group">
+                                <div class="pull-right">
+                                    <div class="checkbox">
+                                        @Html.CheckBoxFor(m => m.Statistics.SendLicenseWarning)
+                                        @Html.LabelFor(m => m.Statistics.SendLicenseWarning, new { style = "padding-left: 0px"})
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div class="modal-footer">
                             <div class="pull-left"><strong>Your bank balance:</strong> 
@@ -689,6 +697,17 @@ $('#filter-ledger-button').click(function () {
             if (result != null) {
                 $("#ledger-content").html(result);
             }
+        }
+    });
+    return true;
+});
+
+$('#Statistics_SendLicenseWarning').change(function () {
+    $.ajax({
+        url: '@Url.Action("OnChangeSendLicenseWarning", "Profile")',
+        type: "Get",
+        data: {
+            cked: $(this).is(':checked')
         }
     });
     return true;

@@ -232,7 +232,7 @@ namespace FlightJobs.Controllers
             }
             catch (Exception ex)
             {
-                ViewBag.Message = $"Failed to send email. {ex.Message}";
+                ViewBag.Message = $"Failed to send email. Please contact the support. {ex.Message}";
             }
 
             // Se chegamos até aqui e houver alguma falha, exiba novamente o formulário
@@ -592,5 +592,10 @@ namespace FlightJobs.Controllers
             }
         }
         #endregion
+
+        public async Task SendEmailAsync(ApplicationUser user, string title, string bodyText)
+        {
+            await UserManager.SendEmailAsync(user.Id, $"FlightJobs - {title}", bodyText);
+        }
     }
 }

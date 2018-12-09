@@ -32,6 +32,12 @@
     <!-- the main fileinput plugin file -->
     @Scripts.Render("~/bundles/fileinput")
 
+    <script src="/Scripts/bootstrap.js"></script>
+    <script src="/Scripts/respond.js"></script>
+    <script src="/Scripts/util.js"></script>
+    <script src="/Scripts/bootstrap-confirmation.js"></script>
+    @RenderSection("scripts", required: false)
+
     <link rel="apple-touch-icon" sizes="57x57" href="/Content/icon/apple-icon-57x57.png">
     <link rel="apple-touch-icon" sizes="60x60" href="/Content/icon/apple-icon-60x60.png">
     <link rel="apple-touch-icon" sizes="72x72" href="/Content/icon/apple-icon-72x72.png">
@@ -178,13 +184,11 @@
     <div class="fixed-footer">
         <div class="text-center">
             <img src="~/Content/img/bell.png" style="width:35px; margin-top: -15px;" />
-            FBOs hunting begins... Transfer pilot funds for the airline is available. Check your profile.
+            [WARNING] FlightJobs may be offline this weekend due to the server migration. Thanks for your patience.
         </div>
     </div>
      
-    @Scripts.Render("~/bundles/jquery")
-    @Scripts.Render("~/bundles/bootstrap")
-    @RenderSection("scripts", required: false)
+    
 
 
     <div class="modal" id="modalNickName" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">

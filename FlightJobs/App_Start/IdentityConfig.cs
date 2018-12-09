@@ -20,9 +20,13 @@ namespace FlightJobs
     {
         public Task SendAsync(IdentityMessage message)
         {
-            SmtpClient client = new SmtpClient();
+            var smtpUserName = ConfigurationManager.AppSettings.Get("SmtpUsername");
+            var smtpPassword = ConfigurationManager.AppSettings.Get("SmtpPassword");
 
-            MailAddress from = new MailAddress("noreply@flight-jobs.net", "FlightJobs");
+            SmtpClient client = new SmtpClient("mail.flight-jobs.net", 25);
+            client.Credentials = new System.Net.NetworkCredential(smtpUserName, smtpPassword);
+
+            MailAddress from = new MailAddress("no-reply@flight-jobs.net", "FlightJobs");
             MailAddress to = new MailAddress(message.Destination);
 
             var msg = new MailMessage(from, to);
