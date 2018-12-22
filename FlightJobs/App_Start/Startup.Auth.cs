@@ -26,6 +26,7 @@ namespace FlightJobs
             {
                 AuthenticationType = DefaultAuthenticationTypes.ApplicationCookie,
                 LoginPath = new PathString("/Account/Login"),
+                ExpireTimeSpan = TimeSpan.FromDays(90),
                 Provider = new CookieAuthenticationProvider
                 {
                     // Permite que o aplicativo valide o carimbo de segurança quando o usuário efetuar login.

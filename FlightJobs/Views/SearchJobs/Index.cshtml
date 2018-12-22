@@ -147,17 +147,13 @@
 }
 
 
-@section Scripts {
-    @Scripts.Render("~/bundles/jqueryval")
-}
 
 <script>
 
     $('#searchForm').submit(function () {
-
         if ($('#GeneralAviation').prop("checked")) {
             $('#myModal').modal('show');
-            return false;
+            return $('#myModal').is(':visible');
         }
         else {
             $('#searchForm').submit();

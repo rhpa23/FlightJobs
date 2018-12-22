@@ -9,6 +9,7 @@ using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
+using System.Web.Security;
 
 namespace FlightJobs
 {
@@ -51,6 +52,14 @@ namespace FlightJobs
                                           .Build();
 
             sched.ScheduleJob(job, trigger);
+        }
+
+        protected void Application_BeginRequest()
+        {
+            if (!Context.Request.IsLocal && !Request.IsSecureConnection && !Request.Url.AbsoluteUri.Contains("api"))
+            {
+                Response.Redirect(Request.Url.AbsoluteUri.Replace("http://", "https://"));
+            }
         }
     }
 }

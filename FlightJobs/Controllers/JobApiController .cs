@@ -145,7 +145,7 @@ namespace FlightJobs.Controllers
                     var payloadInPounds = DataConversion.ConvertKilogramsToPounds(job.Payload);
                     return Request.CreateResponse(HttpStatusCode.Forbidden, $"Wrong. Active job payload is: {job.Payload}kg / {payloadInPounds}lbs");
                 }
-
+                                
                 var diffTime = DateTime.UtcNow - job.StartTime;
 
                 var minTime = (job.Dist * 11) / 100;
@@ -164,6 +164,13 @@ namespace FlightJobs.Controllers
 
                 long fuelWeight = Convert.ToInt64(Math.Round(Convert.ToDouble(fuelWeightStr, new CultureInfo("en-US"))));
                 job.FinishFuelWeight = fuelWeight;
+
+                var expectedFuelBurned = (job.Dist * job.Payload * 0.27) / 1000;
+                //// Check Fuel
+                if ((job.UsedFuelWeight) < expectedFuelBurned)
+                {
+                    return Request.CreateResponse(HttpStatusCode.Forbidden, $"Impossible to finish this job with {job.UsedFuelWeight}Kg burned fuel.");
+                }
 
                 var licenseExpired = UpdateStatistics(job, dbContext);
                 UpdateAirline(job, dbContext);

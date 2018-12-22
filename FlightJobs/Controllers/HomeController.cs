@@ -257,11 +257,15 @@ namespace FlightJobs.Controllers
         {
             if (pounds)
             {
-                Response.SetCookie(new HttpCookie(DataConversion.WeightUnitCookie, DataConversion.WeightPounds));
+                var myCookie = new HttpCookie(DataConversion.WeightUnitCookie, DataConversion.WeightPounds);
+                myCookie.Expires = DateTime.Now.AddYears(1); ;
+                Response.SetCookie(myCookie);
             }
             else
             {
-                Response.SetCookie(new HttpCookie(DataConversion.WeightUnitCookie, DataConversion.WeightKilograms));
+                var myCookie = new HttpCookie(DataConversion.WeightUnitCookie, DataConversion.WeightKilograms);
+                myCookie.Expires = DateTime.Now.AddYears(1); 
+                Response.SetCookie(myCookie);
             }
             return Json("{}", JsonRequestBehavior.AllowGet);
         }
