@@ -32,7 +32,8 @@ namespace FlightJobs.Models
         public DbSet<LicenseItemUserDbModel> LicenseItemUser { get; set; }
         public DbSet<PilotLicenseExpensesUserDbModel> PilotLicenseExpensesUser { get; set; }
         public DbSet<AirlineFboDbModel> AirlineFbo { get; set; }
-        
+        public DbSet<CustomPlaneCapacityDbModel> CustomPlaneCapacity { get; set; }
+
         public ApplicationDbContext()
             : base("DefaultConnection", throwIfV1Schema: false)
         {

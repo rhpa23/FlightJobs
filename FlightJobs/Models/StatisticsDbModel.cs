@@ -40,6 +40,9 @@ namespace FlightJobs.Models
         [DisplayName("Airline bills e-mail warning sent flag")]
         public bool AirlineBillsWarningSent { get; set; }
 
+        [DisplayName("User custom plane capacity ")]
+        public virtual CustomPlaneCapacityDbModel CustomPlaneCapacity { get; set; }
+
         [NotMapped]
         [DisplayName("Number of flights")]
         public long NumberFlights { get; set; }

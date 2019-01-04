@@ -44,22 +44,37 @@ namespace FlightJobs.Controllers
         // GET: SearchJobs
         public ActionResult Index()
         {
+            var dbContext = new ApplicationDbContext();
+            var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
+            var statistics = dbContext.StatisticsDbModels.FirstOrDefault(s => s.User.Id == user.Id);
+            var model = new JobSerachModel()
+            {
+                MaxRange = 450,
+                MinRange = 10,
+                WeightUnit = DataConversion.GetWeightUnit(Request)
+            };
+
             Session.Remove("JobSearchResult");
             if (Session["JobSerachModel"] != null)
             {
-                JobSerachModel model = (JobSerachModel)Session["JobSerachModel"];
+                model = (JobSerachModel)Session["JobSerachModel"];
                 model.WeightUnit = DataConversion.GetWeightUnit(Request);
-                return View(model);
             }
-            else
+
+            if (statistics != null)
             {
-                var model = new JobSerachModel() {
-                    MaxRange = 450, MinRange = 10,
-                    WeightUnit = DataConversion.GetWeightUnit(Request)
-                };
-                return View(model);
+                model.UseCustomPlaneCapacity = statistics.CustomPlaneCapacity != null;
+                model.CustomPlaneCapacity = statistics.CustomPlaneCapacity;
+                model.CustomPlaneCapacityList = dbContext.CustomPlaneCapacity.Where(x => x.User.Id == user.Id).Select(c =>
+                                                                new SelectListItem
+                                                                {
+                                                                    Text = c.CustomNameCapacity,
+                                                                    Value = c.Id.ToString(),
+                                                                }).ToList();
             }
-           
+
+            return View(model);
+
         }
 
         [HttpPost]
@@ -291,24 +306,30 @@ namespace FlightJobs.Controllers
                 var randomPob = new Random();
                 var randomCargo = new Random();
                 int id = 0;
+                bool validGaProfit = false;
 
-                
                 var arrCoord = new GeoCoordinate(arrival.Latitude, arrival.Longitude);
                 var distMeters = depCoord.GetDistanceTo(arrCoord);
                 var distMiles = (int)DataConversion.ConvertMetersToMiles(distMeters);
 
-//                    if (distMiles >= model.MinRange && distMiles <= model.MaxRange && arrival.ICAO.ToUpper() != dep.ICAO.ToUpper() &&
-//                        arrival.ICAO.ToUpper() == model.Arrival.ToUpper())
+                //                    if (distMiles >= model.MinRange && distMiles <= model.MaxRange && arrival.ICAO.ToUpper() != dep.ICAO.ToUpper() &&
+                //                        arrival.ICAO.ToUpper() == model.Arrival.ToUpper())
 
-                if (arrival.ICAO.ToUpper() != dep.ICAO.ToUpper() && 
+                if (arrival.ICAO.ToUpper() != dep.ICAO.ToUpper() &&
                     arrival.ICAO.ToUpper() == model.Arrival.ToUpper())
                 {
+                    var customCapacity = model.CustomPlaneCapacity;
+
+                    if (DataConversion.GetWeightUnit(Request) == DataConversion.UnitPounds)
+                    {
+                        customCapacity.CustomCargoCapacityWeight = DataConversion.ConvertPoundsToKilograms(customCapacity.CustomCargoCapacityWeight);
+                    }
 
                     int index = randomPob.Next(14, 25);
-                    if (model.AviationType == "GeneralAviation")
-                        index = 50;
+                    if (model.AviationType == "GeneralAviation" && model.UseCustomPlaneCapacity)
+                        validGaProfit = customCapacity.CustomCargoCapacityWeight < 3000 && customCapacity.CustomPassengerCapacity < 30;
 
-                    long gePobCount = 0, geCargoCount = 0;
+                    long gePobCount = 0, auxCargoCount = 0;
 
                     for (int i = 0; i < index; i++)
                     {
@@ -322,73 +343,104 @@ namespace FlightJobs.Controllers
                         bool isCargo = alternateCargo == 0 || flightType == "Cargo";
                         if (isCargo)
                         {
-                            if (flightType == "GeneralAviation")
+                            int minCargo = 5;
+                            int maxCargo = 160;
+                            if (flightType == "AirTransport") { minCargo = 100; maxCargo = 3000; };
+                            if (flightType == "Cargo") { minCargo = 80; maxCargo = 3500; }
+                            if (flightType == "HeavyAirTransport") { minCargo = 800; maxCargo = 6000; }
+
+                            if (model.UseCustomPlaneCapacity)
                             {
-                                var cargoCapacity = model.GaCargoCapacityWeight;
-
-                                if (DataConversion.GetWeightUnit(Request) == DataConversion.UnitPounds)
+                                var cargoCapacity = customCapacity.CustomCargoCapacityWeight;
+                                if (cargoCapacity < minCargo) cargoCapacity = minCargo + 1;
+                                cargo = randomCargo.Next(minCargo, cargoCapacity);
+                                if (auxCargoCount + cargo > cargoCapacity)
                                 {
-                                    cargoCapacity = DataConversion.ConvertPoundsToKilograms(model.GaCargoCapacityWeight);
-                                }
-
-                                cargo = randomCargo.Next(5, cargoCapacity);
-                                if (geCargoCount + cargo > cargoCapacity)
-                                {
-                                    cargo = cargoCapacity - geCargoCount;
+                                    cargo = cargoCapacity - auxCargoCount;
                                     if (cargo == 0) continue;
-                                    geCargoCount = cargoCapacity;
+                                    auxCargoCount = cargoCapacity;
                                 }
                                 else
                                 {
-                                    geCargoCount += cargo;
+                                    auxCargoCount += cargo;
                                 }
+                            }
+                            else
+                            {
+                                cargo = randomCargo.Next(minCargo, maxCargo);
+                            }
 
-                                profit = Convert.ToInt32(taxCargoGE * distMiles * cargo);
-                                profit += (140 / cargoCapacity);
+                            if (flightType == "GeneralAviation")
+                            {
+                                if (validGaProfit)
+                                {
+                                    profit = Convert.ToInt32(taxCargoGE * distMiles * cargo);
+                                    profit += (140 / customCapacity.CustomCargoCapacityWeight);
+                                }
+                                else
+                                {
+                                    profit = Convert.ToInt32(taxCargo * distMiles * cargo);
+                                }
                             }
                             else if (flightType == "AirTransport")
                             {
-                                cargo = randomCargo.Next(100, 3000);
                                 profit = Convert.ToInt32(taxCargo * distMiles * cargo);
                             }
                             else if (flightType == "Cargo")
                             {
-                                cargo = randomCargo.Next(80, 3500);
                                 profit = Convert.ToInt32((taxCargo + 0.0005) * distMiles * cargo);
                             }
                             else // HeavyAirTransport
                             {
-                                cargo = randomCargo.Next(800, 6000);
                                 profit = Convert.ToInt32(taxCargo * distMiles * cargo);
                             }
                         }
                         else
                         {
-                            if (flightType == "GeneralAviation")
+                            int minPob = 1;
+                            int maxPob = 12;
+                            if (flightType == "AirTransport") { minPob = 10; maxPob = 80; };
+                            if (flightType == "HeavyAirTransport") { minPob = 50; maxPob = 140; }
+
+                            if (model.UseCustomPlaneCapacity)
                             {
-                                pob = randomPob.Next(1, model.GaPassengerCapacity);
-                                if (gePobCount + pob > model.GaPassengerCapacity)
+                                if (customCapacity.CustomPassengerCapacity < minPob) customCapacity.CustomPassengerCapacity = minPob + 1;
+                                pob = randomPob.Next(minPob, customCapacity.CustomPassengerCapacity);
+                                if (gePobCount + pob > customCapacity.CustomPassengerCapacity)
                                 {
-                                    pob = model.GaPassengerCapacity - gePobCount;
+                                    pob = customCapacity.CustomPassengerCapacity - gePobCount;
                                     if (pob == 0) continue;
-                                    gePobCount = model.GaPassengerCapacity;
+                                    gePobCount = customCapacity.CustomPassengerCapacity;
                                 }
                                 else
                                 {
                                     gePobCount += pob;
                                 }
+                            }
+                            else
+                            {
+                                pob = randomPob.Next(minPob, maxPob);
+                            }
+
+                            if (flightType == "GeneralAviation")
+                            {
                                 isFisrtClass = true; /// Always premium for GA
-                                profit = isFisrtClass ? Convert.ToInt32(taxFirstGE * distMiles * pob) : Convert.ToInt32(taxEconGE * distMiles * pob);
-                                profit += ((distMiles * 2) / model.GaPassengerCapacity);
+                                if (validGaProfit)
+                                {
+                                    profit = Convert.ToInt32(taxFirstGE * distMiles * pob);
+                                    profit += ((distMiles * 2) / customCapacity.CustomPassengerCapacity);
+                                }
+                                else
+                                {
+                                    profit = Convert.ToInt32(taxFirstC * distMiles * pob);
+                                }
                             }
                             else if (flightType == "AirTransport")
                             {
-                                pob = randomPob.Next(10, 80);
                                 profit = isFisrtClass ? Convert.ToInt32(taxFirstC * distMiles * pob) : Convert.ToInt32(taxEcon * distMiles * pob);
                             }
                             else // HeavyAirTransport
                             {
-                                pob = randomPob.Next(50, 140);
                                 profit = isFisrtClass ? Convert.ToInt32(taxFirstC * distMiles * pob) : Convert.ToInt32(taxEcon * distMiles * pob);
                             }
                         }
@@ -615,6 +667,76 @@ namespace FlightJobs.Controllers
             else
             {
                 return allUserJobs.ToList();
+            }
+        }
+
+        public PartialViewResult AddCustonCapacity(int passengers, int cargo, string name)
+        {
+            var dbContext = new ApplicationDbContext();
+            var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
+            var statistics = dbContext.StatisticsDbModels.FirstOrDefault(s => s.User.Id == user.Id);
+            var searchModel = new JobSerachModel();
+
+            if (!string.IsNullOrEmpty(name) && cargo > 0 && passengers > 0 && statistics != null)
+            {
+                var dbEntity = dbContext.CustomPlaneCapacity.FirstOrDefault(x => x.User.Id == user.Id && x.CustomNameCapacity == name);
+                if (dbEntity == null)
+                {
+                    var customCapacity = new CustomPlaneCapacityDbModel()
+                    {
+                        CustomCargoCapacityWeight = cargo,
+                        CustomPassengerCapacity = passengers,
+                        CustomNameCapacity = name.Trim(),
+                        User = user
+                    };
+                    dbContext.CustomPlaneCapacity.Add(customCapacity);
+                    statistics.CustomPlaneCapacity = customCapacity;
+                    searchModel.CustomPlaneCapacity = customCapacity;
+                }
+                else
+                {
+                    dbEntity.CustomCargoCapacityWeight = cargo;
+                    dbEntity.CustomPassengerCapacity = passengers;
+                    statistics.CustomPlaneCapacity = dbEntity;
+                    searchModel.CustomPlaneCapacity = dbEntity;
+                }
+                dbContext.SaveChanges();
+            }
+            searchModel.CustomPlaneCapacityList = dbContext.CustomPlaneCapacity
+                                                           .Where(x => x.User.Id == user.Id).Select(c =>
+                                                            new SelectListItem
+                                                            {
+                                                                Text = c.CustomNameCapacity,
+                                                                Value = c.Id.ToString(),
+                                                            }).ToList();
+            return PartialView("CapacityListView", searchModel);
+        }
+        public JsonResult GetCustonCapacity(long id)
+        {
+            var dbContext = new ApplicationDbContext();
+
+            var CustomPlaneCapacity = dbContext.CustomPlaneCapacity.FirstOrDefault(x => x.Id == id);
+            if (CustomPlaneCapacity != null)
+            {
+                return Json(CustomPlaneCapacity, JsonRequestBehavior.AllowGet);
+            }
+            else
+            {
+                return null;
+            }
+
+        }
+
+        public void UnSetCustonCapacity()
+        {
+            var dbContext = new ApplicationDbContext();
+            var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
+            var statistics = dbContext.StatisticsDbModels.FirstOrDefault(s => s.User.Id == user.Id);
+
+            if (statistics != null)
+            {
+                statistics.CustomPlaneCapacity = null;
+                dbContext.SaveChanges();
             }
         }
     }

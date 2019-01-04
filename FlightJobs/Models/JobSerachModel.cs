@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Web;
+using System.Web.Mvc;
 
 namespace FlightJobs.Models
 {
@@ -39,15 +40,11 @@ namespace FlightJobs.Models
         [Required(ErrorMessage = "Passenger weight is required")]
         public long PassengerWeight { get; set; }
 
-        [DisplayName("Passenger capacity")]
-        [Required(ErrorMessage = "Passenger capacity is required")]
-        [Range(0, 40, ErrorMessage = "Value for {0} must be between {1} and {2}")]
-        public int GaPassengerCapacity { get; set; }
+        public bool UseCustomPlaneCapacity { get; set; }
 
-        [DisplayName("Cargo capacity weight")]
-        [Required(ErrorMessage = "Cargo capacity weight is required")]
-        //[Range(0, 1000, ErrorMessage = "Value for {0} must be between {1} and {2}")]
-        public int GaCargoCapacityWeight { get; set; }
+        public CustomPlaneCapacityDbModel CustomPlaneCapacity { get; set; }
+
+        public List<SelectListItem> CustomPlaneCapacityList { get; set; }
 
         [NotMapped]
         public string WeightUnit { get; set; }

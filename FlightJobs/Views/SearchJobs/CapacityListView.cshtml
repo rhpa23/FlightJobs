@@ -1,0 +1,26 @@
+﻿@model FlightJobs.Models.JobSerachModel
+
+<div class="row" id="CapacityListContent">
+    <div class="col-md-9">
+        <label class="control-label" for="CustomPassengerCapacity">Capacity list</label>
+        @Html.DropDownListFor(model => model.CustomPlaneCapacity.Id, Model.CustomPlaneCapacityList, "Select...", new { @class = "form-control" })
+    </div>
+</div>
+
+<script>
+    $('#CustomPlaneCapacity_Id').change(function () {
+
+        $.ajax({
+            url: '@Url.Action("GetCustonCapacity", "SearchJobs")',
+            type: "Get",
+            data: { id: $('#CustomPlaneCapacity_Id').val() },
+            success: function (result) {
+                if (result != null && result != '') {
+                    $('#CustomPlaneCapacity_CustomPassengerCapacity').val(result.CustomPassengerCapacity);
+                    $('#CustomPlaneCapacity_CustomCargoCapacityWeight').val(result.CustomCargoCapacityWeight);
+                    $('#CustomPlaneCapacity_CustomNameCapacity').val(result.CustomNameCapacity);
+                }
+            }
+        });
+    });
+</script>

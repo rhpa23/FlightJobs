@@ -1,4 +1,5 @@
 ﻿@model FlightJobs.Models.JobSerachModel
+@using FlightJobs.Util;
 
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -10,6 +11,9 @@
     .swap {
         cursor: pointer;
         color: #5bc0de;
+    }
+    .popover {
+        max-width: 100%; /* Max Width of the popover (depending on the container!) */
     }
 </style>
 @using (Html.BeginForm("Index", "SearchJobs", FormMethod.Post, new { id = "searchForm" }))
@@ -103,6 +107,26 @@
                             <label for="Cargo"><img src="~/Content/img/pictures/cargo.jpg" style="width:100px; height:70px;" /><span>Cargo</span></label>
                         </div>
                     </div>
+                    
+                </div>
+                <hr />
+                <div class="row">
+                    <div style="width:300px;margin-left: 15px;">
+                        <div class="funkyradio-info">
+                            <div class="row">
+                                <div class="col-lg-8">
+                                    @Html.CheckBoxFor(model => model.UseCustomPlaneCapacity)
+                                    <label for="UseCustomPlaneCapacity" style="text-align:center;">
+                                        <img src="~/Content/img/capacity001.jpg" style="width:120px; height:80px; " />
+                                        <span>Custom capacity</span>
+                                    </label>
+                                </div>
+                                <div class="col-lg-2" style="margin-top:30px">
+                                    <input id="ChangeCapacity" type="button" value="Change" class="btn btn-info"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -114,32 +138,51 @@
             <div class="modal-content" style="width: 390px;">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" id="myModalLabel">General Aviation model data</h4>
+                    <h4 class="modal-title" id="myModalLabel">Custom capacity</h4>
                 </div>
 
                 <div class="modal-body">
                     <h5 style="color:gray">* This information will be used to calculate the Job Profit.</h5>
                     <div class="form-group">
+                        @if (Model.CustomPlaneCapacityList == null)
+                        {
+                            Model.CustomPlaneCapacityList = new List<SelectListItem>();                            
+                        }
+                        @if (Model.CustomPlaneCapacity == null)
+                        {
+                            Model.CustomPlaneCapacity = new FlightJobs.Models.CustomPlaneCapacityDbModel()
+                            {
+                                CustomCargoCapacityWeight = 1500, CustomNameCapacity = "B738", CustomPassengerCapacity = 5
+                            };
+                        }
+                        
+                        @Html.Partial("CapacityListView", Model)
+                        <hr />
                         <div class="row">
                             <div class="col-md-9">
-                                @Html.LabelFor(model => model.GaPassengerCapacity, htmlAttributes: new { @class = "control-label" })
-                                @Html.EditorFor(model => model.GaPassengerCapacity, new { htmlAttributes = new { @class = "form-control", @Value = "5" } })
-                                @Html.ValidationMessageFor(model => model.GaPassengerCapacity, "", new { @class = "text-danger" })
+                                <label class="control-label" for="CustomPassengerCapacity">Passenger capacity</label>
+                                @Html.EditorFor(model => model.CustomPlaneCapacity.CustomPassengerCapacity, new { htmlAttributes = new { @class = "form-control"} })
                             </div>
                         </div>
                         <br />
                         <div class="row">
                             <div class="col-md-9">
-                                @Html.LabelFor(model => model.GaCargoCapacityWeight, htmlAttributes: new { @class = "control-label" }) ( @Model.WeightUnit )
-                                @Html.EditorFor(model => model.GaCargoCapacityWeight, new { htmlAttributes = new { @class = "form-control" } })
-                                @Html.ValidationMessageFor(model => model.GaCargoCapacityWeight, "", new { @class = "text-danger" })
+                                <label class="control-label" for="CustomCargoCapacityWeight">Cargo capacity weight @if (DataConversion.GetWeightUnit(Request) == DataConversion.UnitPounds) { <span> (lbs)</span>; } else { <span> (Kg)</span>; } </label>
+                                @Html.EditorFor(model => model.CustomPlaneCapacity.CustomCargoCapacityWeight, new { htmlAttributes = new { @class = "form-control" } })
+                            </div>
+                        </div>
+                        <br />
+                        <div class="row">
+                            <div class="col-md-9">
+                                <label class="control-label" for="CustomNameCapacity">Capacity Name (Change to add)</label>
+                                @Html.EditorFor(model => model.CustomPlaneCapacity.CustomNameCapacity, new { htmlAttributes = new { @class = "form-control" } })
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-info" id="ConfirmGeneralAviation">Confirm</button>
+                    <button type="button" class="btn btn-info" id="SaveCustomCapacity">Save</button>
                 </div>
             </div>
         </div>
@@ -149,20 +192,66 @@
 
 
 <script>
+    $('[data-toggle="popover"]').popover({
+        container: 'body'
+    });
+    $("#ChangeCapacity").click(function () {
+        $('#myModal').modal('show');
+        $('#UseCustomPlaneCapacity').prop("checked", 1)
+    });
 
-    $('#searchForm').submit(function () {
-        if ($('#GeneralAviation').prop("checked")) {
-            $('#myModal').modal('show');
-            return $('#myModal').is(':visible');
-        }
-        else {
-            $('#searchForm').submit();
+    $('#UseCustomPlaneCapacity').change(function () {
+        if ($('#UseCustomPlaneCapacity').prop("checked")) {
+            $("#ChangeCapacity").prop('disabled', false);
+        } else {
+             $.ajax({
+                url: '@Url.Action("UnSetCustonCapacity", "SearchJobs")',
+                type: "Get",
+                success: function (result) {}
+            });
+             $("#ChangeCapacity").prop('disabled', true);
         }
     });
 
-    
-    $('#ConfirmGeneralAviation').click(function () {
-        $('#searchForm').submit();
+    //$('#searchForm').submit(function () {
+    //    if ($('#GeneralAviation').prop("checked")) {
+    //        $('#myModal').modal('show');
+    //        return $('#myModal').is(':visible');
+    //    }
+    //    else {
+    //        $('#searchForm').submit();
+    //    }
+    //});
+
+    $('#CustomPassengerCapacity').change(function () {
+        var passengersVal = $('#CustomPassengerCapacity').val();
+        if (parseInt(passengersVal) > 600) {
+            $('#CustomPassengerCapacity').val(600);
+        }
+    });
+
+    $('#CustomCargoCapacityWeight').change(function () {
+        var cargoVal = $('#CustomCargoCapacityWeight').val();
+        if (parseInt(cargoVal) > 190000) {
+            $('#CustomCargoCapacityWeight').val(190000);
+        }
+    });
+
+    $('#SaveCustomCapacity').click(function () {
+        //$('#searchForm').submit();
+        var passengersVal = $('#CustomPlaneCapacity_CustomPassengerCapacity').val();
+        var cargoVal = $('#CustomPlaneCapacity_CustomCargoCapacityWeight').val();
+        var nameVal = $('#CustomPlaneCapacity_CustomNameCapacity').val();
+
+        $.ajax({
+            url: '@Url.Action("AddCustonCapacity", "SearchJobs")',
+            type: "Get",
+            data: { passengers: passengersVal, cargo: cargoVal, name: nameVal },
+            success: function (result) {
+                $('#myModal').modal('hide');
+                $('#CapacityListContent').html(result);
+            }
+        });
     });
 
     $('#swap-button').click(function () {

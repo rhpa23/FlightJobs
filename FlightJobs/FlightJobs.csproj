@@ -370,6 +370,14 @@
     <Compile Include="Migrations\201812022003583_AddWarningSent.Designer.cs">
       <DependentUpon>201812022003583_AddWarningSent.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201812221859450_CustomPlaneCapacity.cs" />
+    <Compile Include="Migrations\201812221859450_CustomPlaneCapacity.Designer.cs">
+      <DependentUpon>201812221859450_CustomPlaneCapacity.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201812221933029_CustomPlaneCapacityFix01.cs" />
+    <Compile Include="Migrations\201812221933029_CustomPlaneCapacityFix01.Designer.cs">
+      <DependentUpon>201812221933029_CustomPlaneCapacityFix01.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\AirlineFboView.cs" />
@@ -378,6 +386,7 @@
     <Compile Include="Models\CertificateViewModel.cs" />
     <Compile Include="Models\ChartViewModel.cs" />
     <Compile Include="Models\ConfirmJobsViewModel.cs" />
+    <Compile Include="Models\CustomPlaneCapacityDbModel.cs" />
     <Compile Include="Models\GeneralInfoViewModel.cs" />
     <Compile Include="Models\JobAirlineDbModel.cs" />
     <Compile Include="Models\LicenseItemUserDbModel.cs" />
@@ -486,6 +495,7 @@
     <Content Include="Content\img\barcode.png" />
     <Content Include="Content\img\bell.png" />
     <Content Include="Content\img\britishairways.png" />
+    <Content Include="Content\img\capacity001.jpg" />
     <Content Include="Content\img\certificate.png" />
     <Content Include="Content\img\checked_icon.png" />
     <Content Include="Content\img\contract2.jpg" />
@@ -767,6 +777,7 @@
     <Content Include="Views\Profile\FboAirlineView.cshtml" />
     <Content Include="Views\Profile\JobVideoView.cshtml" />
     <Content Include="Views\Profile\PilotTransferView.cshtml" />
+    <Content Include="Views\SearchJobs\CapacityListView.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201710111859366_InitialCreate.resx">
@@ -876,6 +887,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201812022003583_AddWarningSent.resx">
       <DependentUpon>201812022003583_AddWarningSent.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201812221859450_CustomPlaneCapacity.resx">
+      <DependentUpon>201812221859450_CustomPlaneCapacity.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201812221933029_CustomPlaneCapacityFix01.resx">
+      <DependentUpon>201812221933029_CustomPlaneCapacityFix01.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
