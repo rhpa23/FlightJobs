@@ -1,9 +1,10 @@
 ﻿@model FlightJobs.Models.JobSerachModel
 
-<div class="row" id="CapacityListContent">
-    <div class="col-md-9">
+<div id="CapacityListContent">
+    <div class="col-md-6">
         <label class="control-label" for="CustomPassengerCapacity">Capacity list</label>
-        @Html.DropDownListFor(model => model.CustomPlaneCapacity.Id, Model.CustomPlaneCapacityList, "Select...", new { @class = "form-control" })
+        @Html.DropDownListFor(model => model.CustomPlaneCapacity.Id, Model.CustomPlaneCapacityList, new { size = 10, @class = "form-control" })
+
     </div>
 </div>
 

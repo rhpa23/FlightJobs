@@ -24,10 +24,12 @@ namespace FlightJobs.Controllers
             var list = dbContext.AirlineDbModels.OrderByDescending(a => a.Id).ToList();
             foreach (var airline in list)
             {
-                var user = dbContext.Users.FirstOrDefault(u => airline.UserId != null && u.Id == airline.UserId);
-                if (user != null)
+                var ownerUserStatistics = dbContext.StatisticsDbModels.FirstOrDefault(s => airline.UserId != null && s.User.Id == airline.UserId);
+                if (ownerUserStatistics != null)
                 {
-                    airline.OwnerNickname = user.UserName;
+                    airline.OwnerUserStatistics = ownerUserStatistics;
+                    var statisticsList = dbContext.StatisticsDbModels.Where(s => s.Airline != null && s.Airline.Id == airline.Id);
+                    airline.OwnerUserStatistics.AirlinePilotsHired = statisticsList.Select(s => s.User).ToList();
                 }
                    
             }

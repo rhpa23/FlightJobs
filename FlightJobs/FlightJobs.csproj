@@ -530,9 +530,14 @@
     <Content Include="Content\img\graduation\14.png" />
     <Content Include="Content\img\graduation\15.png" />
     <Content Include="Content\img\graduation\16.png" />
-    <Content Include="Content\img\HomeThum01.png" />
-    <Content Include="Content\img\HomeThum02.png" />
-    <Content Include="Content\img\HomeThum03.png" />
+    <Content Include="Content\img\HomeThum01.jpg" />
+    <Content Include="Content\img\HomeThum02.jpg" />
+    <Content Include="Content\img\HomeThum03.jpg" />
+    <Content Include="Content\img\HomeThum04.jpg" />
+    <Content Include="Content\img\HomeThum05.jpg" />
+    <Content Include="Content\img\HomeThum06.jpg" />
+    <Content Include="Content\img\HomeThum07.jpg" />
+    <Content Include="Content\img\HomeThum08.jpg" />
     <Content Include="Content\img\KLM.png" />
     <Content Include="Content\img\line.png" />
     <Content Include="Content\img\loading.gif" />

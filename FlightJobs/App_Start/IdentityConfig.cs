@@ -23,10 +23,11 @@ namespace FlightJobs
             var smtpUserName = ConfigurationManager.AppSettings.Get("SmtpUsername");
             var smtpPassword = ConfigurationManager.AppSettings.Get("SmtpPassword");
 
-            SmtpClient client = new SmtpClient("mail.flight-jobs.net", 25);
+            SmtpClient client = new SmtpClient("smtp.gmail.com", 587);
+            client.EnableSsl = true;
             client.Credentials = new System.Net.NetworkCredential(smtpUserName, smtpPassword);
 
-            MailAddress from = new MailAddress("no-reply@flight-jobs.net", "FlightJobs");
+            MailAddress from = new MailAddress("flightjobs.net.no.reply@gmail.com", "FlightJobs");
             MailAddress to = new MailAddress(message.Destination);
 
             var msg = new MailMessage(from, to);

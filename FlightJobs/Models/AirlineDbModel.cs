@@ -47,7 +47,7 @@ namespace FlightJobs.Models
         public string UserId { get; set; }
 
         [NotMapped]
-        public string OwnerNickname { get; set; }
+        public StatisticsDbModel OwnerUserStatistics { get; set; }
 
         [DisplayName("Airline debt")]
         public long DebtValue { get; set; }

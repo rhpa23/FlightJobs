@@ -83,7 +83,8 @@ namespace FlightJobs.Controllers
                     resultMsg = "Job started. Warn: Your pilot license is expired. Check profile page.";
                 }
 
-                return Request.CreateResponse(HttpStatusCode.OK, resultMsg);
+                response = Request.CreateResponse(HttpStatusCode.OK, resultMsg);
+                response.Headers.Add("arrival-icao", job.ArrivalICAO);
             }
             catch (Exception e)
             {
@@ -165,7 +166,7 @@ namespace FlightJobs.Controllers
                 long fuelWeight = Convert.ToInt64(Math.Round(Convert.ToDouble(fuelWeightStr, new CultureInfo("en-US"))));
                 job.FinishFuelWeight = fuelWeight;
 
-                var expectedFuelBurned = (job.Dist * job.Payload * 0.27) / 1000;
+                var expectedFuelBurned = (job.Dist * job.Payload * 0.18) / 1000;
                 //// Check Fuel
                 if ((job.UsedFuelWeight) < expectedFuelBurned)
                 {

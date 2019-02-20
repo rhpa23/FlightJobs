@@ -670,6 +670,57 @@ namespace FlightJobs.Controllers
             }
         }
 
+        public PartialViewResult SelectCustomCapacity(int capacityId)
+        {
+            var dbContext = new ApplicationDbContext();
+            var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
+            var statistics = dbContext.StatisticsDbModels.FirstOrDefault(s => s.User.Id == user.Id);
+            var searchModel = new JobSerachModel();
+
+            var dbEntity = dbContext.CustomPlaneCapacity.FirstOrDefault(x => x.User.Id == user.Id && x.Id == capacityId);
+            if (dbEntity != null)
+            {
+                statistics.CustomPlaneCapacity = dbEntity;
+                searchModel.CustomPlaneCapacity = dbEntity;
+                dbContext.SaveChanges();
+            }
+            searchModel.CustomPlaneCapacityList = dbContext.CustomPlaneCapacity
+                                                           .Where(x => x.User.Id == user.Id).Select(c =>
+                                                            new SelectListItem
+                                                            {
+                                                                Text = c.CustomNameCapacity,
+                                                                Value = c.Id.ToString(),
+                                                            }).ToList();
+
+            return PartialView("CapacityListView", searchModel);
+        }
+
+        public PartialViewResult RemoveCustomCapacity(int capacityId)
+        {
+            var dbContext = new ApplicationDbContext();
+            var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
+            var statistics = dbContext.StatisticsDbModels.FirstOrDefault(s => s.User.Id == user.Id);
+            var searchModel = new JobSerachModel();
+
+            var dbEntity = dbContext.CustomPlaneCapacity.FirstOrDefault(x => x.User.Id == user.Id && x.Id == capacityId);
+            if (dbEntity != null)
+            {
+                dbContext.CustomPlaneCapacity.Remove(dbEntity);
+                statistics.CustomPlaneCapacity = null;
+                searchModel.CustomPlaneCapacity = null;
+                dbContext.SaveChanges();
+            }
+            searchModel.CustomPlaneCapacityList = dbContext.CustomPlaneCapacity
+                                                           .Where(x => x.User.Id == user.Id).Select(c =>
+                                                            new SelectListItem
+                                                            {
+                                                                Text = c.CustomNameCapacity,
+                                                                Value = c.Id.ToString(),
+                                                            }).ToList();
+
+            return PartialView("CapacityListView", searchModel);
+        }
+
         public PartialViewResult AddCustonCapacity(int passengers, int cargo, string name)
         {
             var dbContext = new ApplicationDbContext();

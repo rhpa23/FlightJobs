@@ -10,6 +10,7 @@ using Microsoft.AspNet.Identity;
 using System.Web;
 using System.Web.Mvc;
 using System.Threading.Tasks;
+using FlightJobs.Models;
 
 namespace FlightJobs.Controllers
 {
@@ -71,7 +72,11 @@ namespace FlightJobs.Controllers
                 switch (result)
                 {
                     case SignInStatus.Success:
-                        return Request.CreateResponse(HttpStatusCode.OK, userModel.Id.ToString());
+                    {
+                        response = Request.CreateResponse(HttpStatusCode.OK, userModel.Id.ToString());
+                        response.Headers.Add("active_job_info", GetActiveJobInfo(userModel.Id.ToString()));
+                        return response;
+                    }
                     case SignInStatus.LockedOut:
                         return Request.CreateResponse(HttpStatusCode.Forbidden, "Lockout");
                     case SignInStatus.RequiresVerification:
@@ -90,6 +95,19 @@ namespace FlightJobs.Controllers
 
             return response;
         }
-        
+
+        private string GetActiveJobInfo(string userId)
+        {
+            var dbContext = new ApplicationDbContext();
+            var job = dbContext.JobDbModels.FirstOrDefault(j => j.User.Id == userId && j.IsActivated);
+            if (job != null)
+            {
+                return $"The active job depature from {job.DepartureICAO} to {job.ArrivalICAO} with {job.Pax} passengers and {job.Cargo}kg cargo. The total payload is {job.Payload}kg";
+            }
+            else
+            {
+                return "No jobs activated.";
+            }
+        }
     }
 }

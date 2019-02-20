@@ -223,6 +223,16 @@ namespace FlightJobs.Controllers
                         bodyText = string.Format(bodyText, callbackUrl);
                         await UserManager.SendEmailAsync(user.Id, "FlightJobs - Confirm your account (do not reply to this email)", bodyText);
 
+                        var dbContext = new ApplicationDbContext();
+                        dbContext.StatisticsDbModels.Add(new StatisticsDbModel()
+                        {
+                            User = dbContext.Users.FirstOrDefault(u => u.Id == user.Id),
+                            BankBalance = 2000,
+                            PilotScore = 5,
+                            Logo = "/Content/img/default.jpg"
+                        });
+                        dbContext.SaveChanges();
+
                         //return RedirectToAction("VerifyRegistrationCode", new { message = ApplicationMessages.VerificationCodeSent });
                         TempData["ConfirmMessage"] = "Almost there. Check your email to confirm your account.";
                         return RedirectToAction("Login");
@@ -595,7 +605,15 @@ namespace FlightJobs.Controllers
 
         public async Task SendEmailAsync(ApplicationUser user, string title, string bodyText)
         {
-            await UserManager.SendEmailAsync(user.Id, $"FlightJobs - {title}", bodyText);
+            // TO TEST THE SEND E-MAIL
+            //user = UserManager.FindByName(User.Identity.Name);
+
+            //var callbackUrl = "https://flight-jobs.net";
+
+            //string emailTemplateFileName = System.Web.HttpContext.Current.Server.MapPath("~/Content/templates/Confirm Email.html");
+            //bodyText = System.IO.File.ReadAllText(emailTemplateFileName);
+            //bodyText = string.Format(bodyText, callbackUrl);
+            //await UserManager.SendEmailAsync(user.Id, "FlightJobs - Test email (do not reply to this email)", bodyText);
         }
     }
 }
