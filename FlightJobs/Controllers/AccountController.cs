@@ -606,14 +606,14 @@ namespace FlightJobs.Controllers
         public async Task SendEmailAsync(ApplicationUser user, string title, string bodyText)
         {
             // TO TEST THE SEND E-MAIL
-            //user = UserManager.FindByName(User.Identity.Name);
+            user = UserManager.FindByName(User.Identity.Name);
 
-            //var callbackUrl = "https://flight-jobs.net";
+            var callbackUrl = "https://flight-jobs.net";
 
-            //string emailTemplateFileName = System.Web.HttpContext.Current.Server.MapPath("~/Content/templates/Confirm Email.html");
-            //bodyText = System.IO.File.ReadAllText(emailTemplateFileName);
-            //bodyText = string.Format(bodyText, callbackUrl);
-            //await UserManager.SendEmailAsync(user.Id, "FlightJobs - Test email (do not reply to this email)", bodyText);
+            string emailTemplateFileName = System.Web.HttpContext.Current.Server.MapPath("~/Content/templates/Confirm Email.html");
+            bodyText = System.IO.File.ReadAllText(emailTemplateFileName);
+            bodyText = string.Format(bodyText, callbackUrl);
+            await UserManager.SendEmailAsync(user.Id, "FlightJobs - Test email (do not reply to this email)", bodyText);
         }
     }
 }

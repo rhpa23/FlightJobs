@@ -1,0 +1,84 @@
+﻿@{
+    ViewBag.Title = "FAQ";
+}
+<h2>@ViewBag.Title.</h2>
+<h3>@ViewBag.Message</h3>
+
+<div>
+    <ul>
+        <li>
+            <h3>I don't have the bank balance to buy the Licenses requirements. How can I fly without a license?</h3>
+            <h4>- You can buy Licenses Requirements even with zero, in this case after buying your bank balance will be negative until you gain more money to be positive again.</h4>
+        </li>
+        <li>
+            <h3>How can I see the weight values in Pounds?</h3>
+
+            <h4>- You can switch between pounds and kilograms in your User Manager page: <a href="https://flight-jobs.net/Manage" >https://flight-jobs.net/Manage</a> </h4>
+        </li>
+        <li>
+            <h3>I can't start or finish the flight with my aircraft, but with another plane, it works. What can I do?</h3>
+            <h4>
+                - The aircraft model is not defined in ACF file. Open the .acf file with some text editor like Notepad++ and check if these attributes exist and are filled like this sample:
+                <br/>
+                <code>
+                    ...<br />
+                    P acf/_tailnum N251CV<br />
+                    ...<br />
+                    P acf/_descrip Cessna C550<br />
+                </code>
+                <br />
+                If the ACF file defined these attributes and the error persists, please contact the aircraft builder to ask why the XP plugins can't read the aircraft model datarefs: 
+                <code>(sim/aircraft/view/acf_tailnum and sim/aircraft/view/acf_descrip)</code>
+            </h4>
+        </li>
+        <li>
+            <h3>What happens if I buy an airline and sign a contract with another airline?</h3>
+            <h4>- The airline that you bought will be without an owner and will be considered bankrupt.</h4>
+        </li>
+        <li>
+            <h3>I have not received a confirmation email. How can I sign in?</h3>
+            
+            <h4>- First check your spam folder, if isn't there send an email to <a href="mailto:rhpa23@gmail.com?Subject=FlightJobs" target="_blank" data-toggle="tooltip" title="Support e-mail">rhpa23@gmail.com</a> asking to confirm.</h4>
+        </li>
+        <li>
+            <h3>Can I receive some Pilot license expiration warn?</h3>
+            <h4>- Yes, check the "Send email expired license warning" on License popup. Uncheck to not receive this warning.</h4>
+        </li>
+        <li>
+            <h3>How the score system works and what the purpose of joining an airline?</h3>
+            <h4>- The score depends on the distance and the payload. If you joining an airline you can grow the company finance and see the ledger.</h4>
+        </li>
+        <li>
+            <h3>The generated jobs for small aviation aircraft is substantially small comparing the heavies planes. What can I do to make more money with small aircraft?</h3>
+            <h4>- When adding a Job, use the Custom Capacity combining with "General Aviation" flight type and check the job payment difference.</h4>
+        </li>
+        <li>
+            <h3>I let my computer pick a strong password and I don’t remember it.  Can my password be reset?</h3>
+            <h4>- Use 'Change your password' option on your User Manager page:  <a href="https://flight-jobs.net/Manage">https://flight-jobs.net/Manage</a> </h4>
+        </li>
+    </ul>
+</div>
+
+<hr />
+<div class="text-center">
+    <h2>Support Contact</h2>
+    <address>
+        by rhpa23<br />
+        Fortaleza<br />
+        Brazil<br />
+    </address>
+
+    <address>
+        <div>
+            <a href="https://discordapp.com/invite/xmpAWz7" target="_blank" data-toggle="tooltip" title="FlightJobs at Discord">
+                <img src="~/Content/img/discordapp.png" style="width:40px;" />
+            </a>
+            <a href="https://fb.me/rhpa23" target="_blank" data-toggle="tooltip" title="FlightJobs at Facebook">
+                <img src="~/Content/img/fb.png" style="width:40px;" />
+            </a>
+            <a href="mailto:rhpa23@gmail.com?Subject=FlightJobs" target="_blank" data-toggle="tooltip" title="Support e-mail">
+                <img src="~/Content/img/email-icon.png" style="width:35px;" />
+            </a>
+        </div>
+    </address>
+</div>

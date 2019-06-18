@@ -15,6 +15,7 @@ using FlightJobs.Models;
 using System.Globalization;
 using FlightJobs.Util;
 using Elmah;
+using Newtonsoft.Json;
 
 namespace FlightJobs.Controllers
 {
@@ -107,9 +108,12 @@ namespace FlightJobs.Controllers
                 string icaoStr = Request.Headers.GetValues("ICAO").First();
                 string payloadStr = Request.Headers.GetValues("Payload").First();
                 string usarIdStr = Request.Headers.GetValues("UserId").First().Replace("\"", "");
-                string tailNumberStr = Request.Headers.GetValues("TailNumber").First();
-                string planeDescriptionStr = Request.Headers.GetValues("PlaneDescription").First();
+                string tailNumberStr = Request.Headers.Contains("TailNumber") ? Request.Headers.GetValues("TailNumber").FirstOrDefault() : "No acf model data";
+                string planeDescriptionStr = Request.Headers.Contains("PlaneDescription") ? Request.Headers.GetValues("PlaneDescription").FirstOrDefault() : "No acf model data";
                 string fuelWeightStr = Request.Headers.GetValues("FuelWeight").First();
+
+                if (string.IsNullOrEmpty(tailNumberStr))  tailNumberStr = "No acf model data";
+                if (string.IsNullOrEmpty(planeDescriptionStr)) planeDescriptionStr = "No acf model data";
 
                 var dbContext = new ApplicationDbContext();
                 JobDbModel job = null;
@@ -166,7 +170,7 @@ namespace FlightJobs.Controllers
                 long fuelWeight = Convert.ToInt64(Math.Round(Convert.ToDouble(fuelWeightStr, new CultureInfo("en-US"))));
                 job.FinishFuelWeight = fuelWeight;
 
-                var expectedFuelBurned = (job.Dist * job.Payload * 0.18) / 1000;
+                var expectedFuelBurned = (job.Dist * job.Payload * 0.12) / 1000;
                 //// Check Fuel
                 if ((job.UsedFuelWeight) < expectedFuelBurned)
                 {
@@ -280,6 +284,61 @@ namespace FlightJobs.Controllers
                                                             e.MaturityDate < DateTime.UtcNow &&
                                                             e.User.Id == userId).ToList();
             return (listOverdue.Count() > 0);
+        }
+
+        [System.Web.Http.HttpGet]
+        [System.Web.Mvc.AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<HttpResponseMessage> GetUserJobs()
+        {
+            var dbContext = new ApplicationDbContext();
+            string userIdStr = Request.Headers.GetValues("UserId").First().Replace("\"", "");
+            var user = dbContext.Users.FirstOrDefault(u => u.Id == userIdStr);
+            if (user == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest, "User not found.");
+            }
+            
+            var jobListQuery = dbContext.JobDbModels.Where(j => !j.IsDone && j.User.Id == user.Id).OrderBy(j => j.Id);
+
+            var jobList = jobListQuery.ToList();
+            jobList.ForEach(delegate (JobDbModel j) {
+                var cargo = j.Cargo;//  DataConversion.GetWeight(Request, j.Cargo);
+                var paxWeight = j.PaxWeight;// DataConversion.GetWeight(Request, j.PaxWeight);
+                var passengesWeight = j.Pax * paxWeight;
+                j.PayloadDisplay = cargo + passengesWeight;
+                j.Cargo = cargo;
+                j.User = null;
+            });
+
+            var jobListJson = JsonConvert.SerializeObject(jobList, Formatting.None);
+            return Request.CreateResponse(HttpStatusCode.OK, jobListJson);
+        }
+
+        [System.Web.Http.HttpGet]
+        [System.Web.Mvc.AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<HttpResponseMessage> ActivateUserJob()
+        {
+            var dbContext = new ApplicationDbContext();
+            string userIdStr = Request.Headers.GetValues("UserId").First().Replace("\"", "");
+            string jobIdStr = Request.Headers.GetValues("JobId").First().Replace("\"", "");
+            var user = dbContext.Users.FirstOrDefault(u => u.Id == userIdStr);
+            if (user != null)
+            {
+                var jobList = dbContext.JobDbModels.Where(j => !j.IsDone && j.User.Id == user.Id);
+                foreach (var job in jobList)
+                {
+                    job.IsActivated = (job.Id == Convert.ToInt32(jobIdStr));
+                }
+                dbContext.SaveChanges();
+            }
+            else
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest, "User not found.");
+            }
+
+            return Request.CreateResponse(HttpStatusCode.OK);
         }
     }
 }

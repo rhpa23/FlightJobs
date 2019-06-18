@@ -794,18 +794,13 @@ namespace FlightJobs.Controllers
                             var code = ExtractYoutubeCode(uri);
                             videoUrl = "https://www.youtube.com/embed/" + code;
                         }
+                    }
 
-                        job.VideoUrl = videoUrl;
-                        job.VideoDescription = description;
-                        dbContext.SaveChanges();
-                        ViewBag.ResponseMessage = "Video data saved and shared in Airline Ledger table.";
-                        return PartialView("JobVideoView", job);
-                    }
-                    else
-                    {
-                        ViewBag.ResponseError = "Invalid video URL.";
-                        return PartialView("JobVideoView", job);
-                    }
+                    job.VideoUrl = videoUrl;
+                    job.VideoDescription = description;
+                    dbContext.SaveChanges();
+                    ViewBag.ResponseMessage = "Video data saved and shared in Airline Ledger table.";
+                    return PartialView("JobVideoView", job);
                 }
                 else
                 {

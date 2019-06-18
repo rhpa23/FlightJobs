@@ -1585,7 +1585,7 @@ pre code {
   padding-right: 15px;
   padding-left: 15px;
   margin-right: auto;
-  margin-left: auto;
+  
 }
 @media (min-width: 768px) {
   .container {
@@ -1594,12 +1594,12 @@ pre code {
 }
 @media (min-width: 992px) {
   .container {
-    width: 970px;
+    width: 100%;
   }
 }
 @media (min-width: 1200px) {
   .container {
-    width: 1170px;
+    
   }
 }
 .container-fluid {
@@ -2974,10 +2974,7 @@ select[multiple].input-lg {
 .form-horizontal .checkbox {
   min-height: 27px;
 }
-.form-horizontal .form-group {
-  margin-right: -15px;
-  margin-left: -15px;
-}
+
 @media (min-width: 768px) {
   .form-horizontal .control-label {
     padding-top: 7px;

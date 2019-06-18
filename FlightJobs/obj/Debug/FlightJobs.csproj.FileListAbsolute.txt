@@ -144,9 +144,6 @@ D:\Users\rhpa2\Documents\Visual Studio 2017\Projects\FlightJobs\FlightJobs\obj\D
 D:\Users\rhpa2\Documents\Visual Studio 2017\Projects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.csprojResolveAssemblyReference.cache
 D:\DotNetProjects\FlightJobs\FlightJobs\bin\ApplicationInsights.config
 D:\DotNetProjects\FlightJobs\FlightJobs\bin\Content\templates\Confirm Email.html
-D:\DotNetProjects\FlightJobs\FlightJobs\bin\FlightJobs.dll.config
-D:\DotNetProjects\FlightJobs\FlightJobs\bin\FlightJobs.dll
-D:\DotNetProjects\FlightJobs\FlightJobs\bin\FlightJobs.pdb
 D:\DotNetProjects\FlightJobs\FlightJobs\bin\Antlr3.Runtime.dll
 D:\DotNetProjects\FlightJobs\FlightJobs\bin\EntityFramework.dll
 D:\DotNetProjects\FlightJobs\FlightJobs\bin\EntityFramework.SqlServer.dll
@@ -256,8 +253,6 @@ D:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.Migrations.RemoveCo
 D:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.Migrations.UsedFuelWeight.resources
 D:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.csproj.GenerateResource.Cache
 D:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.csproj.CoreCompileInputs.cache
-D:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.dll
-D:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.pdb
 C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\bin\ApplicationInsights.config
 C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\bin\Content\templates\Confirm Email.html
 C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\bin\FlightJobs.dll.config
@@ -409,3 +404,8 @@ D:\DotNetProjects\FlightJobs\FlightJobs\bin\Quartz.xml
 D:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.Migrations.AddWarningSent.resources
 D:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.Migrations.CustomPlaneCapacity.resources
 D:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.Migrations.CustomPlaneCapacityFix01.resources
+D:\DotNetProjects\FlightJobs\FlightJobs\bin\FlightJobs.dll.config
+D:\DotNetProjects\FlightJobs\FlightJobs\bin\FlightJobs.dll
+D:\DotNetProjects\FlightJobs\FlightJobs\bin\FlightJobs.pdb
+D:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.dll
+D:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.pdb

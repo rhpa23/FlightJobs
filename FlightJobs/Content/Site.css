@@ -185,3 +185,8 @@ div.card {
     padding-top: 0px;
     padding-bottom: 0px;
 }
+
+.ads-content {
+    margin-top: 20px;
+    border-left: 1px solid #eee;
+}

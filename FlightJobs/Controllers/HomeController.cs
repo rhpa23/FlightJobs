@@ -269,5 +269,17 @@ namespace FlightJobs.Controllers
             }
             return Json("{}", JsonRequestBehavior.AllowGet);
         }
+
+        [AllowAnonymous]
+        public ActionResult Faq()
+        {
+            return View();
+        }
+
+        [AllowAnonymous]
+        public ActionResult Install()
+        {
+            return View();
+        }
     }
 }

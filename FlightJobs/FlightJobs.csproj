@@ -538,6 +538,8 @@
     <Content Include="Content\img\HomeThum06.jpg" />
     <Content Include="Content\img\HomeThum07.jpg" />
     <Content Include="Content\img\HomeThum08.jpg" />
+    <Content Include="Content\img\install\MenuToggle.jpg" />
+    <Content Include="Content\img\install\PopupWindow.jpg" />
     <Content Include="Content\img\KLM.png" />
     <Content Include="Content\img\line.png" />
     <Content Include="Content\img\loading.gif" />
@@ -783,6 +785,8 @@
     <Content Include="Views\Profile\JobVideoView.cshtml" />
     <Content Include="Views\Profile\PilotTransferView.cshtml" />
     <Content Include="Views\SearchJobs\CapacityListView.cshtml" />
+    <Content Include="Views\Home\Faq.cshtml" />
+    <Content Include="Views\Home\Install.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201710111859366_InitialCreate.resx">
