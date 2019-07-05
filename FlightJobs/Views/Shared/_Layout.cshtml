@@ -73,22 +73,10 @@
                 </a>
                 @Html.Partial("_LoginPartial")
             </div>
-            <div class="navbar-collapse collapse">
-                
-                <ul class="nav navbar-nav  navbar-right">
-                    <li>@Html.ActionLink("Profile", "Index", "Profile")</li>
-                    <li>@Html.ActionLink("Airlines", "Index", "Airlines")</li>
-                    <li>@Html.ActionLink("Add Jobs", "Index", "SearchJobs")</li>
-                    <li><a target="_blank" href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=B2GHF8WFN95JW&lc=US&item_name=FlightJobs&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted">Donation</a></li>
-                    <li>@Html.ActionLink("About", "About", "Home")</li>
-                    <li>@Html.ActionLink("Faq", "Faq", "Home")</li> 
-                </ul>
-                
-                
-            </div>
+            
         </div>
     </div>
-    <div id="banner" style="width:100%; position: relative;">
+    <div id="banner" style="width:100%; position: relative; z-index:90;">
         
         <img src="~/Content/img/banner0001.jpg" style="width:100%" />
     </div>
@@ -111,13 +99,39 @@
                 <strong>Info!</strong> @TempData["MessageLayout"]
             </div>
         }
+        
         <div class="row">
-            <div class="col-sm-9">
+            <div class="col-sm-2" style="width:14%;">
+                <div class="sidenav">
+                    <ul>
+                        <li><i class="glyphicon glyphicon-home black-icon"></i>@Html.ActionLink("Home", "Index", "Home")</li>
+                        <li><i class="glyphicon glyphicon-user black-icon"></i>@Html.ActionLink("Profile", "Index", "Profile")</li>
+                        <li><i class="glyphicon glyphicon-list-alt black-icon"></i>@Html.ActionLink("Airlines", "Index", "Airlines")</li>
+                        <li><i class="glyphicon glyphicon-plus black-icon"></i>@Html.ActionLink("Add Jobs", "Index", "SearchJobs")</li>
+                        <li class="divider"></li>
+                        <li><i class="glyphicon glyphicon-signal black-icon"></i>@Html.ActionLink("Analysis", "Analysis", "Home")</li>
+                        <li><i class="glyphicon glyphicon-download black-icon"></i>@Html.ActionLink("Download", "Install", "Home")</li>
+                        <li class="divider"></li>
+                        <li><i class="glyphicon glyphicon-flag black-icon"></i><a target="_blank" href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=B2GHF8WFN95JW&lc=US&item_name=FlightJobs&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted">Donation</a></li>
+                        <li><i class="glyphicon glyphicon-info-sign black-icon"></i>@Html.ActionLink("About", "About", "Home")</li>
+                        <li><i class="glyphicon glyphicon-question-sign black-icon"></i>@Html.ActionLink("Faq", "Faq", "Home")</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-sm-7"  style="width:61%;">
                 @RenderBody()
             </div>
             <div class="col-sm-3 ads-content">
                 <!-- FSadwork -->
                 <center>
+                    <script type="text/javascript">
+                        zone = "27";
+                        pl = "162";
+                        url = "https://www.fsadwork.com";</script>
+                    <script type="text/javascript" src="https://www.fsadwork.com/show.js"></script>
+                    <br />
+                    <br />
+                    <br />
                     <script type="text/javascript">
                     <!--
                     zone = "39";
@@ -131,14 +145,6 @@
                     c_text3 = "0000FF";
                     url = "https://www.fsadwork.com";
             //--></script>
-                    <script type="text/javascript" src="https://www.fsadwork.com/show.js"></script>
-
-                    <hr />
-
-                    <script type="text/javascript">
-                        zone = "27";
-                        pl = "162";
-                        url = "https://www.fsadwork.com";</script>
                     <script type="text/javascript" src="https://www.fsadwork.com/show.js"></script>
 
                     <hr />
@@ -156,61 +162,45 @@
                 </center>
             </div>
         </div>
-        
     </div>
-    
-
-
-    
-    <hr />
+    <div align="center">
+        <div class="separator"></div>
+    </div>
     <footer>
-        <div class="container">
-            <div class="row">
-                
-                <div class="col-md-6" style="width:47%">
-                    <p>
-                        This application for X-Plane 11 simulate pilot and airliners jobs. 
-                        For use you will need to download and install the <b>FlightJobs Connector Script</b>. @Html.ActionLink("Click here to download the last version.", "Install", "Home")<br><br>
-                    </p>
-                </div>
-                <div class="col-md-1">
-                    <img src="~/Content/img/FlightJobsLogo0002.png" style="width:70px;" />
-                </div>
+        <div class="text-center">
+            <p>
+                This application for X-Plane 11 simulate pilot and airliners jobs.
+            </p>
+            <p>
+                For use you will need to download and install the <b>FlightJobs Connector Script</b>. @Html.ActionLink("Click here to download the last version.", "Install", "Home")<br><br>
+            </p>
 
-                <div class="col-md-5 pull-right">
-                    <p>FlightJobs is free. If you like it, please consider to make a donation. Donations will be spent paying the servers costs.</p>
-                </div>
-                
-            </div>
-            <div class="row">
-                <div class="text-center">
-                    <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
-                        <input type="hidden" name="cmd" value="_s-xclick">
-                        <input type="hidden" name="encrypted" value="-----BEGIN PKCS7-----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-----END PKCS7-----">
-                        <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
-                        <img alt="" border="0" src="https://www.paypalobjects.com/pt_BR/i/scr/pixel.gif" width="1" height="1">
-                    </form>
-                </div>
-            </div>
-            <div class="text-center"><p>Developed by rhpa23 </p></div><br />
-            <br /><hr />
-            <div class="text-center"><p><strong> Thank you for visiting FlightJobs &copy; @DateTime.Now.Year </strong></p></div><br />
-            <div class="text-center">
-                <a href="https://discordapp.com/invite/xmpAWz7" target="_blank" data-toggle="tooltip" title="FlightJobs at Discord" >
-                    <img src="~/Content/img/discordapp.png" style="width:40px;" />
-                </a>
-                <a href="https://fb.me/rhpa23" target="_blank" data-toggle="tooltip" title="FlightJobs at Facebook" >
-                    <img src="~/Content/img/fb.png" style="width:40px;"   />
-                </a>
-                <a href="mailto:rhpa23@gmail.com?Subject=FlightJobs" target="_blank" data-toggle="tooltip" title="Support e-mail">
-                    <img src="~/Content/img/email-icon.png" style="width:35px;" />
-                </a>
-            </div>
-            
-            <div class="text-center small"><p> Disable anti-popup in your browser for a better experience  </p></div><br />
-        </div>
+            <p>FlightJobs is free. If you like it, please consider to make a donation. Donations will be spent paying the servers costs.</p>
+            <img src="~/Content/img/FlightJobsLogo0002.png" style="width:70px;" />
+
+            <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
+                <input type="hidden" name="cmd" value="_s-xclick">
+                <input type="hidden" name="encrypted" value="-----BEGIN PKCS7-----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-----END PKCS7-----">
+                <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+                <img alt="" border="0" src="https://www.paypalobjects.com/pt_BR/i/scr/pixel.gif" width="1" height="1">
+            </form>
+
+            <p>Developed by rhpa23 </p><br />
+            <br /><hr style="margin-left:220px;" />
+            <p><strong> Thank you for visiting FlightJobs &copy; @DateTime.Now.Year </strong></p><br />
+            <a href="https://discordapp.com/invite/xmpAWz7" target="_blank" data-toggle="tooltip" title="FlightJobs at Discord">
+                <img src="~/Content/img/discordapp.png" style="width:40px;" />
+            </a>
+            <a href="https://fb.me/rhpa23" target="_blank" data-toggle="tooltip" title="FlightJobs at Facebook">
+                <img src="~/Content/img/fb.png" style="width:40px;" />
+            </a>
+            <a href="mailto:rhpa23@gmail.com?Subject=FlightJobs" target="_blank" data-toggle="tooltip" title="Support e-mail">
+                <img src="~/Content/img/email-icon.png" style="width:35px;" />
+            </a>
+
+            <p> Disable anti-popup in your browser for a better experience  </p><br />
             <br /><br />
-        
+        </div>
     </footer>
     <style>
         .fixed-footer {
@@ -223,12 +213,12 @@
             padding:2px;
         }
     </style>
-    <div class="fixed-footer">
+    @*<div class="fixed-footer">
         <div class="text-center">
             <img src="~/Content/img/bell.png" style="width:35px; margin-top: -15px;" />
             [NEW VERSION] The new Connector version 0.6.2 was rewritten to work as Flywithlua script. Now works on Mac OS and Linux. @Html.ActionLink("DOWNLOAD", "Install", "Home")
         </div>
-    </div>
+    </div>*@
      
     
 

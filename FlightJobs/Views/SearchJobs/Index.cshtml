@@ -23,85 +23,87 @@
     <div class="form-horizontal" role="form">
         <br />
         <h4>Choose the parameters for generate jobs</h4>
-        <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-
-        <div id="swap-button" class="swap">Swap departure and destination</div>
         
-        <div class="form-group">
-            <div class="row">
-                <div class="col-md-2" style="padding-right:0px; width:12%;">
-                    @Html.LabelFor(model => model.Departure, htmlAttributes: new { @class = "control-label" })
-                    @Html.EditorFor(model => model.Departure, new { htmlAttributes = new { placeholder = "ICAO", @class = "form-control uppercase", @maxlength = "4" } })
-                    @Html.ValidationMessageFor(model => model.Departure, "", new { @class = "text-danger" })
-                </div>
-                <div class="col-sm-1" style="padding-left:0px; padding-right:0px; width:auto;">
-                    <br />
-                    <img src="~/Content/img/airplane.png" />
+        <div class="my-form-content">
 
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+            <div id="swap-button" class="swap">Swap departure and destination</div>
+
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-2" style="padding-right:0px; width:12%;">
+                        @Html.LabelFor(model => model.Departure, htmlAttributes: new { @class = "control-label" })
+                        @Html.EditorFor(model => model.Departure, new { htmlAttributes = new { placeholder = "ICAO", @class = "form-control uppercase", @maxlength = "4" } })
+                        @Html.ValidationMessageFor(model => model.Departure, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="col-sm-1" style="padding-left:0px; padding-right:0px; width:auto;">
+                        <br />
+                        <img src="~/Content/img/airplane.png" />
+
+                    </div>
+
+                    <div class="col-md-2" style="padding-left:0px; width:12%;">
+                        @Html.LabelFor(model => model.Arrival, htmlAttributes: new { @class = "control-label" })
+                        @Html.EditorFor(model => model.Arrival, new { htmlAttributes = new { placeholder = "ICAO", @class = "form-control uppercase", @maxlength = "4" } })
+                        @Html.ValidationMessageFor(model => model.Arrival, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="col-xs-1" style="padding:0px; width:auto;">
+                        <input id="arrival-tips-button" type="button" value="Tips" class="btn btn-info btn-xs" style="margin-top:26px" />
+                    </div>
+
+                    <div id="departure-required" style="display: none;"><i class="glyphicon glyphicon-alert"></i>  First set a valid departure.</div>
+                    <div id="arrival-tips-table" style="display: none;" class="col-md-6">Loading...</div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4 text-center" style="padding-left:0px">
+                        <label id="Distance" style="font-size:small;"></label>
+                    </div>
                 </div>
 
-                <div class="col-md-2" style="padding-left:0px; width:12%;">
-                    @Html.LabelFor(model => model.Arrival, htmlAttributes: new { @class = "control-label" })
-                    @Html.EditorFor(model => model.Arrival, new { htmlAttributes = new { placeholder = "ICAO", @class = "form-control uppercase", @maxlength = "4" } })
-                    @Html.ValidationMessageFor(model => model.Arrival, "", new { @class = "text-danger" })
+
+                <div class="row">
+                    <div class="col-md-2" style="width:12%;">
+                        @Html.LabelFor(model => model.Alternative, htmlAttributes: new { @class = "control-label" })
+                        @Html.EditorFor(model => model.Alternative, new { htmlAttributes = new { placeholder = "ICAO", @class = "form-control uppercase", @maxlength = "4" } })
+                        @Html.ValidationMessageFor(model => model.Alternative, "", new { @class = "text-danger" })
+                    </div>
+
+                    <div class="col-xs-1" style="padding:0px; width:auto;">
+                        <input id="alternative-tips-button" type="button" value="Tips" class="btn btn-info btn-xs" style="margin-top:26px" />
+                    </div>
+                    <div id="destination-required" style="display: none;"><i class="glyphicon glyphicon-alert"></i> First set a valid destination.</div>
+                    <div id="alternative-tips-table" style="display: none;" class="col-md-6">Loading...</div>
+                    <input type="submit" value="Generate" class="btn btn-info pull-right" style="margin-right:20px;" />
                 </div>
-                <div class="col-xs-1" style="padding:0px; width:auto;">
-                    <input id="arrival-tips-button" type="button" value="Tips" class="btn btn-info btn-xs" style="margin-top:26px" />
-                </div>
-                
-                <div id="departure-required" style="display: none;"><i class="glyphicon glyphicon-alert"></i>  First set a valid departure.</div>
-                <div id="arrival-tips-table" style="display: none;" class="col-md-6">Loading...</div>
+
             </div>
-            <div class="row">
-                <div class="col-md-4 text-center" style="padding-left:0px"> 
-                    <label id="Distance" style="font-size:small;" ></label>
-                </div>
-            </div>
-
-
-            <div class="row">
-                <div class="col-md-2" style="width:12%;">
-                    @Html.LabelFor(model => model.Alternative, htmlAttributes: new { @class = "control-label" })
-                    @Html.EditorFor(model => model.Alternative, new { htmlAttributes = new { placeholder = "ICAO", @class = "form-control uppercase", @maxlength = "4" } })
-                    @Html.ValidationMessageFor(model => model.Alternative, "", new { @class = "text-danger" })
-                </div>
-
-                <div class="col-xs-1" style="padding:0px; width:auto;">
-                    <input id="alternative-tips-button" type="button" value="Tips" class="btn btn-info btn-xs" style="margin-top:26px" />
-                </div>
-                <div id="destination-required" style="display: none;"><i class="glyphicon glyphicon-alert"></i> First set a valid destination.</div>
-                <div id="alternative-tips-table" style="display: none;" class="col-md-6">Loading...</div>
-
-            </div>
-
+            <br />
         </div>
-        <br />
-
         <div class="form-group">
             <hr />
-            <input type="submit" value="Generate" class="btn btn-info  pull-right" />
+            
             <div class="funkyradio">
                 <div class="row">
-                    <div class="col-xs-2 ">
+                    <div class="col-xs-3 ">
                         <div class="funkyradio-info">
                             <input type="radio" name="AviationType" id="GeneralAviation" value="GeneralAviation" />
-                            <label for="GeneralAviation"><img src="~/Content/img/pictures/general-aviation.jpg" style="width:100px; height:70px;" /><span>General aviation</span></label>
+                            <label for="GeneralAviation"><img src="~/Content/img/pictures/general-aviation.jpg" style="width:100px; height:70px;" /><span>General</span></label>
                         </div>
                     </div>
-                    <div class="col-xs-2 ">
+                    <div class="col-xs-3 ">
                         <div class="funkyradio-info">
                             <input type="radio" name="AviationType" id="AirTransport" value="AirTransport" checked="checked" />
                             <label for="AirTransport"><img src="~/Content/img/pictures/air-transport.jpg" style="width:100px; height:70px;" /><span>Air transport</span></label>
                         </div>
                     </div>
-                    <div class="col-xs-2 ">
+                    <div class="col-xs-3 ">
                         <div class="funkyradio-info">
                             <input type="radio" name="AviationType" id="HeavyAirTransport" value="HeavyAirTransport" />
                             <label for="HeavyAirTransport"><img src="~/Content/img/pictures/heavy.jpg" style="width:100px; height:70px;" /><span>Heavy</span></label>
                         </div>
                     </div>
-                    <div class="col-xs-2 ">
+                    <div class="col-xs-3 ">
                         <div class="funkyradio-info">
                             <input type="radio" name="AviationType" id="Cargo" value="Cargo" />
                             <label for="Cargo"><img src="~/Content/img/pictures/cargo.jpg" style="width:100px; height:70px;" /><span>Cargo</span></label>
@@ -111,8 +113,8 @@
                 </div>
                 <hr />
                 <div class="row">
-                    <div style="width:300px;margin-left: 15px;">
-                        <div class="funkyradio-info">
+                    <div align="center" style="margin-left: 15px;">
+                        <div class="funkyradio-info" style="width:250px;">
                             <div class="row">
                                 <div class="col-lg-8">
                                     @Html.CheckBoxFor(model => model.UseCustomPlaneCapacity)
@@ -121,7 +123,7 @@
                                         <span>Custom capacity</span>
                                     </label>
                                 </div>
-                                <div class="col-lg-2" style="margin-top:30px">
+                                <div class="col-lg-2" style="margin-top:30px; padding-left:0px;">
                                     <input id="ChangeCapacity" type="button" value="Change" class="btn btn-info"/>
                                 </div>
                             </div>

@@ -35,7 +35,7 @@
     }
     .textLimited {
         display: block;
-        width: 250px;
+        width: 320px;
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
@@ -45,6 +45,12 @@
     }
     .show-video-button {
         cursor:pointer;
+    }
+    .file-caption-main {
+        visibility: hidden;
+    }
+    .file-preview {
+        min-height:241px;
     }
 </style>
 <hr />
@@ -155,29 +161,43 @@
 <hr />
 @if (Model.Statistics != null)
 {
-    <div class="row">
-        <div class="card col-md-12" style="padding:0px; background-color: lightgray;">
-            <div class="col-sm-6" style="padding-right:1px;">
-                <div style="height:35px; background-color:dimgray;text-align:center; ">
-                    <h2><strong><span style="color:lightgray">Pilot</span><samp style="color:darkgray"> statistics</samp></strong></h2>
-                </div>
-                <div class="row text-left" style="background-color:white; min-height:270px; margin:inherit;">
-                    <div class="col-sm-4 text-center" style="width:30%;">
-                        <div class="col-sm-4" style="padding-left:0px;">
-                            @using (Html.BeginForm("Upload", "Profile", FormMethod.Post, new { enctype = "multipart/form-data" }))
-                            {
-                                <div class="kv-avatar">
-                                    <div class="file-loading">
-                                        <input id="avatar-1" name="FilesInput" type="file" required>
+    <div align="center" class="row">
+        <div class="col-md-6">
+            <div style="width:390px; height:780px; background-color:#f1f1f1; border-radius: 5px;">
+                <div class="col-sm-7 text-center" style="padding-left:0px;">
+                    <div class="col-sm-4" style="padding-left:0px;">
+                        @using (Html.BeginForm("Upload", "Profile", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                    {
+                            <div class="kv-avatar">
+                                <div class="file-loading">
+                                    <input id="avatar-1" name="FilesInput" type="file" required>
 
-                                    </div>
                                 </div>
+                            </div>
 
-                                <div id="kv-avatar-errors-1" class="center-block" style="font-size:8pt; width:400px;display:none"></div>
-                            }
-                        </div>
+                            <div id="kv-avatar-errors-1" class="center-block" style="font-size:8pt; width:400px;display:none"></div>
+                    }
                     </div>
-                    <div class="col-sm-6">
+                </div>
+                <div class="col-sm-4" style="padding-left:  0px;">
+                    <button id="buttonChart" type="button" class="btn btn btn-info" style="margin-top:10px; width:100px;">
+                        <span class="glyphicon glyphicon-random"></span> Chart
+                    </button>
+                    <button id="buttonLicense" type="button" class="btn btn btn-info" style="margin-top:10px; width:100px;">
+                        <span class="glyphicon glyphicon-shopping-cart"></span> License
+                    </button>
+                    <img id="license-loading-img" src="~/Content/img/loading.gif" style="width:20px; display:none;" />
+                    <button id="buttonTransfer" type="button" data-toggle="popover" title="Warning" data-content="" data-trigger="focus" class="btn btn btn-info" style="margin-top:10px; width:100px;">
+                        <span class="glyphicon glyphicon-transfer"></span> Transfer
+                    </button>
+                </div>
+                <div class="row text-center">
+                    <div class="col-sm-11">
+                        <h2><strong><span>Pilot</span><samp> statistics</samp></strong></h2>
+                    </div>
+                </div>
+                <div class="row text-left">
+                    <div class="col-sm-11" style="margin-left:15px;">
                         <ul class="myList">
                             <li>
                                 <b>@Html.DisplayNameFor(model => model.Statistics.FlightTimeTotal):</b> @Html.DisplayFor(model => model.Statistics.FlightTimeTotal)
@@ -199,23 +219,15 @@
                             </li>
                         </ul>
                     </div>
-                    <div class="col-sm-2" style="padding-left:  0px;">
-                        <button id="buttonChart" type="button" class="btn btn btn-info" style="margin-top:10px; width:100px;">
-                            <span class="glyphicon glyphicon-random"></span> Chart
-                        </button>
-                        <button id="buttonLicense" type="button" class="btn btn btn-info" style="margin-top:10px; width:100px;">
-                            <span class="glyphicon glyphicon-shopping-cart"></span> License
-                        </button>
-                        <img id="license-loading-img" src="~/Content/img/loading.gif" style="width:20px; display:none;" />
-                        <button id="buttonTransfer" type="button" data-toggle="popover" title="Warning" data-content="" data-trigger="focus" class="btn btn btn-info" style="margin-top:10px; width:100px;">
-                            <span class="glyphicon glyphicon-transfer"></span> Transfer
-                        </button>
-                    </div>
-                </div>
 
-                <div class="row" style="height:170px; background-color:dimgray;text-align:center; margin:inherit;">
-                    <div class="col-sm-3">
-                        <div class="pull-left text-center img-thumbnail" style="margin: 10px;width:  130px; background-color:darkgray;">
+                </div>
+                <hr />
+                <div class="row">
+                    
+                </div>
+                <div align="center" class="row" style="background-color:dimgray; margin:inherit;">
+                    <div class="col-sm-4" style="padding: 0px;">
+                        <div class="pull-left text-center img-thumbnail" style="margin: 10px; background-color:darkgray;">
                             <img src="@Model.Statistics.GraduationPath" data-html="True"
                                  data-toggle="popover" title="Pilot graduation"
                                  data-trigger="hover" data-placement="top"
@@ -224,11 +236,16 @@
                             <div style="font-size: 10px; margin-top:9px; color:snow;">@Model.Statistics.GraduationDesc</div>
                         </div>
                     </div>
-                    <div class="col-sm-9" style="text-align:justify; color:white; padding:8px;">
-                         @Html.Raw(Model.PilotStatisticsDescription) 
+                    <div class="col-sm-8" style="text-align:justify; color:white; padding:8px;">
+                        @Html.Raw(Model.PilotStatisticsDescription)
                     </div>
+
                 </div>
+
+
             </div>
+
+
             <div class="modal" id="myModalLicense" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content" style="width: auto;">
@@ -248,8 +265,9 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <div class="pull-left"><strong>Your bank balance:</strong> 
-                                <span id="license-user-bank-balance" class="@(Model.Statistics.BankBalance < 0 ? "negativeBankBalance" : "")" >@string.Format("{0:C}", Model.Statistics.BankBalance)</span>
+                            <div class="pull-left">
+                                <strong>Your bank balance:</strong>
+                                <span id="license-user-bank-balance" class="@(Model.Statistics.BankBalance < 0 ? "negativeBankBalance" : "")">@string.Format("{0:C}", Model.Statistics.BankBalance)</span>
                             </div>
                             <button type="button" onclick="@("window.location.href='" + @Url.Action("Index") + "'");" class="btn btn-default" data-dismiss="modal">Close</button>
                         </div>
@@ -267,163 +285,172 @@
                     </div>
                 </div>
             </div>
-            
+        </div>
+ 
+        <div class="col-md-6">
+            @if (Model.Statistics.Airline != null)
+            {
+                <div style="width:390px; height:780px; background-color:#f1f1f1; border-radius: 5px;">
+                    <div class="col-sm-7 file-preview" style="padding-left:0px; margin-right:50px; width: 180px;min-height: 241px;">
+                        <img class="img-thumbnail" src="@Model.Statistics.Airline.Logo" style="width:170px;" />
+                    </div>
+                    <div class="col-sm-4" style="padding-left:  0px;">
+                        <button id="buttonRanking" type="button" class="btn btn btn-info" style="margin-top:10px; width:100px;">
+                            <span class="glyphicon glyphicon-equalizer"></span> Ranking
+                        </button>
 
+                        <button id="show-ledger-button" type="button" class="btn btn-info" style="margin-top:10px; width:100px;">
+                            <span class="glyphicon glyphicon-book"></span> Ledger
+                        </button>
+                        <img id="ledger-loading-img" src="~/Content/img/loading.gif" style="width:20px; display:none;" />
 
-            <div class="col-sm-6" style="padding-left:1px;">
-                <div style="height:35px; background-color:dimgray;text-align:center; ">
-                    <h2><strong><span style="color:lightgray">Airline</span><samp style="color:darkgray"> statistics</samp></strong></h2>
-                </div>
-                @if (Model.Statistics.Airline != null)
-                {
-                    <div class="row text-left" style="background-color:white; min-height:270px; margin:inherit;">
-                        <div class="col-sm-4" style="padding-right: 0px;width:30%;">
-                            <img class="img-thumbnail" src="@Model.Statistics.Airline.Logo" style="width:170px; margin-top:5px;" />
+                        <button id="show-fbo-button" type="button" class="btn btn-info" style="margin-top:10px; width:100px;">
+                            <span class="glyphicon glyphicon-shopping-cart"></span> FBO
+                        </button>
+                        <img id="fbo-loading-img" src="~/Content/img/loading.gif" style="width:20px; display:none;" />
+                    </div>
+                    <div class="row text-center">
+                        <div class="col-sm-11" style="margin-top: 40px;">
+                            <h2><strong><span>Airline</span><samp> statistics</samp></strong></h2>
                         </div>
-                        <div class="col-sm-6">
+                    </div>
+                    <div class="col-sm-12 ">
+                        <div class="row text-left" style="margin-left: 15px;">
+
+
                             <ul class="myList">
                                 <li><b>@Html.DisplayNameFor(model => model.Statistics.Airline):</b> @Html.DisplayFor(model => model.Statistics.Airline.Name)</li>
                                 <li>
                                     <b>@Html.DisplayNameFor(model => model.Statistics.AirlinePilotsHired):</b> @Model.Statistics.AirlinePilotsHired.Count()
                                     <a href="#" data-html="True"
-                                        data-toggle="popover" title="Pilots"
-                                        data-trigger="hover" data-placement="bottom"
-                                        data-content="@foreach (var item in @Model.Statistics.AirlinePilotsHired)
-                                        {
+                                       data-toggle="popover" title="Pilots"
+                                       data-trigger="hover" data-placement="bottom"
+                                       data-content="@foreach (var item in @Model.Statistics.AirlinePilotsHired)
+                                {
                                     @item.UserName; <br />
-                                        }"><span class="glyphicon glyphicon-eye-open" style="margin-left:10px;"></span></a>
+                                }"><span class="glyphicon glyphicon-eye-open" style="margin-left:10px;"></span></a>
                                 </li>
                                 <li><b>@Html.DisplayNameFor(model => model.Statistics.Airline.AirlineScore):</b> @Html.DisplayFor(model => model.Statistics.Airline.AirlineScore)</li>
                                 <li><b>@Html.DisplayNameFor(model => model.Statistics.Airline.BankBalance):</b> @Html.DisplayFor(model => model.Statistics.Airline.BankBalance)</li>
                                 <li><b>@Html.DisplayNameFor(model => model.Statistics.Airline.Description):</b> <span style="font-size:smaller"> @Html.DisplayFor(model => model.Statistics.Airline.Description)</span></li>
                             </ul>
                         </div>
-                        <div class="col-sm-2" style="padding-left: 0px;">
-                            <button id="buttonRanking" type="button" class="btn btn btn-info" style="margin-top:10px; width:100px;">
-                                <span class="glyphicon glyphicon-equalizer"></span> Ranking
-                            </button>
-
-                            <button id="show-ledger-button" type="button" class="btn btn-info" style="margin-top:10px; width:100px;">
-                                <span class="glyphicon glyphicon-book"></span> Ledger
-                            </button>
-                            <img id="ledger-loading-img" src="~/Content/img/loading.gif" style="width:20px; display:none;" />
-
-                            <button id="show-fbo-button" type="button" class="btn btn-info" style="margin-top:10px; width:100px;">
-                                <span class="glyphicon glyphicon-shopping-cart"></span> FBO
-                            </button>
-                            <img id="fbo-loading-img" src="~/Content/img/loading.gif" style="width:20px; display:none;" />
-                            
-                            <div class="modal" id="myModalLedger" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-                                <div class="modal-dialog" role="document" style="width:auto; height:auto;">
-                                    <div class="modal-content">
-                                        <div class="modal-header" style="padding-bottom:0px;">
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-
-                                            <h2 class="modal-title">
-                                                <img src="@Model.Statistics.Airline.Logo" style="width:50px; height:50px; margin-right:5px" />
-                                                @Model.Statistics.Airline.Name ledger
-                                            </h2>
-                                        </div>
-                                        <div class="modal-body" height:auto;">
-                                            <div id="ledger-content"></div>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <div class="row" style="padding-right:10px;">
-                                                <div class="col-sm-1">
-                                                    <input id="ledger-departure-filter" placeholder="Departure" class="form-control input-sm text-uppercase" maxlength="4" type="text" />
-                                                </div>
-                                                <div class="col-sm-1">
-                                                    <input id="ledger-arrival-filter" placeholder="Arrival" class="form-control input-sm text-uppercase" maxlength="4" type="text" />
-                                                </div>
-                                                <div class="col-sm-1">
-                                                    <button id="filter-ledger-button" type="button" class="btn btn-default btn-sm pull-left">Filter</button>
-                                                </div>
-                                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        
-                            <div class="modal" id="myModalFBO" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-                                <div class="modal-dialog" role="document" style="width:auto; height:auto;">
-                                    <div class="modal-content">
-                                        <div class="modal-header" style="padding-bottom:0px;">
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                            <h2 class="modal-title">
-                                                Fixed-Base Operator to hire
-                                            </h2>
-                                        </div>
-                                        <div class="modal-body" height:auto;">
-                                            <div id="fbo-content"></div>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <div class="row" style="padding-right:10px;">
-                                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                    </div>
+                    <div class="row" style="background-color:dimgray;margin:inherit;margin-top: 270px;">
+                    @if (Model.Statistics.Airline != null && Model.Statistics.Airline.DebtValue > 0)
+                    {
+                    <div class="pull-right" style="padding:7px;">
+                        <div class="row">
+                            @if (Model.Statistics.Airline.DebtMaturityDate < DateTime.Now)
+                            {
+                                <div class="col-md-1"><img src="~/Content/img/Alert001.gif" style="width:30px; height:30px;" /></div>
+                                <div class="col-sm-5" style="padding:0px;"> <h4 style="color:tomato; margin-left:5px;">This airline has overdue bills to pay. </h4></div>
+                            }
+                            else
+                            {
+                                <div class="col-md-1"><img src="~/Content/img/barcode.png" style="width:30px; height:30px;" /></div>
+                                <div class="col-sm-8" style="padding:0px;"><h4 style="color:tomato; margin-left:5px;">The airline has bills to pay. </h4></div>
+                            }
+                        </div>
+                        <div class="row">
+                            <div align="left" class="col-md-8">
+                                <ul style="color:white; margin-bottom:0px;">
+                                    <li><strong>Debt value: </strong> @string.Format("{0:C}", Model.Statistics.Airline.DebtValue)</li>
+                                    <li><strong>Debt maturity date: </strong> @Model.Statistics.Airline.DebtMaturityDate.ToShortDateString()</li>
+                                </ul>
                             </div>
                         </div>
                         
+
+                        <div style="text-align:justify; color:white; padding:0px 8px 0px 8px;">
+                            <h5>
+                                Fees, taxes and charges are generated with the Jobs. If you are the owner, pay your bills before the due date.
+                                Otherwise, this airline will not score, and the Jobs will generate more debts which could lead to the bankruptcy of the company.
+                            </h5>
+                        </div>
+                        @if (Model.Statistics.Airline.AlowEdit)
+                            {
+                            <input id="pay-debts-button" type="button" value="Pay" onclick="location.href='@Url.Action("PayDebt", "Profile", new { id = Model.Statistics.Airline.Id })'" class="btn btn-danger pull-right btn-sm" style="margin-top:5px" />
+
+                            }
                     </div>
-                    <div class="row" style="height:170px; background-color:dimgray;margin:inherit;">
-                        @if (Model.Statistics.Airline != null && Model.Statistics.Airline.DebtValue > 0)
-                        {
-                            <div class="pull-right" style="padding:7px;">
-                                <div class="row">
-                                    @if (Model.Statistics.Airline.DebtMaturityDate < DateTime.Now)
-                                    {
-                                            <div class="col-md-1"><img src="~/Content/img/Alert001.gif" style="width:30px; height:30px;" /></div>
-                                            <div class="col-sm-5" style="padding:0px;"> <h4 style="color:tomato; margin-left:5px;">This airline has overdue bills to pay. </h4></div>
-                                    }
-                                    else
-                                    {
-                                        <div class="col-md-1"><img src="~/Content/img/barcode.png" style="width:30px; height:30px;" /></div>
-                                        <div class="col-sm-5" style="padding:0px;" ><h4 style="color:tomato; margin-left:5px;">This airline has bills to pay. </h4></div>
-                                    }
-                                    <div class="col-md-6">
-                                        <ul style="color:white;">
-                                            <li><strong>Debt value: </strong> @string.Format("{0:C}", Model.Statistics.Airline.DebtValue)</li>
-                                            <li><strong>Debt maturity date: </strong> @Model.Statistics.Airline.DebtMaturityDate.ToShortDateString()</li>
-                                        </ul>
+                    }
+                    else
+                    {
+                    <div class="col-sm-12" style="text-align:justify; color:white; padding:8px;">
+                        <h5><strong>@Model.Statistics.Airline.Name don't have any bills to pay. The balance of the company is healthy.</strong></h5>
+                        <hr />
+                        <h5>Fees, taxes and charges are generated with the Jobs. </h5>
+                        <h5>If the owner does not pay bills before the due date the airline will not score, and the Jobs will generate more debts which could lead to the bankruptcy of the company.</h5>
+                    </div>
+                    }
+                    </div>
+                </div>
+
+                /** Modals */
+                <div class="modal" id="myModalLedger" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                    <div class="modal-dialog" role="document" style="width:auto; height:auto;">
+                        <div class="modal-content">
+                            <div class="modal-header" style="padding-bottom:0px;">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+
+                                <h2 class="modal-title">
+                                    <img src="@Model.Statistics.Airline.Logo" style="width:50px; height:50px; margin-right:5px" />
+                                    @Model.Statistics.Airline.Name ledger
+                                </h2>
+                            </div>
+                            <div class="modal-body" height:auto;">
+                                <div id="ledger-content"></div>
+                            </div>
+                            <div class="modal-footer">
+                                <div class="row" style="padding-right:10px;">
+                                    <div class="col-sm-1">
+                                        <input id="ledger-departure-filter" placeholder="Departure" class="form-control input-sm text-uppercase" maxlength="4" type="text" />
                                     </div>
+                                    <div class="col-sm-1">
+                                        <input id="ledger-arrival-filter" placeholder="Arrival" class="form-control input-sm text-uppercase" maxlength="4" type="text" />
+                                    </div>
+                                    <div class="col-sm-1">
+                                        <button id="filter-ledger-button" type="button" class="btn btn-default btn-sm pull-left">Filter</button>
+                                    </div>
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                                 </div>
-
-                                <div style="text-align:justify; color:white; padding:8px;">
-                                    <h5>Fees, taxes and charges are generated with the Jobs. If you are the owner, pay your bills before the due date. 
-                                    Otherwise, this airline will not score, and the Jobs will generate more debts which could lead to the bankruptcy of the company.</h5>
-                                </div>
-                                @if (Model.Statistics.Airline.AlowEdit)
-                                {
-                                    <input id="pay-debts-button" type="button" value="Pay" onclick="location.href='@Url.Action("PayDebt", "Profile", new { id = Model.Statistics.Airline.Id })'" class="btn btn-danger pull-right btn-sm" style="margin-top:5px" />
-
-                                }
                             </div>
-                        }
-                        else
-                        {
-                            <div class="col-sm-12" style="text-align:justify; color:white; padding:8px;">
-                                <h5><strong>@Model.Statistics.Airline.Name don't have any bills to pay. The balance of the company is healthy.</strong></h5>
-                                <hr />
-                                <h5>Fees, taxes and charges are generated with the Jobs. </h5>
-                                <h5>If the owner does not pay bills before the due date the airline will not score, and the Jobs will generate more debts which could lead to the bankruptcy of the company.</h5>
-                            </div>
-                        }
+                        </div>
                     </div>
-                }
-                else
-                {
-                    <div class="row text-left" style="background-color:white; min-height:270px; margin:inherit; padding:50px;">
-                        <ul class="myList">
-                            <li><b>@Html.DisplayNameFor(model => model.Statistics.Airline):</b> Unemployed </li>
-                            <li> You don't have any airline info. Try to sign a contract or buy an Airline.</li>
-                       </ul>
-                   </div>
-                }
-            </div>
-       </div>
+                </div>
+
+                <div class="modal" id="myModalFBO" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                    <div class="modal-dialog" role="document" style="width:auto; height:auto;">
+                        <div class="modal-content">
+                            <div class="modal-header" style="padding-bottom:0px;">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h2 class="modal-title">
+                                    Fixed-Base Operator to hire
+                                </h2>
+                            </div>
+                            <div class="modal-body" height:auto;">
+                                <div id="fbo-content"></div>
+                            </div>
+                            <div class="modal-footer">
+                                <div class="row" style="padding-right:10px;">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="row text-left" style="background-color:white; min-height:270px; margin:inherit; padding:50px;">
+                    <ul class="myList">
+                        <li><b>@Html.DisplayNameFor(model => model.Statistics.Airline):</b> Unemployed </li>
+                        <li> You don't have any airline info. Try to sign a contract or buy an Airline.</li>
+                    </ul>
+                </div>
+            }
+        </div>
     </div>
 }
 <hr />
@@ -549,7 +576,7 @@ $("#avatar-1").fileinput({
     elErrorContainer: '#kv-avatar-errors-1',
     msgErrorClass: 'alert alert-block alert-danger',
 
-    defaultPreviewContent: '<img src="@if (@Model.Statistics != null) { @Model.Statistics.Logo }" alt="Your Avatar" style="width:140px;"><h6 class="text-muted">Click to select</h6>',
+    defaultPreviewContent: '<img src="@if (@Model.Statistics != null) { @Model.Statistics.Logo }" alt="Your Avatar"><h6 class="text-muted">Click to select</h6>',
     layoutTemplates: { main2: '{preview} {remove} ' },
     language: 'eN',
     uploadUrl: '/Profile/Upload',

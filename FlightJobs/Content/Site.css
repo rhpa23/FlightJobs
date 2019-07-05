@@ -61,6 +61,7 @@ textarea {
     border-radius: 3px;
     border: 1px solid #D1D3D4;
     margin-top: 1em;
+    width:139px;
 }
 
 .funkyradio label {
@@ -189,4 +190,70 @@ div.card {
 .ads-content {
     margin-top: 20px;
     border-left: 1px solid #eee;
+}
+
+/* The sidebar menu */
+.sidenav {
+    height: 100%; 
+    width: 210px; 
+    position: fixed; 
+    z-index: 1; 
+    top: 0; 
+    left: 0;
+    overflow-x: hidden; /* Disable horizontal scroll */
+    padding-top: 220px;
+    box-shadow: 0 4px 8px 2px rgba(0, 0, 0, 0.0), 0 5px 5px 2px rgba(0, 0, 0, 0.19);
+}
+
+.sidenav ul {
+    display: contents;
+    list-style-type: none;
+}
+.sidenav li:hover {
+    color: #5bc0de;
+    background-color: #eeeff0;
+    cursor: pointer;
+}
+
+.sidenav a {
+    padding: 6px 8px 6px 16px;
+    text-decoration: none;
+    font-size: 20px;
+    color: #818181;
+    display: inline-block;
+    width:80%;
+}
+
+.sidenav li.divider {
+    height: 1px;
+    margin: 12px 0 12px;
+    background: #eaeaea;
+}
+
+
+@media (min-width: 768px) {
+    .navbar-header {
+        float: unset;
+    }
+}
+
+.sidenav .black-icon {
+    color: #818181;
+    font-size: large;
+    margin-left: 6px;
+}
+
+.separator {
+    background-color: dimgray;
+    width: 80px;
+    height: 5px;
+    border-radius: 5px;
+    margin-top: 25px;
+    margin-bottom: 25px;
+}
+
+.my-form-content {
+    background-color: #f1f1f1;
+    border-radius: 10px;
+    padding: 10px;
 }
