@@ -78,15 +78,15 @@
                                         <a href="#" data-html="True"
                                            data-toggle="popover" title="Pilots"
                                            data-trigger="hover" data-placement="bottom"
-                                           data-content="@foreach (var user in item.OwnerUserStatistics.AirlinePilotsHired)
+                                           data-content="@foreach (var userStat in item.OwnerUserStatistics.AirlinePilotsHired)
                                        {
-                                           if (item.OwnerUserStatistics.User.UserName == user.UserName)
+                                           if (item.OwnerUserStatistics.User.UserName == userStat.User.UserName)
                                            {
-                                        <b> @user.UserName (Owner)</b><br />
+                                        <b> @userStat.User.UserName (Owner)</b><br />
                                            }
                                            else
                                            {
-                                           @user.UserName <br />
+                                           @userStat.User.UserName <br />
                                            }
                                        }"><span class="glyphicon glyphicon-eye-open" style="margin-left:10px;"></span></a>
                                     }

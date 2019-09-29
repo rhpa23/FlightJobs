@@ -1,0 +1,72 @@
+﻿@using PagedList;
+
+@using PagedList.Mvc;
+@using FlightJobs.Models;
+
+@model PagedList.IPagedList<JobDbModel>
+
+<div id="pending-job-content" style="margin-bottom:5px;  ">
+    <p>
+        <h3 style=" width:100%; text-align:center; color:dimgray"><b>Pending Jobs</b></h3>
+    </p>
+    <br />
+    <div class="row" style="margin-left:inherit; margin-right:inherit;">
+        <div class="col-sm-1 pending-header" style="width:215px;">
+            Departure - Arrival
+        </div>
+
+        <div class="col-sm-1 pending-header">Distance</div>
+        <div class="col-sm-1 pending-header">Passengers</div>
+        <div class="col-sm-1 pending-header">Cargo</div>
+        <div class="col-sm-1 pending-header">Total payload</div>
+        <div class="col-sm-1 pending-header" style="width:178px; text-align:left;">Payment</div>
+    </div>
+    @foreach (var item in Model)
+    {
+        var styleClass = (item.IsActivated) ? "job-line-activated" : "job-line";
+        var lineTootip = (item.IsActivated) ? "Activated" : "Click to activate";
+
+        <div class="row @styleClass" onclick="activateJob(@item.Id)" title="@lineTootip">
+            <div class="col-sm-1" style="color:white; padding:8px 0px 0px 0px;width: 65px;">
+                <strong>@item.DepartureICAO</strong>
+            </div>
+            <div class="col-sm-1" style="padding-top:5px;padding-left:0px; padding-right:0px; width:auto;">
+                <img src="~/Content/img/airplane2.png" style="width:80px;" />
+            </div>
+            <div class="col-sm-1" style="color:white; padding:8px 0px 0px 0px;width: 65px;" title="Alternative: @item.AlternativeICAO">
+                <strong>@item.ArrivalICAO</strong>
+            </div>
+            <div class="col-sm-1 pending-col">@item.Dist Nm </div>
+            <div class="col-sm-1 pending-col">@item.Pax</div>
+            <div class="col-sm-1 pending-col">@item.Cargo @item.WeightUnit</div>
+            <div class="col-sm-1 pending-col">@item.Payload @item.WeightUnit</div>
+            <div class="col-sm-1 pending-col" style="text-align: left;">@string.Format("{0:C}", item.Pay)</div>
+            <div class="col-sm-1 pending-col" style="width:50px;">
+                <a data-toggle="confirmation" data-title="Remove Job?" href="Home/DeleteJob/@item.Id"><i style="font-size: 20px;" class="glyphicon glyphicon-remove"></i></a>
+            </div>
+        </div>
+    }
+    <br />
+    @Html.PagedListPager(Model, pageNumber => Url.Action("Index", new { pageNumber }))
+    <div class="text-right">
+        <button type="button" class="btn btn btn-info" onclick="location.href='@Url.Action("Index", "SearchJobs")'">
+            <span style="font-size: 20px;" class="glyphicon glyphicon-plus"></span> Add jobs
+        </button>
+    </div>
+</div>
+
+<script>
+    function activateJob(jobID) {
+        $.ajax({
+            url: '@Url.Action("ActivateJob", "Home")',
+            type: "Get",
+            data: { jobId: jobID },
+            success: function (result) {
+                if (result != null) {
+                    $("#pending-job-content").html(result);
+                }
+            }
+        });
+        return true;
+    }
+</script>

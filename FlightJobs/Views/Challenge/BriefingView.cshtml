@@ -1,0 +1,62 @@
+﻿@model FlightJobs.Models.ChallengeViewModel
+
+@if (!string.IsNullOrEmpty(Model.Briefing))
+{
+    <style>
+        .container-watermark {
+            position: relative;
+            text-align: right;
+            color: black;
+        }
+
+        .watermarked {
+            position: absolute;
+            top: 40%;
+            left: 35%;
+            transform: translate(-50%, -50%);
+            text-align: justify;
+        }
+    </style>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-md-11 my-form-content column-in-center">
+                <p>
+
+                    <div class="container-watermark">
+                        <h4 class="text-center watermarked" style="top:2%;"><b><span>Briefing</span></b></h4>
+                        <img src="@Model.WaterMarkImg" alt="Snow" style="width:55%; opacity:0.6;" />
+                        <div class="watermarked">@Model.Briefing</div><br />
+                        
+                    </div>
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="row">
+            @if (TempData["ShowDetails"] == null)
+            {
+                <div class="col-md-10">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                </div>
+            
+                <div class="col-lg-2">
+                    @Html.ActionLink("Confirm", "Confirm", "Challenge", new object { }, new { @class = "btn btn-info pull-right" })
+                </div>
+            }
+            else
+            {
+                <div class="col-md-12">
+                    @if (TempData["JobsUpdated"] != null)
+                    {
+                        <button type="button" onclick="@("window.location.href='" + @Url.Action("Index", "Home") + "'");" class="btn btn-default" data-dismiss="modal">Close</button>
+                    }
+                    else
+                    {
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+}

@@ -29,7 +29,7 @@ namespace FlightJobs.Controllers
                 {
                     airline.OwnerUserStatistics = ownerUserStatistics;
                     var statisticsList = dbContext.StatisticsDbModels.Where(s => s.Airline != null && s.Airline.Id == airline.Id);
-                    airline.OwnerUserStatistics.AirlinePilotsHired = statisticsList.Select(s => s.User).ToList();
+                    airline.OwnerUserStatistics.AirlinePilotsHired = statisticsList.ToList();
                 }
                    
             }

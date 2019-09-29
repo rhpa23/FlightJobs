@@ -12,20 +12,8 @@ using Microsoft.AspNet.Identity.Owin;
 
 namespace FlightJobs.Controllers
 {
-    public class SearchJobsController : Controller
+    public class SearchJobsController : BaseController
     {
-        private double taxEcon = 0.008; // por NM
-        private double taxFirstC = 0.012; // por NM
-        private double taxCargo = 0.0004; // por NM
-
-        private double taxEconGE = 0.165; // por NM
-        private double taxFirstGE = 0.175; // por NM
-        private double taxCargoGE = 0.0041; // por NM
-
-        private int PaxWeight = 84;
-
-        public const string PassengersWeightCookie = "PassengersWeightCookie";
-
         private ApplicationUserManager _userManager;
 
         public ApplicationUserManager UserManager
@@ -225,23 +213,6 @@ namespace FlightJobs.Controllers
             return PartialView("Confirm", viewModel);
         }
 
-        private int GetAviationTypeId(string aviationType)
-        {
-            switch (aviationType)
-            {
-                case "GeneralAviation":
-                    return 1;
-                case "AirTransport":
-                    return 2;
-                case "HeavyAirTransport":
-                    return 3;
-                case "Cargo":
-                    return 4;
-                default:
-                    return 0;
-            }
-        }
-
         public async Task<ActionResult> Confirm()
         {
             var dbContext = new ApplicationDbContext();
@@ -267,6 +238,7 @@ namespace FlightJobs.Controllers
                     selJob.User = user;
                     selJob.StartTime = DateTime.Now;
                     selJob.EndTime = DateTime.Now;
+                    selJob.ChallengeExpirationDate = DateTime.Now.AddDays(-1);
                     selJob.PaxWeight = PaxWeight;
 
                     bool isPounds = DataConversion.GetWeightUnit(Request) == DataConversion.UnitPounds;
@@ -291,185 +263,6 @@ namespace FlightJobs.Controllers
             }
 
             return RedirectToAction("Index", "Home");
-        }
-
-        private IList<JobListModel> GenerateBoardJobs(JobSerachModel model)
-        {
-            IList<JobListModel> listBoardJobs = new List<JobListModel>();
-
-            try
-            {
-                var dep = AirportDatabaseFile.FindAirportInfo(model.Departure);
-                var arrival = AirportDatabaseFile.FindAirportInfo(model.Arrival);
-
-                var depCoord = new GeoCoordinate(dep.Latitude, dep.Longitude);
-                var randomPob = new Random();
-                var randomCargo = new Random();
-                int id = 0;
-                bool validGaProfit = false;
-
-                var arrCoord = new GeoCoordinate(arrival.Latitude, arrival.Longitude);
-                var distMeters = depCoord.GetDistanceTo(arrCoord);
-                var distMiles = (int)DataConversion.ConvertMetersToMiles(distMeters);
-
-                //                    if (distMiles >= model.MinRange && distMiles <= model.MaxRange && arrival.ICAO.ToUpper() != dep.ICAO.ToUpper() &&
-                //                        arrival.ICAO.ToUpper() == model.Arrival.ToUpper())
-
-                if (arrival.ICAO.ToUpper() != dep.ICAO.ToUpper() &&
-                    arrival.ICAO.ToUpper() == model.Arrival.ToUpper())
-                {
-                    var customCapacity = model.CustomPlaneCapacity;
-
-                    if (DataConversion.GetWeightUnit(Request) == DataConversion.UnitPounds)
-                    {
-                        customCapacity.CustomCargoCapacityWeight = DataConversion.ConvertPoundsToKilograms(customCapacity.CustomCargoCapacityWeight);
-                    }
-
-                    int index = randomPob.Next(14, 25);
-                    if (model.AviationType == "GeneralAviation" && model.UseCustomPlaneCapacity)
-                        validGaProfit = customCapacity.CustomCargoCapacityWeight < 3000 && customCapacity.CustomPassengerCapacity < 30;
-
-                    long gePobCount = 0, auxCargoCount = 0;
-
-                    for (int i = 0; i < index; i++)
-                    {
-                        long pob = 0;
-                        long cargo = 0;
-                        long profit = 0;
-                        bool isFisrtClass = Convert.ToBoolean(randomPob.Next(2));
-
-                        var flightType = model.AviationType.Trim();
-                        int alternateCargo = randomPob.Next(2);
-                        bool isCargo = alternateCargo == 0 || flightType == "Cargo";
-                        if (isCargo)
-                        {
-                            int minCargo = 5;
-                            int maxCargo = 160;
-                            if (flightType == "AirTransport") { minCargo = 100; maxCargo = 3000; };
-                            if (flightType == "Cargo") { minCargo = 80; maxCargo = 3500; }
-                            if (flightType == "HeavyAirTransport") { minCargo = 800; maxCargo = 6000; }
-
-                            if (model.UseCustomPlaneCapacity)
-                            {
-                                var cargoCapacity = customCapacity.CustomCargoCapacityWeight;
-                                if (cargoCapacity < minCargo) cargoCapacity = minCargo + 1;
-                                cargo = randomCargo.Next(minCargo, cargoCapacity);
-                                if (auxCargoCount + cargo > cargoCapacity)
-                                {
-                                    cargo = cargoCapacity - auxCargoCount;
-                                    if (cargo == 0) continue;
-                                    auxCargoCount = cargoCapacity;
-                                }
-                                else
-                                {
-                                    auxCargoCount += cargo;
-                                }
-                            }
-                            else
-                            {
-                                cargo = randomCargo.Next(minCargo, maxCargo);
-                            }
-
-                            if (flightType == "GeneralAviation")
-                            {
-                                if (validGaProfit)
-                                {
-                                    profit = Convert.ToInt32(taxCargoGE * distMiles * cargo);
-                                    profit += (140 / customCapacity.CustomCargoCapacityWeight);
-                                }
-                                else
-                                {
-                                    profit = Convert.ToInt32(taxCargo * distMiles * cargo);
-                                }
-                            }
-                            else if (flightType == "AirTransport")
-                            {
-                                profit = Convert.ToInt32(taxCargo * distMiles * cargo);
-                            }
-                            else if (flightType == "Cargo")
-                            {
-                                profit = Convert.ToInt32((taxCargo + 0.0005) * distMiles * cargo);
-                            }
-                            else // HeavyAirTransport
-                            {
-                                profit = Convert.ToInt32(taxCargo * distMiles * cargo);
-                            }
-                        }
-                        else
-                        {
-                            int minPob = 1;
-                            int maxPob = 12;
-                            if (flightType == "AirTransport") { minPob = 10; maxPob = 80; };
-                            if (flightType == "HeavyAirTransport") { minPob = 50; maxPob = 140; }
-
-                            if (model.UseCustomPlaneCapacity)
-                            {
-                                if (customCapacity.CustomPassengerCapacity < minPob) customCapacity.CustomPassengerCapacity = minPob + 1;
-                                pob = randomPob.Next(minPob, customCapacity.CustomPassengerCapacity);
-                                if (gePobCount + pob > customCapacity.CustomPassengerCapacity)
-                                {
-                                    pob = customCapacity.CustomPassengerCapacity - gePobCount;
-                                    if (pob == 0) continue;
-                                    gePobCount = customCapacity.CustomPassengerCapacity;
-                                }
-                                else
-                                {
-                                    gePobCount += pob;
-                                }
-                            }
-                            else
-                            {
-                                pob = randomPob.Next(minPob, maxPob);
-                            }
-
-                            if (flightType == "GeneralAviation")
-                            {
-                                isFisrtClass = true; /// Always premium for GA
-                                if (validGaProfit)
-                                {
-                                    profit = Convert.ToInt32(taxFirstGE * distMiles * pob);
-                                    profit += ((distMiles * 2) / customCapacity.CustomPassengerCapacity);
-                                }
-                                else
-                                {
-                                    profit = Convert.ToInt32(taxFirstC * distMiles * pob);
-                                }
-                            }
-                            else if (flightType == "AirTransport")
-                            {
-                                profit = isFisrtClass ? Convert.ToInt32(taxFirstC * distMiles * pob) : Convert.ToInt32(taxEcon * distMiles * pob);
-                            }
-                            else // HeavyAirTransport
-                            {
-                                profit = isFisrtClass ? Convert.ToInt32(taxFirstC * distMiles * pob) : Convert.ToInt32(taxEcon * distMiles * pob);
-                            }
-                        }
-
-                        cargo = DataConversion.GetWeight(Request, cargo);
-                        var weightUnit = DataConversion.GetWeightUnit(Request);
-
-                        listBoardJobs.Add(new JobListModel()
-                        {
-                            Id = id++,
-                            Departure = dep,
-                            Arrival = arrival.ICAO,
-                            Dist = distMiles,
-                            Pax = pob,
-                            Cargo = cargo,
-                            PayloadView = (isCargo) ? "[Cargo] " + cargo + weightUnit : (isFisrtClass) ? "[Premium] " + pob + " Pax" : "[Promo] " + pob + " Pax",
-                            Pay = profit,
-                            FirstClass = isFisrtClass,
-                            AviationType = model.AviationType
-                        });
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                ModelState.AddModelError("error", ex.Message);
-            }
-
-            return listBoardJobs.OrderBy(j => j.Arrival).ThenBy(x => x.PayloadView).ToList();
         }
 
         public ActionResult AlternativeTips(string destination, int range)
@@ -638,23 +431,6 @@ namespace FlightJobs.Controllers
 
             return RedirectToAction("Index", "Home");
         }
-
-        public int CalcDistance(string departure, string arrival)
-        {
-            var departureInfo = AirportDatabaseFile.FindAirportInfo(departure);
-            var arrivalInfo = AirportDatabaseFile.FindAirportInfo(arrival);
-            if (departureInfo != null && arrivalInfo != null)
-            {
-                var departureCoord = new GeoCoordinate(departureInfo.Latitude, departureInfo.Longitude);
-                var arrivalCoord = new GeoCoordinate(arrivalInfo.Latitude, arrivalInfo.Longitude);
-
-                var distMeters = departureCoord.GetDistanceTo(arrivalCoord);
-                var distMiles = (int)DataConversion.ConvertMetersToMiles(distMeters);
-                return distMiles;
-            }
-            return 0;
-        }
-
 
         private List<JobDbModel> FilterJobs(ApplicationUser user, string departureICAO)
         {

@@ -11,6 +11,8 @@ namespace FlightJobs.Models
     {
         public IPagedList<JobDbModel> Jobs { get; set; }
 
+        public JobDbModel Challenge { get; set; }
+
         public StatisticsDbModel Statistics { get; set; }
 
         [DisplayName("Departure")]

@@ -8,10 +8,11 @@ using PagedList;
 using System.Data.SqlClient;
 using System.Data;
 using FlightJobs.Util;
+using System.Net;
 
 namespace FlightJobs.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : BaseController
     {
         public ActionResult Index(int? pageNumber)
         {
@@ -20,13 +21,30 @@ namespace FlightJobs.Controllers
             var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
             if (user != null)
             {
-                var statistics = dbContext.StatisticsDbModels.FirstOrDefault(s => s.User.Id == user.Id);
+                var statistics = GetAllStatisticsInfo(user, null); 
                 if (statistics != null)
                 {
                     homeModel.Statistics = statistics;
+                    homeModel.PilotStatisticsDescription = GetPilotDescription(statistics, dbContext);
                 }
             }
-            var jobList = dbContext.JobDbModels.Where(j => !j.IsDone && j.User.Id == user.Id).OrderBy(j => j.Id).ToPagedList(pageNumber ?? 1, 4);
+            var jobList = dbContext.JobDbModels.Where(j => 
+                        !j.IsDone && 
+                         j.User.Id == user.Id &&
+                        !j.IsChallenge
+                        ).OrderBy(j => j.Id).ToPagedList(pageNumber ?? 1, 5);
+
+            homeModel.Challenge = dbContext.JobDbModels.FirstOrDefault(c =>
+                            !c.IsDone && c.IsChallenge && c.User.Id == user.Id &&
+                            c.ChallengeExpirationDate >= DateTime.UtcNow);
+            string weightUnit = DataConversion.GetWeightUnit(Request);
+            if (homeModel.Challenge != null)
+            {
+                homeModel.Challenge.WeightUnit = weightUnit;
+                homeModel.Challenge.Cargo = DataConversion.GetWeight(Request, homeModel.Challenge.Cargo);
+                homeModel.Challenge.PayloadDisplay = homeModel.Challenge.Cargo + homeModel.Challenge.PaxWeight;
+            }                
+
             var listOverdue = dbContext.PilotLicenseExpensesUser.Where(e =>
                                                             e.MaturityDate < DateTime.UtcNow &&
                                                             e.User.Id == user.Id).ToList();
@@ -37,27 +55,41 @@ namespace FlightJobs.Controllers
                 var passengesWeight = j.Pax * paxWeight;
                 j.PayloadDisplay = cargo + passengesWeight;
                 j.Cargo = cargo;
+                j.WeightUnit = weightUnit;
             });
             homeModel.Jobs = jobList;
-            homeModel.WeightUnit = DataConversion.GetWeightUnit(Request);
+            homeModel.WeightUnit = weightUnit;
+            ViewBag.TitleChallenge = "Pending Challenges";
             return View(homeModel);
         }
 
-        public ActionResult ActivateJob(int? jobId)
+        public PartialViewResult ActivateJob(int? jobId)
         {
             var dbContext = new ApplicationDbContext();
             var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
             if (user != null)
             {
-                var jobList = dbContext.JobDbModels.Where(j => !j.IsDone && j.User.Id == user.Id);
-                foreach (var job in jobList)
-                {
-                    job.IsActivated = (job.Id == jobId);
-                }
-                dbContext.SaveChanges();
-            }
+                dbContext.JobDbModels.Where(j => j.User.Id == user.Id).ToList().ForEach(x =>
+                        x.IsActivated = (x.Id == jobId)
+                    );
 
-            return RedirectToAction("Index");
+                dbContext.SaveChanges();
+
+                var jobList = dbContext.JobDbModels.Where(j => !j.IsDone && j.User.Id == user.Id && !j.IsChallenge);
+
+                var pagedJobList = jobList.OrderBy(j => j.Id).ToPagedList(1, 4);
+                pagedJobList.ToList().ForEach(delegate (JobDbModel j) {
+                    var cargo = DataConversion.GetWeight(Request, j.Cargo);
+                    var paxWeight = DataConversion.GetWeight(Request, j.PaxWeight);
+                    var passengesWeight = j.Pax * paxWeight;
+                    j.PayloadDisplay = cargo + passengesWeight;
+                    j.Cargo = cargo;
+                    j.WeightUnit = DataConversion.GetWeightUnit(Request);
+                });
+                return PartialView("PendingJobsView", pagedJobList);
+
+            }
+            return PartialView("PendingJobsView");
         }
 
         public ActionResult DeleteJob(int id)
@@ -280,6 +312,98 @@ namespace FlightJobs.Controllers
         public ActionResult Install()
         {
             return View();
+        }
+
+        public ActionResult PilotTransferFunds(int percent)
+        {
+            if (percent > 100 || percent <= 0)
+            {
+                var msg = $"Transfer percent out of range [1-100].";
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest, msg);
+            }
+
+            var dbContext = new ApplicationDbContext();
+
+            var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
+            var uStatistics = dbContext.StatisticsDbModels.FirstOrDefault(s => s.User.Id == user.Id);
+            if (uStatistics.Airline == null)
+            {
+                var msg = $"You need to sign a contract with an airline to transfer funds.";
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest, msg);
+            }
+
+            var transferBB = uStatistics.BankBalance * (percent / (double)100);
+            var newPilotBalance = uStatistics.BankBalance - transferBB - (uStatistics.BankBalance * 0.15);
+
+            if (newPilotBalance <= 0)
+            {
+                var msg = $"Insufficient balance to make a transfer. Your current bank balance is: {string.Format("{0:C}", uStatistics.BankBalance)}";
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest, msg);
+            }
+
+            uStatistics.BankBalance = (long)newPilotBalance;
+            uStatistics.Airline.BankBalance = (long)transferBB + uStatistics.Airline.BankBalance;
+
+            dbContext.SaveChanges();
+
+            Session["HeaderStatistics"] = null;
+
+            return RedirectToAction("Index");
+        }
+
+        public PartialViewResult PilotGraduation()
+        {
+            return PartialView("~/Views/Profile/GraduationView.cshtml");
+        }
+
+        public PartialViewResult FlightsInfo()
+        {
+            var dbContext = new ApplicationDbContext();
+            var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
+            var statistics = GetAllStatisticsInfo(user, null);
+            //return PartialView("ChartProfile", chartModel);
+            statistics.ChartModel = ChartProfile(user);
+            return PartialView("~/Views/Profile/FlightInfoView.cshtml", statistics);
+        }
+
+        public ActionResult PayDebt(int id)
+        {
+            var dbContext = new ApplicationDbContext();
+            var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
+            var airline = dbContext.AirlineDbModels.FirstOrDefault(a => a.Id == id && a.UserId == user.Id);
+
+            if (airline != null)
+            {
+                //          500                 200
+                if (airline.DebtValue > airline.BankBalance)
+                {
+                    airline.DebtValue = airline.DebtValue - airline.BankBalance;
+                    airline.BankBalance = 0;
+                    var statistics = dbContext.StatisticsDbModels.FirstOrDefault(s => s.User.Id == user.Id);
+                    if (airline.DebtValue > statistics.BankBalance)
+                    {
+                        airline.DebtValue = airline.DebtValue - statistics.BankBalance;
+                        statistics.BankBalance = 0;
+                    }
+                    else
+                    {
+                        statistics.BankBalance -= airline.DebtValue;
+                        airline.DebtValue = 0;
+                    }
+                }
+                else
+                {
+                    airline.BankBalance -= airline.DebtValue;
+                    airline.DebtValue = 0;
+                }
+
+                dbContext.SaveChanges();
+            }
+            else
+            {
+                TempData["Message"] = "You must be the owner of the airline to pay debts.";
+            }
+            return RedirectToAction("Index");
         }
     }
 }

@@ -46,6 +46,9 @@ namespace FlightJobs
             bundles.Add(new ScriptBundle("~/bundles/chart").Include(
             "~/Scripts/Chart.js"));
 
+            bundles.Add(new ScriptBundle("~/Content/css/challenge").Include(
+            "~/Content/challenge.css"));
+
             //D:\Users\rhpa2\Documents\Visual Studio 2017\Projects\FlightJobs\FlightJobs\Content\bootstrap-fileinput\css\fileinput.min.css
         }
     }

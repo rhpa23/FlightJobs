@@ -54,5 +54,8 @@ namespace FlightJobs.Models
 
         [DisplayName("Debt maturity date")]
         public DateTime DebtMaturityDate { get; set; }
+
+        [NotMapped]
+        public List<AirlineFboDbModel> HiredFBOs { get; internal set; }
     }
 }

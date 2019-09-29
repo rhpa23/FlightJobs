@@ -5,6 +5,7 @@
 
 @model FlightJobs.Models.HomeViewModel
 
+@Styles.Render("~/Content/css/challenge")
 
 <style>
     .pagination {
@@ -14,27 +15,46 @@
         font-size:13pt;
     }
     .job-line {
-        height: 120px;
+        height: 40px;
         background-color: dimgray;
+        color: white;
         text-align: center;
         margin: inherit;
-        border-radius: 9px;
         padding-left: 5px;
         border: 1px solid #D1D3D4;
-        cursor:pointer;
+        cursor: pointer;
+        margin-bottom: 0px;
     }
     .job-line:hover {
         border: 2px solid #5bc0de;
     }
     .job-line-activated {
-        height: 120px;
+        height: 40px;
         background-color: #5bc0de;
+        color: white;
         text-align: center;
         margin: inherit;
-        border-radius: 9px;
+        margin-top: 0px;
         padding-left: 5px;
         border: 1px solid #696969;
         cursor: pointer;
+        margin-bottom: 0px;
+    }
+    .pending-header {
+        height: 20px;
+        background-color: dimgrey;
+        text-align: center;
+        padding-left: 5px;
+        color: white;
+        width: 14%;
+    }
+    .pending-col {
+        width: 14%;
+        text-align: center;
+        margin: inherit;
+        padding-top: 8px;
+        color: white;
+        padding-left: 5px;
     }
     .glyphicon {
         font-size: 50px;
@@ -48,248 +68,466 @@
     .carousel-indicators .active {
         background-color: #444;
     }
+    .notes-area {
+        border: 2px solid #7ed6f0;
+        padding: 0px;
+        height: auto;
+        margin: 5px 10px 10px 5px;
+        width: 98.5%;
+    }
+    .dashboard-area {
+        border: 2px solid #7ed6f0;
+        padding: 0px;
+        height: 350px;
+        margin: 5px;
+    }
+    .card-user-info {
+        color: #5bc0de;
+        width: 120px;
+        height: 130px;
+        margin: 10px;
+        padding: 5px;
+        text-align: center;
+    }
+
+    .linked :hover {
+        cursor: pointer;
+        border: 1px solid #5bc0de;
+        text-decoration: none;
+    }
+
 </style>
 
-@*<div style="height:65px">
-    <img class="pull-right" src="~/Content/img/FlightJobsWeekend.png" style="width:172px; height:68px;" />
-</div>*@
 
 <div>
     <br />
     
-    
-    @if (Model.Jobs.Count == 0)
+    @if (Model.Statistics != null)
     {
-        <p>
-            <b>You don't have any jobs to activate. Click on 'Add Jobs' button below to growing your list of pending jobs. 
-            After that don't forget to activate your job on this home page. If you have any doubt watch 
-                <a href="https://youtu.be/zOAvb1jQaGY" target="_blank">
-                    this video tutorial.
-                </a> </b>
-        </p>
-        <div class="row" style="text-align:center; margin-bottom:15px;">
-            <button type="button" class="btn btn btn-info" onclick="location.href='@Url.Action("Index", "SearchJobs")'">
-                <span style="font-size: 20px;" class="glyphicon glyphicon-plus"></span> Add jobs
-            </button>
-        </div>
-        <br />
-
-        <div id="carouselScreenShots" class="carousel slide" data-ride="carousel" >
-            <div style="background-color:#5bc0de; height:1px;">
-                <ol class="carousel-indicators">
-                    <li data-target="#carouselScreenShots" data-slide-to="0" class="active"></li>
-                    <li data-target="#carouselScreenShots" data-slide-to="1"></li>
-                    <li data-target="#carouselScreenShots" data-slide-to="2"></li>
-                    <li data-target="#carouselScreenShots" data-slide-to="3"></li>
-                    <li data-target="#carouselScreenShots" data-slide-to="4"></li>
-                    <li data-target="#carouselScreenShots" data-slide-to="5"></li>
-                    <li data-target="#carouselScreenShots" data-slide-to="6"></li>
-                    <li data-target="#carouselScreenShots" data-slide-to="7"></li>
-                </ol>
-            </div>
-            <div class="carousel-inner">
-                <div class="item active">
-                    <img class="d-block w-100" src="~/Content/img/HomeThum01.jpg" alt="Pilot Statistics">
-                </div>
-                <div class="item">
-                    <img class="d-block w-100" src="~/Content/img/HomeThum02.jpg" alt="Airline Statistics">
-                </div>
-                <div class="item">
-                    <img class="d-block w-100" src="~/Content/img/HomeThum03.jpg" alt="License">
-                </div>
-                <div class="item">
-                    <img class="d-block w-100" src="~/Content/img/HomeThum04.jpg" alt="Airlines">
-                </div>
-                <div class="item">
-                    <img class="d-block w-100" src="~/Content/img/HomeThum05.jpg" alt="Analysis">
-                </div>
-                <div class="item">
-                    <img class="d-block w-100" src="~/Content/img/HomeThum06.jpg" alt="FOBs">
-                </div>
-                <div class="item">
-                    <img class="d-block w-100" src="~/Content/img/HomeThum07.jpg" alt="Ranking">
-                </div>
-                <div class="item">
-                    <img class="d-block w-100" src="~/Content/img/HomeThum08.jpg" alt="Pilot Chart">
-                </div>
-            </div>
-
-        </div>
-
+        string cashTextColor = Model.Statistics.BankBalance < 0 ? "red" : "#5bc0de";
 
         
-        <br />
-    }
-    else
-    {
-    <div style="margin-bottom:5px;  ">
-        <p>
-            <h3 style=" width:100%; text-align:center; color:dimgray"><b>Pending Jobs</b></h3>
-        </p>
-        <br />
-        @foreach (var item in Model.Jobs)
-        {
-            var styleClass = (item.IsActivated) ? "job-line-activated" : "job-line";
-
-            <div class="row @styleClass" onclick="location.href='@Url.Action("ActivateJob", "Home", new { jobId = item.Id })'">
-                <div class="row">
-                    <div class="col-xs-1" style="text-align:justify; color:white; padding-top:8px;">
-                        <h3><strong>@item.DepartureICAO</strong></h3>
+        <div class="row center-block">
+            <div class="col-md-7 dashboard-area">
+                <div style="padding:4px; background-color:#5bc0de; color:white;">Captain: @Model.Statistics.User.UserName</div>
+                @{ string btnTransferId = (Model.Statistics.Airline != null) ? "btnTransfer" : "btnNonTransfer"; }
+                
+                <div id="@btnTransferId" class="col-lg-4 linked">
+                    <div class="card card-user-info">
+                        <img style="width:80px;border:none;" src="~/Content/img/cash-001.png" />
+                        <br />
+                        <span style="font-size:medium;border:none;">Bank balance:</span>
+                        <br />
+                        <span style="border:none;color:@cashTextColor">
+                            @string.Format("{0:C}", Model.Statistics.BankBalance)
+                        </span>
+                        <br />
+                        <img id="bank-balance-loading-img" src="~/Content/img/loading.gif" style="width:20px; display:none;" />
                     </div>
-                    <div class="col-sm-1" style="padding-top:20px;padding-left:0px; padding-right:0px; width:auto;">
-                        <img src="~/Content/img/airplane2.png" />
-                    </div>
-                    <div class="col-sm-1" style="text-align:justify; color:white; padding:8px;">
-                        <h3><strong>@item.ArrivalICAO</strong></h3>
-                    </div>
-                    
                 </div>
-                <div class="row">
-                    <div class="col-sm-2" style="text-align:right; color:white; margin-left:25px; ">
-                        @item.Dist Nm
+                <div class="col-lg-4">
+                    <div class="card card-user-info">
+                        <img style="width:80px;" src="~/Content/img/score-001.png" />
+                        <br />
+                        <span style="font-size:medium;">Score:</span>
+                        <br />
+                        <span>
+                            @Model.Statistics.PilotScore point(s)
+                        </span>
                     </div>
-                    <div class="col-sm-1" style="text-align:center; color:gray; margin-left:10px; ">
-                        <h3 style="margin-top:0px;"><strong>@item.AlternativeICAO</strong></h3>
+                </div>
+                <div id="btnLicense" class="col-lg-4 linked">
+                    <div class="card card-user-info">
+                        @if (TempData["PilotMessage"] != null)
+                        {
+                            <img style="width:80px;opacity: 0.5;border:none;" src="~/Content/img/license-001.png" /><br />
+                            <h6 style="color:red; border:none;">@TempData["PilotMessage"]</h6>
+                        }
+                        else
+                        {
+                            <img style="width:80px; border:none;" src="~/Content/img/license-001.png" /><br />
+                            <h6 style="border:none;">License is up to date</h6>
+                        }
+                        <img id="license-loading-img" src="~/Content/img/loading.gif" style="width:20px; display:none;" />
                     </div>
-                    <div class="col-sm-2" style="text-align:justify; color:white; margin-left:30px; margin-top:-40px; width:12%; padding-right:0px; padding-left:0px;">
-                        <div class="row">
-                            <div class="col-sm-3">
-                                <img src="~/Content/img/passenger2.png" style="width:40px;" />
-                            </div>
-                            <div class="col-sm-5">
-                                <h4><strong>@item.Pax</strong></h4><h5> Passengers</h5>
-                            </div>
+                </div>
+                <div class="col-lg-4 linked">
+                    <a href="@Url.Action("Index", "Profile")">
+                        <div class="card card-user-info">
+                            <img style="width:80px;border:none;" src="~/Content/img/time-001.png" />
+                            <br />
+                            <span style="font-size:medium;border:none;">Flight time:</span>
+                            <br />
+                            <span style="border:none;">
+                                @Model.Statistics.FlightTimeTotal
+                            </span>
                         </div>
+                    </a>
+                </div>
+                <div id="btnGraduation" class="col-lg-4 linked">
+                    <div class="card card-user-info">
+                        <img style="width:50px; height:80px; padding:4px; border:none;" src="@Model.Statistics.GraduationPath" />
+                        <br />
+                        <span style="font-size:medium;border:none;">Graduation:</span>
+                        <br />
+                        <span style="font-size:smaller;line-height: 12px;border:none;">@Model.Statistics.GraduationDesc</span>
                     </div>
-                    <div class="col-sm-2" style="text-align:justify; width:19%; color:white; margin-top:-40px; padding-right:0px;">
-
-                            <div class="col-sm-3">
-                                <img src="~/Content/img/baggage.png" style="width:40px;padding-right:0px;" />
-                            </div>
-                            <div class="col-sm-9" style="margin-top:-55px; margin-left:60px;" >
-                                <h5 style="margin-bottom:0px;"><strong>@item.Cargo @Model.WeightUnit</strong></h5><h6 style="margin-top:0px;"> Cargo</h6>
-                                <h5 style="margin-bottom:0px;"><strong>@item.PayloadDisplay @Model.WeightUnit</strong></h5><h6 style="margin-top:0px;"> Total payload</h6>
-                            </div>
-
-                    </div>
-                    <div class="col-sm-2" style="text-align:justify; color:white; margin-top:-47px; padding-left:0px; width:20%;">
- 
-                            <div class="col-sm-5" style="padding-left:0px;">
-                                <img src="~/Content/img/pilot2.png" style="width:40px; margin-left:5px;" />
-                                <h6 style="margin-top:5px; margin-bottom:0px;"><strong>@string.Format("{0:C}", item.Pay)</strong></h6><h6 style="margin-top:0px;"> Payament</h6>
-                            </div>
-                            <div class="col-sm-7" style="margin-top:-12px; padding-left:0px; padding-right:0px;" >
-                                <h5 style="margin-bottom:0px;"><strong>@item.User.UserName</strong></h5><h6 style="margin-top:0px;"> Pilot</h6>
-                                
-                                @if (TempData["PilotMessage"] != null)
-                                {
-                                    <h6 style="color:gold">@TempData["PilotMessage"]</h6>
-                                }
-                                else
-                                {
-                                   <h6>License is up to date</h6>
-                                }
-                            </div>
-
-                    </div>
-                    <div class="col-sm-1" style="text-align:center; color:white; margin-top:-50px; padding-left:20px;">
-                        <div class="row">
-                            @if (item.IsActivated)
-                            {
-                                <span class="glyphicon glyphicon-check"></span><h6>Activated</h6>
-                            }
-                            else
-                            {
-                                <span class="glyphicon glyphicon-hourglass"></span><h6>Click me</h6>
-                            }
-                        </div>
-                    </div>
-                    <div class="col-sm-1" style="text-align:right; color:white; margin-top:-20px; padding-left:20px;width:auto; ">
-                        <a data-toggle="confirmation" data-title="Remove Job?" href="Home/DeleteJob/@item.Id"><i style="font-size: 20px;" class="glyphicon glyphicon-remove"></i></a>
+                </div>
+                <div id="btnFlightsInfo" class="col-lg-4 linked">
+                    <div class="card card-user-info">
+                        <img style="width:80px; height:80px; padding:4px;border:none;" src="@Model.Statistics.Logo" />
+                        <br />
+                        <span style="font-size:medium;border:none;">Nº of Flights:</span>
+                        <br />
+                        <span style="border:none;">@Model.Statistics.NumberFlights</span><br />
+                        <img id="flights-info-loading-img" src="~/Content/img/loading.gif" style="width:20px; display:none;" />
                     </div>
                 </div>
             </div>
-        }
+            <div class="col-md-1"> </div>
+            @if (Model.Statistics.Airline != null)
+            {
+                string debtTextColor = Model.Statistics.Airline.DebtValue > 0 ? "red" : "#5bc0de";
 
-    </div>
-    <button type="button" class="btn btn btn-info pull-right" onclick="location.href='@Url.Action("Index", "SearchJobs")'">
-        <span style="font-size: 20px;" class="glyphicon glyphicon-plus"></span> Add jobs
-    </button>
+                <div class="col-md-4 dashboard-area" style="width:39%;">
+                    <div style="padding:4px; background-color:#5bc0de; color:white;">Airline: @Model.Statistics.Airline.Name</div>
+                    <div id="btnLedger" class="col-md-6 linked">
+                        <div class="card card-user-info">
+                            <img style="width:80px; border:none;" src="~/Content/img/cash-001.png" /><br />
+                            <span style="font-size:medium;border:none;">Bank balance:</span><br />
+                            <div style="font-size:smaller;line-height: 12px;border:none;">
+                                @string.Format("{0:C}", @Model.Statistics.Airline.BankBalance)
+                            </div>
+                        </div>
+                    </div>
+                    <div id="btnRanking" class="col-md-6 linked">
+                        <div class="card card-user-info">
+                            <img style="width:80px;border:none;" src="~/Content/img/score-001.png" /><br />
+                            <span style="font-size:medium;border:none;">Score:</span><br />
+                            <span style="font-size:small;border:none;">@Model.Statistics.Airline.AirlineScore point(s)</span>
+                        </div>
+                    </div>
+                    <div id="btnAirlineInfo" class="col-md-6 linked">
+                        <div class="card card-user-info">
+                            <img style="width:80px;border:none;" src="~/Content/img/debt-001.png" /><br />
+                            <span style="font-size:medium;border:none;">Debt:</span><br />
+                            <span style="font-size:small;border:none; color:@debtTextColor">
+                                @string.Format("{0:C}", @Model.Statistics.Airline.DebtValue)
+                            </span>
+                            <br />
+                            <img id="airline-info-loading-img" src="~/Content/img/loading.gif" style="width:20px; display:none;" />
+                        </div>
+                    </div>
+                    <div id="btnFBO" class="col-md-6 linked">
+                        <div class="card card-user-info">
+                            <img style="width:80px;height:80px;padding:3px;border:none;" src="@Model.Statistics.Airline.Logo" />
+                            <br />
+                            <span style="font-size:smaller;line-height:11px;border:none;">Pilots hired: @Model.Statistics.AirlinePilotsHired.Count()</span>
+                            <br />
+                            <div style="font-size:smaller;line-height:12px;border:none;">FBO(s): @Model.Statistics.Airline.HiredFBOs.Count()</div><br />
+                            <img id="fbo-loading-img" src="~/Content/img/loading.gif" style="width:20px; display:none;" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AIRLINE MODALS-->
+
+                <div class="modal" id="myModalLedger" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                    <div class="modal-dialog" role="document" style="width:auto; height:auto;">
+                        <div class="modal-content">
+                            <div class="modal-header" style="padding-bottom:0px;">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+
+                                <h2 class="modal-title">
+                                    <img src="@Model.Statistics.Airline.Logo" style="width:50px; height:50px; margin-right:5px" />
+                                    @Model.Statistics.Airline.Name ledger
+                                </h2>
+                            </div>
+                            <div class="modal-body" height:auto;">
+                                <div id="ledger-content"></div>
+                            </div>
+                            <div class="modal-footer">
+                                <div class="row" style="padding-right:10px;">
+                                    <div class="col-sm-1">
+                                        <input id="ledger-departure-filter" placeholder="Departure" class="form-control input-sm text-uppercase" maxlength="4" type="text" />
+                                    </div>
+                                    <div class="col-sm-1">
+                                        <input id="ledger-arrival-filter" placeholder="Arrival" class="form-control input-sm text-uppercase" maxlength="4" type="text" />
+                                    </div>
+                                    <div class="col-sm-1">
+                                        <button id="filter-ledger-button" type="button" class="btn btn-default btn-sm pull-left">Filter</button>
+                                    </div>
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal" id="myModalAirlineInfo" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content" style="width: auto;">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title" id="myModalLabel">@Model.Statistics.Airline.Name balance situation</h4>
+                            </div>
+                            <div id="airline-info-content"></div>
+                        </div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="col-md-4 dashboard-area" style="width:39%;">
+                    <div style="padding:4px; background-color:#5bc0de; color:white;">No airline</div>
+                    <a href="@Url.Action("Index", "Airlines")">
+                        <div class="col-lg-12 linked">
+                            <div class="card card-user-info" style="width:200px;">
+                                <br />
+                                <span style="font-size:medium; border:none;">Sign a contract with an airline or buy your own company.</span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            }
+        </div>
+        <div class="row center-block">
+            <div class="col-md-12 notes-area">
+                <div style="padding:4px; background-color:#5bc0de; color:white;">Notification(s)</div>
+                @if (Model.Jobs.Count == 0)
+                {
+                    <hr />
+                    <div class="col-md-1"><img src="~/Content/img/alert-002.png" style="width:30px; height:30px;" /></div>
+                    <div class="col-md-11" style="padding:0px;">
+                        <b>
+                            You don't have any pending job to activate. <a href="@Url.Action("Index", "SearchJobs")">Click on 'Add Jobs'</a> to growing your list of pending jobs.
+                            <br />After that don't forget to activate your job.
+                        </b>
+                    </div>
+                    <br />
+                }
+                @if (!string.IsNullOrEmpty(Model.PilotStatisticsDescription))
+                {
+                    <hr />
+                    <a onclick="openLicenseModal()" href="#">
+                        <div style="padding:10px;">@Html.Raw(Model.PilotStatisticsDescription)</div>
+                    </a>
+                }
+                @if (Model.Statistics.Airline != null &&
+                     Model.Statistics.Airline.DebtValue > 0 &&
+                     Model.Statistics.Airline.DebtMaturityDate < DateTime.Now)
+                {
+                    <hr />
+                    <div class="col-md-1"><img src="~/Content/img/alert-002.png" style="width:30px; height:30px;" /></div>
+                    <div class="col-md-11" style="padding:0px;">
+                        <a onclick="openAirlineInfoModal()" href="#">
+                            <h5><strong>YOUR AIRLINE HAS BILLS TO PAY.</strong></h5>
+                            <h5>
+                                The airline will not score, and the Jobs will generate more debts which could lead to the bankruptcy of the company.
+                            </h5>
+                        </a>
+                    </div>
+                }
+                @if (Model.Challenge != null)
+                {
+                    <a onclick="openChallengeBriefingModal()" href="#">
+                        <br />
+                        <hr />
+                        <div class="col-md-1"><img src="~/Content/img/alert-002.png" style="width:30px; height:30px;" /></div>
+                        <div class="col-md-11" style="padding:0px;">
+
+                            <h5><strong>Challenge to complete by expiring on @Model.Challenge.ChallengeExpirationDate.ToShortDateString().</strong></h5>
+                            <h5>
+                                Do not waste time! Challenge is more rentable than a normal job and when you complete you and the creator will earn money.
+                            </h5>
+                        </div>
+                        <div class="row" style="margin-left:10px;margin-right:10px;">
+                            <div class="col-sm-1 pending-header" style="width:5%;">Type</div>
+                            <div class="col-sm-1 pending-header" style="width:25%;">
+                                Departure - Arrival
+                            </div>
+
+                            <div class="col-sm-1 pending-header">Distance</div>
+                            <div class="col-sm-1 pending-header">Passengers</div>
+                            <div class="col-sm-1 pending-header">Cargo</div>
+                            <div class="col-sm-1 pending-header">Total payload</div>
+                            <div class="col-sm-1 pending-header">Total payment</div>
+                        </div>
+                        @{ var styleClass = (Model.Challenge.IsActivated) ? "job-line-activated" : "job-line"; }
+                        <div class="row @styleClass" style="margin-left:10px;margin-right:10px;">
+                            <div class="col-sm-1" style="width:4%;">
+                                @if (Model.Challenge.ChallengeType == FlightJobs.Enums.ChallengeTypeEnum.Civilian)
+                                {
+                                    <span class="glyphicon glyphicon-plane challenge-type-icon"></span>
+                                }
+                                else if (Model.Challenge.ChallengeType == FlightJobs.Enums.ChallengeTypeEnum.Military)
+                                {
+                                    <span class="glyphicon glyphicon-bullhorn challenge-type-icon"></span>
+                                }
+                                else if (Model.Challenge.ChallengeType == FlightJobs.Enums.ChallengeTypeEnum.Rescue)
+                                {
+                                    <span class="glyphicon glyphicon-fire challenge-type-icon"></span>
+                                }
+                            </div>
+                            <div class="col-sm-1" style="text-align:justify; color:white; width:6%;">
+                                <h4>@Model.Challenge.DepartureICAO</h4>
+                            </div>
+                            <div class="col-sm-1" style="padding-top:5px; width:auto;">
+                                <img src="~/Content/img/airplane2.png" style="height:25px;" />
+                            </div>
+                            <div class="col-sm-1" style="text-align:justify; color:white; width:6%; padding-left:0px;">
+                                <h4>@Model.Challenge.ArrivalICAO</h4>
+                            </div>
+                            <div class="col-sm-1 challenge-col">
+                                <div class="row">@Model.Challenge.Dist Nm</div>
+                            </div>
+                            <div class="col-sm-1 challenge-col">
+                                <div class="row">@Model.Challenge.Pax</div>
+                            </div>
+                            <div class="col-sm-1 challenge-col">
+                                <div class="row">@Model.Challenge.Cargo @Model.Challenge.WeightUnit</div>
+                            </div>
+                            <div class="col-sm-1 challenge-col">
+                                <div class="row">@Model.Challenge.Payload @Model.Challenge.WeightUnit</div>
+                            </div>
+                            <div class="col-sm-1 challenge-col">
+                                <div class="row"> @string.Format("{0:C}", Model.Challenge.Pay)</div>
+                            </div>
+                        </div>
+                    </a>
+                    <br />
+                }
+
+            </div>
+        </div>
+        <!-- MODALs -->
+        <div class="modal" id="myModalTransfer" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content" style="width: auto;">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="myModalLabel">Transfer pilot funds to Airline</h4>
+                    </div>
+                    <div id="transfer-content"></div>
+                </div>
+            </div>
+        </div>
+        <div class="modal" id="myModalGraduation" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content" style="width: 300px;">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="myModalLabel">Pilot graduation</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div id="graduation-content"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal" id="myModalFlightsInfo" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content" style="width: 650px;">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="myModalLabel">Pilot flights info</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div id="flights-info-content"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal" id="myModalLicense" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content" style="width: auto;">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="myModalLabel">Pilot license expenses</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div id="license-content"></div>
+                        <div class="form-group">
+                            <div class="pull-right">
+                                <div class="checkbox">
+                                    @Html.CheckBoxFor(m => m.Statistics.SendLicenseWarning)
+                                    @Html.LabelFor(m => m.Statistics.SendLicenseWarning, new { style = "padding-left: 0px" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <div class="pull-left">
+                            <strong>Your bank balance:</strong>
+                            <span id="license-user-bank-balance" class="@(Model.Statistics.BankBalance < 0 ? "negativeBankBalance" : "")">@string.Format("{0:C}", Model.Statistics.BankBalance)</span>
+                        </div>
+                        <button type="button" onclick="@("window.location.href='" + @Url.Action("Index") + "'");" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal" id="myModalFBO" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document" style="width:auto; height:auto;">
+                <div class="modal-content">
+                    <div class="modal-header" style="padding-bottom:0px;">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h2 class="modal-title">
+                            Fixed-Base Operator to hire
+                        </h2>
+                    </div>
+                    <div class="modal-body" height:auto;">
+                        <div id="fbo-content"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <div class="row" style="padding-right:10px;">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal" id="myModalRanking" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content" style="width: 100%;">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="myModalLabel">Airlines ranking</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div id="ranking-content"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    
+    
+    @if (Model.Jobs.Count > 0)
+    { 
+        @Html.Partial("PendingJobsView", Model.Jobs)
     }
 
 </div>
-
-
-
-
-@Html.PagedListPager(Model.Jobs, pageNumber => Url.Action("Index", new { pageNumber }))
-
 <br />
 <br />
-<br />
-<br />
+<hr />
 
-<div align="center">
-    <div class="separator" ></div>
-</div>
-<br /><br />
-<h4 style="text-align:center;">
-    @Html.ActionLink("Download the connector for", "Install", "Home")
-</h4>
-<img class="img-responsive center-block" src="~/Content/img/XPlane_11_logo.png" />
+
+<br />
 
 <br /><br />
-<div class="row" align="center">
-    <p><h3>Screenshots</h3></p>
-    <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel" align="center" style="width:550px; height:650px; ">
-        <div style="background-color:#5bc0de; height:10px;">
-            <ol class="carousel-indicators">
-                <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
-                <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
-                <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
-                <li data-target="#carouselExampleIndicators" data-slide-to="3"></li>
-                <li data-target="#carouselExampleIndicators" data-slide-to="4"></li>
-                <li data-target="#carouselExampleIndicators" data-slide-to="5"></li>
-                <li data-target="#carouselExampleIndicators" data-slide-to="6"></li>
-                <li data-target="#carouselExampleIndicators" data-slide-to="7"></li>
-                <li data-target="#carouselExampleIndicators" data-slide-to="8"></li>
-            </ol>
-        </div>
-        <div class="carousel-inner">
-            <div class="item active">
-                <img class="d-block w-100" src="~/Content/img/Slider/pilot-statistics.JPG" alt="Pilot Statistics">
-            </div>
-            <div class="item">
-                <img class="d-block w-100" src="~/Content/img/Slider/airline-statistics.JPG" alt="Airline Statistics">
-            </div>
-            <div class="item">
-                <img class="d-block w-100" src="~/Content/img/Slider/license.JPG" alt="License">
-            </div>
-            <div class="item">
-                <img class="d-block w-100" src="~/Content/img/Slider/airlines.JPG" alt="Airlines">
-            </div>
-            <div class="item">
-                <img class="d-block w-100" src="~/Content/img/Slider/analysis.JPG" alt="Analysis">
-            </div>
-            <div class="item">
-                <img class="d-block w-100" src="~/Content/img/Slider/fbos.JPG" alt="FOBs">
-            </div>
-            <div class="item">
-                <img class="d-block w-100" src="~/Content/img/Slider/ranking.JPG" alt="Ranking">
-            </div>
-            <div class="item">
-                <img class="d-block w-100" src="~/Content/img/Slider/pilot-chart.JPG" alt="Pilot Chart">
-            </div>
-            <div class="item">
-                <img class="d-block w-100" src="~/Content/img/Slider/ledger.JPG" alt="Airline Ledger">
-            </div>
-        </div>
-    </div>
-</div>
 <div class="row">
     <div style="margin-left:100px;">
-        <div style="background-color:#5bc0de; height:10px;"></div>
-        <strong class="text-center"> Below this list of current features:</strong>
+        <div style="background-color:#5bc0de; height:10px;"></div><br />
+        <strong class="text-center"> FEATURES:</strong>
         <ul>
             <li>Access your detailed Logbook anywhere through a website</li>
             <li>
@@ -324,6 +562,15 @@
     </div>
 </div>
 
+<div align="center">
+    <div class="separator"></div>
+</div>
+<br /><br />
+<h4 style="text-align:center;">
+    @Html.ActionLink("Download the connector for", "Install", "Home")
+</h4>
+<img class="img-responsive center-block" src="~/Content/img/XPlane_11_logo.png" />
+
 <br />
 <br />
 <br />
@@ -340,9 +587,204 @@
 
 
 
-
+<!-- Modal -->
+<div class="modal fade" id="briefingModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" style="width: 800px;">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Challenge details</h4>
+            </div>
+            <div id="challenge-briefing"></div>
+        </div>
+    </div>
+</div>
 
 
 
 <hr />
 <br />
+<script>
+    function openLicenseModal() {
+        $('#license-loading-img').show();
+        $.ajax({
+            url: '@Url.Action("PilotLicenseProfile", "Profile")',
+            type: "Get",
+            data: '',
+            success: function (result) {
+                if (result != null) {
+                    $('#myModalLicense').modal('show');
+                    $("#license-content").html(result);
+                    $('#license-loading-img').hide();
+                }
+            }
+        });
+        return true;
+    }
+
+    $('#btnFBO').click(function () {
+        $('#fbo-loading-img').show();
+        $.ajax({
+            url: '@Url.Action("FboProfile", "Profile")',
+            type: "Get",
+            data: { airlineId: @( Model.Statistics != null && Model.Statistics.Airline != null ? Model.Statistics.Airline.Id : 0 )  },
+            success: function (result) {
+                if (result != null) {
+                    $('#myModalFBO').modal('show');
+                    $("#fbo-content").html(result);
+                    $('#fbo-loading-img').hide();
+                }
+            }
+        });
+        return true;
+    });
+
+    $('#btnTransfer').click(function () {
+        $('#bank-balance-loading-img').show();
+        $.ajax({
+            url: '@Url.Action("PilotTransferProfile", "Profile")',
+            type: "Get",
+            data: '',
+            success: function (result) {
+                if (result != null) {
+                    $('#myModalTransfer').modal('show');
+                    $("#transfer-content").html(result);
+                    $('#bank-balance-loading-img').hide();
+                }
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log("Erro:" + errorThrown);
+                $('#myModalTransfer').modal('show');
+                $("#transfer-content").html('<h4 style="margin:20px;color:red;">' + errorThrown + '</h4>');
+            }
+        });
+        return true;
+    });
+
+    $('#btnGraduation').click(function () {
+        $.ajax({
+            url: '@Url.Action("PilotGraduation", "Home")',
+            type: "Get",
+            data: '',
+            success: function (result) {
+                if (result != null) {
+                    $('#myModalGraduation').modal('show');
+                    $("#graduation-content").html(result);
+                }
+            }
+            });
+        return true;
+    });
+
+    $('#btnLicense').click(function () {
+        openLicenseModal();
+    });
+
+    $('#btnFlightsInfo').click(function () {
+        $('#flights-info-loading-img').show();
+        $.ajax({
+            url: '@Url.Action("FlightsInfo", "Home")',
+            type: "Get",
+            data: '',
+            success: function (result) {
+                if (result != null) {
+                    $('#myModalFlightsInfo').modal('show');
+                    $("#flights-info-content").html(result);
+                    $('#flights-info-loading-img').hide();
+                }
+            }
+            });
+        return true;
+    });
+
+    $('#btnRanking').click(function () {
+        $.ajax({
+            url: '@Url.Action("RankingProfile", "Profile")',
+            type: "Get",
+            data: '',
+            success: function (result) {
+                if (result != null) {
+                    $('#myModalRanking').modal('show');
+                    $("#ranking-content").html(result);
+                }
+            }
+        });
+        return true;
+    });
+
+    $('#btnLedger').click(function () {
+        $('#ledger-loading-img').show();
+        $.ajax({
+            url: '@Url.Action("LedgerProfile", "Profile")',
+            type: "Get",
+            data: { airlineId: @( Model.Statistics != null && Model.Statistics.Airline != null ? Model.Statistics.Airline.Id : 0 )  },
+            success: function (result) {
+                if (result != null) {
+                    $('#myModalLedger').modal('show');
+                    $("#ledger-content").html(result);
+                    $('#ledger-loading-img').hide();
+                }
+            }
+        });
+        return true;
+    });
+
+    $('#filter-ledger-button').click(function () {
+        $.ajax({
+            url: '@Url.Action("FilterLedger", "Profile")',
+            type: "Get",
+            data: {
+                airlineId: @( Model.Statistics != null && Model.Statistics.Airline != null ? Model.Statistics.Airline.Id : 0 )  ,
+                departure: $('#ledger-departure-filter').val(),
+                arrival: $('#ledger-arrival-filter').val()
+            },
+            success: function (result) {
+                if (result != null) {
+                    $("#ledger-content").html(result);
+                }
+            }
+        });
+        return true;
+    });
+
+    function openAirlineInfoModal() {
+        $('#airline-info-loading-img').show();
+        $.ajax({
+            url: '@Url.Action("AirlineBalanceInfo", "Profile")',
+            type: "Get",
+            data: {
+                airlineId: @( Model.Statistics != null && Model.Statistics.Airline != null ? Model.Statistics.Airline.Id : 0 )
+            },
+            success: function (result) {
+                if (result != null) {
+                    $('#myModalAirlineInfo').modal('show');
+                    $("#airline-info-content").html(result);
+                    $('#airline-info-loading-img').hide();
+                }
+            }
+        });
+        return true;
+    }
+    $('#btnAirlineInfo').click(function () {
+        openAirlineInfoModal();
+    });
+
+    function openChallengeBriefingModal() {
+        $.ajax({
+            url: '@Url.Action("ShowChallengeDetails", "Challenge")',
+            type: "Get",
+            data: {
+                jobId: @( Model.Challenge != null ? Model.Challenge.Id : 0 )
+            },
+            success: function (result) {
+                if (result != null) {
+                    $('#briefingModal').modal('show');
+                    $("#challenge-briefing").html(result);
+                }
+            }
+        });
+        return true;
+    }
+
+
+</script>

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNet.Identity.EntityFramework;
+﻿using FlightJobs.Enums;
+using Microsoft.AspNet.Identity.EntityFramework;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -144,6 +145,20 @@ namespace FlightJobs.Models
         [DataType(DataType.MultilineText)]
         [DisplayName("Video description")]
         public string VideoDescription { get; set; }
+
+        public string ChallengeCreatorUserId { get; set; }
+
+        public bool IsChallenge { get; set; }
+
+        [NotMapped]
+        public bool IsChallengeFromCurrentUser { get; set; }
+
+        public DateTime ChallengeExpirationDate { get; set; }
+
+        public ChallengeTypeEnum ChallengeType { get; set; }
+
+        [NotMapped]
+        public string WeightUnit { get; set; }
 
         public static JobDbModel Clone(JobDbModel job, ApplicationUser user)
         {

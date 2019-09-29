@@ -70,7 +70,7 @@ namespace FlightJobs.Models
 
         [NotMapped]
         [DisplayName("Pilots hired")]
-        public List<ApplicationUser> AirlinePilotsHired { get; set; }
+        public List<StatisticsDbModel> AirlinePilotsHired { get; set; }
 
         [NotMapped]
         public string GraduationPath { get; set; }
@@ -78,5 +78,7 @@ namespace FlightJobs.Models
         [NotMapped]
         public string GraduationDesc { get; set; }
 
+        [NotMapped]
+        public ChartViewModel ChartModel { get; set; }
     }
 }

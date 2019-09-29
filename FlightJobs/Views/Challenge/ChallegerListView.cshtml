@@ -1,0 +1,98 @@
+﻿@using PagedList;
+@using FlightJobs.Models;
+@using PagedList.Mvc;
+
+@Styles.Render("~/Content/css/challenge")
+
+@model IPagedList<JobDbModel>
+
+@if (Model != null && Model.Count > 0 && TempData["PilotMessage"] == null)
+{
+    <div style="margin-bottom:5px;">
+        <p>
+            <h3 style=" width:100%; text-align:center; color:dimgray"><b>@ViewBag.TitleChallenge</b></h3>
+        </p>
+        <br />
+        <div class="row" style="margin-left:inherit; margin-right:inherit;">
+            <div class="col-sm-1 challenge-header" style="width:5%;">Type</div>
+            <div class="col-sm-1 challenge-header" style="width:25%;">
+                Departure - Arrival
+            </div>
+
+            <div class="col-sm-1 challenge-header">Distance</div>
+            <div class="col-sm-1 challenge-header">Passengers</div>
+            <div class="col-sm-1 challenge-header">Cargo</div>
+            <div class="col-sm-1 challenge-header">Total payload</div>
+            <div class="col-sm-1 challenge-header">Total payment</div>
+        </div>
+
+        @foreach (var item in Model)
+        {
+            string rowClass = item.IsChallengeFromCurrentUser ? "challenge-line-unable" : "challenge-line";
+
+            <div class="row @rowClass" onclick="openChallengerBriefing(@item.Id)">
+                <div class="row">
+                    <div class="col-sm-1" style="width:5%;">
+                        @if (item.ChallengeType == FlightJobs.Enums.ChallengeTypeEnum.Civilian)
+                    {
+                            <span class="glyphicon glyphicon-plane challenge-type-icon"></span>
+                        }
+                        else if (item.ChallengeType == FlightJobs.Enums.ChallengeTypeEnum.Military)
+                        {
+                            <span class="glyphicon glyphicon-bullhorn challenge-type-icon"></span>
+                        }
+                        else if (item.ChallengeType == FlightJobs.Enums.ChallengeTypeEnum.Rescue)
+                        {
+                            <span class="glyphicon glyphicon-fire challenge-type-icon"></span>
+                        }
+                    </div>
+                    <div class="col-sm-1" style="text-align:justify; color:white; width:6%;">
+                        <h4>@item.DepartureICAO</h4>
+                    </div>
+                    <div class="col-sm-1" style="padding-top:5px; width:auto;">
+                        <img src="~/Content/img/airplane2.png" style="height:25px;" />
+                    </div>
+                    <div class="col-sm-1" style="text-align:justify; color:white; width:6%; padding-left:0px;">
+                        <h4>@item.ArrivalICAO</h4>
+                    </div>
+                    <div class="col-sm-1 challenge-col">
+                        <div class="row">@item.Dist Nm</div>
+                    </div>
+                    <div class="col-sm-1 challenge-col">
+                        <div class="row">@item.Pax</div>
+                    </div>
+                    <div class="col-sm-1 challenge-col">
+                        <div class="row">@item.Cargo @item.WeightUnit</div>
+                    </div>
+                    <div class="col-sm-1 challenge-col">
+                        <div class="row">@item.Payload @item.WeightUnit</div>
+                    </div>
+                    <div class="col-sm-1 challenge-col">
+                        <div class="row"> @string.Format("{0:C}", item.Pay)</div>
+                    </div>
+                </div>
+            </div>
+        }
+        <br />
+
+        @Html.PagedListPager(Model, pageNumber => Url.Action("Index", new { pageNumber }))
+    </div>
+}
+
+
+<script>
+    function openChallengerBriefing(challengerId) {
+        $.ajax({
+            url: '@Url.Action("OpenChallengerBriefing", "Challenge")',
+            type: "Get",
+            data: { jobId: + challengerId } ,
+            success: function (result) {
+                if (result) {
+                    $("#briefingModal").modal('show');
+                    $('#challenge-briefing').html(result);
+                }
+            }
+        });
+        return true;
+    }
+</script>

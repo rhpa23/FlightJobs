@@ -55,13 +55,13 @@
     $('#pilot-transfer-button').click(function () {
         var pct = parseInt($("#PilotTransferPercent").val());
         $.ajax({
-            url: '@Url.Action("PilotTransferFunds", "Profile")',
+            url: '@Url.Action("PilotTransferFunds", "Home")',
             type: "Get",
             data: {
                 percent: pct
             },
             success: function (results) {
-                window.location.href = '/Profile';
+                window.location.href = '/Home';
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 console.log("Erro:" + errorThrown);

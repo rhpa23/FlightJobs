@@ -217,12 +217,15 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AirlinesController.cs" />
+    <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Controllers\ChallengeController.cs" />
     <Compile Include="Controllers\JobApiController .cs" />
     <Compile Include="Controllers\AuthenticationApiController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\ProfileController.cs" />
     <Compile Include="Controllers\SearchJobsController.cs" />
+    <Compile Include="Enums\ChallengeTypeEnum.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -378,12 +381,17 @@
     <Compile Include="Migrations\201812221933029_CustomPlaneCapacityFix01.Designer.cs">
       <DependentUpon>201812221933029_CustomPlaneCapacityFix01.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201908181309579_Challenger.cs" />
+    <Compile Include="Migrations\201908181309579_Challenger.Designer.cs">
+      <DependentUpon>201908181309579_Challenger.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\AirlineFboView.cs" />
     <Compile Include="Models\AirlineFboDbModel.cs" />
     <Compile Include="Models\AirlineViewModel.cs" />
     <Compile Include="Models\CertificateViewModel.cs" />
+    <Compile Include="Models\ChallengeViewModel.cs" />
     <Compile Include="Models\ChartViewModel.cs" />
     <Compile Include="Models\ConfirmJobsViewModel.cs" />
     <Compile Include="Models\CustomPlaneCapacityDbModel.cs" />
@@ -454,6 +462,7 @@
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\challenge.css" />
     <Content Include="Content\icon\android-icon-144x144.png" />
     <Content Include="Content\icon\android-icon-192x192.png" />
     <Content Include="Content\icon\android-icon-36x36.png" />
@@ -485,6 +494,7 @@
     <Content Include="Content\img\airfrance.png" />
     <Content Include="Content\img\airplane.png" />
     <Content Include="Content\img\airplane2.png" />
+    <Content Include="Content\img\alert-002.png" />
     <Content Include="Content\img\Alert001.gif" />
     <Content Include="Content\img\alitalia.png" />
     <Content Include="Content\img\americanAirlines.jpg" />
@@ -496,7 +506,11 @@
     <Content Include="Content\img\bell.png" />
     <Content Include="Content\img\britishairways.png" />
     <Content Include="Content\img\capacity001.jpg" />
+    <Content Include="Content\img\cash-001.png" />
     <Content Include="Content\img\certificate.png" />
+    <Content Include="Content\img\challenger\civilian-water-mark-001.png" />
+    <Content Include="Content\img\challenger\military-water-mark-002.png" />
+    <Content Include="Content\img\challenger\rescue-water-mark-001.png" />
     <Content Include="Content\img\checked_icon.png" />
     <Content Include="Content\img\contract2.jpg" />
     <Content Include="Content\img\contract_ico.jpg" />
@@ -541,6 +555,7 @@
     <Content Include="Content\img\install\MenuToggle.jpg" />
     <Content Include="Content\img\install\PopupWindow.jpg" />
     <Content Include="Content\img\KLM.png" />
+    <Content Include="Content\img\license-001.png" />
     <Content Include="Content\img\line.png" />
     <Content Include="Content\img\loading.gif" />
     <Content Include="Content\img\logbook0001.jpg" />
@@ -571,6 +586,7 @@
     <Content Include="Content\img\PilotExpenses\WeatherExam.jpg" />
     <Content Include="Content\img\ranking.png" />
     <Content Include="Content\img\ryanair.png" />
+    <Content Include="Content\img\score-001.png" />
     <Content Include="Content\img\Slider\airline-statistics.JPG" />
     <Content Include="Content\img\Slider\airlines.JPG" />
     <Content Include="Content\img\Slider\analysis.JPG" />
@@ -582,6 +598,7 @@
     <Content Include="Content\img\Slider\ranking.JPG" />
     <Content Include="Content\img\southwest.png" />
     <Content Include="Content\img\TAP.jpg" />
+    <Content Include="Content\img\time-001.png" />
     <Content Include="Content\img\XPlane_11_logo.png" />
     <Content Include="Content\PagedList.css" />
     <Content Include="Content\templates\Confirm Email.html">
@@ -787,6 +804,13 @@
     <Content Include="Views\SearchJobs\CapacityListView.cshtml" />
     <Content Include="Views\Home\Faq.cshtml" />
     <Content Include="Views\Home\Install.cshtml" />
+    <Content Include="Views\Challenge\Index.cshtml" />
+    <Content Include="Views\Challenge\BriefingView.cshtml" />
+    <Content Include="Views\Challenge\AssignChallengerView.cshtml" />
+    <Content Include="Views\Profile\FlightInfoView.cshtml" />
+    <Content Include="Views\Profile\AirlineBalanceInfoView.cshtml" />
+    <Content Include="Views\Home\PendingJobsView.cshtml" />
+    <Content Include="Views\Challenge\ChallegerListView.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201710111859366_InitialCreate.resx">
@@ -902,6 +926,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201812221933029_CustomPlaneCapacityFix01.resx">
       <DependentUpon>201812221933029_CustomPlaneCapacityFix01.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201908181309579_Challenger.resx">
+      <DependentUpon>201908181309579_Challenger.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

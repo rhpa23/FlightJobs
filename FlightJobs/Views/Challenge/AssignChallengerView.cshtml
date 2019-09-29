@@ -1,0 +1,58 @@
+﻿@model FlightJobs.Models.ChallengeViewModel
+
+@if (!string.IsNullOrEmpty(Model.Briefing))
+{
+    <style>
+        .container-watermark {
+            position: relative;
+            text-align: right;
+            color: black;
+        }
+
+        .watermarked {
+            position: absolute;
+            top: 40%;
+            left: 35%;
+            transform: translate(-50%, -50%);
+            text-align: justify;
+        }
+    </style>
+    <div class="modal-body">
+        @if (TempData["ErroMessage"] != null)
+        {
+            <div class="alert alert-danger" role="alert"><h5>@TempData["ErroMessage"]</h5></div>
+        }
+        <div class="row">
+            <div class="col-md-11 my-form-content column-in-center">
+                <p>
+
+                    <div class="container-watermark">
+                        <h4 class="text-center watermarked" style="top:2%;"><b><span>Briefing</span></b></h4>
+                        <img src="@Model.WaterMarkImg" alt="Snow" style="width:55%; opacity:0.6;" />
+                        <div class="watermarked">@Model.Briefing</div><br />
+
+                    </div>
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="row">
+            <div class="col-md-10">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+            </div>
+            @if (TempData["ErroMessage"] == null)
+            {
+                <div class="col-lg-2">
+                    @Html.ActionLink("Confirm", "AssignChallenger", "Challenge", new { jobId = Model.JobId }, new { @class = "btn btn-info pull-right" })
+                </div>
+            }
+            else
+            {
+                <div class="col-lg-2">
+                    <button type="button" class="btn btn-default" disabled data-dismiss="modal">Confirm</button>
+                </div>
+            }
+        </div>
+    </div>
+}

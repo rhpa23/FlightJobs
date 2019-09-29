@@ -22,6 +22,8 @@ namespace FlightJobs.Controllers
     public class JobApiController : ApiController
     {
 
+        private const string CHALLENGE_EXPIRED = "Unfortunately, this Challenge is expired. Take another one.";
+
         [System.Web.Http.HttpGet]
         [System.Web.Mvc.AllowAnonymous]
         [ValidateAntiForgeryToken]
@@ -54,6 +56,11 @@ namespace FlightJobs.Controllers
                 if (job == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.Forbidden, "You don't have any job activated for this location.");
+                }
+
+                if (job.IsChallenge && job.ChallengeExpirationDate > DateTime.UtcNow)
+                {
+                    return Request.CreateResponse(HttpStatusCode.Forbidden, CHALLENGE_EXPIRED);
                 }
 
                 // Check GUEST
@@ -135,6 +142,11 @@ namespace FlightJobs.Controllers
                 if (job == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.Forbidden, "Wrong destination to finish this job.");
+                }
+
+                if (job.IsChallenge && job.ChallengeExpirationDate > DateTime.UtcNow)
+                {
+                    return Request.CreateResponse(HttpStatusCode.Forbidden, CHALLENGE_EXPIRED);
                 }
 
                 // Check GUEST

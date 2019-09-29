@@ -1,0 +1,51 @@
+﻿.challenge-header {
+    height: 40px;
+    background-color: dimgrey;
+    text-align: center;
+    margin: inherit;
+    padding-left: 5px;
+    font-weight: bold;
+    color: white;
+    width: 14%;
+    padding-top: 8px;
+}
+
+.challenge-type-icon {
+    font-size: 25px !important;
+    padding-top: 5px !important;
+}
+.challenge-line {
+    background-color: #5bc0de;
+    text-align: center;
+    margin-left: inherit;
+    margin-right: inherit;
+    padding-left: 5px;
+    cursor: pointer;
+    border: 1px solid #5bc0de;
+}
+
+.challenge-line:hover {
+    background-color: #4ba9c5;
+    border: 1px solid #696969;
+}
+
+.challenge-line-unable {
+    background-color: #7ed6f0;
+    text-align: center;
+    margin-left: inherit;
+    margin-right: inherit;
+    padding-left: 5px;
+    cursor: not-allowed;
+    border: 1px solid #5bc0de;
+}
+
+.challenge-col {
+    color: white;
+    width: 14%;
+    padding-top: 8px;
+}
+
+.glyphicon {
+    font-size: 50px;
+    color: #fff;
+}

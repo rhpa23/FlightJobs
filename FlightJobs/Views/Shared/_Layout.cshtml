@@ -102,12 +102,13 @@
         
         <div class="row">
             <div class="col-sm-2" style="width:14%;">
-                <div class="sidenav">
+                <div id="sidenav" class="sidenav">
                     <ul>
                         <li><i class="glyphicon glyphicon-home black-icon"></i>@Html.ActionLink("Home", "Index", "Home")</li>
-                        <li><i class="glyphicon glyphicon-user black-icon"></i>@Html.ActionLink("Profile", "Index", "Profile")</li>
+                        <li><i class="glyphicon glyphicon-user black-icon"></i>@Html.ActionLink("Logbook", "Index", "Profile")</li>
                         <li><i class="glyphicon glyphicon-list-alt black-icon"></i>@Html.ActionLink("Airlines", "Index", "Airlines")</li>
                         <li><i class="glyphicon glyphicon-plus black-icon"></i>@Html.ActionLink("Add Jobs", "Index", "SearchJobs")</li>
+                        <li><i class="glyphicon glyphicon-screenshot black-icon"></i>@Html.ActionLink("Challenges", "Index", "Challenge", null, new { @style= "width: auto;" })</li>
                         <li class="divider"></li>
                         <li><i class="glyphicon glyphicon-signal black-icon"></i>@Html.ActionLink("Analysis", "Analysis", "Home")</li>
                         <li><i class="glyphicon glyphicon-download black-icon"></i>@Html.ActionLink("Download", "Install", "Home")</li>
@@ -246,20 +247,10 @@
     </div>
 
     <script>
-        $(document).ready(function () {
-            $.ajax({
-                url: '@Url.Action("NickName", "Home")',
-                type: "Get",
-                data: '',
-                success: function (result) {
-                    if (result.trim() != '') {
-                        $('#modalNickName').modal('show');
-                        $("#nick-name-content").html(result);
-                    }
-                    else {
-                        $('#modalNickName').hide();
-                    }
-                }
+        $("document").ready(function () {
+            $(function () {
+                $('.sidenav a[href="/' + location.pathname.split("/")[location.pathname.split("/").length - 1] + '"]').parent().addClass('active');
+                $('.sidenav a[href="/Home/' + location.pathname.split("/")[location.pathname.split("/").length - 1] + '"]').parent().addClass('active');
             });
         });
 

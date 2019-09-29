@@ -1,0 +1,122 @@
+﻿@model FlightJobs.Models.StatisticsDbModel
+
+
+
+<style>
+    .myList {
+        font-size: small;
+        padding: 0px;
+        list-style-type: none;
+    }
+
+    .myList li {
+        margin: 10px 0;
+    }
+
+    .popover {
+        width: 500px;
+    }
+
+    .hired-header {
+        background-color: #ddd;
+        padding:1px;
+        text-align:center;
+    }
+
+    .hired-body {
+        border: 1px solid #ddd;
+        height: 150px;
+        overflow: auto;
+        text-align: center;
+        font-size:small;
+    }
+</style>
+
+<div class="row text-left" style="margin: 15px;">
+    <div class="col-sm-4 file-preview" style="padding:0px; margin-right:10px; width: 170px;">
+        <img class="img-thumbnail" src="@Model.Airline.Logo" style="width:170px;" />
+    </div>
+    <div class="col-sm-4">
+        <ul class="myList">
+            <li><b>Score: </b> @Html.DisplayFor(model => model.Airline.AirlineScore)</li>
+            <li><b>@Html.DisplayNameFor(model => model.Airline.BankBalance):</b> @Html.DisplayFor(model => model.Airline.BankBalance)</li>
+            <li><b>@Html.DisplayNameFor(model => model.Airline.Description):</b> <span style="font-size:smaller"> @Html.DisplayFor(model => model.Airline.Description)</span></li>
+        </ul>
+    </div>
+    <div class="col-sm-4" style="padding: 0px;">
+        <div class="hired-header">
+        @Html.DisplayNameFor(model => model.AirlinePilotsHired)
+        </div>
+        <div class="hired-body">
+            @foreach (var item in @Model.AirlinePilotsHired)
+            {
+                <div class="row" style="border:1px solid #ddd; padding:1px; margin:0px;">
+                    <div class="col-sm-3" style="padding:0px;">
+                        @if (!string.IsNullOrEmpty(item.Logo))
+                        {
+                            <img style="width:40px; height:40px; padding:0px;border:1px solid #ddd;" src="@item.Logo" />
+                        }
+                        else
+                        {
+                            <img style="width:40px; height:40px; padding:0px;border:1px solid #ddd;" src="/Content/img/avatar/default.jpg" />
+                        }
+                    </div>
+                    <div class="col-sm-8" style="margin:1px;padding:0px;">
+                        <div>@item.User.UserName</div>
+                        <div style="margin:1px; font-size:smaller">Last job: @item.LastFlight.ToShortDateString()</div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+
+<div class="row" style="background-color:dimgray;margin:10px -1px 0px 0px;">
+    @if (Model.Airline != null && Model.Airline.DebtValue > 0)
+    {
+        <div class="pull-right" style="padding:7px;">
+            <div class="row">
+                @if (Model.Airline.DebtMaturityDate < DateTime.Now)
+                {
+                    <div class="col-md-1"><img src="~/Content/img/alert-002.png" style="width:30px; height:30px;" /></div>
+                    <div class="col-md-11" style="padding:0px;"> <h4 style="color:tomato; margin-left:5px;">This airline has overdue bills to pay. </h4></div>
+                }
+                else
+                {
+                    <div class="col-md-1"><img src="~/Content/img/barcode.png" style="width:30px; height:30px;" /></div>
+                                <div class="col-sm-8" style="padding:0px;"><h4 style="color:tomato; margin-left:5px;">The airline has bills to pay. </h4></div>
+                }
+            </div>
+            <div class="row">
+                <div align="left" class="col-md-8">
+                    <ul style="color:white; margin-bottom:0px;">
+                        <li><strong>Debt value: </strong> @string.Format("{0:C}", Model.Airline.DebtValue)</li>
+                        <li><strong>Debt maturity date: </strong> @Model.Airline.DebtMaturityDate.ToShortDateString()</li>
+                    </ul>
+                </div>
+            </div>
+
+
+            <div style="text-align:justify; color:white; padding:0px 8px 0px 8px;">
+                <h5>
+                    Fees, taxes and charges are generated with the Jobs. If you are the owner, pay your bills before the due date.
+                    Otherwise, this airline will not score, and the Jobs will generate more debts which could lead to the bankruptcy of the company.
+                </h5>
+            </div>
+            @if (Model.Airline.AlowEdit)
+            {
+                <input id="pay-debts-button" type="button" value="Pay" onclick="location.href='@Url.Action("PayDebt", "Home", new { id = Model.Airline.Id })'" class="btn btn-danger pull-right btn-sm" style="margin-top:5px" />
+            }
+        </div>
+    }
+    else
+    {
+        <div class="col-sm-12" style="text-align:justify; color:white; padding:8px;">
+            <h5><strong>@Model.Airline.Name don't have any bills to pay. The balance of the company is healthy.</strong></h5>
+            <hr />
+            <h5>Fees, taxes and charges are generated with the Jobs. </h5>
+            <h5>If the owner does not pay bills before the due date the airline will not score, and the Jobs will generate more debts which could lead to the bankruptcy of the company.</h5>
+        </div>
+    }
+</div>

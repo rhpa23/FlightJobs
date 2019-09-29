@@ -17,7 +17,7 @@ using System.Threading.Tasks;
 
 namespace FlightJobs.Controllers
 {
-    public class ProfileController : Controller
+    public class ProfileController : BaseController
     {
         // GET: Profile
         public ActionResult Index(string sortOrder, string CurrentSort, int? pageNumber)
@@ -86,7 +86,7 @@ namespace FlightJobs.Controllers
 
         private IPagedList<JobDbModel> GetSortedJobs(List<JobDbModel> listJobs, string sortOrder, string CurrentSort, int? pageNumber, ApplicationUser user)
         {
-            int pageSize = 5;
+            int pageSize = 20;
             IPagedList<JobDbModel> jobSortedList = null;
             switch (sortOrder)
             {
@@ -180,31 +180,7 @@ namespace FlightJobs.Controllers
             return RedirectToAction("Index");
         }
 
-        private List<JobDbModel> FilterJobs(ApplicationUser user, HomeViewModel filterModel)
-        {
-            var dbContext = new ApplicationDbContext();
-            var allUserJobs = dbContext.JobDbModels.Where(j => j.IsDone && j.User.Id == user.Id);
-            if (filterModel != null)
-            {
-                if (!string.IsNullOrEmpty(filterModel.DepartureFilter))
-                {
-                    allUserJobs = allUserJobs.Where(j => j.DepartureICAO.Contains(filterModel.DepartureFilter));
-                }
-
-                if (!string.IsNullOrEmpty(filterModel.ArrivalFilter))
-                {
-                    allUserJobs = allUserJobs.Where(j => j.ArrivalICAO.Contains(filterModel.ArrivalFilter));
-                }
-
-                if (!string.IsNullOrEmpty(filterModel.ModelDescriptionFilter))
-                {
-                    allUserJobs = allUserJobs.Where(j => j.ModelDescription.Contains(filterModel.ModelDescriptionFilter));
-                }
-
-            }
-
-            return allUserJobs.ToList();
-        }
+        
 
         private HomeViewModel SearchProfileInfo(string sortOrder, string CurrentSort, int? pageNumber, HomeViewModel filterModel)
         {
@@ -216,50 +192,16 @@ namespace FlightJobs.Controllers
             var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
             if (user != null)
             {
-                var allUserJobs = FilterJobs(user, filterModel);
+                //var statistics = GetAllStatisticsInfo(user, filterModel);
 
-                var statistics = dbContext.StatisticsDbModels.FirstOrDefault(s => s.User.Id == user.Id);
-                if (statistics != null)
-                {
-                    if (statistics.Airline != null)
-                    {
-                        var statisticsAirline = dbContext.StatisticsDbModels.Where(s => s.Airline != null && s.Airline.Id == statistics.Airline.Id);
-                        statistics.AirlinePilotsHired = statisticsAirline.Select(s => s.User).ToList();
+                //if (statistics != null)
+                //{
+                //    homeModel.Statistics = statistics;
 
-                        statistics.Airline.AlowEdit = statistics.Airline.UserId == user.Id;
-                    }
-
-                    TimeSpan span = new TimeSpan();
-                    long payloadTotal = 0;
-
-                    allUserJobs.ToList().ForEach(j => {
-                        span += (j.EndTime - j.StartTime);
-                        payloadTotal += j.Payload;
-                        j.PayloadDisplay = DataConversion.GetWeight(Request, j.Payload);
-                        j.Cargo = DataConversion.GetWeight(Request, j.Cargo);
-                        j.UsedFuelWeightDisplay = DataConversion.GetWeight(Request, j.UsedFuelWeight);
-                    });
-
-                    statistics.NumberFlights = allUserJobs.Count();
-                    statistics.FlightTimeTotal = String.Format("{0}h {1}m", (int)span.TotalHours, span.Minutes);
-                    statistics.PayloadTotal = DataConversion.GetWeight(Request, payloadTotal) + DataConversion.GetWeightUnit(Request);
-
-                    var grad = GetGraduationInfo(span);
-                    statistics.GraduationPath = grad.Value;
-                    statistics.GraduationDesc = grad.Key;
-
-                    if (allUserJobs.Count() > 0)
-                    {
-                        statistics.LastFlight = allUserJobs.OrderBy(j => j.EndTime).Last().EndTime;
-                        statistics.LastAircraft = allUserJobs.OrderBy(j => j.EndTime).Last().ModelDescription;
-                        statistics.FavoriteAirplane = allUserJobs.GroupBy(q => q.ModelDescription)
-                                                                 .OrderByDescending(gp => gp.Count())
-                                                                 .Select(g => g.Key).FirstOrDefault();
-                    }
-                    homeModel.Statistics = statistics;
-
-                    homeModel.PilotStatisticsDescription = GetPilotDescription(statistics, dbContext);
-                }
+                //    homeModel.PilotStatisticsDescription = GetPilotDescription(statistics, dbContext);
+                //}
+                TimeSpan t = new TimeSpan();
+                var allUserJobs = FilterJobs(user, filterModel, ref t);
                 var jobList = GetSortedJobs(allUserJobs, sortOrder, CurrentSort, pageNumber, user);
                 homeModel.Jobs = jobList;
                 homeModel.WeightUnit = DataConversion.GetWeightUnit(Request);
@@ -269,77 +211,7 @@ namespace FlightJobs.Controllers
             return homeModel;
         }
 
-        private string GetPilotDescription(StatisticsDbModel statistics, ApplicationDbContext dbContext)
-        {
-            var stBuilder = new StringBuilder();
-            var listOverdue = dbContext.PilotLicenseExpensesUser.Include(x => x.PilotLicenseExpense).Where(e =>
-                                                            e.MaturityDate < DateTime.UtcNow &&
-                                                            e.User.Id == statistics.User.Id).ToList();
-            if (listOverdue.Count() > 0)
-            {
-                stBuilder.Append(string.Format(@"<h5><img src='/Content/img/Alert001.gif' style='width: 30px; height: 30px;'/>"));
-                stBuilder.Append(string.Format("<strong>"));
-                stBuilder.Append(string.Format("  Hi captain {0}, your pilot license is expired. ", statistics.User.UserName));
-                stBuilder.Append(string.Format("</strong></h5><hr />"));
-                stBuilder.Append(string.Format("There are {0} license(s) requirements overdue. ", listOverdue.Count()));
-                stBuilder.Append(string.Format("The next Jobs will not score and paid until you renew your license. "));
-                stBuilder.Append(string.Format("Click on License button to check your license requirements."));
-                foreach (var expenseOverdue in listOverdue.Where(o => !o.OverdueProcessed))
-                {
-                    var list = dbContext.LicenseItemUser.Where(x => x.User.Id == statistics.User.Id &&
-                                                               x.PilotLicenseItem.PilotLicenseExpense.Id == expenseOverdue.PilotLicenseExpense.Id);
-                    foreach (var item in list.ToList())
-                    {
-                        item.IsBought = false;
-                    }
-                    expenseOverdue.OverdueProcessed = true;
-                }
-                dbContext.SaveChanges();
-            }
-            else
-            {
-                stBuilder.Append(string.Format("<h5><strong>"));
-                stBuilder.Append(string.Format("Hi captain {0}. ", statistics.User.UserName));
-                stBuilder.Append(string.Format("</strong></h5><hr />"));
-                stBuilder.Append(string.Format("Your pilot license is up to date. "));
-                stBuilder.Append(string.Format("Keep an eye on your license requirements maturity dates. "));
-                stBuilder.Append(string.Format("Click on License button to check your license requirements."));
-            }
-
-            return stBuilder.ToString();
-        }
-
-        public ActionResult ChartProfile()
-        {
-            var dbContext = new ApplicationDbContext();
-            var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
-            var tempDate = DateTime.Now.AddMonths(-6);
-            var dateFilter = new DateTime(tempDate.Year, tempDate.Month, 1);
-            var userJobs = dbContext.JobDbModels.Where(j => j.IsDone && j.User.Id == user.Id && j.StartTime > dateFilter).ToList();
-
-            var chartModel = new ChartViewModel() { Data = new Dictionary<string, double>() };
-
-            foreach (var job in userJobs)
-            {
-                if (!chartModel.Data.Keys.Contains(job.Month))
-                {
-                    chartModel.Data.Add(job.Month, job.Pay);
-                }
-                else
-                {
-                    chartModel.Data[job.Month] += job.Pay;
-                }
-
-                chartModel.PayamentTotal += job.Pay;
-            }
-
-            if (chartModel.Data.Count > 0)
-            {
-                chartModel.PayamentMonthGoal = chartModel.Data.Values.Max() + 1000;
-            }
-
-            return PartialView("ChartProfile", chartModel);
-        }
+        
 
         public ActionResult RankingProfile()
         {
@@ -397,98 +269,7 @@ namespace FlightJobs.Controllers
             return PartialView("AirlineLedgerView", pgList);
         }
 
-        private KeyValuePair<string, string> GetGraduationInfo(TimeSpan flightTimeSpan)
-        {
-            string path = "/Content/img/graduation/";
-            var hours = (int)flightTimeSpan.TotalHours;
-
-            if (Enumerable.Range(0, 39).Contains(hours))
-                return new KeyValuePair<string, string>("Junior Flight Officer", string.Concat(path, "02.png"));
-
-            if (Enumerable.Range(40, 40).Contains(hours))
-                return new KeyValuePair<string, string>("Flight Officer", string.Concat(path, "03.png"));
-
-            if (Enumerable.Range(80, 80).Contains(hours))
-                return new KeyValuePair<string, string>("First Officer", string.Concat(path, "04.png"));
-
-            if (Enumerable.Range(160, 90).Contains(hours))
-                return new KeyValuePair<string, string>("Captain", string.Concat(path, "05.png"));
-
-            if (Enumerable.Range(250, 110).Contains(hours))
-                return new KeyValuePair<string, string>("Senior Captain", string.Concat(path, "06.png"));
-
-            if (Enumerable.Range(360, 70).Contains(hours))
-                return new KeyValuePair<string, string>("Commercial First Officer", string.Concat(path, "07.png"));
-
-            if (Enumerable.Range(430, 110).Contains(hours))
-                return new KeyValuePair<string, string>("Commercial Captain", string.Concat(path, "08.png"));
-
-            if (Enumerable.Range(540, 210).Contains(hours))
-                return new KeyValuePair<string, string>("Commercial Senior Captain", string.Concat(path, "09.png"));
-
-            if (Enumerable.Range(750, 250).Contains(hours))
-                return new KeyValuePair<string, string>("Commercial Commander", string.Concat(path, "10.png"));
-
-            if (Enumerable.Range(1000, 500).Contains(hours))
-                return new KeyValuePair<string, string>("Commercial Senior Commander", string.Concat(path, "11.png"));
-
-            if (Enumerable.Range(1500, 500).Contains(hours))
-                return new KeyValuePair<string, string>("ATP First Officer", string.Concat(path, "12.png"));
-
-            if (Enumerable.Range(2000, 1000).Contains(hours))
-                return new KeyValuePair<string, string>("ATP Captain", string.Concat(path, "13.png"));
-
-            if (Enumerable.Range(3000, 1000).Contains(hours))
-                return new KeyValuePair<string, string>("ATP Senior Captain", string.Concat(path, "14.png"));
-
-            if (Enumerable.Range(4000, 1000).Contains(hours))
-                return new KeyValuePair<string, string>("ATP Commander", string.Concat(path, "15.png"));
-
-            if (hours >= 5000)
-                return new KeyValuePair<string, string>("ATP Senior Commander", string.Concat(path, "16.png"));
-
-            return new KeyValuePair<string, string>("Junior Flight Officer", string.Concat(path, "02.png"));
-        }
-
-        public ActionResult PayDebt(int id)
-        {
-            var dbContext = new ApplicationDbContext();
-            var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
-            var airline = dbContext.AirlineDbModels.FirstOrDefault(a => a.Id == id && a.UserId == user.Id);
-
-            if (airline != null)
-            {
-                //          500                 200
-                if (airline.DebtValue > airline.BankBalance)
-                {
-                    airline.DebtValue = airline.DebtValue - airline.BankBalance;
-                    airline.BankBalance = 0;
-                    var statistics = dbContext.StatisticsDbModels.FirstOrDefault(s => s.User.Id == user.Id);
-                    if (airline.DebtValue > statistics.BankBalance)
-                    {
-                        airline.DebtValue = airline.DebtValue - statistics.BankBalance;
-                        statistics.BankBalance = 0;
-                    }
-                    else
-                    {
-                        statistics.BankBalance -= airline.DebtValue;
-                        airline.DebtValue = 0;
-                    }
-                }
-                else
-                {
-                    airline.BankBalance -= airline.DebtValue;
-                    airline.DebtValue = 0;
-                }
-
-                dbContext.SaveChanges();
-            }
-            else
-            {
-                TempData["Message"] = "You must be the owner of the airline to pay debts.";
-            }
-            return RedirectToAction("Index");
-        }
+        
 
         public ActionResult PilotLicenseProfile()
         {
@@ -527,42 +308,7 @@ namespace FlightJobs.Controllers
             return PartialView("PilotTransferView", pilotTransfer);
         }
 
-        public ActionResult PilotTransferFunds(int percent)
-        {
-            if (percent > 100 || percent <= 0)
-            {
-                var msg = $"Transfer percent out of range [1-100].";
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest, msg);
-            }
-
-            var dbContext = new ApplicationDbContext();
-
-            var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
-            var uStatistics = dbContext.StatisticsDbModels.FirstOrDefault(s => s.User.Id == user.Id);
-            if (uStatistics.Airline == null)
-            {
-                var msg = $"You need to sign a contract with an airline to transfer funds.";
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest, msg);
-            }
-
-            var transferBB = uStatistics.BankBalance * (percent / (double)100);
-            var newPilotBalance = uStatistics.BankBalance - transferBB - (uStatistics.BankBalance * 0.15);
-
-            if (newPilotBalance <= 0)
-            {
-                var msg = $"Insufficient balance to make a transfer. Your current bank balance is: {string.Format("{0:C}", uStatistics.BankBalance)}";
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest, msg);
-            }
-
-            uStatistics.BankBalance = (long) newPilotBalance;
-            uStatistics.Airline.BankBalance = (long) transferBB + uStatistics.Airline.BankBalance;
-
-            dbContext.SaveChanges();
-
-            Session["HeaderStatistics"] = null;
-
-            return RedirectToAction("Index");
-        }
+        
 
         public ActionResult SelectLicenceExpense(int licenseExpenseId)
         {
@@ -813,6 +559,16 @@ namespace FlightJobs.Controllers
             }
 
             return View("Index");
+        }
+
+        public PartialViewResult AirlineBalanceInfo(int airlineId)
+        {
+            var dbContext = new ApplicationDbContext();
+            var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
+            var userStatistics = GetAllStatisticsInfo(user, null);
+
+
+            return PartialView("AirlineBalanceInfoView", userStatistics);
         }
 
         private string ExtractYoutubeCode(Uri uri)

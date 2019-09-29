@@ -1,0 +1,88 @@
+﻿@model FlightJobs.Models.StatisticsDbModel
+
+<link href="/Content/bootstrap.css" rel="stylesheet">
+<link href="/Content/bootstrap-fileinput/css/fileinput.min.css" rel="stylesheet">
+
+<style>
+    .krajee-default.file {
+        max-width: 100px;
+    }
+
+    .show-video-button {
+        cursor: pointer;
+    }
+
+    .file-caption-main {
+        visibility: hidden;
+    }
+
+    .file-preview {
+        min-height: 241px;
+        max-width: 180px;
+    }
+
+    .glyphicon {
+        font-size: 10px;
+        color: #000;
+    }
+</style>
+<div class="row">
+    <div class="col-sm-3" style="padding-left:5px;">
+        @using (Html.BeginForm("Upload", "Profile", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            <div class="kv-avatar">
+                <div class="file-loading">
+                    <input id="avatar-1" name="FilesInput" type="file" required>
+
+                </div>
+            </div>
+
+            <div id="kv-avatar-errors-1" class="center-block" style="font-size:8pt; width:400px;display:none"></div>
+        }
+    </div>
+    <div class="col-lg-9">
+        @Html.Partial("~/Views/Profile/ChartProfile.cshtml", Model.ChartModel)
+    </div>
+</div>
+<hr />
+<div class="row">
+    <div class="col-sm-3"><strong>Last flight date:</strong></div>
+    <div class="col-sm-8">@Model.LastFlight.ToShortDateString()</div>
+</div>
+
+<div class="row">
+    <div class="col-sm-3"><strong>Last aircraft:</strong></div>
+    <div class="col-sm-8">@Model.LastAircraft</div>
+</div>
+
+<div class="row">
+    <div class="col-sm-3"><strong>Favorite airplane:</strong></div>
+    <div class="col-sm-8">@Model.FavoriteAirplane</div>
+</div>
+
+
+<script>
+$("#avatar-1").fileinput({
+    overwriteInitial: true,
+    maxFileSize: 60,
+    showClose: false,
+    showCaption: true,
+    browseOnZoneClick: true,
+    showBrowse: false,
+    preferIconicZoomPreview: false,
+    browseLabel: '',
+    removeLabel: '',
+    browseIcon: '<i class="glyphicon glyphicon-folder-open"></i>',
+    removeIcon: '<i class="glyphicon glyphicon-remove"></i>',
+    removeTitle: 'Cancel or reset changes',
+    elErrorContainer: '#kv-avatar-errors-1',
+    msgErrorClass: 'alert alert-block alert-danger',
+
+    defaultPreviewContent: '<img src="@if (@Model != null) { @Model.Logo }" alt="Your Avatar"><h6 class="text-muted">Click to select</h6>',
+    layoutTemplates: { main2: '{preview} {remove} ' },
+    language: 'eN',
+    uploadUrl: '/Profile/Upload',
+    allowedFileExtensions: ["jpg", "png", "gif"],
+    maxFileCount: 1
+    });
+</script>

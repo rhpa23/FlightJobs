@@ -255,5 +255,20 @@ div.card {
 .my-form-content {
     background-color: #f1f1f1;
     border-radius: 10px;
-    padding: 10px;
+    padding: 8px;
+    margin:15px 0px 0px 25px;
+    min-height:200px;
+}
+
+.active {
+    background-color: #f1f1f1;
+    font-weight:bold;
+}
+
+.pagination > .active > a {
+    background-color: #5bc0de !important;
+}
+
+.pagination > .active > a:hover {
+    background-color: #4ba9c5 !important;
 }

@@ -1,0 +1,199 @@
+﻿@model FlightJobs.Models.ChallengeViewModel
+@using FlightJobs.Util;
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .uppercase {
+        text-transform: uppercase;
+    }
+
+    .swap {
+        cursor: pointer;
+        color: #5bc0de;
+    }
+
+    .popover {
+        max-width: 100%; /* Max Width of the popover (depending on the container!) */
+    }
+    .column-in-center {
+        float: none;
+        margin: 0 auto;
+    }
+    .briefing {
+        min-height: 100px;
+        font-size: larger;
+        text-align: justify;
+        margin: 10px;
+    }
+    .field-validation-valid {
+        display: none;
+    }
+
+    .validation-summary-valid {
+        display: none;
+    }
+</style>
+
+@if (TempData["ErroMessageAssign"] != null)
+{
+    <div class="alert-danger"> @TempData["UserAlreadyAssigned"];</div>
+}
+
+@if (Model.UserActiveChallenges >= 5)
+{
+    <br />
+    <br />
+    <p>
+        <div class="col-md-1"><img src="~/Content/img/alert-002.png" style="width:30px; height:30px;" /></div>
+        <div class="col-md-11" style="padding:0px;">
+            <h4 style="color:orangered;">You can only create 5 challenges. When the challenges expired or the users complete your challenges you will be able to add more.</h4>
+        </div>
+    </p>
+    <br />
+    <br />
+    <hr />
+}
+else
+{
+    using (Html.BeginForm("Index", "SearchJobs", FormMethod.Post, new { id = "challengeForm" }))
+    {
+        @Html.AntiForgeryToken()
+        <div class="form-horizontal" role="form">
+            <br />
+            <h4>Choose the parameters to create a challenge</h4>
+            <div class="">
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                <div class="form-group">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-5 my-form-content">
+                                <div class="col-md-6" style="padding-right:0px;">
+                                    @Html.LabelFor(model => model.Pax, htmlAttributes: new { @class = "control-label" })
+                                    @Html.EditorFor(model => model.Pax, new { htmlAttributes = new { placeholder = "123", @class = "form-control", @maxlength = "4" } })
+                                    @Html.ValidationMessageFor(model => model.Pax, "Passenger number invalid", new { @class = "text-danger" })
+                                </div>
+                                <div class="col-md-5" style="padding-right:0px;">
+                                    @Html.LabelFor(model => model.PaxWeight, htmlAttributes: new { @class = "control-label" })
+                                    @Html.EditorFor(model => model.PaxWeight, new { htmlAttributes = new { placeholder = "123", @class = "form-control", @maxlength = "3" } })
+                                    @Html.ValidationMessageFor(model => model.PaxWeight, "Weight invalid", new { @class = "text-danger" })
+                                </div>
+                                <div class="col-md-1" style="padding: 30px 0px 0px 3px;">
+                                    <span>@Model.WeightUnit</span>
+                                </div>
+                                <div class="col-md-8" style="padding-right:0px; margin-top:10px;">
+                                    @Html.LabelFor(model => model.Cargo, htmlAttributes: new { @class = "control-label" })
+                                    @Html.EditorFor(model => model.Cargo, new { htmlAttributes = new { placeholder = "123", @class = "form-control", @maxlength = "5" } })
+                                    @Html.ValidationMessageFor(model => model.Cargo, "Cargo number invalid", new { @class = "text-danger" })
+                                </div>
+                                <div class="col-md-2" style="padding: 40px 0px 0px 3px;">
+                                    <span>@Model.WeightUnit</span>
+                                </div>
+                            </div>
+                            <div class="col-md-6 my-form-content">
+                                <div class="row" style="margin-left: 15px;">
+                                    <div class="col-md-2" style="padding-right:0px; width:38%;">
+                                        @Html.LabelFor(model => model.DepartureICAO, htmlAttributes: new { @class = "control-label" })
+                                        @Html.EditorFor(model => model.DepartureICAO, new { htmlAttributes = new { placeholder = "ICAO", @class = "form-control uppercase", @maxlength = "4" } })
+                                        @Html.ValidationMessageFor(model => model.DepartureICAO, "Departure ICAO invalid", new { @class = "text-danger" })
+                                    </div>
+                                    <div class="col-sm-1" style="padding-left:0px; padding-right:0px; width:auto;">
+                                        <br />
+                                        <img src="~/Content/img/airplane.png" />
+
+                                    </div>
+
+                                    <div class="col-md-2" style="padding-left:0px; width:38%;">
+                                        @Html.LabelFor(model => model.ArrivalICAO, htmlAttributes: new { @class = "control-label" })
+                                        @Html.EditorFor(model => model.ArrivalICAO, new { htmlAttributes = new { placeholder = "ICAO", @class = "form-control uppercase", @maxlength = "4" } })
+                                        @Html.ValidationMessageFor(model => model.ArrivalICAO, "Arrival ICAO invalid", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12 text-center" style="padding-left:0px">
+                                        <label id="Distance" style="font-size:small;"></label>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12 text-center" style="padding-left:0px">
+                                        <div class="col-md-4">
+                                            @Html.RadioButtonFor(model => model.Type, "Military", new { @id = "TypeMilitary" })@Html.Label("Military", new { @for = "TypeMilitary" })
+                                        </div>
+                                        <div class="col-md-4">
+                                            @Html.RadioButtonFor(model => model.Type, "Civilian", new { @id = "TypeCivilian", Checked = "checked" })@Html.Label("Civilian", new { @for = "TypeCivilian" })
+                                        </div>
+                                        <div class="col-md-4">
+                                            @Html.RadioButtonFor(model => model.Type, "Rescue", new { @id = "TypeRescue" })@Html.Label("Rescue", new { @for = "TypeRescue" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <br />
+                                <div class="row">
+                                    <div class="col-md-12 text-center">
+                                        <input id="btn-load" type="button" value="Briefing" class="btn btn-info" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <br />
+                        <!-- Modal -->
+                        <div class="modal fade" id="briefingModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content" style="width: 800px;">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                        <h4 class="modal-title" id="myModalLabel">Add Challenge</h4>
+                                    </div>
+                                    <div id="challenge-briefing"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}
+
+
+@Html.Partial("ChallegerListView", Model.Challenges)
+
+<script>
+    $("#btn-load").click(function () {
+
+        var paxVal = validateAndGet('Pax');
+        var cargoVal = validateAndGet('Cargo');
+        var paxWeightVal = validateAndGet('PaxWeight');
+        var departureVal = validateAndGet('DepartureICAO');
+        var arrivalVal = validateAndGet('ArrivalICAO');
+        var typeVal = $("input[name='Type']:checked").val();
+
+        $.ajax({
+            url: '@Url.Action("Update", "Challenge")',
+            type: "Get",
+            data: { pax: paxVal, cargo: cargoVal, paxWeight: paxWeightVal, departure: departureVal, arrival: arrivalVal, type: typeVal },
+            success: function (result) {
+                if (result) {
+                    $("#briefingModal").modal('show');
+                    $('#challenge-briefing').html(result);
+                    //$("#btn-load").attr("disabled", true);
+                }
+            }
+        });
+    });
+
+    function validateAndGet(key) {
+        var myValue = $('#' + key + '').val();
+        
+        if (myValue == '' || $.isNumeric(myValue) && parseInt(myValue) <= 0) {
+            $('#challengeForm [data-valmsg-for="' + key + '"]').removeClass("field-validation-valid").addClass("field-validation-invalid");
+        } else {
+            $('#challengeForm [data-valmsg-for="' + key + '"]').removeClass("field-validation-invalid").addClass("field-validation-valid");
+        }
+        
+        return myValue;
+    }
+
+</script>
