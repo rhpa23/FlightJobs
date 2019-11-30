@@ -4,6 +4,13 @@
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css"
+      integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+      crossorigin="" />
+<script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"
+        integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og=="
+        crossorigin=""></script>
+
 <style>
     .uppercase {
         text-transform: uppercase;
@@ -14,6 +21,14 @@
     }
     .popover {
         max-width: 100%; /* Max Width of the popover (depending on the container!) */
+    }
+    .map-container {
+        width: 95%;
+        margin: 20px;
+        border: 1px solid #D1D3D4;
+    }
+    #mapid {
+        height: 290px;
     }
 </style>
 @using (Html.BeginForm("Index", "SearchJobs", FormMethod.Post, new { id = "searchForm" }))
@@ -29,7 +44,7 @@
             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
             <div id="swap-button" class="swap">Swap departure and destination</div>
-
+            
             <div class="form-group">
                 <div class="row">
                     <div class="col-md-2" style="padding-right:0px; width:12%;">
@@ -51,7 +66,6 @@
                     <div class="col-xs-1" style="padding:0px; width:auto;">
                         <input id="arrival-tips-button" type="button" value="Tips" class="btn btn-info btn-xs" style="margin-top:26px" />
                     </div>
-
                     <div id="departure-required" style="display: none;"><i class="glyphicon glyphicon-alert"></i>  First set a valid departure.</div>
                     <div id="arrival-tips-table" style="display: none;" class="col-md-6">Loading...</div>
                 </div>
@@ -77,6 +91,7 @@
                     <input type="submit" value="Generate" class="btn btn-info pull-right" style="margin-right:20px;" />
                 </div>
 
+                <div id="mapContainer" class="map-container"></div>
             </div>
             <br />
         </div>
@@ -302,7 +317,7 @@
         var arr = $('#Arrival').val();
         $('#Departure').val(arr);
         $('#Arrival').val(dep);
-
+        LoadMapInfo();
     });
 
     $('#alternative-tips-button').click(function () {
@@ -351,10 +366,16 @@
 
     });
 
+    $('#Alternative').change(function () {
+        if ($('#Alternative').val().length == 4) {
+            LoadMapInfo();
+        }
+    });
 
     $('#Arrival').change(function () {
         if ($('#Departure').val().length == 4 && $('#Arrival').val().length == 4) {
             CalcDistance();
+            LoadMapInfo();
         }
     });
 
@@ -362,6 +383,7 @@
 
         if ($('#Departure').val().length == 4 && $('#Arrival').val().length == 4) {
             CalcDistance();
+            LoadMapInfo();
         }
     });
 
@@ -369,6 +391,7 @@
 
         if ($('#Departure').val().length == 4 && $('#Arrival').val().length == 4) {
             CalcDistance();
+            LoadMapInfo();
         }
     });
 
@@ -384,5 +407,59 @@
             }
         });
     }
+
+    function LoadMapInfo() {
+        if ($('#Departure').val().length == 4 && $('#Arrival').val().length == 4) {
+            $.ajax({
+                url: '@Url.Action("GetMapInfo", "SearchJobs")',
+                type: "Get",
+                data: { departure: $('#Departure').val(), arrival: $('#Arrival').val(), alternative: $('#Alternative').val() },
+                success: function (result) {
+                    if (result != null && result != '') {
+                        ShowMap(result);
+                    }
+                }
+            });
+        }
+    }
+
+    function ShowMap(markers) {
+        document.getElementById('mapContainer').innerHTML = "<div id='mapid'></div>";
+        var mymap = L.map('mapid');
+        var bounds = new L.latLngBounds();
+        var flight_path = [];
+
+        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}',
+            {
+                attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ',
+                maxZoom: 18,
+            }
+        ).addTo(mymap);
+
+        markers.forEach(function (marker) {
+            var marker_icon = L.icon({
+                iconUrl: marker.icon_url,
+                iconAnchor: [marker.icon_center_x, marker.icon_center_y],
+            });
+
+            var m = L.marker([marker.lat, marker.lng], { icon: marker_icon }).addTo(mymap);
+            m.bindPopup('<strong>' + marker.name + '</strong><br/>' +
+                marker.info + ' airport <br/> Runway size: ' +
+                marker.runway_size + '<br/>Elevation: ' +
+                marker.elevation + '<br/>Trasition: ' +
+                marker.trasition);
+
+            flight_path.push([marker.lat, marker.lng]);
+
+            bounds.extend([marker.lat, marker.lng]);
+        });
+
+        L.polyline(flight_path, { color: '#5bc0de' }).addTo(mymap);
+
+        mymap.fitBounds(bounds, { padding: [25, 25] });
+
+    }
+
+
 
 </script>

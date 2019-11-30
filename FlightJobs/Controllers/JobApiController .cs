@@ -58,7 +58,7 @@ namespace FlightJobs.Controllers
                     return Request.CreateResponse(HttpStatusCode.Forbidden, "You don't have any job activated for this location.");
                 }
 
-                if (job.IsChallenge && job.ChallengeExpirationDate > DateTime.UtcNow)
+                if (job.IsChallenge && job.ChallengeExpirationDate <= DateTime.UtcNow)
                 {
                     return Request.CreateResponse(HttpStatusCode.Forbidden, CHALLENGE_EXPIRED);
                 }
@@ -84,11 +84,13 @@ namespace FlightJobs.Controllers
                 job.StartTime = DateTime.UtcNow;
                 dbContext.SaveChanges();
 
+                string name = job.IsChallenge ? "Challenge" : "Job";
+
                 var licenseOverdue = IsLicenseOverdue(dbContext, job.User.Id);
-                var resultMsg = "Job to " + job.ArrivalICAO + " started at: " + job.StartTime.ToShortTimeString() + " (UTC)";
+                var resultMsg = $"{name} to " + job.ArrivalICAO + " started at: " + job.StartTime.ToShortTimeString() + " (UTC)";
                 if (licenseOverdue)
                 {
-                    resultMsg = "Job started. Warn: Your pilot license is expired. Check profile page.";
+                    resultMsg = $"{name} started. Warn: Your pilot license is expired. Check profile page.";
                 }
 
                 response = Request.CreateResponse(HttpStatusCode.OK, resultMsg);
@@ -144,7 +146,9 @@ namespace FlightJobs.Controllers
                     return Request.CreateResponse(HttpStatusCode.Forbidden, "Wrong destination to finish this job.");
                 }
 
-                if (job.IsChallenge && job.ChallengeExpirationDate > DateTime.UtcNow)
+                string name = job.IsChallenge ? "Challenge" : "Job";
+
+                if (job.IsChallenge && job.ChallengeExpirationDate <= DateTime.UtcNow)
                 {
                     return Request.CreateResponse(HttpStatusCode.Forbidden, CHALLENGE_EXPIRED);
                 }
@@ -160,7 +164,7 @@ namespace FlightJobs.Controllers
                 if (payload >= (job.Payload + 150) || payload <= (job.Payload - 150))
                 {
                     var payloadInPounds = DataConversion.ConvertKilogramsToPounds(job.Payload);
-                    return Request.CreateResponse(HttpStatusCode.Forbidden, $"Wrong. Active job payload is: {job.Payload}kg / {payloadInPounds}lbs");
+                    return Request.CreateResponse(HttpStatusCode.Forbidden, $"Wrong. Active {name} payload is: {job.Payload}kg / {payloadInPounds}lbs");
                 }
                                 
                 var diffTime = DateTime.UtcNow - job.StartTime;
@@ -186,7 +190,7 @@ namespace FlightJobs.Controllers
                 //// Check Fuel
                 if ((job.UsedFuelWeight) < expectedFuelBurned)
                 {
-                    return Request.CreateResponse(HttpStatusCode.Forbidden, $"Impossible to finish this job with {job.UsedFuelWeight}Kg burned fuel.");
+                    return Request.CreateResponse(HttpStatusCode.Forbidden, $"Impossible to finish this {name} with {job.UsedFuelWeight}Kg burned fuel.");
                 }
 
                 var licenseExpired = UpdateStatistics(job, dbContext);
@@ -194,9 +198,9 @@ namespace FlightJobs.Controllers
 
                 dbContext.SaveChanges();
 
-                string resultMsg = "Job finish successfully at: " + job.EndTime.ToShortTimeString() + "  (UTC)";
+                string resultMsg = $"{name} finish successfully at: " + job.EndTime.ToShortTimeString() + "  (UTC)";
                 if (licenseExpired)
-                    resultMsg = "Job finish. Your license is expired. Check Profile page.";
+                    resultMsg = $"{name} finish. Your license is expired. Check Profile page.";
 
                 return Request.CreateResponse(HttpStatusCode.OK, resultMsg);
             }

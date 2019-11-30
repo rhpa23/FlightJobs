@@ -82,6 +82,7 @@
             var value = $(this).closest('tr').children('td:first').text();
             $('#Alternative').val(value.trim());
             $("#alternative-tips-table").hide(500);
+            LoadMapInfo();
         });
     });
 

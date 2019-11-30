@@ -40,6 +40,83 @@ namespace FlightJobs.Controllers
             return 0;
         }
 
+        public JsonResult GetMapInfo(string departure, string arrival, string alternative)
+        {
+            /*
+            {
+                "lat":53.3539,
+	            "lng":-2.275,
+	            "name":"MANCHESTER",
+	            "icon_url":"/assets/airport-e91142e842d5da7b82cfca5c7c9ef6ad.png",
+	            "icon_center_x":13,
+	            "icon_center_y":13
+            }*/
+
+            var departureInfo = AirportDatabaseFile.FindAirportInfo(departure);
+            var arrivalInfo = AirportDatabaseFile.FindAirportInfo(arrival);
+            var alternativeInfo = string.IsNullOrEmpty(alternative) ? null : AirportDatabaseFile.FindAirportInfo(alternative);
+            if (departureInfo != null && arrivalInfo != null)
+            {
+                var departureCoord = new GeoCoordinate(departureInfo.Latitude, departureInfo.Longitude);
+                var arrivalCoord = new GeoCoordinate(arrivalInfo.Latitude, arrivalInfo.Longitude);
+
+                var depJson = new
+                {
+                    lat = departureCoord.Latitude,
+                    lng = departureCoord.Longitude,
+                    name = departureInfo.Name,
+                    info = "Departure",
+                    runway_size = departureInfo.RunwaySize + "ft",
+                    elevation = departureInfo.Elevation + "ft",
+                    trasition = departureInfo.Trasition + "ft",
+                    icon_url = "../Content/img/departing.png",
+                    icon_center_x = 13,
+                    icon_center_y = 13
+                };
+
+                var arrJson = new
+                {
+                    lat = arrivalCoord.Latitude,
+                    lng = arrivalCoord.Longitude,
+                    name = arrivalInfo.Name,
+                    info = "Arrival",
+                    runway_size = arrivalInfo.RunwaySize + "ft",
+                    elevation = arrivalInfo.Elevation + "ft",
+                    trasition = arrivalInfo.Trasition + "ft",
+                    icon_url = "../Content/img/arrival.png",
+                    icon_center_x = 13,
+                    icon_center_y = 13
+                };
+
+                var jsonList = new List<object>();
+                jsonList.Add(depJson);
+                jsonList.Add(arrJson);
+
+
+                if (alternativeInfo != null)
+                {
+                    var alternativeCoord = new GeoCoordinate(alternativeInfo.Latitude, alternativeInfo.Longitude);
+                    var altJson = new
+                    {
+                        lat = alternativeCoord.Latitude,
+                        lng = alternativeCoord.Longitude,
+                        name = alternativeInfo.Name,
+                        info = "Alternative",
+                        runway_size = alternativeInfo.RunwaySize + "ft",
+                        elevation = alternativeInfo.Elevation + "ft",
+                        trasition = alternativeInfo.Trasition + "ft",
+                        icon_url = "../Content/img/alternative.png",
+                        icon_center_x = 13,
+                        icon_center_y = 13
+                    };
+                    jsonList.Add(altJson);
+                }
+
+                return Json(jsonList, JsonRequestBehavior.AllowGet);
+            }
+            return new JsonResult();
+        }
+
         internal int GetAviationTypeId(string aviationType)
         {
             switch (aviationType)

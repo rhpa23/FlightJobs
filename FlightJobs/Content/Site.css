@@ -272,3 +272,7 @@ div.card {
 .pagination > .active > a:hover {
     background-color: #4ba9c5 !important;
 }
+
+.badge-warning {
+    background-color:darkorange;
+}

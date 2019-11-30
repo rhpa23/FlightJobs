@@ -183,7 +183,7 @@ namespace FlightJobs.Controllers
                 }
             }
 
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", "Home");
         }
 
         public ActionResult ShowChallengeDetails(int jobId)

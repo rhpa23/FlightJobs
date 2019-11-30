@@ -28,11 +28,11 @@ namespace FlightJobs.Controllers
                     homeModel.PilotStatisticsDescription = GetPilotDescription(statistics, dbContext);
                 }
             }
-            var jobList = dbContext.JobDbModels.Where(j => 
-                        !j.IsDone && 
+            var jobList = dbContext.JobDbModels.Where(j =>
+                        !j.IsDone &&
                          j.User.Id == user.Id &&
                         !j.IsChallenge
-                        ).OrderBy(j => j.Id).ToPagedList(pageNumber ?? 1, 5);
+                        ).OrderBy(j => j.Id);//.ToPagedList(pageNumber ?? 1, 5);
 
             homeModel.Challenge = dbContext.JobDbModels.FirstOrDefault(c =>
                             !c.IsDone && c.IsChallenge && c.User.Id == user.Id &&
@@ -57,7 +57,7 @@ namespace FlightJobs.Controllers
                 j.Cargo = cargo;
                 j.WeightUnit = weightUnit;
             });
-            homeModel.Jobs = jobList;
+            homeModel.Jobs = jobList.ToPagedList(pageNumber ?? 1, 5);
             homeModel.WeightUnit = weightUnit;
             ViewBag.TitleChallenge = "Pending Challenges";
             return View(homeModel);

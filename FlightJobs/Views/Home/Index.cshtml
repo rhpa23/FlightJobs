@@ -5,7 +5,7 @@
 
 @model FlightJobs.Models.HomeViewModel
 
-@Styles.Render("~/Content/css/challenge")
+@Styles.Render("~/Content/challenge.css")
 
 <style>
     .pagination {
@@ -70,14 +70,14 @@
     }
     .notes-area {
         border: 2px solid #7ed6f0;
-        padding: 0px;
+        padding: 0px !important;
         height: auto;
         margin: 5px 10px 10px 5px;
         width: 98.5%;
     }
     .dashboard-area {
         border: 2px solid #7ed6f0;
-        padding: 0px;
+        padding: 0px !important;
         height: 350px;
         margin: 5px;
     }
@@ -654,6 +654,7 @@
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 console.log("Erro:" + errorThrown);
+                $('#bank-balance-loading-img').hide();
                 $('#myModalTransfer').modal('show');
                 $("#transfer-content").html('<h4 style="margin:20px;color:red;">' + errorThrown + '</h4>');
             }
