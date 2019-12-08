@@ -478,7 +478,7 @@ namespace FlightJobs.Controllers
         {
             var stBuilder = new StringBuilder();
             var listOverdue = dbContext.PilotLicenseExpensesUser.Include("PilotLicenseExpense").Where(e =>
-                                                            e.MaturityDate < DateTime.UtcNow &&
+                                                            e.MaturityDate < DateTime.Now &&
                                                             e.User.Id == statistics.User.Id).ToList();
             if (listOverdue.Count() > 0)
             {
@@ -521,7 +521,7 @@ namespace FlightJobs.Controllers
                         j.User.Id == user.Id &&
                         !j.IsDone &&
                         j.IsChallenge &&
-                        j.ChallengeExpirationDate >= DateTime.UtcNow
+                        j.ChallengeExpirationDate >= DateTime.Now
                 );
         }
     }

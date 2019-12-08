@@ -108,7 +108,9 @@
                         <li><i class="glyphicon glyphicon-user black-icon"></i>@Html.ActionLink("Logbook", "Index", "Profile")</li>
                         <li><i class="glyphicon glyphicon-list-alt black-icon"></i>@Html.ActionLink("Airlines", "Index", "Airlines")</li>
                         <li><i class="glyphicon glyphicon-plus black-icon"></i>@Html.ActionLink("Add Jobs", "Index", "SearchJobs")</li>
-                        <li><i class="glyphicon glyphicon-screenshot black-icon"></i>@Html.ActionLink("Challenges", "Index", "Challenge", null, new { @style= "width: auto;" })<span class="badge badge-pill badge-warning">new</span></li>
+                        <li><i class="glyphicon glyphicon-screenshot black-icon"></i>@Html.ActionLink("Challenges", "Index", "Challenge", null, new { @style= "width: auto;" })
+                        <span class="badge badge-pill badge-warning">@if (ViewBag.ChallengeCount != null) { @ViewBag.ChallengeCount; }</span>
+                        </li>
                         <li class="divider"></li>
                         <li><i class="glyphicon glyphicon-signal black-icon"></i>@Html.ActionLink("Analysis", "Analysis", "Home")</li>
                         <li><i class="glyphicon glyphicon-download black-icon"></i>@Html.ActionLink("Download", "Install", "Home")</li>
@@ -132,22 +134,9 @@
                     <script type="text/javascript" src="https://www.fsadwork.com/show.js"></script>
                     <br />
                     <br />
-                    <br />
-                    <script type="text/javascript">
-                    <!--
-                    zone = "39";
-                    pl = "163";
-                    shape = "1";
-                    c_border = "336699";
-                    c_background = "FFFFFF";
-                    page_background = "FFFFFF";
-                    c_text1 = "000000";
-                    c_text2 = "0000FF";
-                    c_text3 = "0000FF";
-                    url = "https://www.fsadwork.com";
-            //--></script>
-                    <script type="text/javascript" src="https://www.fsadwork.com/show.js"></script>
-
+                    <a href="https://www.myASP.NET/index?r=flightjobs">
+                        <img src="https://www.myASP.NET/affiliate/300x250.gif" border="0">
+                    </a>
                     <hr />
                     <div>
                         <img src="~/Content/img/FlightJobsLogo0002.png" style="width:70px;" />

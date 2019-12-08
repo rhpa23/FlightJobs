@@ -9,7 +9,9 @@ namespace FlightJobs.Migrations
     {
         public Configuration()
         {
-            AutomaticMigrationsEnabled = false;
+            AutomaticMigrationsEnabled = true;
+            ContextKey = "FlightJobs.Migrations.Configuration";
+            SetSqlGenerator("MySql.Data.MySqlClient", new MySql.Data.EntityFramework.MySqlMigrationSqlGenerator());
         }
 
         protected override void Seed(FlightJobs.Models.ApplicationDbContext context)

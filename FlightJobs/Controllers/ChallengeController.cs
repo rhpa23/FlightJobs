@@ -31,10 +31,12 @@ namespace FlightJobs.Controllers
             };
 
             var challengeList = dbContext.JobDbModels.Where(c =>
-                            !c.IsDone && c.IsChallenge && c.User == null &&
-                            c.ChallengeExpirationDate > DateTime.UtcNow &&
+                            !c.IsDone && c.IsChallenge && 
+                            c.ChallengeExpirationDate > DateTime.Now &&
                             c.User == null)
                             .OrderBy(j => j.Id).ToList();
+
+            ViewBag.ChallengeCount = challengeList.Count();
 
             challengeList.ForEach(x =>
             {
@@ -154,7 +156,7 @@ namespace FlightJobs.Controllers
         {
             var dbContext = new ApplicationDbContext();
             var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
-            var userChallenger = dbContext.JobDbModels.Count(x => x.IsChallenge && x.ChallengeCreatorUserId == user.Id && !x.IsDone && x.ChallengeExpirationDate > DateTime.UtcNow);
+            var userChallenger = dbContext.JobDbModels.Count(x => x.IsChallenge && x.ChallengeCreatorUserId == user.Id && !x.IsDone && x.ChallengeExpirationDate > DateTime.Now);
 
             if (user != null && user.Email != AccountController.GuestEmail && userChallenger <= CHALLENGE_LIMIT)
             {
@@ -167,7 +169,7 @@ namespace FlightJobs.Controllers
                         IsChallenge = true,
                         ChallengeType = (ChallengeTypeEnum)Enum.Parse(typeof(ChallengeTypeEnum), challenge.Type),
                         ChallengeCreatorUserId = user.Id,
-                        ChallengeExpirationDate = DateTime.UtcNow.AddDays(5),
+                        ChallengeExpirationDate = DateTime.Now.AddDays(5),
                         DepartureICAO = challenge.DepartureICAO,
                         ArrivalICAO = challenge.ArrivalICAO,
                         AviationType = 2,
@@ -175,15 +177,15 @@ namespace FlightJobs.Controllers
                         Pax = challenge.Pax,
                         Pay = challenge.TotalPayment,
                         Dist = challenge.Dist,
-                        StartTime = DateTime.UtcNow,
-                        EndTime = DateTime.UtcNow
+                        StartTime = DateTime.Now,
+                        EndTime = DateTime.Now
                     };
                     dbContext.JobDbModels.Add(job);
                     dbContext.SaveChanges();
                 }
             }
 
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Index", "Challenge");
         }
 
         public ActionResult ShowChallengeDetails(int jobId)
@@ -254,7 +256,7 @@ namespace FlightJobs.Controllers
         {
             var dbContext = new ApplicationDbContext();
             var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
-            var userChallenger = dbContext.JobDbModels.Count(x => x.IsChallenge && x.ChallengeCreatorUserId == user.Id && !x.IsDone && x.ChallengeExpirationDate > DateTime.UtcNow);
+            var userChallenger = dbContext.JobDbModels.Count(x => x.IsChallenge && x.ChallengeCreatorUserId == user.Id && !x.IsDone && x.ChallengeExpirationDate > DateTime.Now);
 
             if (user != null && user.Email != AccountController.GuestEmail && userChallenger <= CHALLENGE_LIMIT)
             {
@@ -272,7 +274,7 @@ namespace FlightJobs.Controllers
                         !j.IsDone &&
                         !j.IsActivated &&
                         j.IsChallenge &&
-                        j.ChallengeExpirationDate >= DateTime.UtcNow
+                        j.ChallengeExpirationDate >= DateTime.Now
                 );
 
                 if (job != null)

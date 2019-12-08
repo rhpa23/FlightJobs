@@ -7,7 +7,6 @@ using System.Web;
 using System.Web.Mvc;
 using PagedList;
 using System.IO;
-using Chart.Mvc.ComplexChart;
 using System.Text;
 using FlightJobs.Util;
 using System.Text.RegularExpressions;
@@ -353,7 +352,7 @@ namespace FlightJobs.Controllers
                                                     e.PilotLicenseExpense.Id == item.PilotLicenseItem.PilotLicenseExpense.Id &&
                                                     e.User.Id == user.Id);
 
-                    expenseUser.MaturityDate = DateTime.UtcNow.AddDays(expenseUser.PilotLicenseExpense.DaysMaturity);
+                    expenseUser.MaturityDate = DateTime.Now.AddDays(expenseUser.PilotLicenseExpense.DaysMaturity);
                     expenseUser.OverdueProcessed = false;
                 }
                 dbContext.SaveChanges();
@@ -392,7 +391,7 @@ namespace FlightJobs.Controllers
                     {
                         User = user,
                         PilotLicenseExpense = expense,
-                        MaturityDate = DateTime.UtcNow.AddDays(expense.DaysMaturity)
+                        MaturityDate = DateTime.Now.AddDays(expense.DaysMaturity)
                     };
                     dbContext.PilotLicenseExpensesUser.Add(expenseUser);
                 }

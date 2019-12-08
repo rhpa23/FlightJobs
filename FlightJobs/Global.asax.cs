@@ -56,10 +56,10 @@ namespace FlightJobs
 
         protected void Application_BeginRequest()
         {
-            if (!Context.Request.IsLocal && !Request.IsSecureConnection && !Request.Url.AbsoluteUri.Contains("api"))
-            {
-                Response.Redirect(Request.Url.AbsoluteUri.Replace("http://", "https://"));
-            }
+            //if (!Context.Request.IsLocal && !Request.IsSecureConnection && !Request.Url.AbsoluteUri.Contains("api"))
+            //{
+            //    Response.Redirect(Request.Url.AbsoluteUri.Replace("http://", "https://"));
+            //}
         }
     }
 }

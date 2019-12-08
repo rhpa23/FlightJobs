@@ -22,7 +22,7 @@ namespace FlightJobs.Schedule
             var dbContext = new ApplicationDbContext();
             try
             {
-                var checkDate = DateTime.UtcNow.AddHours(12);
+                var checkDate = DateTime.Now.AddHours(12);
                 var listOverdue = dbContext.StatisticsDbModels
                                     .Join(dbContext.PilotLicenseExpensesUser, u => u.User.Id, y => y.User.Id, (s, y) => new { StatisticsDbModel = s, PilotLicenseExpensesUserDbModel = y })
                                     .Where(

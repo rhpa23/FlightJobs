@@ -58,7 +58,7 @@ namespace FlightJobs.Controllers
                     return Request.CreateResponse(HttpStatusCode.Forbidden, "You don't have any job activated for this location.");
                 }
 
-                if (job.IsChallenge && job.ChallengeExpirationDate <= DateTime.UtcNow)
+                if (job.IsChallenge && job.ChallengeExpirationDate <= DateTime.Now)
                 {
                     return Request.CreateResponse(HttpStatusCode.Forbidden, CHALLENGE_EXPIRED);
                 }
@@ -81,7 +81,7 @@ namespace FlightJobs.Controllers
                 job.StartFuelWeight = fuelWeight;
 
                 job.InProgress = true;
-                job.StartTime = DateTime.UtcNow;
+                job.StartTime = DateTime.Now;
                 dbContext.SaveChanges();
 
                 string name = job.IsChallenge ? "Challenge" : "Job";
@@ -148,7 +148,7 @@ namespace FlightJobs.Controllers
 
                 string name = job.IsChallenge ? "Challenge" : "Job";
 
-                if (job.IsChallenge && job.ChallengeExpirationDate <= DateTime.UtcNow)
+                if (job.IsChallenge && job.ChallengeExpirationDate <= DateTime.Now)
                 {
                     return Request.CreateResponse(HttpStatusCode.Forbidden, CHALLENGE_EXPIRED);
                 }
@@ -167,7 +167,7 @@ namespace FlightJobs.Controllers
                     return Request.CreateResponse(HttpStatusCode.Forbidden, $"Wrong. Active {name} payload is: {job.Payload}kg / {payloadInPounds}lbs");
                 }
                                 
-                var diffTime = DateTime.UtcNow - job.StartTime;
+                var diffTime = DateTime.Now - job.StartTime;
 
                 var minTime = (job.Dist * 11) / 100;
 
@@ -177,7 +177,7 @@ namespace FlightJobs.Controllers
                 }
 
                 job.InProgress = false;
-                job.EndTime = DateTime.UtcNow;
+                job.EndTime = DateTime.Now;
                 job.IsDone = true;
                 job.IsActivated = false;
                 job.ModelName = tailNumberStr;
@@ -297,7 +297,7 @@ namespace FlightJobs.Controllers
         private bool IsLicenseOverdue(ApplicationDbContext dbContext, string userId)
         {
             var listOverdue = dbContext.PilotLicenseExpensesUser.Where(e =>
-                                                            e.MaturityDate < DateTime.UtcNow &&
+                                                            e.MaturityDate < DateTime.Now &&
                                                             e.User.Id == userId).ToList();
             return (listOverdue.Count() > 0);
         }

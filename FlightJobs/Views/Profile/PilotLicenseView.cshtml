@@ -24,7 +24,7 @@
                 </tr>
                 @foreach (var item in Model)
                 {
-                    <tr class="@(item.MaturityDate < DateTime.UtcNow ? "expenseOverdue" : "")" style="cursor:pointer;">
+                    <tr class="@(item.MaturityDate < DateTime.Now ? "expenseOverdue" : "")" style="cursor:pointer;">
                         <td>
                             @Html.DisplayFor(modelItem => item.PilotLicenseExpense.Name)
                         </td>

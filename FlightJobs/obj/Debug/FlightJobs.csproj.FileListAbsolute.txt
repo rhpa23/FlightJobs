@@ -374,9 +374,6 @@ C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs
 C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\obj\Debug\FlightJobs.pdb
 C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\obj\Debug\FlightJobs.csprojResolveAssemblyReference.cache
 C:\Users\rudolf\Documents\Visual Studio 2017\Meus Projetos\FlightJobs\FlightJobs\obj\Debug\FlightJobs.Migrations.AirlineProperties.resources
-D:\DotNetProjects\FlightJobs\FlightJobs\bin\Chart.Mvc.dll
-D:\DotNetProjects\FlightJobs\FlightJobs\bin\Chart.Mvc.pdb
-D:\DotNetProjects\FlightJobs\FlightJobs\bin\Chart.Mvc.xml
 D:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.Migrations.AirlineProperties.resources
 D:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.Migrations.AddAlternative.resources
 D:\DotNetProjects\FlightJobs\FlightJobs\bin\App_Data\GlobalAirportDatabase.txt
@@ -410,3 +407,16 @@ D:\DotNetProjects\FlightJobs\FlightJobs\bin\FlightJobs.pdb
 D:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.dll
 D:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.pdb
 D:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.Migrations.Challenger.resources
+D:\DotNetProjects\FlightJobs\FlightJobs\bin\MySql.Data.dll
+D:\DotNetProjects\FlightJobs\FlightJobs\bin\MySql.Data.xml
+D:\DotNetProjects\FlightJobs\FlightJobs\bin\BouncyCastle.Crypto.dll
+D:\DotNetProjects\FlightJobs\FlightJobs\bin\Google.Protobuf.dll
+D:\DotNetProjects\FlightJobs\FlightJobs\bin\Renci.SshNet.dll
+D:\DotNetProjects\FlightJobs\FlightJobs\bin\Google.Protobuf.xml
+D:\DotNetProjects\FlightJobs\FlightJobs\bin\Renci.SshNet.xml
+D:\DotNetProjects\FlightJobs\FlightJobs\bin\MySql.Data.EntityFramework.dll
+D:\DotNetProjects\FlightJobs\FlightJobs\bin\MySql.Data.EntityFramework.xml
+D:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.Migrations.mysql.resources
+D:\DotNetProjects\FlightJobs\FlightJobs\bin\Chart.Mvc.dll
+D:\DotNetProjects\FlightJobs\FlightJobs\bin\Chart.Mvc.pdb
+D:\DotNetProjects\FlightJobs\FlightJobs\bin\Chart.Mvc.xml

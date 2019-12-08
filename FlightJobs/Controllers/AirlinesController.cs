@@ -22,14 +22,15 @@ namespace FlightJobs.Controllers
             ViewBag.Message = TempData["Message"];
             var dbContext = new ApplicationDbContext();
             var list = dbContext.AirlineDbModels.OrderByDescending(a => a.Id).ToList();
+            var statisticsList = dbContext.StatisticsDbModels.ToList();
             foreach (var airline in list)
             {
-                var ownerUserStatistics = dbContext.StatisticsDbModels.FirstOrDefault(s => airline.UserId != null && s.User.Id == airline.UserId);
+                var ownerUserStatistics = statisticsList.FirstOrDefault(s => airline.UserId != null && s.User.Id == airline.UserId);
                 if (ownerUserStatistics != null)
                 {
                     airline.OwnerUserStatistics = ownerUserStatistics;
-                    var statisticsList = dbContext.StatisticsDbModels.Where(s => s.Airline != null && s.Airline.Id == airline.Id);
-                    airline.OwnerUserStatistics.AirlinePilotsHired = statisticsList.ToList();
+                    var airlineStatisticsList = statisticsList.Where(s => s.Airline != null && s.Airline.Id == airline.Id);
+                    airline.OwnerUserStatistics.AirlinePilotsHired = airlineStatisticsList.ToList();
                 }
                    
             }
@@ -229,7 +230,7 @@ namespace FlightJobs.Controllers
                     Salary = 20,
                     Score = model.Score,
                     UserId = user.Id,
-                    DebtMaturityDate = DateTime.UtcNow
+                    DebtMaturityDate = DateTime.Now
                 };
 
                 if (model.FilesInput != null && model.FilesInput.Any())

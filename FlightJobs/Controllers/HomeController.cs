@@ -36,7 +36,7 @@ namespace FlightJobs.Controllers
 
             homeModel.Challenge = dbContext.JobDbModels.FirstOrDefault(c =>
                             !c.IsDone && c.IsChallenge && c.User.Id == user.Id &&
-                            c.ChallengeExpirationDate >= DateTime.UtcNow);
+                            c.ChallengeExpirationDate >= DateTime.Now);
             string weightUnit = DataConversion.GetWeightUnit(Request);
             if (homeModel.Challenge != null)
             {
@@ -46,7 +46,7 @@ namespace FlightJobs.Controllers
             }                
 
             var listOverdue = dbContext.PilotLicenseExpensesUser.Where(e =>
-                                                            e.MaturityDate < DateTime.UtcNow &&
+                                                            e.MaturityDate < DateTime.Now &&
                                                             e.User.Id == user.Id).ToList();
             TempData["PilotMessage"] = (listOverdue.Count() > 0) ? "License is expired" : null;
             jobList.ToList().ForEach(delegate(JobDbModel j) {
@@ -60,6 +60,10 @@ namespace FlightJobs.Controllers
             homeModel.Jobs = jobList.ToPagedList(pageNumber ?? 1, 5);
             homeModel.WeightUnit = weightUnit;
             ViewBag.TitleChallenge = "Pending Challenges";
+            ViewBag.ChallengeCount = dbContext.JobDbModels.Where(c =>
+                            !c.IsDone && c.IsChallenge &&
+                            c.ChallengeExpirationDate > DateTime.Now &&
+                            c.User == null).Count();
             return View(homeModel);
         }
 
