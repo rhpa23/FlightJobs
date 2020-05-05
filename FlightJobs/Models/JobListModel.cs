@@ -12,11 +12,11 @@ namespace FlightJobs.Models
         public int Id { get; set; }
 
         public AirportModel Departure { get; set; }
+        public AirportModel Arrival { get; set; }
 
-        [DisplayName("Destination")]
-        public string Arrival { get; set; }
         public long Dist { get; set; }
         public string PayloadView { get; set; }
+        public string PayloadLabel { get; set; }
         public long Pax { get; set; }
         public long Cargo { get; set; }
 
@@ -28,6 +28,8 @@ namespace FlightJobs.Models
         public bool FirstClass { get; set; }
 
         public bool Selected { get; set; }
+
+        public bool IsCargo { get; set; }
 
         public string AviationType { get; set; }
     }

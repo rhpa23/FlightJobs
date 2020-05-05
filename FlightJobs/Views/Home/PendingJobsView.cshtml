@@ -5,12 +5,21 @@
 
 @model PagedList.IPagedList<JobDbModel>
 
+<style>
+    .glyphicon {
+        font-size: 20px;
+    }
+    .col-xs-1, .col-sm-1, .col-md-1, .col-lg-1, .col-xs-2, .col-sm-2, .col-md-2, .col-lg-2, .col-xs-3, .col-sm-3, .col-md-3, .col-lg-3, .col-xs-4, .col-sm-4, .col-md-4, .col-lg-4, .col-xs-5, .col-sm-5, .col-md-5, .col-lg-5, .col-xs-6, .col-sm-6, .col-md-6, .col-lg-6, .col-xs-7, .col-sm-7, .col-md-7, .col-lg-7, .col-xs-8, .col-sm-8, .col-md-8, .col-lg-8, .col-xs-9, .col-sm-9, .col-md-9, .col-lg-9, .col-xs-10, .col-sm-10, .col-md-10, .col-lg-10, .col-xs-11, .col-sm-11, .col-md-11, .col-lg-11, .col-xs-12, .col-sm-12, .col-md-12, .col-lg-12 {
+        position: static !important;
+    }
+</style>
+
 <div id="pending-job-content" style="margin-bottom:5px;  ">
     <p>
         <h3 style=" width:100%; text-align:center; color:dimgray"><b>Pending Jobs</b></h3>
     </p>
     <br />
-    <div class="row" style="margin-left:inherit; margin-right:inherit;">
+    <div class="row" style="margin-left:inherit; margin-right:inherit;background-color: #696969;">
         <div class="col-sm-1 pending-header" style="width:215px;">
             Departure - Arrival
         </div>
@@ -26,23 +35,25 @@
         var styleClass = (item.IsActivated) ? "job-line-activated" : "job-line";
         var lineTootip = (item.IsActivated) ? "Activated" : "Click to activate";
 
-        <div class="row @styleClass" onclick="activateJob(@item.Id)" title="@lineTootip">
-            <div class="col-sm-1" style="color:white; padding:8px 0px 0px 0px;width: 65px;">
-                <strong>@item.DepartureICAO</strong>
+        <div class="row @styleClass">
+            <div data-toggle="tooltip" data-placement="right" title="@lineTootip" onclick="activateJob(@item.Id)">
+                <div class="col-sm-1" style="color:white; padding:8px 0px 0px 0px;width: 65px;">
+                    <strong>@item.DepartureICAO</strong>
+                </div>
+                <div class="col-sm-1" style="padding-top:5px;padding-left:0px; padding-right:0px; width:auto;">
+                    <img src="~/Content/img/airplane2.png" style="width:80px;" />
+                </div>
+                <div class="col-sm-1" style="color:white; padding:8px 0px 0px 0px;width: 65px;" title="Alternative: @item.AlternativeICAO">
+                    <strong>@item.ArrivalICAO</strong>
+                </div>
+                <div class="col-sm-1 pending-col">@item.Dist Nm </div>
+                <div class="col-sm-1 pending-col">@item.Pax</div>
+                <div class="col-sm-1 pending-col">@item.Cargo @item.WeightUnit</div>
+                <div class="col-sm-1 pending-col">@item.Payload @item.WeightUnit</div>
+                <div class="col-sm-1 pending-col" style="text-align: left;">@string.Format("{0:C}", item.Pay)</div>
             </div>
-            <div class="col-sm-1" style="padding-top:5px;padding-left:0px; padding-right:0px; width:auto;">
-                <img src="~/Content/img/airplane2.png" style="width:80px;" />
-            </div>
-            <div class="col-sm-1" style="color:white; padding:8px 0px 0px 0px;width: 65px;" title="Alternative: @item.AlternativeICAO">
-                <strong>@item.ArrivalICAO</strong>
-            </div>
-            <div class="col-sm-1 pending-col">@item.Dist Nm </div>
-            <div class="col-sm-1 pending-col">@item.Pax</div>
-            <div class="col-sm-1 pending-col">@item.Cargo @item.WeightUnit</div>
-            <div class="col-sm-1 pending-col">@item.Payload @item.WeightUnit</div>
-            <div class="col-sm-1 pending-col" style="text-align: left;">@string.Format("{0:C}", item.Pay)</div>
-            <div class="col-sm-1 pending-col" style="width:50px;">
-                <a data-toggle="confirmation" data-title="Remove Job?" href="Home/DeleteJob/@item.Id"><i style="font-size: 20px;" class="glyphicon glyphicon-remove"></i></a>
+            <div class="col-sm-1 pending-col" style="color:black; width:50px;">
+                <a data-toggle="confirmation" href="Home/DeleteJob/@item.Id"><i class="glyphicon glyphicon-remove"></i></a>
             </div>
         </div>
     }
@@ -69,4 +80,19 @@
         });
         return true;
     }
+    $('body').confirmation({
+        selector: '[data-toggle="confirmation"]',
+        title: 'Remove Job?',
+        trigger: 'click',
+        placement: 'right',
+        singleton: true,
+        target: '_self',
+        popout: true,
+
+    });
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+    });
 </script>
+
+

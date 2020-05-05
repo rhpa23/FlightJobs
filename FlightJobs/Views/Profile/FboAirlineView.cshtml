@@ -14,10 +14,10 @@
                     <b>Score increase: </b> @Html.DisplayFor(modelItem => item.ScoreIncrease)<br />
                 </div>
                 <div class="col-sm-4">
-                    <b>Fuel price(discount): </b> @Html.DisplayFor(modelItem => item.FuelPriceDiscount)
+                    <b>Fuel price(discount): </b> @string.Format("{0:0.00}", item.FuelPriceDiscount)
                 </div>
                 <div class="col-sm-4">
-                    <b>Ground crew(discount): </b> @Html.DisplayFor(modelItem => item.GroundCrewDiscount)
+                    <b>Ground crew(discount): </b>@string.Format("{0:0.00}", item.GroundCrewDiscount)
                 </div>
             </div>
         </div>

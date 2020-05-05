@@ -1,6 +1,6 @@
 ﻿@model FlightJobs.Models.StatisticsDbModel
 
-<link href="/Content/bootstrap.css" rel="stylesheet">
+
 <link href="/Content/bootstrap-fileinput/css/fileinput.min.css" rel="stylesheet">
 
 <style>
@@ -44,24 +44,71 @@
         @Html.Partial("~/Views/Profile/ChartProfile.cshtml", Model.ChartModel)
     </div>
 </div>
-<hr />
-<div class="row">
-    <div class="col-sm-3"><strong>Last flight date:</strong></div>
-    <div class="col-sm-8">@Model.LastFlight.ToShortDateString()</div>
+<hr style="margin:0px;" />
+<div style="height:200px; overflow-y:auto; overflow-x:hidden;">
+    <div class="row">
+        <div class="col-sm-3"><strong>Last flight date:</strong></div>
+        <div class="col-sm-8">@Model.LastFlight.ToShortDateString()</div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-3"><strong>Last aircraft:</strong></div>
+        <div class="col-sm-8">@Model.LastAircraft</div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-3"><strong>Favorite airplane:</strong></div>
+        <div class="col-sm-8">@Model.FavoriteAirplane</div>
+    </div>
+    <hr style="margin:0px;" /><br />
+    <div class="row" style="margin:0px;">
+        <div class="col-md-6">
+            <table class="table table-hover" style="font-size:x-small;">
+                <tr  style="background-color: aliceblue;">
+                    <th>10 most used airports to departure</th>
+                    <th style="text-align:center;">Jobs count</th>
+                </tr>
+                @foreach (var item in Model.DepartureRanking)
+            {
+                    <tr>
+                        <td style="padding-left: 10px; vertical-align: middle;">
+                            @Html.DisplayFor(modelItem => item.Key)
+                        </td>
+                        <td style="padding-left: 10px; vertical-align: middle; text-align:center;">
+                            @Html.DisplayFor(modelItem => item.Value)
+                        </td>
+                    </tr>
+                }
+
+            </table>
+        </div>
+        <div class="col-md-6">
+            <table class="table table-hover" style="font-size:x-small;">
+                <tr style="background-color: aliceblue;">
+                    <th>10 most used airports to arrive</th>
+                    <th style="text-align:center;">Jobs count</th>
+                </tr>
+                @foreach (var item in Model.DestinationRanking)
+            {
+                    <tr>
+                        <td style="padding-left: 10px; vertical-align: middle;">
+                            @Html.DisplayFor(modelItem => item.Key)
+                        </td>
+                        <td style="padding-left: 10px; vertical-align: middle; text-align:center;">
+                            @Html.DisplayFor(modelItem => item.Value)
+                        </td>
+                    </tr>
+                }
+
+            </table>
+        </div>
+    </div>
 </div>
 
-<div class="row">
-    <div class="col-sm-3"><strong>Last aircraft:</strong></div>
-    <div class="col-sm-8">@Model.LastAircraft</div>
-</div>
-
-<div class="row">
-    <div class="col-sm-3"><strong>Favorite airplane:</strong></div>
-    <div class="col-sm-8">@Model.FavoriteAirplane</div>
-</div>
 
 
-<script>
+
+    <script>
 $("#avatar-1").fileinput({
     overwriteInitial: true,
     maxFileSize: 60,
@@ -85,4 +132,4 @@ $("#avatar-1").fileinput({
     allowedFileExtensions: ["jpg", "png", "gif"],
     maxFileCount: 1
     });
-</script>
+    </script>

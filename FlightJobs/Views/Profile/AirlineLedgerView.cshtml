@@ -133,13 +133,61 @@
 
             </table>
         </div>
-        @Html.PagedListPager(Model,
-            page => Url.Action("LedgerProfile", new { airlineId = Model.FirstOrDefault().Airline.Id, page = page }),
-            PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(new AjaxOptions() { HttpMethod = "GET", UpdateTargetId = "ledger-content" }))
+        <div class="pagination-container">
+            <ul class="pagination">
+                @for (int i = 1; i <= Model.PageCount; i++)
+                {
+                    if (i <= 15 || Model.PageNumber > 15)
+                    {
+                        if (@Model.PageNumber == i)
+                        {
+                            <li class="active"><a>@i</a></li>
+                        }
+                        else
+                        {
+                            <li><a href="#" onclick="changePage(@i)">@i</a></li>
+                        }
+                    }
+                    else
+                    {
+                        <li class="hidden"><a href="#" onclick="changePage(@i)">@i</a></li>
+                    }
+                }
+                @if (Model.PageCount > 15 && Model.PageNumber <= 15)
+                {
+                    <li><a href="#" onclick="showAllPages()">...</a></li>
+                }
+            </ul>
+            <img id="ledger-page-loading-img" src="~/Content/img/loading.gif" style="width:20px; display:none;" />
+        </div>
     }
     else
     {
         <div>No jobs to show.</div>
     }
         
+<script>
+    function changePage(pageNumber) {
+        $('#ledger-page-loading-img').show();
+        var model = {
+            airlineId: @Model.FirstOrDefault().Airline.Id,
+            page: pageNumber
+        }
 
+        $.ajax({
+        url: '@Url.Action("LedgerProfile", "Profile")',
+        type: "Get",
+        data: model,
+        success: function (result) {
+            if (result != null) {
+                $("#ledger-content").html(result);
+                $('#ledger-page-loading-img').hide();
+            }
+        }
+    });
+    }
+
+    function showAllPages() {
+        $('ul li.hidden').removeClass('hidden');
+    }
+</script>

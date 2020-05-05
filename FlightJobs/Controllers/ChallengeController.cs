@@ -14,7 +14,7 @@ namespace FlightJobs.Controllers
     {
         private const string CHALLENGE_SESSION_MODEL = "ChallengeSessionModel";
         private const int CHALLENGE_LIMIT = 5;
-        private const decimal CHALLENGE_GAIN = 1.08M;
+        private const decimal CHALLENGE_GAIN = 1.15M;
 
         // GET: Challenge
         public ActionResult Index()

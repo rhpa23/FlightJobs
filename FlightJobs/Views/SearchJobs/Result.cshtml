@@ -1,6 +1,5 @@
 ﻿@using PagedList;
 
-@using PagedList.Mvc;
 
 @model IPagedList<FlightJobs.Models.JobListModel>
 
@@ -24,164 +23,117 @@
 {
     if (Model.Count() > 0)
     {
-<div class="navbar navbar-inverse navbar-fixed-top" style="margin-top:51px; text-align:center; color:#9d9d9d; height:125px; ">
+<div class="navbar navbar-inverse" style="text-align:center; color:#9d9d9d; height:125px; width:100%; ">
     <p>
-        <h4>First ckeck your aircraft payload limits and select the available jobs departing from:</h4>
+        <h4>Ckeck your aircraft payload limits and select the available jobs</h4>
     </p>
 
     <p>
-        <b>@Html.DisplayFor(modelItem => Model.FirstOrDefault().Departure.ICAO)</b> @Html.DisplayFor(modelItem => Model.FirstOrDefault().Departure.Name)
+        Departing from  
+        <b>@Html.DisplayFor(modelItem => Model.FirstOrDefault().Departure.Name)</b> (@Html.DisplayFor(modelItem => Model.FirstOrDefault().Departure.ICAO))
+        to arrivel at 
+        <b>@Html.DisplayFor(modelItem => Model.FirstOrDefault().Arrival.Name)</b> (@Html.DisplayFor(modelItem => Model.FirstOrDefault().Arrival.ICAO))
     </p>
 
     <label id="paxSummary" style="font-size: 12px;"> </label>
     <label id="cargoSummary" style="font-size: 12px; padding-left:100px"></label>
     <label id="paymentSummary" style="font-size: 12px; padding-left:100px"></label>
+    <div style="border-top: 1px solid #808080; margin: 0px 60px 0px 60px;"></div>
     <p>
         <label id="payloadSummary" style="font-size: 13px;"></label>
     </p>
 </div>
-        <div class="panel panel-default text-center" style="margin-top:140px">
-            
-            <table class="table table-bordered" style="font-size: 10px;">
-                <tr style="background-color:darkgray;">
-                    <th class="text-center">
-                        <span style="cursor:pointer; text-decoration:underline;" id="select-all"> Select all</span>
-                    </th>
-                    <th class="text-center">
-                        @Html.DisplayNameFor(model => model.First().Arrival)
-                    </th>
-                    <th class="text-center">
-                        @Html.DisplayNameFor(model => model.First().Dist) (nm)
-                    </th>
-                    <th class="text-center">
-                        Payload
-                    </th>
-                    <th class="text-center">
-                        @Html.DisplayNameFor(model => model.First().Pay)
-                    </th>
-                </tr>
+<div style="margin: 0px; height: 350px; overflow-y: auto;">
+    <div class="panel panel-default text-center" style="margin: 0px 50px 0px 50px;">
 
-                @foreach (var item in Model)
-                {
+        <table class="table table-bordered" style="font-size: 10px;">
+            <tr style="background-color:darkgray;">
+                <th class="text-center">
+                    <span style="cursor:pointer; text-decoration:underline;" id="select-all"> Select all</span>
+                </th>
+                <th class="text-center">
+                    Type
+                </th>
+                <th class="text-center">
+                    Payload
+                </th>
+                <th class="text-center">
+                    @Html.DisplayNameFor(model => model.First().Pay)
+                </th>
+            </tr>
 
-                    string rowClass = "";
-                    if (item.Selected)
+            @foreach (var item in Model)
                     {
-                        rowClass = "bg-info";
-                    }
+                        string icon = "/Content/img/passanger.png";
+                        if (item.IsCargo)
+                        {
+                            icon = "/Content/img/cargo-icon.png";
+                        }
+                        string rowClass = "";
+                        if (item.Selected)
+                        {
+                            rowClass = "bg-info";
+                        }
 
-                    <tr class="@rowClass" style="cursor:pointer;">
+                        <tr class="@rowClass" style="cursor:pointer;">
 
-                        <td>
-                            @Html.CheckBoxFor(modelItem => item.Selected, new { Id = item.Id, Name = "sels", Value = item.Id })
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Arrival)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Dist)
-                        </td>
-                        
-                        <td> @Html.DisplayFor(modelItem => item.PayloadView)</td>
+                            <td>
+                                @Html.CheckBoxFor(modelItem => item.Selected, new { Id = item.Id, Name = "sels", Value = item.Id, Class= "checkbox-job" })
+                            </td>
+                            <td style="padding:0px; ">
+                                <img src="@icon" style="height:35px;" /> @item.PayloadLabel
+                            </td>
+                            <td> @Html.DisplayFor(modelItem => item.PayloadView)</td>
 
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Pay)
-                        </td>
-                    </tr>
-                }
-            </table>
-            </div>
-            //@Html.PagedListPager(Model, pageNumber => Url.Action("Result", new  {   pageNumber  }))
-            <hr />
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Pay)
+                            </td>
+                        </tr>
+            }
+        </table>
+    </div>
+</div>
+        //@Html.PagedListPager(Model, pageNumber => Url.Action("Result", new  {   pageNumber  }))
+            <hr style="margin:0px;" />
             <div class="form-group">
-                <div class="row">
-                    <div class="col-md-3">
-                        @Html.ActionLink("Back to Search", "Index")
-                    </div>
-                    
-                    <div class="col-md-4">
-                        @{ var pWeightVal = @TempData["PassengersWeightCookie"]; }
+                <div class="row" style="margin: 15px;">
+                    <div class="col-md-9">
+
+                        @{ 
+                            var pWeightVal = @TempData["PassengersWeightCookie"];
+                            string weightTootip = "FlightFactor Airbus A320-214 Ultimate - <b>84Kg (185lbs)</b><br />Boeing 767 300ER with PW4062 - <b>95Kg (209lbs)</b><br />ToLiss A319 - <b>100Kg (220lbs)</b><br />";
+                        }
                         <label style="font-size: 12px; font-weight:normal;">Passenger weight for payload calculation: </label>
                         <label id="paxWeight-label" style="font-size: 11px;">@pWeightVal </label>
                         <label id="paxWeight-unit-label" style="font-size: 11px;">@TempData["PassengersWeightUnit"]</label>
                         <input id="paxWeight-text" name="paxWeight-text" type="number" value="@pWeightVal" maxlength="3" max="200" min="20" class="" style="display: none;" />
-                        <input id="change-paxWeight-button" type="button" value="Change" class="btn btn-info btn-xs" style="" />
+                        <a id="change-paxWeight-button" class="btn btn-info btn-xs" data-toggle="tooltip" data-html="true" data-placement="bottom" title="@weightTootip">Change</a>
                     </div>
-                    <div class="col-md-4">
-                        <a href="#" data-html="True"
-                           data-toggle="popover" title="Aircraft passenger weight info (human + luggage)"
-                           data-trigger="hover" data-placement="bottom"
-                           data-content="FlightFactor Airbus A320-214 Ultimate - <b>84Kg (185lbs)</b><br />Boeing 767 300ER with PW4062 - <b>95Kg (209lbs)</b><br />ToLiss A319 - <b>100Kg (220lbs)</b><br />">
-                            <span class="glyphicon glyphicon-eye-open" style="margin-left:5px;"></span>
-                        </a>
-                    </div>
-                    <div class="col-md-1 pull-right">
-                        <input type="submit" value="Finish" class="btn btn-info  pull-right" />
+                    <div class="col-md-3 pull-right">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <button id="btn-confirm" type="submit" disabled class="btn btn-info pull-right">Confirm</button>
+                                <img id="confirm-loading-img" src="~/Content/img/loading.gif" style="width:20px; display:none; position:absolute;" />
+                            </div>
+                            <div class="col-sm-6">
+                                <button data-dismiss="modal" class="btn btn-default pull-right">Close</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
             }
             else
             {
-            <p>
-                <h1 style="color:red;">No jobs found.</h1>
-            </p>
-    }
-
-    <!-- Modal -->
-    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content" style="width: 100%;">
-                @using (Html.BeginForm("SearchProfile", "Profile", FormMethod.Post))
-                {
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title" id="myModalLabel">Confirm addition of jobs</h4>
-                    </div>
-
-                    <div id="confirm-content"></div>
-                }
-            </div>
-        </div>
-    </div>
-
-
-
-
+                <div class="row" style="margin:15px;">
+                    <p>
+                        <h3 style="color:red; text-align:center;">No jobs found.</h3>
+                    </p>
+                    <button data-dismiss="modal" class="btn btn-info pull-right">Close</button>
+                </div>
+            }
 
     <script type='text/javascript'>
-
-        $('#resultForm').submit(function () {
-        $.ajax({
-            url: '@Url.Action("ResultNext", "SearchJobs")', 
-            type: "Post",
-            data: $("#resultForm").serialize(),
-            success: function (result) {
-                if (result != null) {
-                    $("#confirm-content").html(result);
-
-                    $('#myModal').modal('show');
-                }
-            }
-        });
-            return false;
-        });
-
-        $(function () {
-
-            $("ul.pagination li").click(function (e) {
-
-                var url = $(this).find("a").attr("href");
-                var selectedCheckbox = [];
-                $("input[type='checkbox']").each(function () {
-                    if ($(this).prop("checked")) {
-                        selectedCheckbox.push($(this).attr("id"));
-                    }
-                });
-                $(this).find("a").attr("href", url + '&ids=' + selectedCheckbox);
-                //alert($(this).find("a").attr("href"));
-            });
-        });
 
         $(document).ready(function () {
             $('table tr').click(function (event) {
@@ -189,18 +141,18 @@
                     $(':checkbox', this).trigger('click');
                 }
             });
-            $('#banner').hide();
         });
-        
+
         $(function () {
             $('td:first-child input').change(function () {
-                $(this).closest('tr').toggleClass("bg-success", this.checked);
+                $(this).closest('tr').toggleClass("bg-primary", this.checked);
 
                 var payloadSum = 0;
-                var payLoad = $(this).closest('tr').find('td').eq(3).text();
+                var payLoad = $(this).closest('tr').find('td').eq(2).text();
+                var payLoadLabel = $(this).closest('tr').find('td').eq(1).text();
                 var payloadNumber = payLoad.match(/\d+/);
                 //alert(payLoad.startsWith("[Cargo]"));
-                if (payLoad.indexOf("Cargo") >= 0) {
+                if (payLoadLabel.indexOf("Cargo") >= 0) {
 
                     var t = parseFloat($('#cargoSummary').val());
                     if (t) {
@@ -217,7 +169,7 @@
 
                     var unit = $('#paxWeight-unit-label').text();
                     $('#cargoSummary').text("Total cargo: " + $('#cargoSummary').val() + unit);
-                    
+
                     }
                     else {
 
@@ -242,17 +194,17 @@
                     payloadSum = parseFloat($('#cargoSummary').val());
                 }
 
-                var pWeight = parseInt($("#paxWeight-text").val()); 
+                var pWeight = parseInt($("#paxWeight-text").val());
                 if ($('#paxSummary').val() != "") {
                     payloadSum = payloadSum + (parseFloat($('#paxSummary').val()) * pWeight);
                 }
-                
+
                 var unit = $('#paxWeight-unit-label').text();
                 $('#payloadSummary').text("Total payload: " + payloadSum + unit ) ;
 
 
                         /// payment ##############
-                        var payment = $(this).closest('tr').find('td').eq(4).text();
+                        var payment = $(this).closest('tr').find('td').eq(3).text();
                         var paymentNumber = payment.replace(',', '').replace('.', '').match(/\d+/);
 
                         var p = parseFloat($('#paymentSummary').val());
@@ -270,24 +222,31 @@
 
                 $('#paymentSummary').text("Pilot Payment: $" + $('#paymentSummary').val());
 
+                if (payloadSum > 0) {
+                    $("#btn-confirm").prop('disabled', false);
+                }
+                else {
+                    $("#btn-confirm").prop('disabled', true);
+                }
+                
             });
 
         });
 
         $('#select-all').click(function () {
-             $("input[type='checkbox']").each(function () {
+            //checkbox-job
+            $(".checkbox-job:input[type='checkbox']").each(function () {
                  $(this).trigger('click');
             });
         });
 
         $('#change-paxWeight-button').click(function () {
-            
+
             if ($('#paxWeight-text:visible').length == 1) {
                 $("#paxWeight-text").hide();
-                $('#change-paxWeight-button').val("Change");
+                $('#change-paxWeight-button').text("Change");
                 $("#paxWeight-label").show();
-                var unit = $('#paxWeight-unit-label').text();
-                $("#paxWeight-label").text($("#paxWeight-text").val() + unit);
+                $("#paxWeight-label").text($("#paxWeight-text").val());
 
                 $('table > tbody  > tr').each(function () {
                     var checked = $(this).find("input:checkbox").prop("checked");
@@ -297,20 +256,31 @@
                 });
             }
             else {
-                $('#change-paxWeight-button').val("Confirm");
+                $('#change-paxWeight-button').text("Confirm");
                 $("#paxWeight-label").hide();
                 $("#paxWeight-text").show();
             }
         });
-        
+
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+        });
+
+        $('#resultForm').submit(function () {
+            $("#btn-confirm").prop('disabled', true);
+            $('#confirm-loading-img').show();
+            $.ajax({
+                url: '@Url.Action("ResultNext", "SearchJobs")',
+                type: "Post",
+                data: $("#resultForm").serialize(),
+                success: function (result) {
+                    window.location.href = '/Home';
+                }
+                });
+
+                return false;
+        });
     </script>
-
-
-
-
-
-
-
-  }
+}
 
 

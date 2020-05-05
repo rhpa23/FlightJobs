@@ -1,4 +1,4 @@
-﻿div.card {
+﻿div.tip-card {
     box-shadow: 0 4px 8px 2px rgba(0, 0, 0, 0.2), 0 6px 20px 2px rgba(0, 0, 0, 0.19);
     padding-bottom: 5px;
     /*height: 200px;*/
@@ -6,36 +6,41 @@
     font-size: xx-small;
     position: absolute;
     z-index: 10009;
-    background-color:white;
+    background-color: white;
 }
 
-.table {
+.tip-table {
     width: 100%;
     margin-bottom: 5px;
 }
 
-thead, tbody, tr, td, th {
+.tip-table thead,
+.tip-table tbody,
+.tip-table tr,
+.tip-table td,
+.tip-table th {
     display: block;
 }
 
-thead {
+.tip-table thead {
     background-color: #269abc;
-    color:white;
+    color: white;
 }
 
-    tr:after {
-        content: ' ';
-        display: block;
-        visibility: hidden;
-        clear: both;
-    }
+.tip-table tr:after {
+    content: ' ';
+    display: block;
+    visibility: hidden;
+    clear: both;
+}
 
-    thead th {
-        height: 30px;
-        /*text-align: left;*/
-    }
+.tip-table thead,
+.tip-table th {
+    height: 30px;
+    /*text-align: left;*/
+}
 
-tbody {
+.tip-table tbody {
     height: 120px;
     overflow-y: auto;
 }
@@ -45,10 +50,11 @@ thead {
 }
 
 
-    tbody td, thead th {
-        height: 28px;
-        float: left;
-    }
+.tip-table tbody td,
+.tip-table thead th {
+    height: 28px;
+    float: left;
+}
 
 .icaoCol {
     width: 35px;

@@ -217,6 +217,23 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="myModalConfirm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content" style="width: 750px;">
+                @using (Html.BeginForm("SearchProfile", "Profile", FormMethod.Post))
+                {
+                    <div class="modal-header" style="padding:5px;">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="myModalLabel">Confirm addition of jobs</h4>
+                    </div>
+
+                    <div id="confirm-content"></div>
+                }
+            </div>
+        </div>
+    </div>
 }
 
 
@@ -228,6 +245,22 @@
     $("#ChangeCapacity").click(function () {
         $('#myModal').modal('show');
         $('#UseCustomPlaneCapacity').prop("checked", 1)
+    });
+
+    $('#searchForm').submit(function () {
+        $.ajax({
+            url: '@Url.Action("Index", "SearchJobs")',
+            type: "Post",
+            data: $("#searchForm").serialize(),
+            success: function (result) {
+                if (result != null) {
+                    $("#confirm-content").html(result);
+
+                    $('#myModalConfirm').modal('show');
+                }
+            }
+        });
+            return false;
     });
 
     $('#UseCustomPlaneCapacity').change(function () {
@@ -242,16 +275,6 @@
              $("#ChangeCapacity").prop('disabled', true);
         }
     });
-
-    //$('#searchForm').submit(function () {
-    //    if ($('#GeneralAviation').prop("checked")) {
-    //        $('#myModal').modal('show');
-    //        return $('#myModal').is(':visible');
-    //    }
-    //    else {
-    //        $('#searchForm').submit();
-    //    }
-    //});
 
     $('#CustomPassengerCapacity').change(function () {
         var passengersVal = $('#CustomPassengerCapacity').val();

@@ -80,5 +80,9 @@ namespace FlightJobs.Models
 
         [NotMapped]
         public ChartViewModel ChartModel { get; set; }
+
+        public Dictionary<string, long> DepartureRanking { get; set; }
+
+        public Dictionary<string, long> DestinationRanking { get; set; }
     }
 }

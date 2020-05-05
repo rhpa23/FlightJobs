@@ -44,6 +44,9 @@ namespace FlightJobs.Models
         [NotMapped]
         public bool AlowEdit { get; set; }
 
+        [NotMapped]
+        public bool AlowExit { get; set; }
+
         public string UserId { get; set; }
 
         [NotMapped]

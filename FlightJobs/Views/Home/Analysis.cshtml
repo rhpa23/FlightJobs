@@ -42,16 +42,16 @@
         complexChart.ChartConfiguration.Responsive = true;
     }
     <div class="row">
-        <div class="col-md-8 center-block">
+        <div class="col-md-12 center-block">
             <h5>Chart: number of jobs for the 10 most actives Airlines. (Jobs from May 2018)</h5>
-            <canvas id="@Canvas" width="1200" height="500" style="padding:10px;"></canvas>
+            <canvas id="@Canvas" style="padding:10px; width:80%;"></canvas>
             @Html.CreateChart(Canvas, complexChart)
         </div>
     </div>
     <hr />
 
     <div class="row">
-        <div class="card col-md-3">
+        <div class="card col-md-4" style="width:32%;">
             <table class="table table-hover" style="font-size:x-small;">
                 <tr>
                     <th>Info</th>
@@ -79,7 +79,7 @@
                 </tr>
             </table>
         </div>
-        <div class="card col-md-3">
+        <div class="card col-md-4" style="width:32%;">
             <table class="table table-hover" style="font-size:x-small;">
                 <tr>
                     <th>The 5 pilots with the bests scores</th>
@@ -99,7 +99,7 @@
 
             </table>
         </div>
-        <div class="card col-md-2">
+        <div class="card col-md-3">
             <table class="table table-hover" style="font-size:x-small;">
                 <tr>
                     <th>Aviation type</th>
@@ -123,7 +123,7 @@
     </div>
     <div class="row">
 
-        <div class="card col-md-4">
+        <div class="card col-md-5">
             <table class="table table-hover" style="font-size:x-small;">
                 <tr>
                     <th>The 10 most departure airports used</th>
@@ -143,7 +143,7 @@
 
             </table>
         </div>
-        <div class="card col-md-4">
+        <div class="card col-md-6">
             <table class="table table-hover" style="font-size:x-small;">
                 <tr>
                     <th>The 10 most destination airports used</th>
@@ -165,7 +165,7 @@
         </div>
     </div>
     <div class="row">
-        <div class="card col-md-4">
+        <div class="card col-md-5">
             <table class="table table-hover" style="font-size:x-small;">
                 <tr>
                     <th>The most used models</th>
@@ -185,7 +185,7 @@
 
             </table>
         </div>
-        <div class="card col-md-4">
+        <div class="card col-md-6">
             <table class="table table-hover" style="font-size:x-small;">
                 <tr>
                     <th>Airlines with the bests scores</th>

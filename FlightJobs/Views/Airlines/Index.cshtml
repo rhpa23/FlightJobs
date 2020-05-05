@@ -13,6 +13,7 @@
         font-size: small;
         padding: 5px 0px 0px 0px;
         list-style-type: none;
+        height: 170px;
     }
 
     .myList li {
@@ -22,15 +23,19 @@
         border-radius: calc(.25rem - 1px) calc(.25rem - 1px) 0 0;
         border-left: 1px solid #f8f9fa !important;
         border-right: 1px solid #f8f9fa !important;
-        margin-top: 8px;
+        margin: 8px 0px 55px 1px;
         height: 240px;
     }
     .airlineCardHeader {
         border-radius: .25rem;
         border-bottom: 1px solid rgba(0,0,0,.125);
         text-align: center;
-        background-color: rgba(0,0,0,.03);
+        background-color: rgba(0, 16, 58, 0.11);
         font-size: 1.75rem;
+        font-weight: bold;
+    }
+    .tooltip {
+        width:230px;
     }
 </style>
 
@@ -38,6 +43,13 @@
 {
     <div class="alert alert-info">
         <strong>Info!</strong> @ViewBag.Message
+    </div>
+}
+
+@if (TempData["ExitMessage"] != null)
+{
+    <div class="alert alert-info">
+        <strong>Info!</strong> @TempData["ExitMessage"]
     </div>
 }
 
@@ -52,23 +64,23 @@
             foreach (var item in Model)
             {
                 countAux++;
-                if(countAux % 2 == 0 || countAux % 2 == 2)
+                if(countAux % 3 == 0 || countAux % 3 == 3)
                 {
                     countAux = 0;
                     @:<div class="row">
                 }
-                <div class="col-md-6 airlineCard">
+                <div class="col-md-4 airlineCard">
                     <div class="row airlineCardHeader">
-                        @Html.DisplayFor(modelItem => item.Name)
+                       [ @Html.DisplayFor(modelItem => item.Name) ]
                     </div>
                     <div class="row">
-                        <div class="col-sm-3" style="padding-right: 0px;width:30%;">
-                            <img class="img-thumbnail" src="@item.Logo" style="width:120px; margin-top:5px;" />
+                        <div class="col-sm-3 img-thumbnail" style="padding: 0px;width:30%; height:210px;background-color:ghostwhite;">
+                            <img src="@item.Logo" style="width:87px; margin-top:5px;" />
                         </div>
-                        <div class="col-md-7">
+                        <div class="col-md-8">
                             <ul class="myList">
-                                <li><b> Description: </b> @Html.DisplayFor(modelItem => item.Description)</li>
-                                <li><b> Country: </b> @Html.DisplayFor(modelItem => item.Country) </li>
+                                <li><div data-toggle="tooltip" data-placement="right" title="@item.Description"><b> Description: </b> @FlightJobs.Helpers.HtmlHelpers.Truncate(item.Description, 50) </div></li>
+                                <li><div data-toggle="tooltip" data-placement="right" title="@item.Country"><b> Country: </b> @FlightJobs.Helpers.HtmlHelpers.Truncate(item.Country, 18) </div> </li>
                                 <li><b> Minimum score for hire: </b> @Html.DisplayFor(modelItem => item.Score) </li>
                                 <li>
                                     <b>Pilots hired: </b>
@@ -92,22 +104,31 @@
                                     }
                                 </li>
                             </ul>
-                        </div>
-                        <div class="col-md-1" style="padding-top:30px; padding-left:0px;">
-                            @if (item.AlowEdit)
-                            {
-                                <button id="@item.Id" type="button" class="btn btn-default btn-sm edit-airline">
-                                    <span class="glyphicon glyphicon-edit"></span> Edit
-                                </button>
-                            }
-                            else
-                            {
-                                <img src="~/Content/img/contract_ico.jpg" title="Sign contract" style="cursor: pointer;" onclick="location.href='@Url.Action("Sign", new { id = item.Id })'" />
-                            }
+                            <div class="row">
+                                <div class="col-md-12">
+                                @if (item.AlowExit)
+                                {
+                                    <a data-toggle="confirmation" type="button" href="@Url.Action("Exit", new { id = item.Id })"><button type="button" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-remove"></span> Exit</button></a>
+                                }
+                                @if (item.AlowEdit)
+                                {
+                                    <button id="@item.Id" type="button" class="btn btn-info btn-sm edit-airline">
+                                        <span class="glyphicon glyphicon-edit"></span> Edit
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button type="button" class="btn btn-info btn-sm" onclick="location.href='@Url.Action("Sign", new { id = item.Id })'">
+                                        <span class="glyphicon glyphicon-ok-circle"></span> Join
+                                    </button>
+                                }
+                                </div>
+                            </div>
+                            <br />
                         </div>
                     </div>
                 </div>
-                if (countAux % 2 == 0 || countAux % 2 == 2)
+                if (countAux % 3 == 0 || countAux % 3 == 3)
                 {
                         @:</div>
                 }
@@ -164,5 +185,19 @@
             }
         });
         return false;
+    });
+
+    $('body').confirmation({
+        selector: '[data-toggle="confirmation"]',
+        title: 'Exit airline?',
+        trigger: 'click',
+        placement: 'top',
+        singleton: true,
+        target: '_self',
+        popout: true,
+
+    });
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
     });
 </script>

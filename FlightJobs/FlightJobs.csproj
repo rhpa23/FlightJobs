@@ -253,6 +253,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\HtmlHelpers.cs" />
     <Compile Include="Migrations\201710111859366_InitialCreate.cs" />
     <Compile Include="Migrations\201710111859366_InitialCreate.Designer.cs">
       <DependentUpon>201710111859366_InitialCreate.cs</DependentUpon>
@@ -536,6 +537,7 @@
     <Content Include="Content\img\bell.png" />
     <Content Include="Content\img\britishairways.png" />
     <Content Include="Content\img\capacity001.jpg" />
+    <Content Include="Content\img\cargo-icon.png" />
     <Content Include="Content\img\cash-001.png" />
     <Content Include="Content\img\certificate.png" />
     <Content Include="Content\img\challenger\civilian-water-mark-001.png" />
@@ -592,6 +594,8 @@
     <Content Include="Content\img\logbook0001.jpg" />
     <Content Include="Content\img\logo\LogoDefault.png" />
     <Content Include="Content\img\lufthansa.jpg" />
+    <Content Include="Content\img\passanger.png" />
+    <Content Include="Content\img\passenger-with-baggage-filled.png" />
     <Content Include="Content\img\passenger2.png" />
     <Content Include="Content\img\pictures\air-transport.jpg" />
     <Content Include="Content\img\pictures\cargo.jpg" />
@@ -615,6 +619,7 @@
     <Content Include="Content\img\PilotExpenses\PilotCourseTraining.jpg" />
     <Content Include="Content\img\PilotExpenses\SimulatorTraining.jpg" />
     <Content Include="Content\img\PilotExpenses\WeatherExam.jpg" />
+    <Content Include="Content\img\QRCode.png" />
     <Content Include="Content\img\ranking.png" />
     <Content Include="Content\img\ryanair.png" />
     <Content Include="Content\img\score-001.png" />
@@ -676,7 +681,7 @@
     <Content Include="Content\themes\base\tabs.css" />
     <Content Include="Content\themes\base\theme.css" />
     <Content Include="Content\themes\base\tooltip.css" />
-    <Content Include="Content\TipsTable.css" />
+    <Content Include="Content\TipsTable2.css" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
@@ -700,6 +705,7 @@
     <None Include="Properties\PublishProfiles\Locaweb FTP.pubxml" />
     <None Include="Properties\PublishProfiles\MyAspNet FTP.pubxml" />
     <None Include="Properties\PublishProfiles\MyAspNet.pubxml" />
+    <Content Include="Scripts\bootstrap-tooltip.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\Chart.js" />

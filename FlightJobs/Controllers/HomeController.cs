@@ -199,8 +199,8 @@ namespace FlightJobs.Controllers
                 ModelRanking = GetModelRanking(dbContext),
                 UsersRankingScore = GetUsersRankingScore(dbContext),
                 AviationTypeRanking = GetAviationTypeRanking(dbContext),
-                DepartureRanking = GetDepartureRanking(dbContext),
-                DestinationRanking = GetArrivalRanking(dbContext),
+                DepartureRanking = GetDepartureRanking(dbContext, false),
+                DestinationRanking = GetArrivalRanking(dbContext, false),
                 AirlineRankingScore = GetAirlineRankingScore(dbContext),
                 AirlinesChart = GetAirlinesChart(dbContext)
             };
@@ -242,9 +242,18 @@ namespace FlightJobs.Controllers
             return dic;
         }
 
-        private Dictionary<string, long> GetDepartureRanking(ApplicationDbContext dbContext)
+        private Dictionary<string, long> GetDepartureRanking(ApplicationDbContext dbContext, bool fromCurrentUser)
         {
             var jobsDone = dbContext.JobDbModels.Where(j => j.IsDone);
+            if (fromCurrentUser)
+            {
+                var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
+                if (user != null)
+                {
+                    jobsDone = jobsDone.Where(j => j.User.Id == user.Id);
+                }
+            }
+            
             var s = jobsDone.GroupBy(q => q.DepartureICAO)
                             .OrderByDescending(gp => gp.Count())
                             .Select(g => g.Key)
@@ -254,9 +263,18 @@ namespace FlightJobs.Controllers
             return dic;
         }
 
-        private Dictionary<string, long> GetArrivalRanking(ApplicationDbContext dbContext)
+        private Dictionary<string, long> GetArrivalRanking(ApplicationDbContext dbContext, bool fromCurrentUser)
         {
             var jobsDone = dbContext.JobDbModels.Where(j => j.IsDone);
+            if (fromCurrentUser)
+            {
+                var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
+                if (user != null)
+                {
+                    jobsDone = jobsDone.Where(j => j.User.Id == user.Id);
+                }
+            }
+
             var s = jobsDone.GroupBy(q => q.ArrivalICAO)
                             .OrderByDescending(gp => gp.Count())
                             .Select(g => g.Key)
@@ -367,6 +385,8 @@ namespace FlightJobs.Controllers
             var statistics = GetAllStatisticsInfo(user, null);
             //return PartialView("ChartProfile", chartModel);
             statistics.ChartModel = ChartProfile(user);
+            statistics.DepartureRanking = GetDepartureRanking(dbContext, true);
+            statistics.DestinationRanking = GetArrivalRanking(dbContext, true);
             return PartialView("~/Views/Profile/FlightInfoView.cshtml", statistics);
         }
 

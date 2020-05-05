@@ -66,16 +66,11 @@ namespace FlightJobs.Controllers
         }
 
         [HttpPost]
-        public ActionResult Index(JobSerachModel model)
+        public ActionResult Index(JobSerachModel modelParam)
         {
-            Session.Add("JobSerachModel", model);
-            ViewBag.JobSerachModel = model;
-            return Result(-1, string.Empty);
-        }
+            Session.Add("JobSerachModel", modelParam);
 
-        public ActionResult Result(int? pageNumber, string ids)
-        {
-            if (Request.Cookies[PassengersWeightCookie] != null 
+            if (Request.Cookies[PassengersWeightCookie] != null
                 && Request.Cookies[PassengersWeightCookie].Value != null)
             {
                 long weight = Convert.ToInt32(Request.Cookies[PassengersWeightCookie].Value);
@@ -88,32 +83,13 @@ namespace FlightJobs.Controllers
 
             TempData["PassengersWeightUnit"] = DataConversion.GetWeightUnit(Request);
 
-            if (Session["JobSerachModel"] != null)
+            if (modelParam != null)
             {
                 IList<JobListModel> jobs = new List<JobListModel>();
-                JobSerachModel modelParam = (JobSerachModel)Session["JobSerachModel"];
-                if (pageNumber == -1)
-                {
-                    pageNumber = 1;
-                    jobs = GenerateBoardJobs(modelParam);
-                    Session.Add("JobSearchResult", jobs);
-                }
-                else
-                {
-                    if (Session["JobSearchResult"] != null)
-                    {
-                        jobs = (IList<JobListModel>)Session["JobSearchResult"];
-                    }
-                }
+                jobs = GenerateBoardJobs(modelParam);
+                Session.Add("JobSearchResult", jobs);
 
-                string[] idSel = string.IsNullOrEmpty(ids) ? new string[]{ } : ids.Split(',');
-                foreach (var id in idSel)
-                {
-                    var job = jobs.FirstOrDefault(j => j.Id == Convert.ToInt32(id));
-                    job.Selected = true;
-                }
-
-                return View("Result", jobs.OrderBy(x => x.Dist).ToPagedList(pageNumber ?? 1, 45));
+                return PartialView("Result", jobs.OrderBy(x => x.Dist).ToPagedList(1, 100));
             }
             else
             {
@@ -122,7 +98,7 @@ namespace FlightJobs.Controllers
         }
 
         [HttpPost]
-        public ActionResult ResultNext(FormCollection form)
+        public JsonResult ResultNext(FormCollection form)
         {
             var ids = new List<int>();
             var pageSelsIds = form["sels"];
@@ -159,12 +135,12 @@ namespace FlightJobs.Controllers
                 foreach (var job in jobs.Where(j => j.Selected || ids.Contains(j.Id)))
                 {
                     JobDbModel jobDB;
-                    if (!list.ContainsKey(job.Arrival))
+                    if (!list.ContainsKey(job.Arrival.ICAO))
                     {
                         jobDB = new JobDbModel()
                         {
                             DepartureICAO = job.Departure.ICAO,
-                            ArrivalICAO = job.Arrival,
+                            ArrivalICAO = job.Arrival.ICAO,
                             Dist = job.Dist,
                             Pax = job.Pax,
                             Cargo = job.Cargo,
@@ -173,11 +149,11 @@ namespace FlightJobs.Controllers
                             AviationType = GetAviationTypeId(job.AviationType)
                         };
 
-                        list.Add(job.Arrival, jobDB);
+                        list.Add(job.Arrival.ICAO, jobDB);
                     }
                     else
                     {
-                        jobDB = list[job.Arrival];
+                        jobDB = list[job.Arrival.ICAO];
 
                         jobDB.Pax += job.Pax;
                         jobDB.Cargo += job.Cargo;
@@ -189,13 +165,7 @@ namespace FlightJobs.Controllers
                 }
             }
 
-            //ViewBag.TotalPax = totalPax;
-            //ViewBag.TotalCargo = totalCargo;
-            //ViewBag.TotalPay = string.Format("{0:C}", totalPay);
-            //ViewBag.TotalPayload = string.Format("{0:G}", (totalPax * JobDbModel.PaxWeight) + totalCargo);
-
             var jobList = list.Values.ToList();
-            Session.Add("ListSelJobs", jobList);
 
             var viewModel = new ConfirmJobsViewModel()
             {
@@ -208,23 +178,21 @@ namespace FlightJobs.Controllers
 
             var pxWeight = isPounds ? DataConversion.ConvertPoundsToKilograms(PaxWeight) : PaxWeight;
             Response.SetCookie(new HttpCookie(PassengersWeightCookie, pxWeight.ToString()));
-            TempData["PassengersWeightUnit"] = DataConversion.GetWeightUnit(Request);
 
-            return PartialView("Confirm", viewModel);
+            return Confirm(jobList);
         }
 
-        public async Task<ActionResult> Confirm()
+        public JsonResult Confirm(List<JobDbModel> jobList)
         {
             var dbContext = new ApplicationDbContext();
             // Check GUEST
             var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
             if (user != null && user.Email == AccountController.GuestEmail)
             {
-                TempData["GuestMessage"] = AccountController.GuestMessage;
-                return RedirectToAction("Register", "Account");
+                return Json("Guest can't save!!!", JsonRequestBehavior.AllowGet); ;
             }
 
-            if (Session["ListSelJobs"] != null)
+            if (jobList != null)
             {
                 
                 if (Request.Cookies[PassengersWeightCookie] != null
@@ -233,7 +201,7 @@ namespace FlightJobs.Controllers
                     PaxWeight = int.Parse(Request.Cookies[PassengersWeightCookie].Value);
                 }
 
-                foreach (var selJob in (List<JobDbModel>)Session["ListSelJobs"])
+                foreach (var selJob in jobList)
                 {
                     selJob.User = user;
                     selJob.StartTime = DateTime.Now;
@@ -262,7 +230,7 @@ namespace FlightJobs.Controllers
                 dbContext.SaveChanges();
             }
 
-            return RedirectToAction("Index", "Home");
+            return Json("Saved", JsonRequestBehavior.AllowGet); ;
         }
 
         public ActionResult AlternativeTips(string destination, int range)
@@ -538,6 +506,7 @@ namespace FlightJobs.Controllers
                                                             }).ToList();
             return PartialView("CapacityListView", searchModel);
         }
+
         public JsonResult GetCustonCapacity(long id)
         {
             var dbContext = new ApplicationDbContext();
@@ -551,7 +520,6 @@ namespace FlightJobs.Controllers
             {
                 return null;
             }
-
         }
 
         public void UnSetCustonCapacity()

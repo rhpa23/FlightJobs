@@ -122,7 +122,7 @@
                             @string.Format("{0:C}", Model.Statistics.BankBalance)
                         </span>
                         <br />
-                        <img id="bank-balance-loading-img" src="~/Content/img/loading.gif" style="width:20px; display:none;" />
+                        <img id="transfer-balance-loading-img" src="~/Content/img/loading.gif" style="width:20px; display:none;" />
                     </div>
                 </div>
                 <div class="col-lg-4">
@@ -166,12 +166,16 @@
                 </div>
                 <div id="btnGraduation" class="col-lg-4 linked">
                     <div class="card card-user-info">
-                        <img style="width:50px; height:80px; padding:4px; border:none;" src="@Model.Statistics.GraduationPath" />
-                        <br />
-                        <span style="font-size:medium;border:none;">Graduation:</span>
-                        <br />
-                        <span style="font-size:smaller;line-height: 12px;border:none;">@Model.Statistics.GraduationDesc</span>
-                    </div>
+                        <div class="row" style="border:0px;">
+                            <img style="width:50px; height:80px; padding:4px; border:none;" src="@Model.Statistics.GraduationPath" />
+                        </div>
+                        <div class="row" style="border:0px;">
+                            <span style="font-size:medium;border:none;">Graduation:</span>
+                        </div>
+                        <div class="row" style="border:0px;line-height: 10px;">
+                            <span style="font-size:smaller;line-height: 12px;border:none;">@Model.Statistics.GraduationDesc</span>
+                        </div>
+                        </div>
                 </div>
                 <div id="btnFlightsInfo" class="col-lg-4 linked">
                     <div class="card card-user-info">
@@ -198,6 +202,7 @@
                             <div style="font-size:smaller;line-height: 12px;border:none;">
                                 @string.Format("{0:C}", @Model.Statistics.Airline.BankBalance)
                             </div>
+                            <img id="ledger-loading-img" src="~/Content/img/loading.gif" style="width:20px; display:none;" />
                         </div>
                     </div>
                     <div id="btnRanking" class="col-md-6 linked">
@@ -653,7 +658,7 @@
     });
 
     $('#btnTransfer').click(function () {
-        $('#bank-balance-loading-img').show();
+        $('#transfer-balance-loading-img').show();
         $.ajax({
             url: '@Url.Action("PilotTransferProfile", "Profile")',
             type: "Get",
@@ -662,12 +667,12 @@
                 if (result != null) {
                     $('#myModalTransfer').modal('show');
                     $("#transfer-content").html(result);
-                    $('#bank-balance-loading-img').hide();
+                    $('#transfer-balance-loading-img').hide();
                 }
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 console.log("Erro:" + errorThrown);
-                $('#bank-balance-loading-img').hide();
+                $('#transfer-balance-loading-img').hide();
                 $('#myModalTransfer').modal('show');
                 $("#transfer-content").html('<h4 style="margin:20px;color:red;">' + errorThrown + '</h4>');
             }

@@ -293,14 +293,16 @@ namespace FlightJobs.Controllers
                         {
                             Id = id++,
                             Departure = dep,
-                            Arrival = arrival.ICAO,
+                            Arrival = arrival,
                             Dist = distMiles,
                             Pax = pob,
                             Cargo = cargo,
-                            PayloadView = (isCargo) ? "[Cargo] " + cargo + weightUnit : (isFisrtClass) ? "[Premium] " + pob + " Pax" : "[Promo] " + pob + " Pax",
+                            PayloadLabel = (isCargo) ? "[Cargo] " : (isFisrtClass) ? "[Full price] " : "[Promo] ",
+                            PayloadView = (isCargo) ? cargo + weightUnit : (isFisrtClass) ? pob + " Pax" : pob + " Pax",
                             Pay = profit,
                             FirstClass = isFisrtClass,
-                            AviationType = model.AviationType
+                            AviationType = model.AviationType,
+                            IsCargo = isCargo
                         });
                     }
                 }
@@ -310,7 +312,7 @@ namespace FlightJobs.Controllers
                 ModelState.AddModelError("error", ex.Message);
             }
 
-            return listBoardJobs.OrderBy(j => j.Arrival).ThenBy(x => x.PayloadView).ToList();
+            return listBoardJobs.OrderBy(j => j.Arrival).ThenBy(x => x.PayloadLabel).ToList();
         }
 
         internal StatisticsDbModel GetAllStatisticsInfo(ApplicationUser user, HomeViewModel filterModel)

@@ -21,32 +21,36 @@ namespace FlightJobs.Controllers
         {
             ViewBag.Message = TempData["Message"];
             var dbContext = new ApplicationDbContext();
-            var list = dbContext.AirlineDbModels.OrderByDescending(a => a.Id).ToList();
-            var statisticsList = dbContext.StatisticsDbModels.ToList();
+            var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
+            var list = dbContext.AirlineDbModels.OrderByDescending(x => x.Id).ToList();
+            var statisticsList = dbContext.StatisticsDbModels;
+
+            var userStatistics = statisticsList.FirstOrDefault(s => s.User.Id == user.Id);
+
             foreach (var airline in list)
             {
+                var airlinePilotsHired = statisticsList.Where(s => s.Airline != null && s.Airline.Id == airline.Id).ToList();
+                airline.AlowExit = airlinePilotsHired.Any(x => x.User.Id == user.Id);
+
                 var ownerUserStatistics = statisticsList.FirstOrDefault(s => airline.UserId != null && s.User.Id == airline.UserId);
                 if (ownerUserStatistics != null)
                 {
                     airline.OwnerUserStatistics = ownerUserStatistics;
-                    var airlineStatisticsList = statisticsList.Where(s => s.Airline != null && s.Airline.Id == airline.Id);
-                    airline.OwnerUserStatistics.AirlinePilotsHired = airlineStatisticsList.ToList();
+                    airline.OwnerUserStatistics.AirlinePilotsHired = airlinePilotsHired;
+                    airline.AlowEdit = airline.UserId == user.Id;
                 }
-                   
             }
-            CheckAirlinerUsers(list);
-            return View(list);
-        }
 
-        private void CheckAirlinerUsers(List<AirlineDbModel> list)
-        {
-            var dbContext = new ApplicationDbContext();
-            var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
-            
-            foreach (var airline in list)
+            if (userStatistics != null && userStatistics.Airline != null)
             {
-                airline.AlowEdit = airline.UserId == user.Id;
+                // Move user airline to first position
+                var a = list.FirstOrDefault(x => x.Id == userStatistics.Airline.Id);
+                list.Remove(a);
+                list.Insert(0, a);
             }
+            
+
+            return View(list);
         }
 
         public ActionResult Sign(int id)
@@ -85,6 +89,31 @@ namespace FlightJobs.Controllers
                 TempData["Message"] = string.Format("You need {0} scores to sign contract with {1}.", airline.Score, airline.Name);
                 return RedirectToAction("Index");
             }
+        }
+
+        public ActionResult Exit(int id)
+        {
+            var dbContext = new ApplicationDbContext();
+            // Check GUEST
+            var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
+            if (user != null && user.Email == AccountController.GuestEmail)
+            {
+                TempData["GuestMessage"] = AccountController.GuestMessage;
+                return RedirectToAction("Register", "Account");
+            }
+
+            var statistics = dbContext.StatisticsDbModels.Include("Airline").FirstOrDefault(s => s.User.Id == user.Id && s.Airline.Id == id);
+            if (statistics != null)
+            {
+                var certsUser = dbContext.StatisticCertificatesDbModels.Include("Certificate").Where(u => u.Statistic.Id == statistics.Id).ToList();
+                dbContext.StatisticCertificatesDbModels.RemoveRange(certsUser);
+                statistics.Airline = null;
+                dbContext.Entry(statistics).State = System.Data.Entity.EntityState.Modified;
+
+                dbContext.SaveChanges();
+                TempData["ExitMessage"] = $"You are out of the airline.";
+            }
+            return RedirectToAction("Index");
         }
 
         public ActionResult Buy(int id, int airlineId)
