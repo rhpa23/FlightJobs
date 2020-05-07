@@ -805,5 +805,17 @@
         return true;
     }
 
+    $("#Statistics_SendLicenseWarning").change(function () {
+        var isCheck = $('#Statistics_SendLicenseWarning').prop('checked');
+
+        $.ajax({
+            url: '@Url.Action("OnChangeSendLicenseWarning", "Profile")',
+            type: "Get",
+            data: {
+                cked: isCheck
+            }
+        });
+    });
+
 
 </script>

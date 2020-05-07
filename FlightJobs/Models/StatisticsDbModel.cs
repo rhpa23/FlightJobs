@@ -28,10 +28,10 @@ namespace FlightJobs.Models
         [DisplayName("Logo")]
         public string Logo { get; set; }
 
-        [DisplayName("Send email expired license warning")]
+        [DisplayName("Send expired license warning email")]
         public bool SendLicenseWarning { get; set; }
 
-        [DisplayName("Send email airline bills warning")]
+        [DisplayName("Send debt warning email")]
         public bool SendAirlineBillsWarning { get; set; }
 
         [DisplayName("License e-mail warning sent flag")]

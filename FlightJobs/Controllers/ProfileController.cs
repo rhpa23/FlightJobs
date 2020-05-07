@@ -585,5 +585,15 @@ namespace FlightJobs.Controllers
             userStatistics.LicenseWarningSent = false;
             dbContext.SaveChanges();
         }
+
+        public void OnChangeSendAirlineWarning(bool cked)
+        {
+            var dbContext = new ApplicationDbContext();
+            var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
+            var userStatistics = dbContext.StatisticsDbModels.FirstOrDefault(x => x.User.Id == user.Id);
+            userStatistics.SendAirlineBillsWarning = cked;
+            userStatistics.AirlineBillsWarningSent = false;
+            dbContext.SaveChanges();
+        }
     }
 }

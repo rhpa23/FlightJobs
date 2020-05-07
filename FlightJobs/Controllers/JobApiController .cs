@@ -16,6 +16,8 @@ using System.Globalization;
 using FlightJobs.Util;
 using Elmah;
 using Newtonsoft.Json;
+using System.Text;
+using System.Threading;
 
 namespace FlightJobs.Controllers
 {
@@ -289,6 +291,11 @@ namespace FlightJobs.Controllers
 
                     // Aplica o débito
                     statistics.Airline.DebtValue += (long)jobAirline.TotalFlightCost;
+
+                    if (statistics.Airline.DebtValue > 0)
+                    {
+                        Task.Factory.StartNew(() => SendEmailWarningForAirlineDebtAsync(statistics.Airline, job));
+                    }
                 }
                 dbContext.JobAirlineDbModels.Add(jobAirline);
             }
@@ -355,6 +362,59 @@ namespace FlightJobs.Controllers
             }
 
             return Request.CreateResponse(HttpStatusCode.OK);
+        }
+
+        private async Task SendEmailWarningForAirlineDebtAsync(AirlineDbModel airline, JobDbModel job)
+        {
+            await Task.Delay(10000);
+            var dbContext = new ApplicationDbContext();
+            try
+            {
+                var airlinePilotsHiredStatistics = dbContext.StatisticsDbModels.Where(s => 
+                                                        s.Airline != null && 
+                                                        s.Airline.Id == airline.Id && s.SendAirlineBillsWarning).ToList();
+
+                foreach (var pilotHired in airlinePilotsHiredStatistics)
+                {
+                    var sb = new StringBuilder();
+                    sb.Append($"<p><a href='https://www.flight-jobs.net' target='_blank'><img src='http://flight-jobs.net/Content/img/FlightJobsLogo0001.png' /></a></p><hr />");
+                    sb.Append($"<p>Hi captain {pilotHired.User.UserName},</p>");
+                    sb.Append("<p>FlightJobs is sending you this email because you have defined to be advised when your airline generates a Debt since one Job was finished.</p>");
+                    sb.Append("<p>You can disable this email warning any time unchecking the box in the Airline Balance Situation popup window.</p>");
+                    sb.Append("<p>If you have any problem please contact FlightJobs support by email: rhpa23@gmail.com.</p>");
+                    sb.Append("<h3>A job at the airline generated bills to pay.</h3>");
+                    sb.Append($"<h4><p>The debt of {airline.Name} is <font color=\"red\"> {string.Format("{0:C}", airline.DebtValue)} </font> at the moment. </p></h4>");
+                    sb.Append($"<h4><p>The maturity date for the debt is <font color=\"red\"> {airline.DebtMaturityDate.ToShortDateString()} </font> </p></h4>");
+                    sb.Append($"<p>If the owner does not pay bills before the due date the airline will not score, and the Jobs will generate more debts which could lead to the bankruptcy of the company.</p>  <hr />");
+
+                    sb.Append($"<p><b>Info about the job that generate the debt: </b></p><ul>");
+                    sb.Append($"<li>Depature: <b>{job.DepartureICAO}</b>  </li>");
+                    sb.Append($"<li>Arrival: <b>{job.ArrivalICAO}</b>  </li>");
+                    sb.Append($"<li>Model: <b>{job.ModelDescription}</b>  </li>");
+                    sb.Append($"<li>Pilot: <b>{job.User.UserName}</b>  </li>");
+                    sb.Append($"<li>Flight time: <b>{job.FlightTime}</b>  </li>");
+                    sb.Append($"<li>Flight distance: <b>{job.Dist}nm</b> </li>");
+                    sb.Append($"<li>Arrive time: <b>{job.EndTime}</b> </li>");
+                    sb.Append($"<li>Pax: <b>{job.Pax}</b> </li>");
+                    sb.Append($"<li>Cargo: <b>{job.Cargo}</b> </li>");
+                    sb.Append($"<li>Challenge: <b>{job.IsChallenge.ToString()} </b></li></ul><hr />");
+
+                    sb.Append($"<p>Thanks for use FlightJobs.</p>");
+                    sb.Append($"<p>FlightJobs is free. If you like it, please consider making a donation in PayPal.</p>");
+                    sb.Append($"https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=44VG35XYRJUCW&source=url");
+                    sb.Append($"<p>https://www.flight-jobs.net</p>");
+                    await new EmailService().SendAsync(new IdentityMessage()
+                    {
+                        Body = sb.ToString(),
+                        Subject = "[FlightJobs] Airline has bills to pay",
+                        Destination = pilotHired.User.Email
+                    });
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Error sending license e-mail warning: {e.ToString()}", e);
+            }
         }
     }
 }
