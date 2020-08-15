@@ -28,7 +28,7 @@
         <div class="col-sm-1 pending-header">Passengers</div>
         <div class="col-sm-1 pending-header">Cargo</div>
         <div class="col-sm-1 pending-header">Total payload</div>
-        <div class="col-sm-1 pending-header" style="width:178px; text-align:left;">Payment</div>
+        <div class="col-sm-1 pending-header" style="width:10%; text-align:left;">Payment</div>
     </div>
     @foreach (var item in Model)
     {
@@ -52,7 +52,7 @@
                 <div class="col-sm-1 pending-col">@item.Payload @item.WeightUnit</div>
                 <div class="col-sm-1 pending-col" style="text-align: left;">@string.Format("{0:C}", item.Pay)</div>
             </div>
-            <div class="col-sm-1 pending-col" style="color:black; width:50px;">
+            <div class="col-sm-1 pending-col" style="color:black; width:10px;">
                 <a data-toggle="confirmation" href="Home/DeleteJob/@item.Id"><i class="glyphicon glyphicon-remove"></i></a>
             </div>
         </div>

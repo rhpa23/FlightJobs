@@ -62,10 +62,11 @@ namespace FlightJobs.Controllers
 
                 var depJson = new
                 {
+                    isRoute = true,
                     lat = departureCoord.Latitude,
                     lng = departureCoord.Longitude,
                     name = departureInfo.Name,
-                    info = "Departure",
+                    info = "Departure airport",
                     runway_size = departureInfo.RunwaySize + "ft",
                     elevation = departureInfo.Elevation + "ft",
                     trasition = departureInfo.Trasition + "ft",
@@ -76,10 +77,11 @@ namespace FlightJobs.Controllers
 
                 var arrJson = new
                 {
+                    isRoute = true,
                     lat = arrivalCoord.Latitude,
                     lng = arrivalCoord.Longitude,
                     name = arrivalInfo.Name,
-                    info = "Arrival",
+                    info = "Arrival airport",
                     runway_size = arrivalInfo.RunwaySize + "ft",
                     elevation = arrivalInfo.Elevation + "ft",
                     trasition = arrivalInfo.Trasition + "ft",
@@ -98,10 +100,11 @@ namespace FlightJobs.Controllers
                     var alternativeCoord = new GeoCoordinate(alternativeInfo.Latitude, alternativeInfo.Longitude);
                     var altJson = new
                     {
+                        isRoute = true,
                         lat = alternativeCoord.Latitude,
                         lng = alternativeCoord.Longitude,
                         name = alternativeInfo.Name,
-                        info = "Alternative",
+                        info = "Alternative airport",
                         runway_size = alternativeInfo.RunwaySize + "ft",
                         elevation = alternativeInfo.Elevation + "ft",
                         trasition = alternativeInfo.Trasition + "ft",
@@ -110,6 +113,48 @@ namespace FlightJobs.Controllers
                         icon_center_y = 13
                     };
                     jsonList.Add(altJson);
+                }
+
+                var userJobsSessionKey = "USER_JOBS_ICAOS";
+                var userJobsIcaos = new List<string>();
+                if (Session[userJobsSessionKey] != null)
+                {
+                    userJobsIcaos = (List<string>)Session[userJobsSessionKey];
+                }
+                else
+                {
+                    using (var dbContext = new ApplicationDbContext())
+                    {
+                        var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
+                        if (user != null)
+                        {
+                            TimeSpan t = new TimeSpan();
+                            var allUserJobs = FilterJobs(user, null, ref t);
+                            userJobsIcaos = allUserJobs.Select(x => x.DepartureICAO).ToList();
+                            userJobsIcaos.AddRange(allUserJobs.Select(x => x.ArrivalICAO));
+                            Session.Add(userJobsSessionKey, userJobsIcaos.Distinct().ToList());
+                        }
+                    }
+                }
+                foreach (var icao in userJobsIcaos.Distinct())
+                {
+                    var favDptInfo = AirportDatabaseFile.FindAirportInfo(icao);
+                    var favDptCoord = new GeoCoordinate(favDptInfo.Latitude, favDptInfo.Longitude);
+                    var favDptAirport = new
+                    {
+                        isRoute = false,
+                        lat = favDptCoord.Latitude,
+                        lng = favDptCoord.Longitude,
+                        name = favDptInfo.Name,
+                        info = icao,
+                        runway_size = favDptInfo.RunwaySize + "ft",
+                        elevation = favDptInfo.Elevation + "ft",
+                        trasition = favDptInfo.Trasition + "ft",
+                        icon_url = "../Content/img/favorite.png",
+                        icon_center_x = 8,
+                        icon_center_y = 8
+                    };
+                    jsonList.Add(favDptAirport);
                 }
 
                 return Json(jsonList, JsonRequestBehavior.AllowGet);

@@ -70,11 +70,9 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="MySql.Data, Version=8.0.18.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
       <HintPath>..\packages\MySql.Data.8.0.18\lib\net452\MySql.Data.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="MySql.Data.EntityFramework, Version=8.0.18.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
       <HintPath>..\packages\MySql.Data.EntityFramework.8.0.18\lib\net452\MySql.Data.EntityFramework.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -93,6 +91,9 @@
       <HintPath>..\packages\SSH.NET.2016.1.0\lib\net40\Renci.SshNet.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Buffers, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Buffers.4.4.0\lib\netstandard1.1\System.Buffers.dll</HintPath>
+    </Reference>
     <Reference Include="System.ComponentModel" />
     <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Data" />
@@ -100,11 +101,20 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Drawing.Design" />
     <Reference Include="System.Management" />
+    <Reference Include="System.Memory, Version=4.0.1.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Memory.4.5.0\lib\netstandard1.1\System.Memory.dll</HintPath>
+    </Reference>
     <Reference Include="System.Net.Http.Formatting, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
     </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.5.0\lib\netstandard1.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
     <Reference Include="System.Runtime.Remoting" />
     <Reference Include="System.Security" />
+    <Reference Include="System.Threading.Tasks.Extensions, Version=4.1.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Threading.Tasks.Extensions.4.3.0\lib\portable-net45+win8+wp8+wpa81\System.Threading.Tasks.Extensions.dll</HintPath>
+    </Reference>
     <Reference Include="System.Transactions" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
@@ -414,6 +424,10 @@
     <Compile Include="Migrations\201912032010344_mysql.Designer.cs">
       <DependentUpon>201912032010344_mysql.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202005081341260_UseCustomPlaneCapacity.cs" />
+    <Compile Include="Migrations\202005081341260_UseCustomPlaneCapacity.Designer.cs">
+      <DependentUpon>202005081341260_UseCustomPlaneCapacity.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\AirlineFboView.cs" />
@@ -518,6 +532,7 @@
     <Content Include="Content\icon\ms-icon-150x150.png" />
     <Content Include="Content\icon\ms-icon-310x310.png" />
     <Content Include="Content\icon\ms-icon-70x70.png" />
+    <Content Include="Content\img\AdvertiseHere.jpg" />
     <Content Include="Content\img\aeroflot.png" />
     <Content Include="Content\img\aireuropa.png" />
     <Content Include="Content\img\airfrance.png" />
@@ -553,6 +568,7 @@
     <Content Include="Content\img\discordapp.png" />
     <Content Include="Content\img\easyJet.jpg" />
     <Content Include="Content\img\email-icon.png" />
+    <Content Include="Content\img\favorite.png" />
     <Content Include="Content\img\fb.png" />
     <Content Include="Content\img\Flight Jobs Info.png" />
     <Content Include="Content\img\FlightJobsLogo0001.png" />
@@ -594,6 +610,7 @@
     <Content Include="Content\img\logbook0001.jpg" />
     <Content Include="Content\img\logo\LogoDefault.png" />
     <Content Include="Content\img\lufthansa.jpg" />
+    <Content Include="Content\img\msf-logo.png" />
     <Content Include="Content\img\passanger.png" />
     <Content Include="Content\img\passenger-with-baggage-filled.png" />
     <Content Include="Content\img\passenger2.png" />
@@ -619,6 +636,15 @@
     <Content Include="Content\img\PilotExpenses\PilotCourseTraining.jpg" />
     <Content Include="Content\img\PilotExpenses\SimulatorTraining.jpg" />
     <Content Include="Content\img\PilotExpenses\WeatherExam.jpg" />
+    <Content Include="Content\img\planes\A319.JPG" />
+    <Content Include="Content\img\planes\A320.JPG" />
+    <Content Include="Content\img\planes\A321.JPG" />
+    <Content Include="Content\img\planes\A330.JPG" />
+    <Content Include="Content\img\planes\A350.JPG" />
+    <Content Include="Content\img\planes\B738.JPG" />
+    <Content Include="Content\img\planes\B767.JPG" />
+    <Content Include="Content\img\planes\Cessna.JPG" />
+    <Content Include="Content\img\planes\default.jpg" />
     <Content Include="Content\img\QRCode.png" />
     <Content Include="Content\img\ranking.png" />
     <Content Include="Content\img\ryanair.png" />
@@ -967,6 +993,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201912032010344_mysql.resx">
       <DependentUpon>201912032010344_mysql.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202005081341260_UseCustomPlaneCapacity.resx">
+      <DependentUpon>202005081341260_UseCustomPlaneCapacity.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

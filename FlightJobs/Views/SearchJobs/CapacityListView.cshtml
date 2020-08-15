@@ -1,9 +1,9 @@
 ﻿@model FlightJobs.Models.JobSerachModel
 
 <div id="CapacityListContent">
-    <div class="col-md-6">
+    <div class="col-md-12">
         <label class="control-label" for="CustomPassengerCapacity">Capacity list</label>
-        @Html.DropDownListFor(model => model.CustomPlaneCapacity.Id, Model.CustomPlaneCapacityList, new { size = 10, @class = "form-control" })
+        @Html.DropDownListFor(model => model.CustomPlaneCapacity.Id, Model.CustomPlaneCapacityList, new { @class = "form-control", @style = "max-width: 100%;" })
 
     </div>
 </div>
@@ -20,6 +20,7 @@
                     $('#CustomPlaneCapacity_CustomPassengerCapacity').val(result.CustomPassengerCapacity);
                     $('#CustomPlaneCapacity_CustomCargoCapacityWeight').val(result.CustomCargoCapacityWeight);
                     $('#CustomPlaneCapacity_CustomNameCapacity').val(result.CustomNameCapacity);
+                    $("#CustomPlaneCapacity_ImagePath").attr("src", result.ImagePath)
                 }
             }
         });

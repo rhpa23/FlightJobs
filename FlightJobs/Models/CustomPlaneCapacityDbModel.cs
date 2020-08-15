@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Web;
 
@@ -25,5 +26,8 @@ namespace FlightJobs.Models
         [DisplayName("Capacity name")]
         [Required(ErrorMessage = "Capacity name is required")]
         public string CustomNameCapacity { get; set; }
+
+        [NotMapped]
+        public string ImagePath { get; set; }
     }
 }

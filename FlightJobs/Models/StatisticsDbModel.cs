@@ -43,6 +43,9 @@ namespace FlightJobs.Models
         [DisplayName("User custom plane capacity ")]
         public virtual CustomPlaneCapacityDbModel CustomPlaneCapacity { get; set; }
 
+        [DisplayName("User custom plane capacity ")]
+        public bool UseCustomPlaneCapacity { get; set; }
+
         [NotMapped]
         [DisplayName("Number of flights")]
         public long NumberFlights { get; set; }

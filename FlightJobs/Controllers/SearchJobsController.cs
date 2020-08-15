@@ -51,7 +51,9 @@ namespace FlightJobs.Controllers
 
             if (statistics != null)
             {
-                model.UseCustomPlaneCapacity = statistics.CustomPlaneCapacity != null;
+                if (statistics.CustomPlaneCapacity != null)
+                    statistics.CustomPlaneCapacity.ImagePath = GetCustomCapacityPath(statistics.CustomPlaneCapacity.CustomNameCapacity);
+                model.UseCustomPlaneCapacity = statistics.UseCustomPlaneCapacity;
                 model.CustomPlaneCapacity = statistics.CustomPlaneCapacity;
                 model.CustomPlaneCapacityList = dbContext.CustomPlaneCapacity.Where(x => x.User.Id == user.Id).Select(c =>
                                                                 new SelectListItem
@@ -63,6 +65,36 @@ namespace FlightJobs.Controllers
 
             return View(model);
 
+        }
+
+        private string GetCustomCapacityPath(string customNameCapacity)
+        {
+            string path = "/Content/img/planes/{0}";
+            if (customNameCapacity.ToLower().Contains("320"))
+                return string.Format(path, "A320.JPG");
+
+            if (customNameCapacity.ToLower().Contains("319"))
+                return string.Format(path, "A319.JPG");
+
+            if (customNameCapacity.ToLower().Contains("321"))
+                return string.Format(path, "A321.JPG");
+
+            if (customNameCapacity.ToLower().Contains("330"))
+                return string.Format(path, "A330.JPG");
+
+            if (customNameCapacity.ToLower().Contains("350"))
+                return string.Format(path, "A350.JPG");
+
+            if (customNameCapacity.ToLower().Contains("767"))
+                return string.Format(path, "B767.JPG");
+
+            if (customNameCapacity.ToLower().Contains("Cessna"))
+                return string.Format(path, "Cessna.JPG");
+
+            if (customNameCapacity.ToLower().Contains("737") || customNameCapacity.ToLower().Contains("738"))
+                return string.Format(path, "B738.JPG");
+
+            return string.Format(path, "default.jpg");
         }
 
         [HttpPost]
@@ -511,10 +543,11 @@ namespace FlightJobs.Controllers
         {
             var dbContext = new ApplicationDbContext();
 
-            var CustomPlaneCapacity = dbContext.CustomPlaneCapacity.FirstOrDefault(x => x.Id == id);
-            if (CustomPlaneCapacity != null)
+            var customPlaneCapacity = dbContext.CustomPlaneCapacity.FirstOrDefault(x => x.Id == id);
+            if (customPlaneCapacity != null)
             {
-                return Json(CustomPlaneCapacity, JsonRequestBehavior.AllowGet);
+                customPlaneCapacity.ImagePath = GetCustomCapacityPath(customPlaneCapacity.CustomNameCapacity);
+                return Json(customPlaneCapacity, JsonRequestBehavior.AllowGet);
             }
             else
             {
@@ -522,7 +555,7 @@ namespace FlightJobs.Controllers
             }
         }
 
-        public void UnSetCustonCapacity()
+        public void SetCustonCapacity(bool isChecked)
         {
             var dbContext = new ApplicationDbContext();
             var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
@@ -530,9 +563,34 @@ namespace FlightJobs.Controllers
 
             if (statistics != null)
             {
-                statistics.CustomPlaneCapacity = null;
+                statistics.UseCustomPlaneCapacity = isChecked;
                 dbContext.SaveChanges();
             }
+        }
+
+        public JsonResult RandomFlight(string departure, string destination)
+        {
+            var dbContext = new ApplicationDbContext();
+            var query = dbContext.JobDbModels.AsQueryable();
+            var departureFilter = departure.Length == 4;
+            var destinationFilter = destination.Length == 4;
+
+            if (!departureFilter || !destinationFilter)
+            {
+                if (departureFilter)
+                {
+                    query = query.Where(x => x.DepartureICAO == departure);
+                }
+                else if (destinationFilter)
+                {
+                    query = query.Where(x => x.ArrivalICAO == destination);
+                }
+            }
+            
+            var jobCount = query.Count();
+            int index = new Random().Next(jobCount);
+            var randomJob = query.OrderBy(x => x.Id).Skip(index).FirstOrDefault();
+            return Json(randomJob != null ? randomJob : new JobDbModel(), JsonRequestBehavior.AllowGet);
         }
     }
 }

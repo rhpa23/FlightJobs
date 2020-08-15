@@ -30,6 +30,17 @@
     #mapid {
         height: 290px;
     }
+    #searchclear {
+        position: absolute;
+        right: 5px;
+        top: 25px;
+        bottom: 0;
+        height: 14px;
+        margin: auto;
+        font-size: 14px;
+        cursor: pointer;
+        color: #ccc;
+    }
 </style>
 @using (Html.BeginForm("Index", "SearchJobs", FormMethod.Post, new { id = "searchForm" }))
 {
@@ -50,6 +61,7 @@
                     <div class="col-md-2" style="padding-right:0px; width:12%;">
                         @Html.LabelFor(model => model.Departure, htmlAttributes: new { @class = "control-label" })
                         @Html.EditorFor(model => model.Departure, new { htmlAttributes = new { placeholder = "ICAO", @class = "form-control uppercase", @maxlength = "4" } })
+                        <span id="searchclear" onclick="clearInput('Departure')" class="glyphicon glyphicon-remove-circle"></span>
                         @Html.ValidationMessageFor(model => model.Departure, "", new { @class = "text-danger" })
                     </div>
                     <div class="col-sm-1" style="padding-left:0px; padding-right:0px; width:auto;">
@@ -58,13 +70,16 @@
 
                     </div>
 
-                    <div class="col-md-2" style="padding-left:0px; width:12%;">
+                    <div class="col-md-2" style="padding: 0px; width: 12%;">
                         @Html.LabelFor(model => model.Arrival, htmlAttributes: new { @class = "control-label" })
                         @Html.EditorFor(model => model.Arrival, new { htmlAttributes = new { placeholder = "ICAO", @class = "form-control uppercase", @maxlength = "4" } })
+                        <span id="searchclear" onclick="clearInput('Arrival')" class="glyphicon glyphicon-remove-circle"></span>
                         @Html.ValidationMessageFor(model => model.Arrival, "", new { @class = "text-danger" })
                     </div>
-                    <div class="col-xs-1" style="padding:0px; width:auto;">
-                        <input id="arrival-tips-button" type="button" value="Tips" class="btn btn-info btn-xs" style="margin-top:26px" />
+                    <div class="col-xs-1" style="padding:5px; width:auto;">
+                        <input id="arrival-tips-button" type="button" value="Tips" class="btn btn-info btn-xs" style="margin-top:26px;" />
+                        <input id="random-button" type="button" value="Random" class="btn btn-info btn-xs" style="margin:26px 0px 0px 10px;" />
+                        <img id="random-loading-img" src="~/Content/img/loading.gif" style="width:20px; display:none;" />
                     </div>
                     <div id="departure-required" style="display: none;"><i class="glyphicon glyphicon-alert"></i>  First set a valid departure.</div>
                     <div id="arrival-tips-table" style="display: none;" class="col-md-6">Loading...</div>
@@ -77,13 +92,14 @@
 
 
                 <div class="row">
-                    <div class="col-md-2" style="width:12%;">
+                    <div class="col-md-2" style="width: 10%; padding: 0px; margin-left: 15px;">
                         @Html.LabelFor(model => model.Alternative, htmlAttributes: new { @class = "control-label" })
                         @Html.EditorFor(model => model.Alternative, new { htmlAttributes = new { placeholder = "ICAO", @class = "form-control uppercase", @maxlength = "4" } })
+                        <span id="searchclear" onclick="clearInput('Alternative')" class="glyphicon glyphicon-remove-circle"></span>
                         @Html.ValidationMessageFor(model => model.Alternative, "", new { @class = "text-danger" })
                     </div>
 
-                    <div class="col-xs-1" style="padding:0px; width:auto;">
+                    <div class="col-xs-1" style="padding:0px; width:auto; margin: 5px;">
                         <input id="alternative-tips-button" type="button" value="Tips" class="btn btn-info btn-xs" style="margin-top:26px" />
                     </div>
                     <div id="destination-required" style="display: none;"><i class="glyphicon glyphicon-alert"></i> First set a valid destination.</div>
@@ -139,7 +155,7 @@
                                     </label>
                                 </div>
                                 <div class="col-lg-2" style="margin-top:30px; padding-left:0px;">
-                                    <input id="ChangeCapacity" type="button" value="Change" class="btn btn-info"/>
+                                    <input id="ChangeCapacity" type="button" value="Change" class="btn btn-info" @{ if (!Model.UseCustomPlaneCapacity) { <text> disabled </text> }} />
                                 </div>
                             </div>
                         </div>
@@ -175,36 +191,48 @@
                         <hr />
                         <div class="row">
                             @Html.Partial("CapacityListView", Model)
+                        </div>
+                        <br />
+                        <div class="row">
                             <div class="col-md-6">
                                 <div class="row">
-                                    <label class="control-label" for="CustomPassengerCapacity">Passenger capacity</label>
-                                    @Html.EditorFor(model => model.CustomPlaneCapacity.CustomPassengerCapacity, new { htmlAttributes = new { @class = "form-control" } })
-                                </div>
-                                <br />
-                                <div class="row">
-                                    <label class="control-label" for="CustomCargoCapacityWeight">
-                                        Cargo capacity weight @if (DataConversion.GetWeightUnit(Request) == DataConversion.UnitPounds)
-                                        { <span> (lbs)</span>;
-                                        }
-                                        else
-                                        { <span> (Kg)</span>;
-                                        }
-                                    </label>
-                                    @Html.EditorFor(model => model.CustomPlaneCapacity.CustomCargoCapacityWeight, new { htmlAttributes = new { @class = "form-control" } })
-                                </div>
-                                <br />
-                                <div class="row">
-                                    <label class="control-label" for="CustomNameCapacity">Capacity Name (Change to add)</label>
-                                    @Html.EditorFor(model => model.CustomPlaneCapacity.CustomNameCapacity, new { htmlAttributes = new { @class = "form-control" } })
-                                </div>
-                                <br />
-                                <div class="row">
-                                    
-                                    <div class="col-md-3 pull-right">
-                                        <button type="button" class="btn btn-info btn-xs" id="SaveCustomCapacity">Add</button>
+                                    <div class="col-md-12">
+                                        <label class="control-label" for="CustomPassengerCapacity">Passenger capacity</label>
+                                        @Html.EditorFor(model => model.CustomPlaneCapacity.CustomPassengerCapacity, new { htmlAttributes = new { @class = "form-control" } })
                                     </div>
-                                    <div class="col-md-3 pull-right">
-                                        <button type="button" class="btn btn-default btn-xs" id="RemoveCustomCapacity">Remove</button>
+                                </div>
+                                <br />
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <label class="control-label" for="CustomCargoCapacityWeight">
+                                            Cargo capacity weight @if (DataConversion.GetWeightUnit(Request) == DataConversion.UnitPounds)
+                                            { <span> (lbs)</span>;
+                                            }
+                                            else
+                                            { <span> (Kg)</span>;
+                                            }
+                                        </label>
+                                        @Html.EditorFor(model => model.CustomPlaneCapacity.CustomCargoCapacityWeight, new { htmlAttributes = new { @class = "form-control" } })
+                                    </div>
+                                </div>
+                                <br />
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <label class="control-label" for="CustomNameCapacity">Capacity Name (Change to add)</label>
+                                        @Html.EditorFor(model => model.CustomPlaneCapacity.CustomNameCapacity, new { htmlAttributes = new { @class = "form-control" } })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <img id="CustomPlaneCapacity_ImagePath" src="@Model.CustomPlaneCapacity.ImagePath" style="width: 280px;margin: 20px 0px 20px 0px;" />
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="col-md-3 pull-right">
+                                            <button type="button" class="btn btn-info btn-xs" id="SaveCustomCapacity">Add</button>
+                                        </div>
+                                        <div class="col-md-3 pull-right">
+                                            <button type="button" class="btn btn-default btn-xs" id="RemoveCustomCapacity">Remove</button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -264,16 +292,15 @@
     });
 
     $('#UseCustomPlaneCapacity').change(function () {
-        if ($('#UseCustomPlaneCapacity').prop("checked")) {
-            $("#ChangeCapacity").prop('disabled', false);
-        } else {
-             $.ajax({
-                url: '@Url.Action("UnSetCustonCapacity", "SearchJobs")',
-                type: "Get",
-                success: function (result) {}
-            });
-             $("#ChangeCapacity").prop('disabled', true);
-        }
+        var ck = $('#UseCustomPlaneCapacity').prop("checked");
+        $("#ChangeCapacity").prop('disabled', !ck);
+
+        $.ajax({
+            url: '@Url.Action("SetCustonCapacity", "SearchJobs")',
+            type: "Get",
+            data: { isChecked: ck },
+            success: function (result) {}
+        });
     });
 
     $('#CustomPassengerCapacity').change(function () {
@@ -343,13 +370,38 @@
         LoadMapInfo();
     });
 
+
+    $('#random-button').click(function () {
+        //random-loading-img
+        $('#random-loading-img').show();
+        $.ajax({
+            url: '@Url.Action("RandomFlight", "SearchJobs")',
+            type: "Get",
+            data: { destination: $('#Arrival').val(), departure: $('#Departure').val() },
+            success: function (result) {
+                if (result != null && result != '') {
+                    $('#Arrival').val(result.ArrivalICAO);
+                    $('#Departure').val(result.DepartureICAO);
+                    $('#Alternative').val(result.AlternativeICAO);
+                    CalcDistance();
+                    LoadMapInfo();
+                    $('#random-loading-img').hide();
+                }
+                else {
+                    $('#random-loading-img').hide();
+                }
+            }
+        });
+        return false;
+    });
+
     $('#alternative-tips-button').click(function () {
         $("#arrival-tips-table").hide();
         $("#alternative-tips-table").toggle(500);
         $.ajax({
             url: '@Url.Action("AlternativeTips", "SearchJobs")',
             type: "Get",
-            data: { destination: $('#Arrival').val(), range: 40 },
+            data: { destination: $('#Arrival').val(), range: 60 },
             success: function (result) {
                 if (result != null && result != '') {
                     $("#destination-required").hide();
@@ -467,14 +519,16 @@
 
             var m = L.marker([marker.lat, marker.lng], { icon: marker_icon }).addTo(mymap);
             m.bindPopup('<strong>' + marker.name + '</strong><br/>' +
-                marker.info + ' airport <br/> Runway size: ' +
+                marker.info + ' <br/> Runway size: ' +
                 marker.runway_size + '<br/>Elevation: ' +
                 marker.elevation + '<br/>Trasition: ' +
                 marker.trasition);
 
-            flight_path.push([marker.lat, marker.lng]);
+            if (marker.isRoute) {
+                flight_path.push([marker.lat, marker.lng]);
 
-            bounds.extend([marker.lat, marker.lng]);
+                bounds.extend([marker.lat, marker.lng]);
+            }
         });
 
         L.polyline(flight_path, { color: '#5bc0de' }).addTo(mymap);
@@ -483,6 +537,9 @@
 
     }
 
+    function clearInput(inputId) {
+        $("#" + inputId).val('');
+    }
 
 
 </script>
