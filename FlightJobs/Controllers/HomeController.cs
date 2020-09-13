@@ -9,6 +9,7 @@ using System.Data.SqlClient;
 using System.Data;
 using FlightJobs.Util;
 using System.Net;
+using System.Security.Policy;
 
 namespace FlightJobs.Controllers
 {
@@ -19,14 +20,11 @@ namespace FlightJobs.Controllers
             var homeModel = new HomeViewModel();
             var dbContext = new ApplicationDbContext();
             var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
-            if (user != null)
+            var statistics = GetAllStatisticsInfo(user, null); 
+            if (statistics != null)
             {
-                var statistics = GetAllStatisticsInfo(user, null); 
-                if (statistics != null)
-                {
-                    homeModel.Statistics = statistics;
-                    homeModel.PilotStatisticsDescription = GetPilotDescription(statistics, dbContext);
-                }
+                homeModel.Statistics = statistics;
+                homeModel.PilotStatisticsDescription = GetPilotDescription(statistics, dbContext);
             }
             var jobList = dbContext.JobDbModels.Where(j =>
                         !j.IsDone &&
@@ -37,11 +35,11 @@ namespace FlightJobs.Controllers
             homeModel.Challenge = dbContext.JobDbModels.FirstOrDefault(c =>
                             !c.IsDone && c.IsChallenge && c.User.Id == user.Id &&
                             c.ChallengeExpirationDate >= DateTime.Now);
-            string weightUnit = DataConversion.GetWeightUnit(Request);
+            string weightUnit = GetWeightUnit(Request);
             if (homeModel.Challenge != null)
             {
                 homeModel.Challenge.WeightUnit = weightUnit;
-                homeModel.Challenge.Cargo = DataConversion.GetWeight(Request, homeModel.Challenge.Cargo);
+                homeModel.Challenge.Cargo = GetWeight(Request, homeModel.Challenge.Cargo, statistics);
                 homeModel.Challenge.PayloadDisplay = homeModel.Challenge.Cargo + homeModel.Challenge.PaxWeight;
             }                
 
@@ -50,10 +48,8 @@ namespace FlightJobs.Controllers
                                                             e.User.Id == user.Id).ToList();
             TempData["PilotMessage"] = (listOverdue.Count() > 0) ? "License is expired" : null;
             jobList.ToList().ForEach(delegate(JobDbModel j) {
-                var cargo = DataConversion.GetWeight(Request, j.Cargo);
-                var paxWeight = DataConversion.GetWeight(Request, j.PaxWeight);
-                var passengesWeight = j.Pax * paxWeight;
-                j.PayloadDisplay = cargo + passengesWeight;
+                var cargo = GetWeight(Request, j.Cargo, statistics);
+                j.PayloadDisplay = GetWeight(Request, j.Payload, statistics);
                 j.Cargo = cargo;
                 j.WeightUnit = weightUnit;
             });
@@ -71,6 +67,7 @@ namespace FlightJobs.Controllers
         {
             var dbContext = new ApplicationDbContext();
             var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
+            var userStatistics = GetUserStatistics(user.Id);
             if (user != null)
             {
                 dbContext.JobDbModels.Where(j => j.User.Id == user.Id).ToList().ForEach(x =>
@@ -83,12 +80,12 @@ namespace FlightJobs.Controllers
 
                 var pagedJobList = jobList.OrderBy(j => j.Id).ToPagedList(1, 4);
                 pagedJobList.ToList().ForEach(delegate (JobDbModel j) {
-                    var cargo = DataConversion.GetWeight(Request, j.Cargo);
-                    var paxWeight = DataConversion.GetWeight(Request, j.PaxWeight);
+                    var cargo = GetWeight(Request, j.Cargo, userStatistics);
+                    var paxWeight = GetWeight(Request, j.PaxWeight, userStatistics);
                     var passengesWeight = j.Pax * paxWeight;
                     j.PayloadDisplay = cargo + passengesWeight;
                     j.Cargo = cargo;
-                    j.WeightUnit = DataConversion.GetWeightUnit(Request);
+                    j.WeightUnit = GetWeightUnit(Request);
                 });
                 return PartialView("PendingJobsView", pagedJobList);
 
@@ -309,17 +306,14 @@ namespace FlightJobs.Controllers
         [HttpPost]
         public JsonResult SetWeightUnit(bool pounds)
         {
-            if (pounds)
+            var dbContext = new ApplicationDbContext();
+
+            var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
+            if (user != null && user.Email != AccountController.GuestEmail)
             {
-                var myCookie = new HttpCookie(DataConversion.WeightUnitCookie, DataConversion.WeightPounds);
-                myCookie.Expires = DateTime.Now.AddYears(1); ;
-                Response.SetCookie(myCookie);
-            }
-            else
-            {
-                var myCookie = new HttpCookie(DataConversion.WeightUnitCookie, DataConversion.WeightKilograms);
-                myCookie.Expires = DateTime.Now.AddYears(1); 
-                Response.SetCookie(myCookie);
+                var uStatistics = dbContext.StatisticsDbModels.FirstOrDefault(s => s.User.Id == user.Id);
+                uStatistics.WeightUnit = pounds ? DataConversion.WeightPounds : DataConversion.UnitKilograms;
+                dbContext.SaveChanges();
             }
             return Json("{}", JsonRequestBehavior.AllowGet);
         }
@@ -427,6 +421,14 @@ namespace FlightJobs.Controllers
             {
                 TempData["Message"] = "You must be the owner of the airline to pay debts.";
             }
+            return RedirectToAction("Index");
+        }
+
+        public ActionResult AcceptCookies()
+        {
+            var myCookie = new HttpCookie("CookiesAccepted", Guid.NewGuid().ToString());
+            myCookie.Expires = DateTime.Now.AddYears(2); ;
+            Response.SetCookie(myCookie);
             return RedirectToAction("Index");
         }
     }

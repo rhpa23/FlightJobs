@@ -1,6 +1,7 @@
 ﻿@model FlightJobs.Models.JobSerachModel
 @using FlightJobs.Util;
 
+
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
@@ -205,12 +206,7 @@
                                 <div class="row">
                                     <div class="col-md-12">
                                         <label class="control-label" for="CustomCargoCapacityWeight">
-                                            Cargo capacity weight @if (DataConversion.GetWeightUnit(Request) == DataConversion.UnitPounds)
-                                            { <span> (lbs)</span>;
-                                            }
-                                            else
-                                            { <span> (Kg)</span>;
-                                            }
+                                            Cargo capacity weight (@Model.WeightUnit)
                                         </label>
                                         @Html.EditorFor(model => model.CustomPlaneCapacity.CustomCargoCapacityWeight, new { htmlAttributes = new { @class = "form-control" } })
                                     </div>
@@ -522,7 +518,9 @@
                 marker.info + ' <br/> Runway size: ' +
                 marker.runway_size + '<br/>Elevation: ' +
                 marker.elevation + '<br/>Trasition: ' +
-                marker.trasition);
+                marker.trasition + '<br/><input type="button" value="Add to departure" onclick="setInputValue(\'Departure\', \'' + marker.icao + '\'); CalcDistance(); LoadMapInfo();" class="btn btn-defaut btn-xs">'
+                + '<br/><input type="button" value="Add to destination" onclick="setInputValue(\'Arrival\', \'' + marker.icao + '\'); CalcDistance(); LoadMapInfo();" class="btn btn-defaut btn-xs" style="margin-top:5px;">'
+                + '<br/><input type="button" value="Add to alternative" onclick="setInputValue(\'Alternative\', \'' + marker.icao + '\'); CalcDistance(); LoadMapInfo();" class="btn btn-defaut btn-xs" style="margin-top:5px;">');
 
             if (marker.isRoute) {
                 flight_path.push([marker.lat, marker.lng]);
@@ -539,6 +537,10 @@
 
     function clearInput(inputId) {
         $("#" + inputId).val('');
+    }
+
+    function setInputValue(inputId, inputValue) {
+        $("#" + inputId).val(inputValue);
     }
 
 

@@ -27,7 +27,7 @@ namespace FlightJobs.Controllers
                 Pax = 100,
                 Cargo = 1000,
                 PaxWeight = 84,
-                WeightUnit = DataConversion.GetWeightUnit(Request)
+                WeightUnit = GetWeightUnit(Request)
             };
 
             var challengeList = dbContext.JobDbModels.Where(c =>
@@ -40,7 +40,7 @@ namespace FlightJobs.Controllers
 
             challengeList.ForEach(x =>
             {
-                x.WeightUnit = DataConversion.GetWeightUnit(Request);
+                x.WeightUnit = GetWeightUnit(Request);
                 x.IsChallengeFromCurrentUser = x.ChallengeCreatorUserId == user.Id;
             });
 
@@ -55,7 +55,7 @@ namespace FlightJobs.Controllers
         {
             long totalPayment = 0;
             long distance = 0;
-            var weightUnit = DataConversion.GetWeightUnit(Request);
+            var weightUnit = GetWeightUnit(Request);
             var jobSerachModel = new JobSerachModel()
             {
                 Departure = departure,
@@ -68,7 +68,9 @@ namespace FlightJobs.Controllers
                 { CustomPassengerCapacity = pax, CustomCargoCapacityWeight = cargo },
             };
 
-            var jobs = GenerateBoardJobs(jobSerachModel);
+            var userStatistics = GetWebUserStatistics();
+
+            var jobs = GenerateBoardJobs(jobSerachModel, userStatistics);
             if (jobs.Count == 0)
             {
                 return null;
@@ -101,7 +103,7 @@ namespace FlightJobs.Controllers
 
             var model = new ChallengeViewModel()
             {
-                WeightUnit = DataConversion.GetWeightUnit(Request),
+                WeightUnit = GetWeightUnit(Request),
                 ArrivalICAO = arrivalModel.ICAO,
                 DepartureICAO = departureModel.ICAO,
                 Cargo = cargo,
@@ -192,13 +194,14 @@ namespace FlightJobs.Controllers
         {
             var dbContext = new ApplicationDbContext();
             var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
+            var userStatistics = GetUserStatistics(user.Id);
             var viewModel = new ChallengeViewModel();
             var jobDb = dbContext.JobDbModels.FirstOrDefault(j => j.Id == jobId);
             if (jobDb != null)
             {
-                var weightUnit = DataConversion.GetWeightUnit(Request);
-                var cargo = DataConversion.GetWeight(Request, jobDb.Cargo);
-                var paxWeight = jobDb.Pax * DataConversion.GetWeight(Request, jobDb.PaxWeight); 
+                var weightUnit = GetWeightUnit(Request);
+                var cargo = GetWeight(Request, jobDb.Cargo, userStatistics);
+                var paxWeight = jobDb.Pax * GetWeight(Request, jobDb.PaxWeight, userStatistics); 
                 viewModel = GetChallengerView((int)jobDb.Pax, (int)cargo, paxWeight, jobDb.DepartureICAO, jobDb.ArrivalICAO, jobDb.ChallengeType.ToString(), jobDb.Pay, jobDb.Dist, weightUnit, jobId);
             }
             else
@@ -229,7 +232,7 @@ namespace FlightJobs.Controllers
             var jobDb =  dbContext.JobDbModels.FirstOrDefault(j => j.Id == jobId && j.User == null);
             if (jobDb != null)
             {
-                var weightUnit = DataConversion.GetWeightUnit(Request);
+                var weightUnit = GetWeightUnit(Request);
                 var viewModel = GetChallengerView((int)jobDb.Pax, (int)jobDb.Cargo, jobDb.PaxWeight, jobDb.DepartureICAO, jobDb.ArrivalICAO, jobDb.ChallengeType.ToString(), jobDb.Pay, jobDb.Dist, weightUnit, jobId);
                 if (jobDb.ChallengeCreatorUserId == user.Id)
                 {

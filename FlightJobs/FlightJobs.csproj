@@ -428,6 +428,10 @@
     <Compile Include="Migrations\202005081341260_UseCustomPlaneCapacity.Designer.cs">
       <DependentUpon>202005081341260_UseCustomPlaneCapacity.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202009051205157_WeightUnit.cs" />
+    <Compile Include="Migrations\202009051205157_WeightUnit.Designer.cs">
+      <DependentUpon>202009051205157_WeightUnit.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\AirlineFboView.cs" />
@@ -610,6 +614,7 @@
     <Content Include="Content\img\logbook0001.jpg" />
     <Content Include="Content\img\logo\LogoDefault.png" />
     <Content Include="Content\img\lufthansa.jpg" />
+    <Content Include="Content\img\msf-logo-small.png" />
     <Content Include="Content\img\msf-logo.png" />
     <Content Include="Content\img\passanger.png" />
     <Content Include="Content\img\passenger-with-baggage-filled.png" />
@@ -662,6 +667,7 @@
     <Content Include="Content\img\TAP.jpg" />
     <Content Include="Content\img\time-001.png" />
     <Content Include="Content\img\XPlane_11_logo.png" />
+    <Content Include="Content\img\youtube.png" />
     <Content Include="Content\PagedList.css" />
     <Content Include="Content\templates\Confirm Email.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -996,6 +1002,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202005081341260_UseCustomPlaneCapacity.resx">
       <DependentUpon>202005081341260_UseCustomPlaneCapacity.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202009051205157_WeightUnit.resx">
+      <DependentUpon>202009051205157_WeightUnit.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

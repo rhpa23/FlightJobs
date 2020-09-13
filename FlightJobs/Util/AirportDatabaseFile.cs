@@ -1,6 +1,7 @@
 ﻿using FlightJobs.Models;
 using System;
 using System.Collections.Generic;
+using System.Device.Location;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -83,6 +84,22 @@ namespace FlightJobs.Util
         private static bool isPositionEmpty(string[] infoArray)
         {
             return string.IsNullOrEmpty(infoArray[3]) || string.IsNullOrEmpty(infoArray[4]);
+        }
+
+        public static List<AirportModel> FindClosestLocation(double latitude, double longitude)
+        {
+            var coord = new GeoCoordinate(latitude, longitude);
+            var airportInfos = GetAllAirportInfo();
+
+            int minDistance = 15000;
+
+            var nearest = airportInfos.Select(x => new { nearest = x, co = new GeoCoordinate(x.Latitude, x.Longitude) })
+                                   //.Where(x => x.co.GetDistanceTo(coord) < 1000)
+                                   .OrderBy(x => x.co.GetDistanceTo(coord))
+                                   .Take(5)
+                                   .Where(x => x.co.GetDistanceTo(coord) < minDistance);
+
+            return nearest.Select(x => x.nearest).ToList();
         }
 
     }

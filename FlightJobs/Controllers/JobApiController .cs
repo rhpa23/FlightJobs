@@ -26,6 +26,74 @@ namespace FlightJobs.Controllers
 
         private const string CHALLENGE_EXPIRED = "Unfortunately, this Challenge is expired. Take another one.";
 
+
+        [System.Web.Http.HttpGet]
+        [System.Web.Mvc.AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<HttpResponseMessage> StartJobMSFS()
+        {
+            var response = Request.CreateResponse(HttpStatusCode.BadRequest, "Server error");
+
+            try
+            {
+                string icaoStr = "";
+                string latitude = Request.Headers.GetValues("Latitude").First();
+                string longitude = Request.Headers.GetValues("Longitude").First();
+                var airports = AirportDatabaseFile.FindClosestLocation(Convert.ToDouble(latitude.Replace(",", ".")), Convert.ToDouble(longitude.Replace(",", ".")));
+                if (airports.Count > 0)
+                {
+                    icaoStr = airports.First().ICAO;
+                }
+
+                string payloadStr = Request.Headers.GetValues("Payload").First().Replace(",", ".");
+                string usarIdStr = Request.Headers.GetValues("UserId").First().Replace("\"", "");
+                string fuelWeightStr = Request.Headers.GetValues("FuelWeight").First().Replace(",", ".");
+
+                response = StartJob(icaoStr, payloadStr, usarIdStr, fuelWeightStr);
+            }
+            catch (Exception e)
+            {
+                ErrorLog.GetDefault(null).Log(new Error(e));
+                response = Request.CreateResponse(HttpStatusCode.BadRequest, "Process error.");
+            }
+
+            return response;
+        }
+
+        [System.Web.Http.HttpGet]
+        [System.Web.Mvc.AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<HttpResponseMessage> FinishJobMSFS()
+        {
+            var response = Request.CreateResponse(HttpStatusCode.BadRequest, "Server error");
+
+            try
+            {
+                string icaoStr = "";
+                string latitude = Request.Headers.GetValues("Latitude").First();
+                string longitude = Request.Headers.GetValues("Longitude").First();
+                var airports = AirportDatabaseFile.FindClosestLocation(Convert.ToDouble(latitude.Replace(",", ".")), Convert.ToDouble(longitude.Replace(",", ".")));
+                if (airports.Count > 0)
+                {
+                    icaoStr = airports.First().ICAO;
+                }
+
+                string payloadStr = Request.Headers.GetValues("Payload").First().Replace(",", ".");
+                string usarIdStr = Request.Headers.GetValues("UserId").First().Replace("\"", "");
+                string fuelWeightStr = Request.Headers.GetValues("FuelWeight").First().Replace(",", ".");
+                string planeDescriptionStr = Request.Headers.GetValues("PlaneDescription").First().Replace(",", ".");
+
+                response = FinishJob(icaoStr, payloadStr, usarIdStr, fuelWeightStr, "MSFS", planeDescriptionStr);
+            }
+            catch (Exception e)
+            {
+                ErrorLog.GetDefault(null).Log(new Error(e));
+                response = Request.CreateResponse(HttpStatusCode.BadRequest, "Process error.");
+            }
+
+            return response;
+        }
+
         [System.Web.Http.HttpGet]
         [System.Web.Mvc.AllowAnonymous]
         [ValidateAntiForgeryToken]
@@ -36,67 +104,11 @@ namespace FlightJobs.Controllers
             try
             {
                 string icaoStr = Request.Headers.GetValues("ICAO").First();
-                string payloadStr = Request.Headers.GetValues("Payload").First();
+                string payloadStr = Request.Headers.GetValues("Payload").First().Replace(",", ".");
                 string usarIdStr = Request.Headers.GetValues("UserId").First().Replace("\"", "");
-                string fuelWeightStr = Request.Headers.GetValues("FuelWeight").First();
+                string fuelWeightStr = Request.Headers.GetValues("FuelWeight").First().Replace(",", ".");
 
-                var dbContext = new ApplicationDbContext();
-                JobDbModel job = null;
-                if (icaoStr.Length == 3)
-                {
-                    job = dbContext.JobDbModels.FirstOrDefault(j => j.User.Id == usarIdStr &&
-                                                                    j.IsActivated &&
-                                                                    j.DepartureICAO.Substring(1).ToLower() == icaoStr.ToLower());
-                }
-                else
-                {
-                    job = dbContext.JobDbModels.FirstOrDefault(j => j.User.Id == usarIdStr &&
-                                                                    j.IsActivated &&
-                                                                    j.DepartureICAO.ToLower() == icaoStr.ToLower());
-                }
-
-                if (job == null)
-                {
-                    return Request.CreateResponse(HttpStatusCode.Forbidden, "You don't have any job activated for this location.");
-                }
-
-                if (job.IsChallenge && job.ChallengeExpirationDate <= DateTime.Now)
-                {
-                    return Request.CreateResponse(HttpStatusCode.Forbidden, CHALLENGE_EXPIRED);
-                }
-
-                // Check GUEST
-                if (job.User != null && job.User.Email == AccountController.GuestEmail)
-                {
-                    return Request.CreateResponse(HttpStatusCode.Forbidden, AccountController.GuestMessage);
-                }
-
-                long payload = Convert.ToInt64(Math.Round(Convert.ToDouble(payloadStr, new CultureInfo("en-US")))); 
-                // Check payload
-                if (payload >= (job.Payload + 150) || payload <= (job.Payload - 150))
-                {
-                    var payloadInPounds = DataConversion.ConvertKilogramsToPounds(job.Payload);
-                    return Request.CreateResponse(HttpStatusCode.Forbidden, $"Wrong. Active job payload is: {job.Payload}kg / {payloadInPounds}lbs");
-                }
-
-                long fuelWeight = Convert.ToInt64(Math.Round(Convert.ToDouble(fuelWeightStr, new CultureInfo("en-US"))));
-                job.StartFuelWeight = fuelWeight;
-
-                job.InProgress = true;
-                job.StartTime = DateTime.Now;
-                dbContext.SaveChanges();
-
-                string name = job.IsChallenge ? "Challenge" : "Job";
-
-                var licenseOverdue = IsLicenseOverdue(dbContext, job.User.Id);
-                var resultMsg = $"{name} to " + job.ArrivalICAO + " started at: " + job.StartTime.ToShortTimeString() + " (UTC)";
-                if (licenseOverdue)
-                {
-                    resultMsg = $"{name} started. Warn: Your pilot license is expired. Check profile page.";
-                }
-
-                response = Request.CreateResponse(HttpStatusCode.OK, resultMsg);
-                response.Headers.Add("arrival-icao", job.ArrivalICAO);
+                response = StartJob(icaoStr, payloadStr, usarIdStr, fuelWeightStr);
             }
             catch (Exception e)
             {
@@ -117,14 +129,96 @@ namespace FlightJobs.Controllers
             try
             {
                 string icaoStr = Request.Headers.GetValues("ICAO").First();
-                string payloadStr = Request.Headers.GetValues("Payload").First();
+                string payloadStr = Request.Headers.GetValues("Payload").First().Replace(",", ".");
                 string usarIdStr = Request.Headers.GetValues("UserId").First().Replace("\"", "");
+                string fuelWeightStr = Request.Headers.GetValues("FuelWeight").First().Replace(",", ".");
                 string tailNumberStr = Request.Headers.Contains("TailNumber") ? Request.Headers.GetValues("TailNumber").FirstOrDefault() : "No acf model data";
                 string planeDescriptionStr = Request.Headers.Contains("PlaneDescription") ? Request.Headers.GetValues("PlaneDescription").FirstOrDefault() : "No acf model data";
-                string fuelWeightStr = Request.Headers.GetValues("FuelWeight").First();
 
-                if (string.IsNullOrEmpty(tailNumberStr))  tailNumberStr = "No acf model data";
+                if (string.IsNullOrEmpty(tailNumberStr)) tailNumberStr = "No acf model data";
                 if (string.IsNullOrEmpty(planeDescriptionStr)) planeDescriptionStr = "No acf model data";
+
+
+                response = FinishJob(icaoStr, payloadStr, usarIdStr, fuelWeightStr, tailNumberStr, planeDescriptionStr);
+            }
+            catch (Exception e)
+            {
+                ErrorLog.GetDefault(null).Log(new Error(e));
+                response = Request.CreateResponse(HttpStatusCode.BadRequest, "Process error.");
+            }
+
+            return response;
+        }
+
+        private HttpResponseMessage StartJob(string icaoStr, string payloadStr, string usarIdStr, string fuelWeightStr)
+        {
+            var dbContext = new ApplicationDbContext();
+            JobDbModel job = null;
+            if (icaoStr.Length == 3)
+            {
+                job = dbContext.JobDbModels.FirstOrDefault(j => j.User.Id == usarIdStr &&
+                                                                j.IsActivated &&
+                                                                j.DepartureICAO.Substring(1).ToLower() == icaoStr.ToLower());
+            }
+            else
+            {
+                job = dbContext.JobDbModels.FirstOrDefault(j => j.User.Id == usarIdStr &&
+                                                                j.IsActivated &&
+                                                                j.DepartureICAO.ToLower() == icaoStr.ToLower());
+            }
+
+            if (job == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.Forbidden, "You don't have any job activated for this location.");
+            }
+
+            if (job.IsChallenge && job.ChallengeExpirationDate <= DateTime.Now)
+            {
+                return Request.CreateResponse(HttpStatusCode.Forbidden, CHALLENGE_EXPIRED);
+            }
+
+            // Check GUEST
+            if (job.User != null && job.User.Email == AccountController.GuestEmail)
+            {
+                return Request.CreateResponse(HttpStatusCode.Forbidden, AccountController.GuestMessage);
+            }
+
+            long payload = Convert.ToInt64(Math.Round(Convert.ToDouble(payloadStr, new CultureInfo("en-US"))));
+            // Check payload
+            if (payload >= (job.Payload + 150) || payload <= (job.Payload - 150))
+            {
+                var payloadInPounds = DataConversion.ConvertKilogramsToPounds(job.Payload);
+                return Request.CreateResponse(HttpStatusCode.Forbidden, $"Wrong. Active job payload is: {job.Payload}kg / {payloadInPounds}lbs");
+            }
+
+            long fuelWeight = Convert.ToInt64(Math.Round(Convert.ToDouble(fuelWeightStr, new CultureInfo("en-US"))));
+            job.StartFuelWeight = fuelWeight;
+
+            job.InProgress = true;
+            job.StartTime = DateTime.Now;
+            dbContext.SaveChanges();
+
+            string name = job.IsChallenge ? "Challenge" : "Job";
+
+            var licenseOverdue = IsLicenseOverdue(dbContext, job.User.Id);
+            var resultMsg = $"{name} to " + job.ArrivalICAO + " started at: " + job.StartTime.ToShortTimeString() + " (UTC)";
+            if (licenseOverdue)
+            {
+                resultMsg = $"{name} started. Warn: Your pilot license is expired. Check profile page.";
+            }
+
+            var response = Request.CreateResponse(HttpStatusCode.OK, resultMsg);
+            response.Headers.Add("arrival-icao", job.ArrivalICAO);
+
+            return response;
+        }
+
+        public HttpResponseMessage FinishJob(string icaoStr, string payloadStr, string usarIdStr, string fuelWeightStr, string tailNumberStr, string planeDescriptionStr)
+        {
+            var response = Request.CreateResponse(HttpStatusCode.BadRequest, "Server error");
+
+            try
+            {
 
                 var dbContext = new ApplicationDbContext();
                 JobDbModel job = null;
@@ -317,19 +411,24 @@ namespace FlightJobs.Controllers
             var dbContext = new ApplicationDbContext();
             string userIdStr = Request.Headers.GetValues("UserId").First().Replace("\"", "");
             var user = dbContext.Users.FirstOrDefault(u => u.Id == userIdStr);
+            var userStatistics = dbContext.StatisticsDbModels.FirstOrDefault(s => s.User.Id == user.Id);
             if (user == null)
             {
                 return Request.CreateResponse(HttpStatusCode.BadRequest, "User not found.");
             }
             
-            var jobListQuery = dbContext.JobDbModels.Where(j => !j.IsDone && j.User.Id == user.Id).OrderBy(j => j.Id);
+            var jobListQuery = dbContext.JobDbModels
+                .Where(j => !j.IsDone && j.User.Id == user.Id && !j.IsChallenge)
+                .OrderBy(j => j.Id);
 
+            BaseController baseController = new BaseController();
+            
             var jobList = jobListQuery.ToList();
             jobList.ForEach(delegate (JobDbModel j) {
-                var cargo = j.Cargo;//  DataConversion.GetWeight(Request, j.Cargo);
-                var paxWeight = j.PaxWeight;// DataConversion.GetWeight(Request, j.PaxWeight);
-                var passengesWeight = j.Pax * paxWeight;
-                j.PayloadDisplay = cargo + passengesWeight;
+                var cargo = baseController.GetWeight(null, j.Cargo, userStatistics);
+                //var paxWeight = baseController.GetWeight(null, j.PaxWeight, userStatistics);
+                //var passengesWeight = j.Pax * paxWeight;
+                j.PayloadDisplay = baseController.GetWeight(null, j.Payload, userStatistics);
                 j.Cargo = cargo;
                 j.User = null;
             });
@@ -415,6 +514,15 @@ namespace FlightJobs.Controllers
             {
                 Console.WriteLine($"Error sending license e-mail warning: {e.ToString()}", e);
             }
+        }
+
+        [System.Web.Http.HttpGet]
+        [System.Web.Mvc.AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<HttpResponseMessage> FindClosestLocationTest(string lat, string lon)
+        {
+            var list = AirportDatabaseFile.FindClosestLocation(Convert.ToDouble(lat), Convert.ToDouble(lon));
+            return Request.CreateResponse(HttpStatusCode.OK, list.Select(x => x.ICAO));
         }
     }
 }

@@ -316,14 +316,9 @@
                         <img style="width:285px;" src="~/Content/img/msf-logo.png" />
                     </div>
                     <div class="col-md-7">
-                        <div style="font-size:10pt;">Does anyone want to see FlightJobs compatible with the new MS Flight Simulator?</div>
-                        <div style="font-size:10pt;">Send your comments on the Discord channel or Facebook page.</div>
-                        <a href="https://discordapp.com/invite/xmpAWz7" target="_blank" data-toggle="tooltip" title="FlightJobs at Discord">
-                            <img src="~/Content/img/discordapp.png" style="width:35px;" />
-                        </a>
-                        <a href="https://fb.me/rhpa23" target="_blank" data-toggle="tooltip" title="FlightJobs at Facebook">
-                            <img src="~/Content/img/fb.png" style="width:35px;" />
-                        </a>
+                        <div style="font-size:10pt; font-weight:bold; color:red;">The beta version of the connector for MS Flight Simulator was RELEASED.</div>
+                        <div style="font-size:10pt;font-weight:bold;">You can @Html.ActionLink("DOWNLOAD the connector ", "Install", "Home") now and test. The usability is the same. Soon more videos and tutorials.</div>
+                        <div style="font-size:10pt;">If you liked please make a donation. Cheers!</div>
                     </div>
                 </div>
                 <br />
@@ -422,7 +417,7 @@
                                 <div class="row">@Model.Challenge.Cargo @Model.Challenge.WeightUnit</div>
                             </div>
                             <div class="col-sm-1 challenge-col">
-                                <div class="row">@Model.Challenge.Payload @Model.Challenge.WeightUnit</div>
+                                <div class="row">@Model.Challenge.PayloadDisplay @Model.Challenge.WeightUnit</div>
                             </div>
                             <div class="col-sm-1 challenge-col">
                                 <div class="row"> @string.Format("{0:C}", Model.Challenge.Pay)</div>
@@ -566,7 +561,7 @@
         <ul>
             <li>Access your detailed Logbook anywhere through a website</li>
             <li>
-                Start and finish your Flight Jobs in a friendly X-Plane plugin
+                Start and finish your Flight Jobs in a friendly friendly Simulator connector
                 (The window will pop up when you set the parking brake to remind you to finish the flight job)
             </li>
             <li>Scores and bank balance</li>
@@ -604,7 +599,9 @@
 <h4 style="text-align:center;">
     @Html.ActionLink("Download the connector for", "Install", "Home")
 </h4>
-<img class="img-responsive center-block" src="~/Content/img/XPlane_11_logo.png" />
+<img class="img-responsive center-block" src="~/Content/img/XPlane_11_logo.png" style="width:190px" />
+<br />
+<img class="img-responsive center-block" src="~/Content/img/msf-logo.png" style="width:190px" />
 
 <br />
 <br />
@@ -616,8 +613,12 @@
         <strong>This video tutorial will help to use the website and the plugin:</strong>
     </p>
     <p>
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/eKltTI4BVdc" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    </p>
+    <p>
         <iframe width="560" height="315" src="https://www.youtube.com/embed/zOAvb1jQaGY" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
     </p>
+    https://youtu.be/eKltTI4BVdc
 </div>
 
 

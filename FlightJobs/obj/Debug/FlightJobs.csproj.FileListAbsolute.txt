@@ -586,3 +586,4 @@ C:\DotNetProjects\FlightJobs\FlightJobs\bin\System.Buffers.xml
 C:\DotNetProjects\FlightJobs\FlightJobs\bin\System.Memory.xml
 C:\DotNetProjects\FlightJobs\FlightJobs\bin\System.Runtime.CompilerServices.Unsafe.xml
 C:\DotNetProjects\FlightJobs\FlightJobs\bin\System.Threading.Tasks.Extensions.xml
+C:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.Migrations.WeightUnit.resources

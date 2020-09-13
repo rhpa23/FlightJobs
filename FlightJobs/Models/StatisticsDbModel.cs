@@ -87,5 +87,7 @@ namespace FlightJobs.Models
         public Dictionary<string, long> DepartureRanking { get; set; }
 
         public Dictionary<string, long> DestinationRanking { get; set; }
+
+        public string WeightUnit { get; set; }
     }
 }

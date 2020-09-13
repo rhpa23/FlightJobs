@@ -101,13 +101,12 @@
 
                         @{ 
                             var pWeightVal = @TempData["PassengersWeightCookie"];
-                            string weightTootip = "FlightFactor Airbus A320-214 Ultimate - <b>84Kg (185lbs)</b><br />Boeing 767 300ER with PW4062 - <b>95Kg (209lbs)</b><br />ToLiss A319 - <b>100Kg (220lbs)</b><br />";
                         }
                         <label style="font-size: 12px; font-weight:normal;">Passenger weight for payload calculation: </label>
                         <label id="paxWeight-label" style="font-size: 11px;">@pWeightVal </label>
                         <label id="paxWeight-unit-label" style="font-size: 11px;">@TempData["PassengersWeightUnit"]</label>
-                        <input id="paxWeight-text" name="paxWeight-text" type="number" value="@pWeightVal" maxlength="3" max="200" min="20" class="" style="display: none;" />
-                        <a id="change-paxWeight-button" class="btn btn-info btn-xs" data-toggle="tooltip" data-html="true" data-placement="bottom" title="@weightTootip">Change</a>
+                        <input id="paxWeight-text" name="paxWeight-text" type="number" value="@pWeightVal" maxlength="3" max="400" min="20" class="" style="visibility: hidden;" />
+                        <a id="change-paxWeight-button" class="btn btn-info btn-xs" data-toggle="tooltip" data-html="true" data-placement="bottom">Change</a>
                     </div>
                     <div class="col-md-3 pull-right">
                         <div class="row">
@@ -242,8 +241,9 @@
 
         $('#change-paxWeight-button').click(function () {
 
-            if ($('#paxWeight-text:visible').length == 1) {
-                $("#paxWeight-text").hide();
+
+            if ($('#paxWeight-text').css("visibility") === "visible") {
+                $("#paxWeight-text").css('visibility', 'hidden');
                 $('#change-paxWeight-button').text("Change");
                 $("#paxWeight-label").show();
                 $("#paxWeight-label").text($("#paxWeight-text").val());
@@ -258,7 +258,7 @@
             else {
                 $('#change-paxWeight-button').text("Confirm");
                 $("#paxWeight-label").hide();
-                $("#paxWeight-text").show();
+                $("#paxWeight-text").css('visibility', 'visible');
             }
         });
 

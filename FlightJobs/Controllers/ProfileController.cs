@@ -203,7 +203,7 @@ namespace FlightJobs.Controllers
                 var allUserJobs = FilterJobs(user, filterModel, ref t);
                 var jobList = GetSortedJobs(allUserJobs, sortOrder, CurrentSort, pageNumber, user);
                 homeModel.Jobs = jobList;
-                homeModel.WeightUnit = DataConversion.GetWeightUnit(Request);
+                homeModel.WeightUnit = GetWeightUnit(Request);
 
             }
 
@@ -255,12 +255,14 @@ namespace FlightJobs.Controllers
 
             var pgList = airlineJobs.ToPagedList<JobAirlineDbModel>(page, pageSize);
 
+            var userStatistics = GetWebUserStatistics();
+            var weightUnit = GetWeightUnit(Request); 
             foreach (var item in pgList)
             {
-                item.Job.PayloadDisplay = DataConversion.GetWeight(Request, item.Job.Payload);
-                item.Job.StartFuelWeightDisplay = DataConversion.GetWeight(Request, item.Job.StartFuelWeight);
-                item.Job.UsedFuelWeightDisplay = DataConversion.GetWeight(Request, item.Job.UsedFuelWeight);
-                item.WeightUnit = DataConversion.GetWeightUnit(Request);
+                item.Job.PayloadDisplay = GetWeight(Request, item.Job.Payload, userStatistics);
+                item.Job.StartFuelWeightDisplay = GetWeight(Request, item.Job.StartFuelWeight, userStatistics);
+                item.Job.UsedFuelWeightDisplay = GetWeight(Request, item.Job.UsedFuelWeight, userStatistics);
+                item.WeightUnit = weightUnit;
                 var departureFbo = dbContext.AirlineFbo.FirstOrDefault(x => x.Airline.Id == item.Airline.Id && x.Icao == item.Job.DepartureICAO);
                 item.CalcAirlineJob(departureFbo);
             }

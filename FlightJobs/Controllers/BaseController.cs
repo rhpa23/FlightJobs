@@ -67,6 +67,7 @@ namespace FlightJobs.Controllers
                     lng = departureCoord.Longitude,
                     name = departureInfo.Name,
                     info = "Departure airport",
+                    icao = departureInfo.ICAO,
                     runway_size = departureInfo.RunwaySize + "ft",
                     elevation = departureInfo.Elevation + "ft",
                     trasition = departureInfo.Trasition + "ft",
@@ -82,6 +83,7 @@ namespace FlightJobs.Controllers
                     lng = arrivalCoord.Longitude,
                     name = arrivalInfo.Name,
                     info = "Arrival airport",
+                    icao = arrivalInfo.ICAO,
                     runway_size = arrivalInfo.RunwaySize + "ft",
                     elevation = arrivalInfo.Elevation + "ft",
                     trasition = arrivalInfo.Trasition + "ft",
@@ -105,6 +107,7 @@ namespace FlightJobs.Controllers
                         lng = alternativeCoord.Longitude,
                         name = alternativeInfo.Name,
                         info = "Alternative airport",
+                        icao = alternativeInfo.ICAO,
                         runway_size = alternativeInfo.RunwaySize + "ft",
                         elevation = alternativeInfo.Elevation + "ft",
                         trasition = alternativeInfo.Trasition + "ft",
@@ -147,6 +150,7 @@ namespace FlightJobs.Controllers
                         lng = favDptCoord.Longitude,
                         name = favDptInfo.Name,
                         info = icao,
+                        icao = icao,
                         runway_size = favDptInfo.RunwaySize + "ft",
                         elevation = favDptInfo.Elevation + "ft",
                         trasition = favDptInfo.Trasition + "ft",
@@ -179,12 +183,13 @@ namespace FlightJobs.Controllers
             }
         }
 
-        internal IList<JobListModel> GenerateBoardJobs(JobSerachModel model)
+        internal IList<JobListModel> GenerateBoardJobs(JobSerachModel model, StatisticsDbModel statistics)
         {
             IList<JobListModel> listBoardJobs = new List<JobListModel>();
 
             try
             {
+                var weightUnit = GetWeightUnit(Request);
                 var dep = AirportDatabaseFile.FindAirportInfo(model.Departure);
                 var arrival = AirportDatabaseFile.FindAirportInfo(model.Arrival);
 
@@ -206,7 +211,7 @@ namespace FlightJobs.Controllers
                 {
                     var customCapacity = model.CustomPlaneCapacity;
 
-                    if (DataConversion.GetWeightUnit(Request) == DataConversion.UnitPounds)
+                    if (GetWeightUnit(Request) == DataConversion.UnitPounds)
                     {
                         customCapacity.CustomCargoCapacityWeight = DataConversion.ConvertPoundsToKilograms(customCapacity.CustomCargoCapacityWeight);
                     }
@@ -331,8 +336,7 @@ namespace FlightJobs.Controllers
                             }
                         }
 
-                        cargo = DataConversion.GetWeight(Request, cargo);
-                        var weightUnit = DataConversion.GetWeightUnit(Request);
+                        cargo = GetWeight(Request, cargo, statistics);
 
                         listBoardJobs.Add(new JobListModel()
                         {
@@ -425,13 +429,13 @@ namespace FlightJobs.Controllers
                 }
 
             }
-
+            var statitics = GetWebUserStatistics();
             foreach (var j in allUserJobs.ToList())
             {
                 span += (j.EndTime - j.StartTime);
-                j.PayloadDisplay = DataConversion.GetWeight(Request, j.Payload);
-                j.Cargo = DataConversion.GetWeight(Request, j.Cargo);
-                j.UsedFuelWeightDisplay = DataConversion.GetWeight(Request, j.UsedFuelWeight);
+                j.PayloadDisplay = GetWeight(Request, j.Payload, statitics);
+                j.Cargo = GetWeight(Request, j.Cargo, statitics);
+                j.UsedFuelWeightDisplay = GetWeight(Request, j.UsedFuelWeight, statitics);
             }
 
             return allUserJobs.ToList();
@@ -570,6 +574,96 @@ namespace FlightJobs.Controllers
                         j.IsChallenge &&
                         j.ChallengeExpirationDate >= DateTime.Now
                 );
+        }
+
+        public string GetWeightUnit(HttpRequestBase httpRequest, string userId = null)
+        {
+            var dbContext = new ApplicationDbContext();
+            var returnUnit = DataConversion.UnitKilograms;
+
+            ApplicationUser user;
+            if (userId == null)
+            {
+                user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
+            }
+            else
+            {
+                user = dbContext.Users.FirstOrDefault(u => u.Id == userId);
+            }
+            if (user.Email != AccountController.GuestEmail)
+            {
+                var uStatistics = dbContext.StatisticsDbModels.FirstOrDefault(s => s.User.Id == user.Id);
+                if (string.IsNullOrEmpty(uStatistics.WeightUnit))
+                {
+                    if (httpRequest != null && httpRequest.Cookies[DataConversion.WeightUnitCookie] != null &&
+                        httpRequest.Cookies[DataConversion.WeightUnitCookie].Value != null)
+                    {
+                        if (httpRequest.Cookies[DataConversion.WeightUnitCookie].Value == DataConversion.WeightPounds)
+                        {
+                            uStatistics.WeightUnit = DataConversion.WeightPounds;
+                            returnUnit = DataConversion.UnitPounds;
+                        }
+                        else
+                        {
+                            uStatistics.WeightUnit = DataConversion.WeightKilograms;
+                            returnUnit = DataConversion.UnitKilograms;
+                        }
+                        dbContext.SaveChanges();
+                    }
+                }
+                else
+                {
+                    returnUnit = uStatistics.WeightUnit == DataConversion.WeightPounds ? DataConversion.UnitPounds : DataConversion.UnitKilograms;
+                }
+            }
+
+            return returnUnit;
+        }
+
+        internal long GetWeight(HttpRequestBase httpRequest, long kgWeight, StatisticsDbModel userStatistics)
+        {
+
+            var dbContext = new ApplicationDbContext();
+            long convertedValue = kgWeight;
+
+            if (string.IsNullOrEmpty(userStatistics.WeightUnit))
+            {
+                if (httpRequest != null && httpRequest.Cookies[DataConversion.WeightUnitCookie] != null &&
+                    httpRequest.Cookies[DataConversion.WeightUnitCookie].Value != null)
+                {
+                    if (httpRequest.Cookies[DataConversion.WeightUnitCookie].Value == DataConversion.WeightPounds)
+                    {
+                        userStatistics.WeightUnit = DataConversion.WeightPounds;
+                        convertedValue = DataConversion.ConvertKilogramsToPounds(kgWeight);
+                    }
+                    else
+                    {
+                        userStatistics.WeightUnit = DataConversion.WeightKilograms;
+                    }
+                    dbContext.SaveChanges();
+                }
+            }
+            else
+            {
+                convertedValue = userStatistics.WeightUnit == DataConversion.WeightPounds ? 
+                                     DataConversion.ConvertKilogramsToPounds(kgWeight) : kgWeight;
+            }
+
+            return convertedValue;
+        }
+
+        internal StatisticsDbModel GetWebUserStatistics()
+        {
+            var dbContext = new ApplicationDbContext();
+            var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
+            return dbContext.StatisticsDbModels.FirstOrDefault(s => s.User.Id == user.Id);
+        }
+
+        internal StatisticsDbModel GetUserStatistics(string userIdStr)
+        {
+            var dbContext = new ApplicationDbContext();
+            var user = dbContext.Users.FirstOrDefault(u => u.Id == userIdStr);
+            return dbContext.StatisticsDbModels.FirstOrDefault(s => s.User.Id == user.Id);
         }
     }
 }

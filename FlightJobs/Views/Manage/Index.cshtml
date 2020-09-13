@@ -36,7 +36,7 @@
         </dd>
         <dt style="margin-top:30px;" >Weight: </dt>
         <dd style="width:220px; margin-top:25px;">
-            @if (Model.WeightUnit == FlightJobs.Util.DataConversion.UnitPounds)
+            @if (TempData["WeightUnit"] != null && TempData["WeightUnit"].ToString() == FlightJobs.Util.DataConversion.UnitPounds)
             {
                 <input id="weight-unit" type="checkbox" data-switch-always data-group-cls="btn-group-justified" data-off-active-cls="btn-primary" data-on-active-cls="btn-primary" checked>
             }

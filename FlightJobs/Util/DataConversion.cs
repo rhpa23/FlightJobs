@@ -29,29 +29,5 @@ namespace FlightJobs.Util
         {
             return Convert.ToInt32(lbs / 2.20462);
         }
-
-        public static long GetWeight(HttpRequestBase httpRequest, long kgWeight)
-        {
-            if (httpRequest.Cookies[WeightUnitCookie] != null
-                && httpRequest.Cookies[WeightUnitCookie].Value != null
-                && httpRequest.Cookies[WeightUnitCookie].Value == WeightPounds)
-            {
-                return ConvertKilogramsToPounds(kgWeight);
-            }
-
-            return kgWeight;
-        }
-
-        public static string GetWeightUnit(HttpRequestBase httpRequest)
-        {
-            if (httpRequest.Cookies[WeightUnitCookie] != null
-                && httpRequest.Cookies[WeightUnitCookie].Value != null
-                && httpRequest.Cookies[WeightUnitCookie].Value == WeightPounds)
-            {
-                return UnitPounds;
-            }
-
-            return UnitKilograms;
-        }
     }
 }

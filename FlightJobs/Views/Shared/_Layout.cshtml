@@ -105,7 +105,10 @@
                         </li>
                         <li class="divider"></li>
                         <li><i class="glyphicon glyphicon-signal black-icon"></i>@Html.ActionLink("Analysis", "Analysis", "Home")</li>
-                        <li><i class="glyphicon glyphicon-download black-icon"></i>@Html.ActionLink("Download", "Install", "Home")</li>
+                        <li>
+                            <i class="glyphicon glyphicon-download black-icon"></i>@Html.ActionLink("Download", "Install", "Home", null, new { @style = "width: auto;" })
+                            <img src="~/Content/img/msf-logo-small.png" style="width:15px;" />
+                        </li>
                         <li class="divider"></li>
                         <li><i class="glyphicon glyphicon-flag black-icon"></i><a target="_blank" href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=B2GHF8WFN95JW&lc=US&item_name=FlightJobs&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted">Donation</a></li>
                         <li><i class="glyphicon glyphicon-info-sign black-icon"></i>@Html.ActionLink("About", "About", "Home")</li>
@@ -153,10 +156,10 @@
     <footer>
         <div class="text-center">
             <p>
-                This application for X-Plane 11 simulate pilot and airliners jobs.
+                This application for MS Flight Simulator and X-Plane 11 to simulate pilot and airliners jobs.
             </p>
             <p>
-                For use you will need to download and install the <b>FlightJobs Connector Script</b>. @Html.ActionLink("Click here to download the last version.", "Install", "Home")<br><br>
+                For use you will need to <a href="https://www.flight-jobs.net/Home/Install">download and install</a> the <b>FlightJobs Connector</b>. @Html.ActionLink("Click here to download the last version.", "Install", "Home")<br><br>
             </p>
 
             <p>FlightJobs is free. If you like it, please consider to make a donation. Donations will be spent paying the servers costs.</p>
@@ -173,6 +176,9 @@
             <img src="~/Content/img/QRCode.png" style="width:130px;" />
             <br /><hr style="margin-left:220px;" />
             <p><strong> Thank you for visiting FlightJobs &copy; @DateTime.Now.Year </strong></p><br />
+            <a href="https://www.youtube.com/channel/UCBHN8OG2yilRq3SrxAGaIaw" target="_blank" data-toggle="tooltip" title="FlightJobs youtube channel">
+                <img src="~/Content/img/youtube.png" style="width:40px;" />
+            </a>
             <a href="https://discordapp.com/invite/xmpAWz7" target="_blank" data-toggle="tooltip" title="FlightJobs at Discord">
                 <img src="~/Content/img/discordapp.png" style="width:40px;" />
             </a>
@@ -186,6 +192,20 @@
             <p> Disable anti-popup in your browser for a better experience  </p><br />
             <br /><br />
         </div>
+        @if (Context.Request.Cookies["CookiesAccepted"] == null)
+        {
+        <div class="notice-content text-center">
+
+            <div class="text-center">
+                This site uses cookies to help personalize content, tailor your experience and to keep you logged in if you register.<br>
+                By continuing to use this site, you are consenting to our use of cookies.
+            </div>
+            <br />
+            <div class="u-inputSpacer u-alignCenter">
+                @Html.ActionLink("Accept", "AcceptCookies", "Home", new object { }, new { @class = "btn btn-info" })
+            </div>
+        </div>
+        }
     </footer>
     <style>
         .fixed-footer {
@@ -196,6 +216,16 @@
             background-color: #222;
             color:aliceblue;
             padding:2px;
+        }
+        .notice-content {
+            height: 110px;
+            background-color: darkgray;
+            position: fixed !important;
+            bottom: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            padding-top:9px;
+            font:medium;
         }
     </style>
     @*<div class="fixed-footer">

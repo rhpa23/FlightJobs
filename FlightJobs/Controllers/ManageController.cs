@@ -12,7 +12,7 @@ using FlightJobs.Util;
 namespace FlightJobs.Controllers
 {
     [Authorize]
-    public class ManageController : Controller
+    public class ManageController : BaseController
     {
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
@@ -79,8 +79,8 @@ namespace FlightJobs.Controllers
                 TwoFactor = await UserManager.GetTwoFactorEnabledAsync(userId),
                 Logins = await UserManager.GetLoginsAsync(userId),
                 BrowserRemembered = await AuthenticationManager.TwoFactorBrowserRememberedAsync(userId),
-                WeightUnit = DataConversion.GetWeightUnit(Request)
-        };
+            };
+            TempData["WeightUnit"] = GetWeightUnit(Request);
             return View(model);
         }
 

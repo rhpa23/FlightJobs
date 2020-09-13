@@ -102,7 +102,13 @@ namespace FlightJobs.Controllers
             var job = dbContext.JobDbModels.FirstOrDefault(j => j.User.Id == userId && j.IsActivated);
             if (job != null)
             {
-                return $"The active job depature from {job.DepartureICAO} to {job.ArrivalICAO} with {job.Pax} passengers and {job.Cargo}kg cargo. The total payload is {job.Payload}kg";
+                var baseController = new BaseController();
+                var userStatistics = baseController.GetUserStatistics(userId);
+                var cargo = baseController.GetWeight(null, job.Cargo, userStatistics);
+                var payload = baseController.GetWeight(null, job.Payload, userStatistics);
+                var weightUnit = baseController.GetWeightUnit(null, userId);
+                
+                return $"The active job depature from {job.DepartureICAO} to {job.ArrivalICAO} with {job.Pax} passengers and {cargo}{weightUnit} cargo. The total payload is {payload}{weightUnit}";
             }
             else
             {

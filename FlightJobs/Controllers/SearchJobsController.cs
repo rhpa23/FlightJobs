@@ -39,14 +39,14 @@ namespace FlightJobs.Controllers
             {
                 MaxRange = 450,
                 MinRange = 10,
-                WeightUnit = DataConversion.GetWeightUnit(Request)
+                WeightUnit = GetWeightUnit(Request)
             };
 
             Session.Remove("JobSearchResult");
             if (Session["JobSerachModel"] != null)
             {
                 model = (JobSerachModel)Session["JobSerachModel"];
-                model.WeightUnit = DataConversion.GetWeightUnit(Request);
+                model.WeightUnit = GetWeightUnit(Request);
             }
 
             if (statistics != null)
@@ -101,24 +101,25 @@ namespace FlightJobs.Controllers
         public ActionResult Index(JobSerachModel modelParam)
         {
             Session.Add("JobSerachModel", modelParam);
+            var userStatistics = GetWebUserStatistics();
 
             if (Request.Cookies[PassengersWeightCookie] != null
                 && Request.Cookies[PassengersWeightCookie].Value != null)
             {
                 long weight = Convert.ToInt32(Request.Cookies[PassengersWeightCookie].Value);
-                TempData[PassengersWeightCookie] = DataConversion.GetWeight(Request, weight);
+                TempData[PassengersWeightCookie] = GetWeight(Request, weight, userStatistics);
             }
             else
             {
-                TempData[PassengersWeightCookie] = DataConversion.GetWeight(Request, PaxWeight);
+                TempData[PassengersWeightCookie] = GetWeight(Request, PaxWeight, userStatistics);
             }
 
-            TempData["PassengersWeightUnit"] = DataConversion.GetWeightUnit(Request);
+            TempData["PassengersWeightUnit"] = GetWeightUnit(Request);
 
             if (modelParam != null)
             {
                 IList<JobListModel> jobs = new List<JobListModel>();
-                jobs = GenerateBoardJobs(modelParam);
+                jobs = GenerateBoardJobs(modelParam, userStatistics);
                 Session.Add("JobSearchResult", jobs);
 
                 return PartialView("Result", jobs.OrderBy(x => x.Dist).ToPagedList(1, 100));
@@ -135,7 +136,7 @@ namespace FlightJobs.Controllers
             var ids = new List<int>();
             var pageSelsIds = form["sels"];
             var passengersWeight = form["paxWeight-text"];
-            bool isPounds = DataConversion.GetWeightUnit(Request) == DataConversion.UnitPounds;
+            bool isPounds = GetWeightUnit(Request) == DataConversion.UnitPounds;
 
             if (isPounds)
             {
@@ -217,6 +218,8 @@ namespace FlightJobs.Controllers
         public JsonResult Confirm(List<JobDbModel> jobList)
         {
             var dbContext = new ApplicationDbContext();
+            bool isPounds = GetWeightUnit(Request) == DataConversion.UnitPounds;
+
             // Check GUEST
             var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
             if (user != null && user.Email == AccountController.GuestEmail)
@@ -240,8 +243,6 @@ namespace FlightJobs.Controllers
                     selJob.EndTime = DateTime.Now;
                     selJob.ChallengeExpirationDate = DateTime.Now.AddDays(-1);
                     selJob.PaxWeight = PaxWeight;
-
-                    bool isPounds = DataConversion.GetWeightUnit(Request) == DataConversion.UnitPounds;
 
                     if (isPounds)
                     {
