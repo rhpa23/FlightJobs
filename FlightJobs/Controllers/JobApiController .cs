@@ -431,6 +431,7 @@ namespace FlightJobs.Controllers
                 j.PayloadDisplay = baseController.GetWeight(null, j.Payload, userStatistics);
                 j.Cargo = cargo;
                 j.User = null;
+                j.WeightUnit = userStatistics.WeightUnit;
             });
 
             var jobListJson = JsonConvert.SerializeObject(jobList, Formatting.None);
@@ -480,7 +481,6 @@ namespace FlightJobs.Controllers
                     sb.Append($"<p>Hi captain {pilotHired.User.UserName},</p>");
                     sb.Append("<p>FlightJobs is sending you this email because you have defined to be advised when your airline generates a Debt since one Job was finished.</p>");
                     sb.Append("<p>You can disable this email warning any time unchecking the box in the Airline Balance Situation popup window.</p>");
-                    sb.Append("<p>If you have any problem please contact FlightJobs support by email: rhpa23@gmail.com.</p>");
                     sb.Append("<h3>A job at the airline generated bills to pay.</h3>");
                     sb.Append($"<h4><p>The debt of {airline.Name} is <font color=\"red\"> {string.Format("{0:C}", airline.DebtValue)} </font> at the moment. </p></h4>");
                     sb.Append($"<h4><p>The maturity date for the debt is <font color=\"red\"> {airline.DebtMaturityDate.ToShortDateString()} </font> </p></h4>");

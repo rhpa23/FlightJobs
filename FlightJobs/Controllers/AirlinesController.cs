@@ -265,7 +265,7 @@ namespace FlightJobs.Controllers
                 if (model.FilesInput != null && model.FilesInput.Any())
                 {
                     var file = model.FilesInput.FirstOrDefault();
-                    var filePath = Upload(file);
+                    string filePath = @"/Content/img/logo/LogoDefault.png";//Upload(file);
                     dbModel.Logo = filePath;
                 }
 
@@ -301,21 +301,22 @@ namespace FlightJobs.Controllers
 
         public string Upload(HttpPostedFileBase file)
         {
-            if (file != null && file.ContentLength > 0)
-            {
-                var dbContext = new ApplicationDbContext();
-                var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
-                var fileName = Path.GetFileName(user.Id + Path.GetExtension(file.FileName));
+            //if (file != null && file.ContentLength > 0)
+            //{
+            //    var dbContext = new ApplicationDbContext();
+            //    var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
+            //    var fileName = Path.GetFileName(user.Id + Path.GetExtension(file.FileName));
 
-                path = Path.Combine(path, fileName);
-                file.SaveAs(Server.MapPath("~" + path));
-            }
-            else
-            {
-                path = path + "LogoDefault.png";
-            }
+            //    path = Path.Combine(path, fileName);
+            //    file.SaveAs(Server.MapPath("~" + path));
+            //}
+            //else
+            //{
+            //    path = path + "LogoDefault.png";
+            //}
 
-            return path;
+            //return path;
+            return path + "LogoDefault.png"; ;
         }
 
         public ActionResult AddView()

@@ -75,6 +75,7 @@ namespace FlightJobs.Controllers
                     {
                         response = Request.CreateResponse(HttpStatusCode.OK, userModel.Id.ToString());
                         response.Headers.Add("active_job_info", GetActiveJobInfo(userModel.Id.ToString()));
+                        response.Headers.Add("username", userModel.UserName);
                         return response;
                     }
                     case SignInStatus.LockedOut:

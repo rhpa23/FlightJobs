@@ -42,7 +42,6 @@ namespace FlightJobs.Schedule
                     sb.Append($"<p>Hi captain {user.UserName},</p>");
                     sb.Append("<p>FlightJobs is sending you this email because you have set it to be advised when your license is close to expiring.</p>");
                     sb.Append("<p>You can disable this email warning any time unchecking the box in the License popup window.</p>");
-                    sb.Append("<p>If you have any problem please contact FlightJobs support by email: rhpa23@gmail.com.</p>");
                     sb.Append("<h3>Your pilot license is about to expire.</h3>");
                     sb.Append($"<h4><p>There are {requirements.Count()} requirement(s) that will expire soon. </p></h4>");
                     sb.Append($"<p>If the pilot License expires the next Jobs will not score and paid until you renew your license. Go to the Profile/License form and check your license requirements.</p>  <hr />");

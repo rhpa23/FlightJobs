@@ -73,26 +73,29 @@ namespace FlightJobs.Controllers
             if (customNameCapacity.ToLower().Contains("320"))
                 return string.Format(path, "A320.JPG");
 
-            if (customNameCapacity.ToLower().Contains("319"))
-                return string.Format(path, "A319.JPG");
+            //if (customNameCapacity.ToLower().Contains("319"))
+            //    return string.Format(path, "A319.JPG");
 
-            if (customNameCapacity.ToLower().Contains("321"))
-                return string.Format(path, "A321.JPG");
+            //if (customNameCapacity.ToLower().Contains("321"))
+            //    return string.Format(path, "A321.JPG");
 
-            if (customNameCapacity.ToLower().Contains("330"))
-                return string.Format(path, "A330.JPG");
+            //if (customNameCapacity.ToLower().Contains("330"))
+            //    return string.Format(path, "A330.JPG");
 
-            if (customNameCapacity.ToLower().Contains("350"))
-                return string.Format(path, "A350.JPG");
+            //if (customNameCapacity.ToLower().Contains("350"))
+            //    return string.Format(path, "A350.JPG");
 
-            if (customNameCapacity.ToLower().Contains("767"))
-                return string.Format(path, "B767.JPG");
+            //if (customNameCapacity.ToLower().Contains("767"))
+            //    return string.Format(path, "B767.JPG");
 
-            if (customNameCapacity.ToLower().Contains("Cessna"))
-                return string.Format(path, "Cessna.JPG");
+            //if (customNameCapacity.ToLower().Contains("Cessna"))
+            //    return string.Format(path, "Cessna.JPG");
 
-            if (customNameCapacity.ToLower().Contains("737") || customNameCapacity.ToLower().Contains("738"))
-                return string.Format(path, "B738.JPG");
+            //if (customNameCapacity.ToLower().Contains("737") || customNameCapacity.ToLower().Contains("738"))
+            //    return string.Format(path, "B738.JPG");
+
+            if (customNameCapacity.ToLower().Contains("787"))
+                return string.Format(path, "B787.JPG");
 
             return string.Format(path, "default.jpg");
         }

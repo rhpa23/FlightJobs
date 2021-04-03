@@ -53,6 +53,7 @@ namespace FlightJobs.Controllers
 
         public ActionResult Update(int pax, int cargo, int paxWeight, string departure, string arrival, string type)
         {
+            Response.Cache.SetCacheability(HttpCacheability.NoCache);
             long totalPayment = 0;
             long distance = 0;
             var weightUnit = GetWeightUnit(Request);
@@ -126,7 +127,7 @@ namespace FlightJobs.Controllers
                 The captain will earn ${model.PaymentCaptain} when complete.
                 The creator of the challenge will earn ${model.PaymentCreator}.";
 
-                    model.WaterMarkImg = "/Content/img/challenger/civilian-water-mark-001.png";
+                    model.WaterMarkImg = "/Content/img/challenger/civilian-water-mark-002.png";
                     break;
                 case "Military":
                     model.Briefing = $@"The order of crew is transport the Defence Minister and his retinue of peace 
@@ -139,7 +140,7 @@ namespace FlightJobs.Controllers
                     model.WaterMarkImg = "/Content/img/challenger/military-water-mark-002.png";
                     break;
                 case "Rescue":
-                    model.Briefing = $@"A group of students is lost and surrounded by a fire in a park in {arrivalModel.City}. 
+                    model.Briefing = $@"A group of students are lost in a park at {arrivalModel.City}. 
                 The only hope for the group is a speedy air rescue. The rescue aircraft will take off from {departureModel.City}
                 with {pax} doctors and firefighters aboard, and {model.Cargo}{weightUnit} of rescue and fire containment equipment. 
                 The total payment involved is ${model.TotalPayment}.

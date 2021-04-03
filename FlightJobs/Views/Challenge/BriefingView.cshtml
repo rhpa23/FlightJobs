@@ -5,32 +5,35 @@
     <style>
         .container-watermark {
             position: relative;
-            text-align: right;
             color: black;
         }
 
         .watermarked {
             position: absolute;
-            top: 40%;
-            left: 35%;
-            transform: translate(-50%, -50%);
             text-align: justify;
+            font-size:small;
         }
     </style>
     <div class="modal-body">
-        <div class="row">
-            <div class="col-md-11 my-form-content column-in-center">
-                <p>
-
-                    <div class="container-watermark">
-                        <h4 class="text-center watermarked" style="top:2%;"><b><span>Briefing</span></b></h4>
-                        <img src="@Model.WaterMarkImg" alt="Snow" style="width:55%; opacity:0.6;" />
-                        <div class="watermarked">@Model.Briefing</div><br />
-                        
+        <div class="row my-form-content">
+            <div class="col-md-6">
+                <div class="container-watermark">
+                    <img src="@Model.WaterMarkImg" alt="Snow" style="width:100%;" />
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="row">
+                    <div class="col-md-11 column-in-center">
+                        <h4 class="text-center" style="top:3%;"><b><span>Briefing</span></b></h4>
                     </div>
-                </p>
+                </div>
+                <div class="row">
+                    <div class="watermarked">@Model.Briefing</div><br />
+                </div>
             </div>
         </div>
+        
+        
     </div>
     <div class="modal-footer">
         <div class="row">
@@ -39,7 +42,7 @@
                 <div class="col-md-10">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                 </div>
-            
+
                 <div class="col-lg-2">
                     @Html.ActionLink("Confirm", "Confirm", "Challenge", new object { }, new { @class = "btn btn-info pull-right" })
                 </div>

@@ -128,7 +128,7 @@ namespace FlightJobs.Controllers
 
         public ActionResult Contact()
         {
-            ViewBag.Message = "rhpa23@gmail.com.";
+            ViewBag.Message = "";
 
             return View();
         }
