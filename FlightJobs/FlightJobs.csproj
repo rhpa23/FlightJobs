@@ -650,7 +650,10 @@
     <Content Include="Content\img\planes\A350.JPG" />
     <Content Include="Content\img\planes\B738.JPG" />
     <Content Include="Content\img\planes\B767.JPG" />
+    <Content Include="Content\img\planes\B787.jpg" />
     <Content Include="Content\img\planes\Cessna.JPG" />
+    <Content Include="Content\img\planes\Citation.jpg" />
+    <Content Include="Content\img\planes\CRJ.jpg" />
     <Content Include="Content\img\planes\default.jpg" />
     <Content Include="Content\img\QRCode.png" />
     <Content Include="Content\img\ranking.png" />

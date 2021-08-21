@@ -458,7 +458,7 @@ namespace FlightJobs.Controllers
             var dbContext = new ApplicationDbContext();
             var airport = AirportDatabaseFile.FindAirportInfo(icao);
             var fboInDB = dbContext.AirlineFbo.Where(x => x.Icao == icao);
-            if (fboInDB.Count() > 5)
+            if (fboInDB.Count() >= 15)
             {
                 return Json(new { error = true, responseText = "This FBO is not available. All contracts were hired." }, JsonRequestBehavior.AllowGet);
             }
@@ -503,7 +503,7 @@ namespace FlightJobs.Controllers
                 Elevation = airport.Elevation,
                 RunwaySize = airport.RunwaySize,
                 Icao = airport.ICAO,
-                Availability = 5 - countFbosInDB,
+                Availability = 15 - countFbosInDB,
                 FuelPriceDiscount = Math.Round(airport.RunwaySize / (double)62423, 2),
                 GroundCrewDiscount = Math.Round(airport.RunwaySize / (double)41093, 2),
                 ScoreIncrease = airport.RunwaySize / 1123,

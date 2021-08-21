@@ -73,6 +73,13 @@ namespace FlightJobs.Controllers
             if (customNameCapacity.ToLower().Contains("320"))
                 return string.Format(path, "A320.JPG");
 
+            if (customNameCapacity.ToLower().Contains("crj"))
+                return string.Format(path, "CRJ.JPG");
+
+            if (customNameCapacity.ToLower().Contains("citation"))
+                return string.Format(path, "Citation.JPG");
+            
+
             //if (customNameCapacity.ToLower().Contains("319"))
             //    return string.Format(path, "A319.JPG");
 
