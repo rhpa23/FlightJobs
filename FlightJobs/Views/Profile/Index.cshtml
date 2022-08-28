@@ -14,111 +14,112 @@
         margin: 0px;
     }
 </style>
-<hr />
-<div style="background-color:dimgray; width:100%; text-align:center; height:40px; padding-top:5px; border-radius: 5px;"> 
-    <b><span style="color:darkgray">P I L O T</span><samp style="color:lightgray">    L O G B O O K</samp></b>
-</div>
+<div class="row" style="margin:0px 35px 5px 35px;">
+    <hr />
+    <div style="background-color:dimgray; text-align:center; height:40px; padding-top:5px; border-radius: 5px;">
+        <b><span style="color:darkgray">P I L O T</span><samp style="color:lightgray">    L O G B O O K</samp></b>
+    </div>
 
-<div class="panel panel-default text-center" style="margin-bottom:5px; margin-top:-8px; ">
-    <table class="table table-striped table-bordered table-hover" style="font-size: 10px; padding:0px">
-        <tr>
-            <th>
-                @Html.ActionLink("Date", "Index", new { sortOrder = "Date", CurrentSort = ViewBag.CurrentSort })
-            </th>
-            <th>
-                @Html.ActionLink("Departure/Time", "Index", new { sortOrder = "DepartureICAO", CurrentSort = ViewBag.CurrentSort })
-            </th>
-            <th>
-                @Html.ActionLink("Arrival/Time", "Index", new { sortOrder = "ArrivalICAO", CurrentSort = ViewBag.CurrentSort })
-            </th>
-            <th>
-                @Html.ActionLink("Model/Registration", "Index", new { sortOrder = "Model", CurrentSort = ViewBag.CurrentSort })
-            </th>
-            <th>
-                @Html.ActionLink("Distance", "Index", new { sortOrder = "Distance", CurrentSort = ViewBag.CurrentSort })
-            </th>
-            <th>
-                @Html.ActionLink("Pax", "Index", new { sortOrder = "Pax", CurrentSort = ViewBag.CurrentSort })
-            </th>
-            <th>
-                @Html.ActionLink("Cargo", "Index", new { sortOrder = "Cargo", CurrentSort = ViewBag.CurrentSort })
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Jobs.First().Payload)
-            </th>
-            <th>
-                @Html.ActionLink("Pay", "Index", new { sortOrder = "Pay", CurrentSort = ViewBag.CurrentSort })
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Jobs.First().FlightTime)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Jobs.First().UsedFuelWeight)
-            </th>
-            <th></th>
-            <th></th>
-        </tr>
-
-        @foreach (var item in Model.Jobs)
-        {
+    <div class="panel panel-default text-center">
+        <table class="table table-striped table-bordered table-hover" style="font-size: 10px; padding:0px">
             <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.EndTime)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.DepartureICAO)
-                    @item.StartTime.ToString("(HH:mm)")
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.ArrivalICAO)
-                    @item.EndTime.ToString("(HH:mm)")
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.ModelDescription) -
-                    @Html.DisplayFor(modelItem => item.ModelName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Dist) nm
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Pax)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Cargo) @Model.WeightUnit
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.PayloadDisplay) @Model.WeightUnit
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Pay)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.FlightTime)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.UsedFuelWeightDisplay) @Model.WeightUnit
-                </td>
-                <td style="text-align:center;"><a class="show-video-button"  data-id="@item.Id"><i class="glyphicon glyphicon-film"></i></a></td>
-                <td style="text-align:center;"><a data-toggle="confirmation" data-title="Remove Job?" href="Profile/Delete/@item.Id"><i class="glyphicon glyphicon-remove"></i></a></td>
+                <th>
+                    @Html.ActionLink("Date", "Index", new { sortOrder = "Date", CurrentSort = ViewBag.CurrentSort })
+                </th>
+                <th>
+                    @Html.ActionLink("Departure/Time", "Index", new { sortOrder = "DepartureICAO", CurrentSort = ViewBag.CurrentSort })
+                </th>
+                <th>
+                    @Html.ActionLink("Arrival/Time", "Index", new { sortOrder = "ArrivalICAO", CurrentSort = ViewBag.CurrentSort })
+                </th>
+                <th>
+                    @Html.ActionLink("Model/Registration", "Index", new { sortOrder = "Model", CurrentSort = ViewBag.CurrentSort })
+                </th>
+                <th>
+                    @Html.ActionLink("Distance", "Index", new { sortOrder = "Distance", CurrentSort = ViewBag.CurrentSort })
+                </th>
+                <th>
+                    @Html.ActionLink("Pax", "Index", new { sortOrder = "Pax", CurrentSort = ViewBag.CurrentSort })
+                </th>
+                <th>
+                    @Html.ActionLink("Cargo", "Index", new { sortOrder = "Cargo", CurrentSort = ViewBag.CurrentSort })
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Jobs.First().Payload)
+                </th>
+                <th>
+                    @Html.ActionLink("Pay", "Index", new { sortOrder = "Pay", CurrentSort = ViewBag.CurrentSort })
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Jobs.First().FlightTime)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Jobs.First().UsedFuelWeight)
+                </th>
+                <th></th>
+                <th></th>
             </tr>
-        }
 
-    </table>
-</div>
+            @foreach (var item in Model.Jobs)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.EndTime)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DepartureICAO)
+                        @item.StartTime.ToString("(HH:mm)")
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ArrivalICAO)
+                        @item.EndTime.ToString("(HH:mm)")
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ModelDescription) -
+                        @Html.DisplayFor(modelItem => item.ModelName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Dist) nm
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Pax)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Cargo) @Model.WeightUnit
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.PayloadDisplay) @Model.WeightUnit
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Pay)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FlightTime)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.UsedFuelWeightDisplay) @Model.WeightUnit
+                    </td>
+                    <td style="text-align:center;"><a class="show-video-button" data-id="@item.Id"><i class="glyphicon glyphicon-film"></i></a></td>
+                    <td style="text-align:center;"><a data-toggle="confirmation" data-title="Remove Job?" href="Profile/Delete/@item.Id"><i class="glyphicon glyphicon-remove"></i></a></td>
+                </tr>
+            }
 
-<button type="button" class="btn btn btn-info pull-right" data-toggle="modal" data-target="#myModal">
-    <span class="glyphicon glyphicon-search"></span> Filter
-</button>
+        </table>
+    </div>
 
-@if (Session["ProfileFilterModel"] != null)
-{
-    <button type="button" class="btn btn btn-default pull-right" style="margin-right:20px" title="Remove Filter" onclick="location.href='@Url.Action("RemoveFilter")'">
-        <span class="glyphicon glyphicon-remove"></span>
+    <button type="button" class="btn btn btn-info pull-right" data-toggle="modal" data-target="#myModal">
+        <span class="glyphicon glyphicon-search"></span> Filter
     </button>
-}
 
-@Html.PagedListPager(Model.Jobs, pageNumber => Url.Action("Index", new { pageNumber }))
+    @if (Session["ProfileFilterModel"] != null)
+    {
+        <button type="button" class="btn btn btn-default pull-right" style="margin-right:20px" title="Remove Filter" onclick="location.href='@Url.Action("RemoveFilter")'">
+            <span class="glyphicon glyphicon-remove"></span>
+        </button>
+    }
 
+    @Html.PagedListPager(Model.Jobs, pageNumber => Url.Action("Index", new { pageNumber }))
+</div>
 
 <!-- Modal -->
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">

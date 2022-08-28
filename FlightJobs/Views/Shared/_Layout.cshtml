@@ -51,19 +51,45 @@
 
         gtag('config', 'UA-121679574-1');
     </script>
+    <meta http-equiv="refresh" content="900"> <!-- Refresh every 15 minutes -->
+    <meta http-equiv="expires" content="-1">
+    <meta http-equiv="cache-control" content="no-cache" />
+    <meta http-equiv="pragma" content="no-cache" />
+    <meta name="keywords" content="MSFS, flight simulator, x-plane">
+    <meta name="author" content="rhpa23" />
 </head>
 <body>
     <div class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
             <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a href="@Url.Action("Index", "Home")">
-                    <img src="~/Content/img/FlightJobsLogo0006.png" style="height:45px; padding-top:5px;" />
-                </a>
+                <div class="navbar-left">
+                    <a href="@Url.Action("Index", "Home")">
+                        <img src="~/Content/img/FlightJobsLogo0006.png" style="height:45px; padding-top:5px;" />
+                    </a>
+                </div>
+                <nav class="navbar-text navbar-dark bg-dark">
+                    <ul id="menunav" class="navbar-nav mr-auto">
+                        <li class="nav-item">@Html.ActionLink("Home", "Index", "Home", null, new { @class = "nav-link" })</li>
+                        <li class="nav-item">@Html.ActionLink("Logbook", "Index", "Profile", null, new { @class = "nav-link" })</li>
+                        <li class="nav-item">@Html.ActionLink("Airlines", "Index", "Airlines", null, new { @class = "nav-link" })</li>
+                        <li class="nav-item">@Html.ActionLink("Analysis", "Analysis", "Home", null, new { @class = "nav-link" })</li>
+                        <li class="nav-item">
+                            @Html.ActionLink("Challenges", "Index", "Challenge", null, new { @class = "nav-link" })
+                            
+                            @if (ViewBag.ChallengeCount != null && ViewBag.ChallengeCount > 0)
+                            {
+                                @ViewBag.ChallengeCount;
+                                <span class="badge badge-pill badge-warning"></span>
+                            }
+                        </li>
+                        <li class="nav-item">@Html.ActionLink("Download", "Install", "Home", null, new { @class = "nav-link" })</li>
+                        <li class="nav-item">@Html.ActionLink("About", "About", "Home", null, new { @class = "nav-link" })</li>
+                        <li class="nav-item">@Html.ActionLink("Faq", "Faq", "Home", null, new { @class = "nav-link" })</li>
+                        <li class="nav-item">
+                            <a target="_blank" href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=B2GHF8WFN95JW&lc=US&item_name=FlightJobs&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted">Donation</a>
+                        </li>
+                    </ul>
+                </nav>
                 @Html.Partial("_LoginPartial")
             </div>
             
@@ -94,53 +120,7 @@
         }
         
         <div class="row">
-            <div class="col-sm-2" style="width:14%;">
-                <div id="sidenav" class="sidenav">
-                    <ul>
-                        <li><i class="glyphicon glyphicon-home black-icon"></i>@Html.ActionLink("Home", "Index", "Home")</li>
-                        <li><i class="glyphicon glyphicon-user black-icon"></i>@Html.ActionLink("Logbook", "Index", "Profile")</li>
-                        <li><i class="glyphicon glyphicon-list-alt black-icon"></i>@Html.ActionLink("Airlines", "Index", "Airlines")</li>
-                        <li><i class="glyphicon glyphicon-plus black-icon"></i>@Html.ActionLink("Add Jobs", "Index", "SearchJobs")</li>
-                        <li><i class="glyphicon glyphicon-screenshot black-icon"></i>@Html.ActionLink("Challenges", "Index", "Challenge", null, new { @style= "width: auto;" })
-                        <span class="badge badge-pill badge-warning">@if (ViewBag.ChallengeCount != null) { @ViewBag.ChallengeCount; }</span>
-                        </li>
-                        <li class="divider"></li>
-                        <li><i class="glyphicon glyphicon-signal black-icon"></i>@Html.ActionLink("Analysis", "Analysis", "Home")</li>
-                        <li>
-                            <i class="glyphicon glyphicon-download black-icon"></i>@Html.ActionLink("Download", "Install", "Home", null, new { @style = "width: auto;" })
-                            <img src="~/Content/img/msf-logo-small.png" style="width:15px;" />
-                        </li>
-                        <li class="divider"></li>
-                        <li><i class="glyphicon glyphicon-flag black-icon"></i><a target="_blank" href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=B2GHF8WFN95JW&lc=US&item_name=FlightJobs&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted">Donation</a></li>
-                        <li><i class="glyphicon glyphicon-info-sign black-icon"></i>@Html.ActionLink("About", "About", "Home")</li>
-                        <li><i class="glyphicon glyphicon-question-sign black-icon"></i>@Html.ActionLink("Faq", "Faq", "Home")</li>
-                    </ul>
-                </div>
-            </div>
-            <div class="col-sm-7"  style="width:61%;">
-                @RenderBody()
-            </div>
-            <div class="col-sm-3 ads-content">
-                <!-- FSadwork -->
-                <center>
-                    <br />
-                    <br />
-                    <hr />
-                    <div>
-                        <img src="~/Content/img/FlightJobsLogo0002.png" style="width:70px;" />
-                    </div>
-                    <div class="text-center">
-                        <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
-                            <input type="hidden" name="cmd" value="_s-xclick" />
-                            <input type="hidden" name="hosted_button_id" value="44VG35XYRJUCW" />
-                            <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Donate with PayPal button" />
-                            <img alt="" border="0" src="https://www.paypal.com/en_BR/i/scr/pixel.gif" width="1" height="1" />
-                        </form>
-                        <br />
-                        <img src="~/Content/img/QRCode.png" style="width:100px;" />
-                    </div>
-                </center>
-            </div>
+            @RenderBody()
         </div>
     </div>
     <div align="center">
@@ -253,8 +233,8 @@
     <script>
         $("document").ready(function () {
             $(function () {
-                $('.sidenav a[href="/' + location.pathname.split("/")[location.pathname.split("/").length - 1] + '"]').parent().addClass('active');
-                $('.sidenav a[href="/Home/' + location.pathname.split("/")[location.pathname.split("/").length - 1] + '"]').parent().addClass('active');
+                $('.nav-item a[href="' + window.location.pathname + '"]').parent().addClass('active');
+                //$('a[href="/Home/' + location.pathname.split("/")[location.pathname.split("/").length - 1] + '"]').parent().addClass('active');
             });
         });
 

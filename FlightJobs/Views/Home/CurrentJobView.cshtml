@@ -1,0 +1,134 @@
+﻿@using FlightJobs.Models;
+
+
+<style>
+    .my-glyphicon {
+        font-size: 23px;
+        color: #5bc0de;
+    }
+    .col-xs-1, .col-sm-1, .col-md-1, .col-lg-1, .col-xs-2, .col-sm-2, .col-md-2, .col-lg-2, .col-xs-3, .col-sm-3, .col-md-3, .col-lg-3, .col-xs-4, .col-sm-4, .col-md-4, .col-lg-4, .col-xs-5, .col-sm-5, .col-md-5, .col-lg-5, .col-xs-6, .col-sm-6, .col-md-6, .col-lg-6, .col-xs-7, .col-sm-7, .col-md-7, .col-lg-7, .col-xs-8, .col-sm-8, .col-md-8, .col-lg-8, .col-xs-9, .col-sm-9, .col-md-9, .col-lg-9, .col-xs-10, .col-sm-10, .col-md-10, .col-lg-10, .col-xs-11, .col-sm-11, .col-md-11, .col-lg-11, .col-xs-12, .col-sm-12, .col-md-12, .col-lg-12 {
+        position: static !important;
+    }
+    .div-route-line {
+        margin: 22px 5px 0px 5px;
+        background-color: #000000;
+        height: 2px;
+    }
+    .div-route-line-result {
+        margin: 0px 0px 0px 15px;
+        background-color: darkgray;
+        height: 2px;
+    }
+    .icao-label {
+        padding: 8px 0px 0px 0px;
+        font-size:x-large;
+    }
+    .icao-alt-label {
+        padding: 0px 5px 0px 0px;
+        font-size: large;
+        text-align: right;
+        color: darkgray;
+        height: 28px;
+    }
+    .calc-data-label {
+        padding: 8px 0px 0px 0px;
+        font-size: large;
+    }
+    .dist-label {
+        text-align: center;
+        font-size: larger;
+        padding: 12px 0px 0px 0px;
+    }
+    .div-row {
+        margin-left:0px;
+    }
+    .payment {
+        padding: 8px 0px 0px 0px;
+        font-size: large;
+        text-align: center;
+    }
+</style>
+<div id="current-job-body" class="row" style="height:100px; margin:15px;">
+    @if (Model != null && Model.IsActivated)
+    {
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="row div-row">
+                    <div class="col-sm-2 icao-label" style="text-align:left;">
+                        <strong>@Model.DepartureICAO</strong>
+                    </div>
+                    <div class="col-sm-2 div-route-line"></div>
+                    <div class="col-sm-2 dist-label">
+                        <strong>@Model.Dist Nm</strong>
+                    </div>
+                    <div class="col-sm-2 div-route-line"></div>
+                    <div class="col-sm-2 icao-label" style="text-align:right;" title="Alternative: @Model.AlternativeICAO">
+                        <strong>@Model.ArrivalICAO</strong>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-10 icao-alt-label">
+                        <strong>@Model.AlternativeICAO</strong>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-11 div-route-line-result"></div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-10 payment">Payment: <strong> @string.Format("{0:C}", Model.Pay)</strong></div>
+                </div>
+            </div>
+            <div class="col-sm-5">
+                <div class="row div-row">
+                    <div class="col-sm-7 calc-data-label" style="text-align:left;">
+                        <img src="/Content/img/passanger.png" style="height:25px;">
+                        Pax: (@Model.Pax * @Model.PaxWeight @Model.WeightUnit)
+                    </div>
+                    <div class="col-sm-5 calc-data-label" style="text-align:right;">
+                        @Model.PayloadPaxDisplay @Model.WeightUnit
+                    </div>
+                </div>
+                <div class="row div-row">
+                    <div class="col-sm-7 calc-data-label" style="text-align:left;">
+                        <img src="/Content/img/cargo-icon.png" style="height:25px;">
+                        Cargo:
+                    </div>
+                    <div class="col-sm-5 calc-data-label" style="text-align:right;">
+                        @Model.Cargo @Model.WeightUnit
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12 div-route-line-result"></div>
+                </div>
+                <div class="row div-row">
+                    <div class="col-sm-6 calc-data-label" style="text-align:left;">Total payload:</div>
+                    <div class="col-sm-6 calc-data-label" style="text-align:right;"><strong> @Model.PayloadDisplay @Model.WeightUnit</strong></div>
+                </div>
+            </div>
+            <div class="col-sm-1">
+                <div style="margin: 35px 0px 0px 0px; text-align: right;" title="Remove current Job">
+                    <a data-toggle="confirmation" href="@Url.Action("DeleteJob", "Home", new { @Model.Id })"><span class="glyphicon glyphicon-trash my-glyphicon"></span></a>
+                </div>
+            </div>
+            
+        </div>
+    }
+</div>
+
+
+<script>
+    $('body').confirmation({
+        selector: '[data-toggle="confirmation"]',
+        title: 'Remove Job?',
+        trigger: 'click',
+        placement: 'right',
+        singleton: true,
+        target: '_self',
+        popout: true,
+
+    });
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+    });
+
+</script>

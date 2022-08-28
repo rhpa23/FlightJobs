@@ -51,12 +51,13 @@ namespace FlightJobs.Controllers
 	            "icon_center_x":13,
 	            "icon_center_y":13
             }*/
-
-            var departureInfo = AirportDatabaseFile.FindAirportInfo(departure);
-            var arrivalInfo = AirportDatabaseFile.FindAirportInfo(arrival);
+            var jsonList = new List<object>();
             var alternativeInfo = string.IsNullOrEmpty(alternative) ? null : AirportDatabaseFile.FindAirportInfo(alternative);
-            if (departureInfo != null && arrivalInfo != null)
+            if (!string.IsNullOrEmpty(departure) && !string.IsNullOrEmpty(arrival))
             {
+                var departureInfo = AirportDatabaseFile.FindAirportInfo(departure);
+                var arrivalInfo = AirportDatabaseFile.FindAirportInfo(arrival);
+
                 var departureCoord = new GeoCoordinate(departureInfo.Latitude, departureInfo.Longitude);
                 var arrivalCoord = new GeoCoordinate(arrivalInfo.Latitude, arrivalInfo.Longitude);
 
@@ -92,10 +93,8 @@ namespace FlightJobs.Controllers
                     icon_center_y = 13
                 };
 
-                var jsonList = new List<object>();
                 jsonList.Add(depJson);
                 jsonList.Add(arrJson);
-
 
                 if (alternativeInfo != null)
                 {
@@ -117,53 +116,52 @@ namespace FlightJobs.Controllers
                     };
                     jsonList.Add(altJson);
                 }
+            }
 
-                var userJobsSessionKey = "USER_JOBS_ICAOS";
-                var userJobsIcaos = new List<string>();
-                if (Session[userJobsSessionKey] != null)
+            var userJobsSessionKey = "USER_JOBS_ICAOS";
+            var userJobsIcaos = new List<string>();
+            if (Session[userJobsSessionKey] != null)
+            {
+                userJobsIcaos = (List<string>)Session[userJobsSessionKey];
+            }
+            else
+            {
+                using (var dbContext = new ApplicationDbContext())
                 {
-                    userJobsIcaos = (List<string>)Session[userJobsSessionKey];
-                }
-                else
-                {
-                    using (var dbContext = new ApplicationDbContext())
+                    var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
+                    if (user != null)
                     {
-                        var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
-                        if (user != null)
-                        {
-                            TimeSpan t = new TimeSpan();
-                            var allUserJobs = FilterJobs(user, null, ref t);
-                            userJobsIcaos = allUserJobs.Select(x => x.DepartureICAO).ToList();
-                            userJobsIcaos.AddRange(allUserJobs.Select(x => x.ArrivalICAO));
-                            Session.Add(userJobsSessionKey, userJobsIcaos.Distinct().ToList());
-                        }
+                        TimeSpan t = new TimeSpan();
+                        var allUserJobs = FilterJobs(user, null, ref t);
+                        userJobsIcaos = allUserJobs.Select(x => x.DepartureICAO).ToList();
+                        userJobsIcaos.AddRange(allUserJobs.Select(x => x.ArrivalICAO));
+                        Session.Add(userJobsSessionKey, userJobsIcaos.Distinct().ToList());
                     }
                 }
-                foreach (var icao in userJobsIcaos.Distinct())
-                {
-                    var favDptInfo = AirportDatabaseFile.FindAirportInfo(icao);
-                    var favDptCoord = new GeoCoordinate(favDptInfo.Latitude, favDptInfo.Longitude);
-                    var favDptAirport = new
-                    {
-                        isRoute = false,
-                        lat = favDptCoord.Latitude,
-                        lng = favDptCoord.Longitude,
-                        name = favDptInfo.Name,
-                        info = icao,
-                        icao = icao,
-                        runway_size = favDptInfo.RunwaySize + "ft",
-                        elevation = favDptInfo.Elevation + "ft",
-                        trasition = favDptInfo.Trasition + "ft",
-                        icon_url = "../Content/img/favorite.png",
-                        icon_center_x = 8,
-                        icon_center_y = 8
-                    };
-                    jsonList.Add(favDptAirport);
-                }
-
-                return Json(jsonList, JsonRequestBehavior.AllowGet);
             }
-            return new JsonResult();
+            foreach (var icao in userJobsIcaos.Distinct())
+            {
+                var favDptInfo = AirportDatabaseFile.FindAirportInfo(icao);
+                var favDptCoord = new GeoCoordinate(favDptInfo.Latitude, favDptInfo.Longitude);
+                var favDptAirport = new
+                {
+                    isRoute = false,
+                    lat = favDptCoord.Latitude,
+                    lng = favDptCoord.Longitude,
+                    name = favDptInfo.Name,
+                    info = icao,
+                    icao = icao,
+                    runway_size = favDptInfo.RunwaySize + "ft",
+                    elevation = favDptInfo.Elevation + "ft",
+                    trasition = favDptInfo.Trasition + "ft",
+                    icon_url = "../Content/img/favorite.png",
+                    icon_center_x = 8,
+                    icon_center_y = 8
+                };
+                jsonList.Add(favDptAirport);
+            }
+
+            return Json(jsonList, JsonRequestBehavior.AllowGet);
         }
 
         internal int GetAviationTypeId(string aviationType)
@@ -236,19 +234,20 @@ namespace FlightJobs.Controllers
                         {
                             int minCargo = 5;
                             int maxCargo = 160;
-                            if (flightType == "AirTransport") { minCargo = 100; maxCargo = 3000; };
-                            if (flightType == "Cargo") { minCargo = 80; maxCargo = 3500; }
-                            if (flightType == "HeavyAirTransport") { minCargo = 800; maxCargo = 6000; }
+                            if (flightType == "AirTransport") { minCargo = 0; maxCargo = 3000; };
+                            if (flightType == "Cargo") { minCargo = 10; maxCargo = 3500; }
+                            if (flightType == "HeavyAirTransport") { minCargo = 0; maxCargo = 6000; }
 
                             if (model.UseCustomPlaneCapacity)
                             {
                                 var cargoCapacity = customCapacity.CustomCargoCapacityWeight;
                                 if (cargoCapacity < minCargo) cargoCapacity = minCargo + 1;
                                 cargo = randomCargo.Next(minCargo, cargoCapacity);
+                                if (cargo == 0) continue;
+
                                 if (auxCargoCount + cargo > cargoCapacity)
                                 {
                                     cargo = cargoCapacity - auxCargoCount;
-                                    if (cargo == 0) continue;
                                     auxCargoCount = cargoCapacity;
                                 }
                                 else
@@ -534,14 +533,16 @@ namespace FlightJobs.Controllers
             if (listOverdue.Count() > 0)
             {
                 stBuilder.Append(string.Format("<hr />"));
-                stBuilder.Append(string.Format(@"<div class='col-md-1'><img src='/Content/img/alert-002.png' style='width: 30px; height: 30px;' /></div>"));
+                stBuilder.Append(string.Format(@"<div class='col-md-1'><img src='/Content/img/alert-002.png' style='width: 20px; height: 20px;' /></div>"));
+                stBuilder.Append(string.Format(@"<div class='col-md-10' style='margin-left:10px;'>"));
                 stBuilder.Append(string.Format("<h5><strong>"));
                 stBuilder.Append(string.Format("  YOUR PILOT LICENSE EXPIRED. "));
                 stBuilder.Append(string.Format("</strong></h5>"));
                 stBuilder.Append(string.Format("There are {0} license(s) requirements overdue. ", listOverdue.Count()));
                 stBuilder.Append(string.Format("The next Jobs will not score and paid until you renew your license. "));
                 stBuilder.Append(string.Format("Click here to check your license requirements."));
-                
+                stBuilder.Append(string.Format(@"</div>"));
+
                 foreach (var expenseOverdue in listOverdue.Where(o => !o.OverdueProcessed))
                 {
                     var list = dbContext.LicenseItemUser.Where(x => x.User.Id == statistics.User.Id &&

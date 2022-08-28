@@ -24,12 +24,12 @@
         max-width: 100%; /* Max Width of the popover (depending on the container!) */
     }
     .map-container {
-        width: 95%;
-        margin: 20px;
+        margin-top: 10px;
         border: 1px solid #D1D3D4;
+        display:none;
     }
     #mapid {
-        height: 290px;
+        height: 490px;
     }
     #searchclear {
         position: absolute;
@@ -42,225 +42,235 @@
         cursor: pointer;
         color: #ccc;
     }
+    .form-content-search {
+        background-color: #f1f1f1;
+        border-radius: 10px;
+        padding: 10px 20px 5px 20px;
+        margin: 15px 0px 0px 25px;
+        min-height: 200px;
+    }
 </style>
-@using (Html.BeginForm("Index", "SearchJobs", FormMethod.Post, new { id = "searchForm" }))
-{
-    @Html.AntiForgeryToken()
-    
-    <div class="form-horizontal" role="form">
-        <br />
-        <h4>Choose the parameters for generate jobs</h4>
-        
-        <div class="my-form-content">
+<div class="row" style="margin:0px 55px 5px 55px;">
+    @using (Html.BeginForm("Index", "SearchJobs", FormMethod.Post, new { id = "searchForm" }))
+    {
+        @Html.AntiForgeryToken()
 
-            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-
-            <div id="swap-button" class="swap">Swap departure and destination</div>
-            
-            <div class="form-group">
-                <div class="row">
-                    <div class="col-md-2" style="padding-right:0px; width:12%;">
-                        @Html.LabelFor(model => model.Departure, htmlAttributes: new { @class = "control-label" })
-                        @Html.EditorFor(model => model.Departure, new { htmlAttributes = new { placeholder = "ICAO", @class = "form-control uppercase", @maxlength = "4" } })
-                        <span id="searchclear" onclick="clearInput('Departure')" class="glyphicon glyphicon-remove-circle"></span>
-                        @Html.ValidationMessageFor(model => model.Departure, "", new { @class = "text-danger" })
-                    </div>
-                    <div class="col-sm-1" style="padding-left:0px; padding-right:0px; width:auto;">
-                        <br />
-                        <img src="~/Content/img/airplane.png" />
-
-                    </div>
-
-                    <div class="col-md-2" style="padding: 0px; width: 12%;">
-                        @Html.LabelFor(model => model.Arrival, htmlAttributes: new { @class = "control-label" })
-                        @Html.EditorFor(model => model.Arrival, new { htmlAttributes = new { placeholder = "ICAO", @class = "form-control uppercase", @maxlength = "4" } })
-                        <span id="searchclear" onclick="clearInput('Arrival')" class="glyphicon glyphicon-remove-circle"></span>
-                        @Html.ValidationMessageFor(model => model.Arrival, "", new { @class = "text-danger" })
-                    </div>
-                    <div class="col-xs-1" style="padding:5px; width:auto;">
-                        <input id="arrival-tips-button" type="button" value="Tips" class="btn btn-info btn-xs" style="margin-top:26px;" />
-                        <input id="random-button" type="button" value="Random" class="btn btn-info btn-xs" style="margin:26px 0px 0px 10px;" />
-                        <img id="random-loading-img" src="~/Content/img/loading.gif" style="width:20px; display:none;" />
-                    </div>
-                    <div id="departure-required" style="display: none;"><i class="glyphicon glyphicon-alert"></i>  First set a valid departure.</div>
-                    <div id="arrival-tips-table" style="display: none;" class="col-md-6">Loading...</div>
-                </div>
-                <div class="row">
-                    <div class="col-md-4 text-center" style="padding-left:0px">
-                        <label id="Distance" style="font-size:small;"></label>
-                    </div>
-                </div>
-
-
-                <div class="row">
-                    <div class="col-md-2" style="width: 10%; padding: 0px; margin-left: 15px;">
-                        @Html.LabelFor(model => model.Alternative, htmlAttributes: new { @class = "control-label" })
-                        @Html.EditorFor(model => model.Alternative, new { htmlAttributes = new { placeholder = "ICAO", @class = "form-control uppercase", @maxlength = "4" } })
-                        <span id="searchclear" onclick="clearInput('Alternative')" class="glyphicon glyphicon-remove-circle"></span>
-                        @Html.ValidationMessageFor(model => model.Alternative, "", new { @class = "text-danger" })
-                    </div>
-
-                    <div class="col-xs-1" style="padding:0px; width:auto; margin: 5px;">
-                        <input id="alternative-tips-button" type="button" value="Tips" class="btn btn-info btn-xs" style="margin-top:26px" />
-                    </div>
-                    <div id="destination-required" style="display: none;"><i class="glyphicon glyphicon-alert"></i> First set a valid destination.</div>
-                    <div id="alternative-tips-table" style="display: none;" class="col-md-6">Loading...</div>
-                    <input type="submit" value="Generate" class="btn btn-info pull-right" style="margin-right:20px;" />
-                </div>
-
-                <div id="mapContainer" class="map-container"></div>
-            </div>
+        <div class="form-horizontal" role="form">
             <br />
-        </div>
-        <div class="form-group">
-            <hr />
-            
-            <div class="funkyradio">
-                <div class="row">
-                    <div class="col-xs-3 ">
-                        <div class="funkyradio-info">
-                            <input type="radio" name="AviationType" id="GeneralAviation" value="GeneralAviation" />
-                            <label for="GeneralAviation"><img src="~/Content/img/pictures/general-aviation.jpg" style="width:100px; height:70px;" /><span>General</span></label>
+            <h4>Choose the parameters for generate a job</h4>
+
+            <div class="form-content-search">
+
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                <div id="swap-button" class="swap">Swap departure and destination</div>
+
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-2" style="padding-right:0px; width:12%;">
+                            @Html.LabelFor(model => model.Departure, htmlAttributes: new { @class = "control-label" })
+                            @Html.EditorFor(model => model.Departure, new { htmlAttributes = new { placeholder = "ICAO", @class = "form-control uppercase", @maxlength = "4" } })
+                            <span id="searchclear" onclick="clearInput('Departure')" class="glyphicon glyphicon-remove-circle"></span>
+                            @Html.ValidationMessageFor(model => model.Departure, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="col-sm-1" style="padding-left:0px; padding-right:0px; width:auto;">
+                            <br />
+                            <img src="~/Content/img/airplane.png" />
+
+                        </div>
+
+                        <div class="col-md-2" style="padding: 0px; width: 12%;">
+                            @Html.LabelFor(model => model.Arrival, htmlAttributes: new { @class = "control-label" })
+                            @Html.EditorFor(model => model.Arrival, new { htmlAttributes = new { placeholder = "ICAO", @class = "form-control uppercase", @maxlength = "4" } })
+                            <span id="searchclear" onclick="clearInput('Arrival')" class="glyphicon glyphicon-remove-circle"></span>
+                            @Html.ValidationMessageFor(model => model.Arrival, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="col-xs-1" style="padding:5px; width:auto;">
+                            <input id="arrival-tips-button" type="button" value="Tips" class="btn btn-info btn-xs" style="margin-top:26px;" />
+                            <input id="random-button" type="button" value="Random" class="btn btn-info btn-xs" style="margin:26px 0px 0px 10px;" />
+                            <img id="random-loading-img" src="~/Content/img/loading.gif" style="width:20px; display:none;" />
+                        </div>
+                        <div id="departure-required" style="display: none;"><i class="glyphicon glyphicon-alert"></i>  First set a valid departure.</div>
+                        <div id="arrival-tips-table" style="display: none;" class="col-md-6">Loading...</div>
+                        <div class="pull-right" style="padding-right:20px;">
+                            <div class="col-lg-8">
+                                @Html.CheckBoxFor(model => model.UseCustomPlaneCapacity)
+                                <label for="UseCustomPlaneCapacity" style="text-align:center;">
+                                    <span>Use custom capacity</span>
+                                </label>
+                            </div>
+                            <div class="col-lg-4">
+                                <input id="ChangeCapacity" type="button" value="Change" class="btn btn-info" @{ if (!Model.UseCustomPlaneCapacity) { <text> disabled </text>  }} />
+                            </div>
                         </div>
                     </div>
-                    <div class="col-xs-3 ">
-                        <div class="funkyradio-info">
-                            <input type="radio" name="AviationType" id="AirTransport" value="AirTransport" checked="checked" />
-                            <label for="AirTransport"><img src="~/Content/img/pictures/air-transport.jpg" style="width:100px; height:70px;" /><span>Air transport</span></label>
+                    <div class="row">
+                        <div class="col-md-4 text-center" style="padding-left:0px">
+                            <label id="Distance" style="font-size:small;"></label>
                         </div>
                     </div>
-                    <div class="col-xs-3 ">
-                        <div class="funkyradio-info">
-                            <input type="radio" name="AviationType" id="HeavyAirTransport" value="HeavyAirTransport" />
-                            <label for="HeavyAirTransport"><img src="~/Content/img/pictures/heavy.jpg" style="width:100px; height:70px;" /><span>Heavy</span></label>
+
+
+                    <div class="row">
+                        <div class="col-md-2" style="width: 10%; padding: 0px; margin-left: 15px;">
+                            @Html.LabelFor(model => model.Alternative, htmlAttributes: new { @class = "control-label" })
+                            @Html.EditorFor(model => model.Alternative, new { htmlAttributes = new { placeholder = "ICAO", @class = "form-control uppercase", @maxlength = "4" } })
+                            <span id="searchclear" onclick="clearInput('Alternative')" class="glyphicon glyphicon-remove-circle"></span>
+                            @Html.ValidationMessageFor(model => model.Alternative, "", new { @class = "text-danger" })
                         </div>
-                    </div>
-                    <div class="col-xs-3 ">
-                        <div class="funkyradio-info">
-                            <input type="radio" name="AviationType" id="Cargo" value="Cargo" />
-                            <label for="Cargo"><img src="~/Content/img/pictures/cargo.jpg" style="width:100px; height:70px;" /><span>Cargo</span></label>
+
+                        <div class="col-xs-1" style="padding:0px; width:auto; margin: 5px;">
+                            <input id="alternative-tips-button" type="button" value="Tips" class="btn btn-info btn-xs" style="margin-top:26px" />
                         </div>
+                        <div id="destination-required" style="display: none;"><i class="glyphicon glyphicon-alert"></i> First set a valid destination.</div>
+                        <div id="alternative-tips-table" style="display: none;" class="col-md-6">Loading...</div>
+
+                        <input type="submit" value="Generate" class="btn btn-info pull-right" style="margin-right:20px;" />
+                        <button id="btnShowMap" type="button" value="Map" class="btn btn-info pull-right" style="margin-right:20px;" title="Show/Hide MAP">
+                            <span class="glyphicon glyphicon-map-marker"></span>
+                            <img id="map-loading-img" src="/Content/img/loading.gif" style="width: 20px; display: none;">
+                        </button>
+                        
                     </div>
+
+                    <div id="mapContainer" class="map-container"></div>
+                </div>
+                <br />
+            </div>
+            <div class="form-group">
+                <hr />
+
+                <div class="funkyradio">
+                    <div class="row" style="text-align:-webkit-center">
+                        <div class="col-xs-3 ">
+                            <div class="funkyradio-info">
+                                <input type="radio" name="AviationType" id="GeneralAviation" value="GeneralAviation" />
+                                <label for="GeneralAviation"><img src="~/Content/img/pictures/general-aviation.jpg" style="width:100px; height:70px;" /><span>General</span></label>
+                            </div>
+                        </div>
+                        <div class="col-xs-3 ">
+                            <div class="funkyradio-info">
+                                <input type="radio" name="AviationType" id="AirTransport" value="AirTransport" checked="checked" />
+                                <label for="AirTransport"><img src="~/Content/img/pictures/air-transport.jpg" style="width:100px; height:70px;" /><span>Air transport</span></label>
+                            </div>
+                        </div>
+                        <div class="col-xs-3 ">
+                            <div class="funkyradio-info">
+                                <input type="radio" name="AviationType" id="HeavyAirTransport" value="HeavyAirTransport" />
+                                <label for="HeavyAirTransport"><img src="~/Content/img/pictures/heavy.jpg" style="width:100px; height:70px;" /><span>Heavy</span></label>
+                            </div>
+                        </div>
+                        <div class="col-xs-3 ">
+                            <div class="funkyradio-info">
+                                <input type="radio" name="AviationType" id="Cargo" value="Cargo" />
+                                <label for="Cargo"><img src="~/Content/img/pictures/cargo.jpg" style="width:100px; height:70px;" /><span>Cargo</span></label>
+                            </div>
+                        </div>
+
+                    </div>
+                    <hr />
                     
                 </div>
-                <hr />
-                <div class="row">
-                    <div align="center" style="margin-left: 15px;">
-                        <div class="funkyradio-info" style="width:250px;">
-                            <div class="row">
-                                <div class="col-lg-8">
-                                    @Html.CheckBoxFor(model => model.UseCustomPlaneCapacity)
-                                    <label for="UseCustomPlaneCapacity" style="text-align:center;">
-                                        <img src="~/Content/img/capacity001.jpg" style="width:120px; height:80px; " />
-                                        <span>Custom capacity</span>
-                                    </label>
-                                </div>
-                                <div class="col-lg-2" style="margin-top:30px; padding-left:0px;">
-                                    <input id="ChangeCapacity" type="button" value="Change" class="btn btn-info" @{ if (!Model.UseCustomPlaneCapacity) { <text> disabled </text> }} />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
-    </div>
 
-    <!-- Modal -->
-    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content" style="width: 620px;">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" id="myModalLabel">Custom capacity</h4>
-                </div>
-
-                <div class="modal-body">
-                    <h5 style="color:gray">* This information will be used to calculate the Job Profit.</h5>
-                    <div class="form-group">
-                        @if (Model.CustomPlaneCapacityList == null)
-                        {
-                            Model.CustomPlaneCapacityList = new List<SelectListItem>();                            
-                        }
-                        @if (Model.CustomPlaneCapacity == null)
-                        {
-                            Model.CustomPlaneCapacity = new FlightJobs.Models.CustomPlaneCapacityDbModel()
-                            {
-                                CustomCargoCapacityWeight = 1500, CustomNameCapacity = "B738", CustomPassengerCapacity = 5
-                            };
-                        }
-                        <hr />
-                        <div class="row">
-                            @Html.Partial("CapacityListView", Model)
-                        </div>
-                        <br />
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <label class="control-label" for="CustomPassengerCapacity">Passenger capacity</label>
-                                        @Html.EditorFor(model => model.CustomPlaneCapacity.CustomPassengerCapacity, new { htmlAttributes = new { @class = "form-control" } })
-                                    </div>
-                                </div>
-                                <br />
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <label class="control-label" for="CustomCargoCapacityWeight">
-                                            Cargo capacity weight (@Model.WeightUnit)
-                                        </label>
-                                        @Html.EditorFor(model => model.CustomPlaneCapacity.CustomCargoCapacityWeight, new { htmlAttributes = new { @class = "form-control" } })
-                                    </div>
-                                </div>
-                                <br />
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <label class="control-label" for="CustomNameCapacity">Capacity Name (Change to add)</label>
-                                        @Html.EditorFor(model => model.CustomPlaneCapacity.CustomNameCapacity, new { htmlAttributes = new { @class = "form-control" } })
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <img id="CustomPlaneCapacity_ImagePath" src="@Model.CustomPlaneCapacity.ImagePath" style="width: 280px;margin: 20px 0px 20px 0px;" />
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <div class="col-md-3 pull-right">
-                                            <button type="button" class="btn btn-info btn-xs" id="SaveCustomCapacity">Add</button>
-                                        </div>
-                                        <div class="col-md-3 pull-right">
-                                            <button type="button" class="btn btn-default btn-xs" id="RemoveCustomCapacity">Remove</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button id="SelectCustomCapacity" type="button" class="btn btn-info" data-dismiss="modal">Select</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal -->
-    <div class="modal fade" id="myModalConfirm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content" style="width: 750px;">
-                @using (Html.BeginForm("SearchProfile", "Profile", FormMethod.Post))
-                {
-                    <div class="modal-header" style="padding:5px;">
+        <!-- Modal -->
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content" style="width: 620px;">
+                    <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title" id="myModalLabel">Confirm addition of jobs</h4>
+                        <h4 class="modal-title" id="myModalLabel">Custom capacity</h4>
                     </div>
 
-                    <div id="confirm-content"></div>
-                }
+                    <div class="modal-body">
+                        <h5 style="color:gray">* This information will be used to calculate the Job Profit.</h5>
+                        <div class="form-group">
+                            @if (Model.CustomPlaneCapacityList == null)
+                            {
+                                Model.CustomPlaneCapacityList = new List<SelectListItem>();
+                            }
+                            @if (Model.CustomPlaneCapacity == null)
+                            {
+                                Model.CustomPlaneCapacity = new FlightJobs.Models.CustomPlaneCapacityDbModel()
+                                {
+                                    CustomCargoCapacityWeight = 1500,
+                                    CustomNameCapacity = "B738",
+                                    CustomPassengerCapacity = 5
+                                };
+                            }
+                            <hr />
+                            <div class="row">
+                                @Html.Partial("CapacityListView", Model)
+                            </div>
+                            <br />
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <label class="control-label" for="CustomPassengerCapacity">Passenger capacity</label>
+                                            @Html.EditorFor(model => model.CustomPlaneCapacity.CustomPassengerCapacity, new { htmlAttributes = new { @class = "form-control" } })
+                                        </div>
+                                    </div>
+                                    <br />
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <label class="control-label" for="CustomCargoCapacityWeight">
+                                                Cargo capacity weight (@Model.WeightUnit)
+                                            </label>
+                                            @Html.EditorFor(model => model.CustomPlaneCapacity.CustomCargoCapacityWeight, new { htmlAttributes = new { @class = "form-control" } })
+                                        </div>
+                                    </div>
+                                    <br />
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <label class="control-label" for="CustomNameCapacity">Capacity Name (Change to add)</label>
+                                            @Html.EditorFor(model => model.CustomPlaneCapacity.CustomNameCapacity, new { htmlAttributes = new { @class = "form-control" } })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <img id="CustomPlaneCapacity_ImagePath" src="@Model.CustomPlaneCapacity.ImagePath" style="width: 280px;margin: 20px 0px 20px 0px;" />
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="col-md-3 pull-right">
+                                                <button type="button" class="btn btn-info btn-xs" id="SaveCustomCapacity">Add</button>
+                                            </div>
+                                            <div class="col-md-3 pull-right">
+                                                <button type="button" class="btn btn-default btn-xs" id="RemoveCustomCapacity">Remove</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="SelectCustomCapacity" type="button" class="btn btn-info" data-dismiss="modal">Select</button>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-}
 
+        <!-- Modal -->
+        <div class="modal fade" id="myModalConfirm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content" style="width: 750px;">
+                    @using (Html.BeginForm("SearchProfile", "Profile", FormMethod.Post))
+                    {
+                        <div class="modal-header" style="padding:5px;">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title" id="myModalLabel">Confirm addition of jobs</h4>
+                        </div>
 
+                        <div id="confirm-content"></div>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+
+</div>
 
 <script>
     $('[data-toggle="popover"]').popover({
@@ -364,6 +374,7 @@
         $('#Departure').val(arr);
         $('#Arrival').val(dep);
         LoadMapInfo();
+        $(".map-container").show();
     });
 
 
@@ -381,6 +392,7 @@
                     $('#Alternative').val(result.AlternativeICAO);
                     CalcDistance();
                     LoadMapInfo();
+                    $(".map-container").show();
                     $('#random-loading-img').hide();
                 }
                 else {
@@ -392,6 +404,7 @@
     });
 
     $('#alternative-tips-button').click(function () {
+        $('#alternative-tips-button').toggleClass('btn-info btn-default');
         $("#arrival-tips-table").hide();
         $("#alternative-tips-table").toggle(500);
         $.ajax({
@@ -415,6 +428,7 @@
     });
 
     $('#arrival-tips-button').click(function () {
+        $('#arrival-tips-button').toggleClass('btn-info btn-default');
         $("#alternative-tips-table").hide();
         $("#arrival-tips-table").toggle(500);
         $.ajax({
@@ -440,6 +454,8 @@
     $('#Alternative').change(function () {
         if ($('#Alternative').val().length == 4) {
             LoadMapInfo();
+            $(".map-container").show();
+            $('#btnShowMap').removeClass('btn-info').addClass('btn-default');
         }
     });
 
@@ -447,6 +463,8 @@
         if ($('#Departure').val().length == 4 && $('#Arrival').val().length == 4) {
             CalcDistance();
             LoadMapInfo();
+            $(".map-container").show();
+            $('#btnShowMap').removeClass('btn-info').addClass('btn-default');
         }
     });
 
@@ -455,6 +473,8 @@
         if ($('#Departure').val().length == 4 && $('#Arrival').val().length == 4) {
             CalcDistance();
             LoadMapInfo();
+            $(".map-container").show();
+            $('#btnShowMap').removeClass('btn-info').addClass('btn-default');
         }
     });
 
@@ -463,6 +483,8 @@
         if ($('#Departure').val().length == 4 && $('#Arrival').val().length == 4) {
             CalcDistance();
             LoadMapInfo();
+            $(".map-container").show();
+            $('#btnShowMap').removeClass('btn-info').addClass('btn-default');
         }
     });
 
@@ -480,18 +502,18 @@
     }
 
     function LoadMapInfo() {
-        if ($('#Departure').val().length == 4 && $('#Arrival').val().length == 4) {
-            $.ajax({
-                url: '@Url.Action("GetMapInfo", "SearchJobs")',
-                type: "Get",
-                data: { departure: $('#Departure').val(), arrival: $('#Arrival').val(), alternative: $('#Alternative').val() },
-                success: function (result) {
-                    if (result != null && result != '') {
-                        ShowMap(result);
-                    }
+        $('#map-loading-img').show();
+        $.ajax({
+            url: '@Url.Action("GetMapInfo", "SearchJobs")',
+            type: "Get",
+            data: { departure: $('#Departure').val(), arrival: $('#Arrival').val(), alternative: $('#Alternative').val() },
+            success: function (result) {
+                if (result != null && result != '') {
+                    ShowMap(result);
                 }
-            });
-        }
+                $('#map-loading-img').hide();
+            }
+        });
     }
 
     function ShowMap(markers) {
@@ -529,10 +551,15 @@
             }
         });
 
-        L.polyline(flight_path, { color: '#5bc0de' }).addTo(mymap);
+        if (flight_path.length > 0) {
 
-        mymap.fitBounds(bounds, { padding: [25, 25] });
+            L.polyline(flight_path, { color: '#5bc0de' }).addTo(mymap);
 
+            mymap.fitBounds(bounds, { padding: [25, 25] });
+        }
+        else {
+            mymap.setView([48.865195, 2.321033], 2);
+        }
     }
 
     function clearInput(inputId) {
@@ -542,6 +569,12 @@
     function setInputValue(inputId, inputValue) {
         $("#" + inputId).val(inputValue);
     }
+
+    $('#btnShowMap').click(function () {
+        $(".map-container").toggle();
+        $('#btnShowMap').toggleClass('btn-info btn-default');
+        LoadMapInfo();
+    });
 
 
 </script>

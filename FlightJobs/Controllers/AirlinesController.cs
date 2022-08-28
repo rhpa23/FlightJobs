@@ -26,20 +26,23 @@ namespace FlightJobs.Controllers
             var statisticsList = dbContext.StatisticsDbModels;
 
             var userStatistics = statisticsList.FirstOrDefault(s => s.User.Id == user.Id);
+            list.ForEach(x => { 
+                x.AlowEdit = x.UserId == user.Id; 
+                x.AlowExit = x.Id == userStatistics.Airline?.Id;
+            });
+            //foreach (var airline in list)
+            //{
+            //    var airlinePilotsHired = statisticsList.Where(s => s.Airline != null && s.Airline.Id == airline.Id).ToList();
+            //    airline.AlowExit = airlinePilotsHired.Any(x => x.User.Id == user.Id);
 
-            foreach (var airline in list)
-            {
-                var airlinePilotsHired = statisticsList.Where(s => s.Airline != null && s.Airline.Id == airline.Id).ToList();
-                airline.AlowExit = airlinePilotsHired.Any(x => x.User.Id == user.Id);
-
-                var ownerUserStatistics = statisticsList.FirstOrDefault(s => airline.UserId != null && s.User.Id == airline.UserId);
-                if (ownerUserStatistics != null)
-                {
-                    airline.OwnerUserStatistics = ownerUserStatistics;
-                    airline.OwnerUserStatistics.AirlinePilotsHired = airlinePilotsHired;
-                    airline.AlowEdit = airline.UserId == user.Id;
-                }
-            }
+            //    var ownerUserStatistics = statisticsList.FirstOrDefault(s => airline.UserId != null && s.User.Id == airline.UserId);
+            //    if (ownerUserStatistics != null)
+            //    {
+            //        airline.OwnerUserStatistics = ownerUserStatistics;
+            //        airline.OwnerUserStatistics.AirlinePilotsHired = airlinePilotsHired;
+            //        airline.AlowEdit = airline.UserId == user.Id;
+            //    }
+            //}
 
             if (userStatistics != null && userStatistics.Airline != null)
             {
@@ -53,6 +56,15 @@ namespace FlightJobs.Controllers
             return View(list);
         }
 
+        public PartialViewResult PilotsHiredView(int id)
+        {
+            var dbContext = new ApplicationDbContext();
+            var airline = dbContext.AirlineDbModels.FirstOrDefault(x => x.Id == id);
+            var airlinePilotsHired = dbContext.StatisticsDbModels.Where(s => s.Airline != null && s.Airline.Id == airline.Id).ToList();
+            var ownerUserStatistic = airlinePilotsHired.FirstOrDefault(s => airline.UserId != null && s.User.Id == airline.UserId);
+            if (ownerUserStatistic != null) ownerUserStatistic.User.UserName += " (Owner)";
+            return PartialView("AirlinePilotsHiredView", airlinePilotsHired);
+        }
         public ActionResult Sign(int id)
         {
             var dbContext = new ApplicationDbContext();

@@ -56,7 +56,27 @@ namespace FlightJobs.Models
         [NotMapped]
         [DisplayName("Payload")]
         public long PayloadDisplay { get; set; }
-        
+
+        [NotMapped]
+        [DisplayName("Pax payload")]
+        public long PayloadPax
+        {
+            get
+            {
+                if (PaxWeight > 0)
+                {
+                    return (Pax * PaxWeight);
+                }
+                else
+                {
+                    return (Pax * 84);
+                }
+            }
+        }
+
+        [NotMapped]
+        [DisplayName("Pax payload")]
+        public long PayloadPaxDisplay { get; set; }
 
         [NotMapped]
         [DisplayName("Flight time")]

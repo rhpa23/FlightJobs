@@ -883,6 +883,8 @@
     <Content Include="Views\Profile\AirlineBalanceInfoView.cshtml" />
     <Content Include="Views\Home\PendingJobsView.cshtml" />
     <Content Include="Views\Challenge\ChallegerListView.cshtml" />
+    <Content Include="Views\Home\CurrentJobView.cshtml" />
+    <Content Include="Views\Airlines\AirlinePilotsHiredView.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201710111859366_InitialCreate.resx">

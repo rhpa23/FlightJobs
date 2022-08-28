@@ -210,14 +210,14 @@ namespace FlightJobs.Controllers
 
             var jobList = list.Values.ToList();
 
-            var viewModel = new ConfirmJobsViewModel()
-            {
-                JobsList = jobList,
-                TotalPax = totalPax,
-                TotalCargo = totalCargo,
-                TotalPay = string.Format("{0:C}", totalPay),
-                TotalPayload = string.Format("{0:G}", (totalPax * PaxWeight) + totalCargo)
-            };
+            //var viewModel = new ConfirmJobsViewModel()
+            //{
+            //    JobsList = jobList,
+            //    TotalPax = totalPax,
+            //    TotalCargo = totalCargo,
+            //    TotalPay = string.Format("{0:C}", totalPay),
+            //    TotalPayload = string.Format("{0:G}", (totalPax * PaxWeight) + totalCargo)
+            //};
 
             var pxWeight = isPounds ? DataConversion.ConvertPoundsToKilograms(PaxWeight) : PaxWeight;
             Response.SetCookie(new HttpCookie(PassengersWeightCookie, pxWeight.ToString()));
@@ -246,7 +246,8 @@ namespace FlightJobs.Controllers
                     PaxWeight = int.Parse(Request.Cookies[PassengersWeightCookie].Value);
                 }
 
-                foreach (var selJob in jobList)
+                var selJob = jobList.FirstOrDefault();
+                if (selJob != null)
                 {
                     selJob.User = user;
                     selJob.StartTime = DateTime.Now;
@@ -270,6 +271,14 @@ namespace FlightJobs.Controllers
 
                     dbContext.JobDbModels.Add(selJob);
                 }
+                
+                dbContext.SaveChanges();
+
+                // Activate the inserted job.
+                var userJobList = dbContext.JobDbModels.Where(j => !j.IsDone && j.User.Id == user.Id && !j.IsChallenge).ToList();
+                userJobList.ForEach(x => {
+                    x.IsActivated = x.Id == selJob.Id;
+                });
                 dbContext.SaveChanges();
             }
 

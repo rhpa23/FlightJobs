@@ -52,6 +52,8 @@ namespace FlightJobs.Controllers
                 j.PayloadDisplay = GetWeight(Request, j.Payload, statistics);
                 j.Cargo = cargo;
                 j.WeightUnit = weightUnit;
+                j.PayloadPaxDisplay = GetWeight(Request, j.PayloadPax, statistics);
+                j.PaxWeight = (int)GetWeight(Request, j.PaxWeight, statistics);
             });
             homeModel.Jobs = jobList.ToPagedList(pageNumber ?? 1, 5);
             homeModel.WeightUnit = weightUnit;
@@ -60,6 +62,7 @@ namespace FlightJobs.Controllers
                             !c.IsDone && c.IsChallenge &&
                             c.ChallengeExpirationDate > DateTime.Now &&
                             c.User == null).Count();
+
             return View(homeModel);
         }
 
@@ -79,18 +82,41 @@ namespace FlightJobs.Controllers
                 var jobList = dbContext.JobDbModels.Where(j => !j.IsDone && j.User.Id == user.Id && !j.IsChallenge);
 
                 var pagedJobList = jobList.OrderBy(j => j.Id).ToPagedList(1, 4);
-                pagedJobList.ToList().ForEach(delegate (JobDbModel j) {
-                    var cargo = GetWeight(Request, j.Cargo, userStatistics);
-                    var paxWeight = GetWeight(Request, j.PaxWeight, userStatistics);
-                    var passengesWeight = j.Pax * paxWeight;
-                    j.PayloadDisplay = cargo + passengesWeight;
-                    j.Cargo = cargo;
-                    j.WeightUnit = GetWeightUnit(Request);
-                });
+                //pagedJobList.ToList().ForEach(delegate (JobDbModel j) {
+                //    var cargo = GetWeight(Request, j.Cargo, userStatistics);
+                //    var paxWeight = GetWeight(Request, j.PaxWeight, userStatistics);
+                //    var passengesWeight = j.Pax * paxWeight;
+                //    j.PayloadDisplay = cargo + passengesWeight;
+                //    j.Cargo = cargo;
+                //    j.WeightUnit = GetWeightUnit(Request);
+                //});
                 return PartialView("PendingJobsView", pagedJobList);
 
             }
             return PartialView("PendingJobsView");
+        }
+
+        public PartialViewResult GetCurrentJob()
+        {
+            var dbContext = new ApplicationDbContext();
+            var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
+            var userStatistics = GetUserStatistics(user.Id);
+            if (user != null)
+            {
+                var curJob = dbContext.JobDbModels.FirstOrDefault(j => j.User.Id == user.Id && j.IsActivated);
+                if (curJob != null)
+                {
+                    curJob.PayloadDisplay = GetWeight(Request, curJob.Payload, userStatistics);
+                    curJob.Cargo = GetWeight(Request, curJob.Cargo, userStatistics);
+                    curJob.WeightUnit = GetWeightUnit(Request);
+                    curJob.PayloadPaxDisplay = GetWeight(Request, curJob.PayloadPax, userStatistics);
+                    curJob.PaxWeight = (int)GetWeight(Request, curJob.PaxWeight, userStatistics);
+
+                    return PartialView("CurrentJobView", curJob);
+                }
+            }
+
+            return PartialView("CurrentJobView");
         }
 
         public ActionResult DeleteJob(int id)
