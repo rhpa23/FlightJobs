@@ -70,7 +70,7 @@ namespace FlightJobs.Controllers
                     return RedirectToLocal(returnUrl);
             }
 
-            return View();
+            return View(new LoginViewModel());
         }
 
         public bool LoginGest(string returnUrl)

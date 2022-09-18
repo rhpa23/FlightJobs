@@ -18,6 +18,7 @@
             success: function (result) {
                 if (result != null && result != '') {
                     $('#CustomPlaneCapacity_CustomPassengerCapacity').val(result.CustomPassengerCapacity);
+                    $('#CustomPlaneCapacity_CustomPaxWeight').val(result.CustomPaxWeight);
                     $('#CustomPlaneCapacity_CustomCargoCapacityWeight').val(result.CustomCargoCapacityWeight);
                     $('#CustomPlaneCapacity_CustomNameCapacity').val(result.CustomNameCapacity);
                     $("#CustomPlaneCapacity_ImagePath").attr("src", result.ImagePath)

@@ -20,9 +20,7 @@ namespace FlightJobs.Controllers
         internal double taxFirstGE = 0.175; // por NM
         internal double taxCargoGE = 0.0041; // por NM
 
-        internal int PaxWeight = 84;
-
-        public const string PassengersWeightCookie = "PassengersWeightCookie";
+        internal long PaxWeight = 84;
 
         public int CalcDistance(string departure, string arrival)
         {
@@ -215,7 +213,7 @@ namespace FlightJobs.Controllers
                     }
 
                     int index = randomPob.Next(14, 25);
-                    if (model.AviationType == "GeneralAviation" && model.UseCustomPlaneCapacity)
+                    if (model.AviationType == "GeneralAviation")
                         validGaProfit = customCapacity.CustomCargoCapacityWeight < 3000 && customCapacity.CustomPassengerCapacity < 30;
 
                     long gePobCount = 0, auxCargoCount = 0;
@@ -238,27 +236,21 @@ namespace FlightJobs.Controllers
                             if (flightType == "Cargo") { minCargo = 10; maxCargo = 3500; }
                             if (flightType == "HeavyAirTransport") { minCargo = 0; maxCargo = 6000; }
 
-                            if (model.UseCustomPlaneCapacity)
-                            {
-                                var cargoCapacity = customCapacity.CustomCargoCapacityWeight;
-                                if (cargoCapacity < minCargo) cargoCapacity = minCargo + 1;
-                                cargo = randomCargo.Next(minCargo, cargoCapacity);
-                                if (cargo == 0) continue;
+                            var cargoCapacity = customCapacity.CustomCargoCapacityWeight;
+                            if (cargoCapacity < minCargo) cargoCapacity = minCargo + 1;
+                            cargo = randomCargo.Next(minCargo, cargoCapacity);
 
-                                if (auxCargoCount + cargo > cargoCapacity)
-                                {
-                                    cargo = cargoCapacity - auxCargoCount;
-                                    auxCargoCount = cargoCapacity;
-                                }
-                                else
-                                {
-                                    auxCargoCount += cargo;
-                                }
+                            if (auxCargoCount + cargo > cargoCapacity)
+                            {
+                                cargo = cargoCapacity - auxCargoCount;
+                                auxCargoCount = cargoCapacity;
                             }
                             else
                             {
-                                cargo = randomCargo.Next(minCargo, maxCargo);
+                                auxCargoCount += cargo;
                             }
+                            
+                            if (cargo == 0) continue;
 
                             if (flightType == "GeneralAviation")
                             {
@@ -292,25 +284,19 @@ namespace FlightJobs.Controllers
                             if (flightType == "AirTransport") { minPob = 10; maxPob = 80; };
                             if (flightType == "HeavyAirTransport") { minPob = 50; maxPob = 140; }
 
-                            if (model.UseCustomPlaneCapacity)
+                            if (customCapacity.CustomPassengerCapacity < minPob) customCapacity.CustomPassengerCapacity = minPob + 1;
+                            pob = randomPob.Next(minPob, customCapacity.CustomPassengerCapacity);
+                            if (gePobCount + pob > customCapacity.CustomPassengerCapacity)
                             {
-                                if (customCapacity.CustomPassengerCapacity < minPob) customCapacity.CustomPassengerCapacity = minPob + 1;
-                                pob = randomPob.Next(minPob, customCapacity.CustomPassengerCapacity);
-                                if (gePobCount + pob > customCapacity.CustomPassengerCapacity)
-                                {
-                                    pob = customCapacity.CustomPassengerCapacity - gePobCount;
-                                    if (pob == 0) continue;
-                                    gePobCount = customCapacity.CustomPassengerCapacity;
-                                }
-                                else
-                                {
-                                    gePobCount += pob;
-                                }
+                                pob = customCapacity.CustomPassengerCapacity - gePobCount;
+                                if (pob == 0) continue;
+                                gePobCount = customCapacity.CustomPassengerCapacity;
                             }
                             else
                             {
-                                pob = randomPob.Next(minPob, maxPob);
+                                gePobCount += pob;
                             }
+
 
                             if (flightType == "GeneralAviation")
                             {
@@ -665,6 +651,17 @@ namespace FlightJobs.Controllers
             var dbContext = new ApplicationDbContext();
             var user = dbContext.Users.FirstOrDefault(u => u.Id == userIdStr);
             return dbContext.StatisticsDbModels.FirstOrDefault(s => s.User.Id == user.Id);
+        }
+
+        internal List<SelectListItem> GetUserCustomCapacity(string userId)
+        {
+            var dbContext = new ApplicationDbContext();
+            return dbContext.CustomPlaneCapacity.Where(x => x.User.Id == userId).Select(c =>
+                                                                new SelectListItem
+                                                                {
+                                                                    Text = c.CustomNameCapacity,
+                                                                    Value = c.Id.ToString(),
+                                                                }).OrderBy(x => x.Text).ToList();
         }
     }
 }

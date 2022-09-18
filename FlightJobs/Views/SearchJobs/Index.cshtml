@@ -19,6 +19,7 @@
     .swap {
         cursor: pointer;
         color: #5bc0de;
+        display:contents;
     }
     .popover {
         max-width: 100%; /* Max Width of the popover (depending on the container!) */
@@ -49,6 +50,12 @@
         margin: 15px 0px 0px 25px;
         min-height: 200px;
     }
+    .form-content-capacity {
+        background-color: #f1f1f1;
+        border-radius: 10px;
+        padding: 10px 2px 10px 2px;
+        margin: 0px;
+    }
 </style>
 <div class="row" style="margin:0px 55px 5px 55px;">
     @using (Html.BeginForm("Index", "SearchJobs", FormMethod.Post, new { id = "searchForm" }))
@@ -57,7 +64,7 @@
 
         <div class="form-horizontal" role="form">
             <br />
-            <h4>Choose the parameters for generate a job</h4>
+            <h4>Generate job</h4>
 
             <div class="form-content-search">
 
@@ -92,17 +99,6 @@
                         </div>
                         <div id="departure-required" style="display: none;"><i class="glyphicon glyphicon-alert"></i>  First set a valid departure.</div>
                         <div id="arrival-tips-table" style="display: none;" class="col-md-6">Loading...</div>
-                        <div class="pull-right" style="padding-right:20px;">
-                            <div class="col-lg-8">
-                                @Html.CheckBoxFor(model => model.UseCustomPlaneCapacity)
-                                <label for="UseCustomPlaneCapacity" style="text-align:center;">
-                                    <span>Use custom capacity</span>
-                                </label>
-                            </div>
-                            <div class="col-lg-4">
-                                <input id="ChangeCapacity" type="button" value="Change" class="btn btn-info" @{ if (!Model.UseCustomPlaneCapacity) { <text> disabled </text>  }} />
-                            </div>
-                        </div>
                     </div>
                     <div class="row">
                         <div class="col-md-4 text-center" style="padding-left:0px">
@@ -130,7 +126,7 @@
                             <span class="glyphicon glyphicon-map-marker"></span>
                             <img id="map-loading-img" src="/Content/img/loading.gif" style="width: 20px; display: none;">
                         </button>
-                        
+
                     </div>
 
                     <div id="mapContainer" class="map-container"></div>
@@ -204,19 +200,23 @@
                                 @Html.Partial("CapacityListView", Model)
                             </div>
                             <br />
-                            <div class="row">
+                            <div class="row form-content-capacity">
                                 <div class="col-md-6">
                                     <div class="row">
-                                        <div class="col-md-12">
-                                            <label class="control-label" for="CustomPassengerCapacity">Passenger capacity</label>
+                                        <div class="col-md-6">
+                                            <label class="control-label" for="CustomPassengerCapacity">Passengers</label>
                                             @Html.EditorFor(model => model.CustomPlaneCapacity.CustomPassengerCapacity, new { htmlAttributes = new { @class = "form-control" } })
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="control-label" for="CustomPassengerCapacity">Weight (@Model.WeightUnit)</label>
+                                            @Html.EditorFor(model => model.CustomPlaneCapacity.CustomPaxWeight, new { htmlAttributes = new { @class = "form-control" } })
                                         </div>
                                     </div>
                                     <br />
                                     <div class="row">
                                         <div class="col-md-12">
                                             <label class="control-label" for="CustomCargoCapacityWeight">
-                                                Cargo capacity weight (@Model.WeightUnit)
+                                                Cargo weight (@Model.WeightUnit)
                                             </label>
                                             @Html.EditorFor(model => model.CustomPlaneCapacity.CustomCargoCapacityWeight, new { htmlAttributes = new { @class = "form-control" } })
                                         </div>
@@ -224,20 +224,23 @@
                                     <br />
                                     <div class="row">
                                         <div class="col-md-12">
-                                            <label class="control-label" for="CustomNameCapacity">Capacity Name (Change to add)</label>
+                                            <label class="control-label" for="CustomNameCapacity">Name</label>
                                             @Html.EditorFor(model => model.CustomPlaneCapacity.CustomNameCapacity, new { htmlAttributes = new { @class = "form-control" } })
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <img id="CustomPlaneCapacity_ImagePath" src="@Model.CustomPlaneCapacity.ImagePath" style="width: 280px;margin: 20px 0px 20px 0px;" />
+                                    <img id="CustomPlaneCapacity_ImagePath" src="@Model.CustomPlaneCapacity.ImagePath" style="width: 270px;margin: 10px 0px 10px 0px;" />
                                     <div class="row">
                                         <div class="col-md-12">
-                                            <div class="col-md-3 pull-right">
-                                                <button type="button" class="btn btn-info btn-xs" id="SaveCustomCapacity">Add</button>
+                                            <div class="col-md-3">
+                                                <button type="button" class="btn btn-info btn-sm" id="AddCustomCapacity">New</button>
                                             </div>
-                                            <div class="col-md-3 pull-right">
-                                                <button type="button" class="btn btn-default btn-xs" id="RemoveCustomCapacity">Remove</button>
+                                            <div class="col-md-3">
+                                                <button type="button" class="btn btn-info btn-sm" id="SaveCustomCapacity">Save</button>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <button type="button" class="btn btn-default btn-sm" id="RemoveCustomCapacity">Remove</button>
                                             </div>
                                         </div>
                                     </div>
@@ -246,6 +249,12 @@
                         </div>
                     </div>
                     <div class="modal-footer">
+                        <div class="alert alert-info pull-left" role="alert" style="margin-bottom:0px; padding:5px;" id="capacity-success-alert">
+                            Capacity saved!
+                        </div>
+                        <div class="alert alert-info pull-left" role="alert" style="margin-bottom:0px; padding:5px;" id="capacity-remove-alert">
+                            Capacity removed!
+                        </div>
                         <button id="SelectCustomCapacity" type="button" class="btn btn-info" data-dismiss="modal">Select</button>
                     </div>
                 </div>
@@ -258,10 +267,13 @@
                 <div class="modal-content" style="width: 750px;">
                     @using (Html.BeginForm("SearchProfile", "Profile", FormMethod.Post))
                     {
-                        <div class="modal-header" style="padding:5px;">
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                            <h4 class="modal-title" id="myModalLabel">Confirm addition of jobs</h4>
+                    <div class="modal-header" style="padding:5px;">
+                        <div id="loading-generate-msg" style="float: left; padding-right: 10px;">
+                            <img src="/Content/img/loading.gif" style="width:30px;">
                         </div>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="myModalLabel">Confirm</h4>
+                    </div>
 
                         <div id="confirm-content"></div>
                     }
@@ -273,40 +285,21 @@
 </div>
 
 <script>
+
+    $(document).ready(function () {
+        $("#capacity-success-alert").hide();
+        $("#capacity-remove-alert").hide();
+    });
+
     $('[data-toggle="popover"]').popover({
         container: 'body'
     });
-    $("#ChangeCapacity").click(function () {
-        $('#myModal').modal('show');
-        $('#UseCustomPlaneCapacity').prop("checked", 1)
-    });
 
     $('#searchForm').submit(function () {
-        $.ajax({
-            url: '@Url.Action("Index", "SearchJobs")',
-            type: "Post",
-            data: $("#searchForm").serialize(),
-            success: function (result) {
-                if (result != null) {
-                    $("#confirm-content").html(result);
+        $("#loading-generate-msg").show();
+        $('#myModal').modal('show');
 
-                    $('#myModalConfirm').modal('show');
-                }
-            }
-        });
-            return false;
-    });
-
-    $('#UseCustomPlaneCapacity').change(function () {
-        var ck = $('#UseCustomPlaneCapacity').prop("checked");
-        $("#ChangeCapacity").prop('disabled', !ck);
-
-        $.ajax({
-            url: '@Url.Action("SetCustonCapacity", "SearchJobs")',
-            type: "Get",
-            data: { isChecked: ck },
-            success: function (result) {}
-        });
+        return false;
     });
 
     $('#CustomPassengerCapacity').change(function () {
@@ -325,18 +318,23 @@
 
 
     $('#SaveCustomCapacity').click(function () {
-        var passengersVal = $('#CustomPlaneCapacity_CustomPassengerCapacity').val();
-        var cargoVal = $('#CustomPlaneCapacity_CustomCargoCapacityWeight').val();
-        var nameVal = $('#CustomPlaneCapacity_CustomNameCapacity').val();
+        saveCustomCapacity();
 
-        $.ajax({
-            url: '@Url.Action("AddCustonCapacity", "SearchJobs")',
-            type: "Get",
-            data: { passengers: passengersVal, cargo: cargoVal, name: nameVal },
-            success: function (result) {
-                $('#CapacityListContent').html(result);
-            }
-        });
+        $("#AddCustomCapacity").prop("disabled", false);
+        $("#RemoveCustomCapacity").prop("disabled", false);
+        $("#SelectCustomCapacity").prop("disabled", false);
+        $("#CustomPlaneCapacity_Id").prop("disabled", false);
+    });
+
+    $('#AddCustomCapacity').click(function () {
+        $('#CustomPlaneCapacity_CustomPassengerCapacity').val('');
+        $('#CustomPlaneCapacity_CustomCargoCapacityWeight').val('');
+        $('#CustomPlaneCapacity_CustomNameCapacity').val('');
+
+        $("#AddCustomCapacity").prop("disabled", true);
+        $("#RemoveCustomCapacity").prop("disabled", true);
+        $("#SelectCustomCapacity").prop("disabled", true);
+        $("#CustomPlaneCapacity_Id").prop("disabled", true);
     });
 
     $('#RemoveCustomCapacity').click(function () {
@@ -351,12 +349,19 @@
                 $('#CustomPlaneCapacity_CustomPassengerCapacity').val('');
                 $('#CustomPlaneCapacity_CustomCargoCapacityWeight').val('');
                 $('#CustomPlaneCapacity_CustomNameCapacity').val('');
+
+                $("#capacity-remove-alert").fadeTo(2000, 500).slideUp(500, function () {
+                    $("#capacity-remove-alert").slideUp(500);
+                });
             }
         });
     });
 
     $('#SelectCustomCapacity').click(function () {
+        $('#myModalConfirm').modal('show');
+        $("#confirm-content").html('');
         var customPlaneCapacityId = $('#CustomPlaneCapacity_Id').val();
+        saveCustomCapacity();
 
         $.ajax({
             url: '@Url.Action("SelectCustomCapacity", "SearchJobs")',
@@ -364,6 +369,18 @@
             data: { capacityId: customPlaneCapacityId },
             success: function (result) {
                 $('#CapacityListContent').html(result);
+            }
+        });
+
+        $.ajax({
+            url: '@Url.Action("Index", "SearchJobs")',
+            type: "Post",
+            data: $("#searchForm").serialize(),
+            success: function (result) {
+                if (result != null) {
+                    $("#confirm-content").html(result);
+                    $("#loading-generate-msg").hide();
+                }
             }
         });
     });
@@ -570,11 +587,37 @@
         $("#" + inputId).val(inputValue);
     }
 
+    function saveCustomCapacity() {
+        var passengersVal = $('#CustomPlaneCapacity_CustomPassengerCapacity').val();
+        var passengersWeightVal = $('#CustomPlaneCapacity_CustomPaxWeight').val();
+        var cargoVal = $('#CustomPlaneCapacity_CustomCargoCapacityWeight').val();
+        var nameVal = $('#CustomPlaneCapacity_CustomNameCapacity').val();
+
+        $.ajax({
+            url: '@Url.Action("SaveCustomCapacity", "SearchJobs")',
+            type: "Get",
+            data: { passengers: passengersVal, cargo: cargoVal, name: nameVal, paxWeight: passengersWeightVal },
+            success: function (result) {
+                $('#CapacityListContent').html(result);
+                $("#capacity-success-alert").fadeTo(2000, 500).slideUp(500, function () {
+                    $("#capacity-success-alert").slideUp(500);
+                });
+            }
+        });
+    }
+
     $('#btnShowMap').click(function () {
         $(".map-container").toggle();
         $('#btnShowMap').toggleClass('btn-info btn-default');
         LoadMapInfo();
     });
 
+    $("#capacity-success-alert").fadeTo(2000, 500).slideUp(500, function () {
+        $("#capacity-success-alert").slideUp(500);
+    });
+
+    $("#capacity-remove-alert").fadeTo(2000, 500).slideUp(500, function () {
+        $("#capacity-remove-alert").slideUp(500);
+    });
 
 </script>

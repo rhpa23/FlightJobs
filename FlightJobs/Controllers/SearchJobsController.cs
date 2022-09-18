@@ -53,14 +53,10 @@ namespace FlightJobs.Controllers
             {
                 if (statistics.CustomPlaneCapacity != null)
                     statistics.CustomPlaneCapacity.ImagePath = GetCustomCapacityPath(statistics.CustomPlaneCapacity.CustomNameCapacity);
-                model.UseCustomPlaneCapacity = statistics.UseCustomPlaneCapacity;
                 model.CustomPlaneCapacity = statistics.CustomPlaneCapacity;
-                model.CustomPlaneCapacityList = dbContext.CustomPlaneCapacity.Where(x => x.User.Id == user.Id).Select(c =>
-                                                                new SelectListItem
-                                                                {
-                                                                    Text = c.CustomNameCapacity,
-                                                                    Value = c.Id.ToString(),
-                                                                }).ToList();
+                
+                
+                model.CustomPlaneCapacityList = GetUserCustomCapacity(user.Id);
             }
 
             return View(model);
@@ -113,15 +109,9 @@ namespace FlightJobs.Controllers
             Session.Add("JobSerachModel", modelParam);
             var userStatistics = GetWebUserStatistics();
 
-            if (Request.Cookies[PassengersWeightCookie] != null
-                && Request.Cookies[PassengersWeightCookie].Value != null)
+            if (userStatistics.CustomPlaneCapacity != null)
             {
-                long weight = Convert.ToInt32(Request.Cookies[PassengersWeightCookie].Value);
-                TempData[PassengersWeightCookie] = GetWeight(Request, weight, userStatistics);
-            }
-            else
-            {
-                TempData[PassengersWeightCookie] = GetWeight(Request, PaxWeight, userStatistics);
+                TempData["PassengersWeight"] = GetWeight(Request, userStatistics.CustomPlaneCapacity.CustomPaxWeight, userStatistics);
             }
 
             TempData["PassengersWeightUnit"] = GetWeightUnit(Request);
@@ -145,18 +135,9 @@ namespace FlightJobs.Controllers
         {
             var ids = new List<int>();
             var pageSelsIds = form["sels"];
-            var passengersWeight = form["paxWeight-text"];
-            bool isPounds = GetWeightUnit(Request) == DataConversion.UnitPounds;
+            var userStatistics = GetWebUserStatistics();
 
-            if (isPounds)
-            {
-                PaxWeight = int.TryParse(passengersWeight, out PaxWeight) ? PaxWeight : 185;
-            }
-            else
-            {
-                PaxWeight = int.TryParse(passengersWeight, out PaxWeight) ? PaxWeight : 84;
-            }
-            
+            PaxWeight = userStatistics.CustomPlaneCapacity != null ? userStatistics.CustomPlaneCapacity.CustomPaxWeight : 84;
             
             if (pageSelsIds != null)
             {
@@ -219,8 +200,6 @@ namespace FlightJobs.Controllers
             //    TotalPayload = string.Format("{0:G}", (totalPax * PaxWeight) + totalCargo)
             //};
 
-            var pxWeight = isPounds ? DataConversion.ConvertPoundsToKilograms(PaxWeight) : PaxWeight;
-            Response.SetCookie(new HttpCookie(PassengersWeightCookie, pxWeight.ToString()));
 
             return Confirm(jobList);
         }
@@ -239,12 +218,8 @@ namespace FlightJobs.Controllers
 
             if (jobList != null)
             {
-                
-                if (Request.Cookies[PassengersWeightCookie] != null
-                && Request.Cookies[PassengersWeightCookie].Value != null)
-                {
-                    PaxWeight = int.Parse(Request.Cookies[PassengersWeightCookie].Value);
-                }
+                var userStatistics = GetWebUserStatistics();
+                PaxWeight = userStatistics.CustomPlaneCapacity != null ? userStatistics.CustomPlaneCapacity.CustomPaxWeight : 84;
 
                 var selJob = jobList.FirstOrDefault();
                 if (selJob != null)
@@ -253,7 +228,7 @@ namespace FlightJobs.Controllers
                     selJob.StartTime = DateTime.Now;
                     selJob.EndTime = DateTime.Now;
                     selJob.ChallengeExpirationDate = DateTime.Now.AddDays(-1);
-                    selJob.PaxWeight = PaxWeight;
+                    selJob.PaxWeight = (int)PaxWeight;
 
                     if (isPounds)
                     {
@@ -480,13 +455,7 @@ namespace FlightJobs.Controllers
                 searchModel.CustomPlaneCapacity = dbEntity;
                 dbContext.SaveChanges();
             }
-            searchModel.CustomPlaneCapacityList = dbContext.CustomPlaneCapacity
-                                                           .Where(x => x.User.Id == user.Id).Select(c =>
-                                                            new SelectListItem
-                                                            {
-                                                                Text = c.CustomNameCapacity,
-                                                                Value = c.Id.ToString(),
-                                                            }).ToList();
+            searchModel.CustomPlaneCapacityList = GetUserCustomCapacity(user.Id); 
 
             return PartialView("CapacityListView", searchModel);
         }
@@ -506,18 +475,12 @@ namespace FlightJobs.Controllers
                 searchModel.CustomPlaneCapacity = null;
                 dbContext.SaveChanges();
             }
-            searchModel.CustomPlaneCapacityList = dbContext.CustomPlaneCapacity
-                                                           .Where(x => x.User.Id == user.Id).Select(c =>
-                                                            new SelectListItem
-                                                            {
-                                                                Text = c.CustomNameCapacity,
-                                                                Value = c.Id.ToString(),
-                                                            }).ToList();
+            searchModel.CustomPlaneCapacityList = GetUserCustomCapacity(user.Id);
 
             return PartialView("CapacityListView", searchModel);
         }
 
-        public PartialViewResult AddCustonCapacity(int passengers, int cargo, string name)
+        public PartialViewResult SaveCustomCapacity(int passengers, int cargo, string name, long paxWeight)
         {
             var dbContext = new ApplicationDbContext();
             var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
@@ -526,7 +489,7 @@ namespace FlightJobs.Controllers
 
             if (!string.IsNullOrEmpty(name) && cargo > 0 && passengers > 0 && statistics != null)
             {
-                var dbEntity = dbContext.CustomPlaneCapacity.FirstOrDefault(x => x.User.Id == user.Id && x.CustomNameCapacity == name);
+                var dbEntity = dbContext.CustomPlaneCapacity.FirstOrDefault(x => x.User.Id == user.Id && x.CustomNameCapacity.ToLower() == name.ToLower());
                 if (dbEntity == null)
                 {
                     var customCapacity = new CustomPlaneCapacityDbModel()
@@ -534,6 +497,7 @@ namespace FlightJobs.Controllers
                         CustomCargoCapacityWeight = cargo,
                         CustomPassengerCapacity = passengers,
                         CustomNameCapacity = name.Trim(),
+                        CustomPaxWeight = paxWeight,
                         User = user
                     };
                     dbContext.CustomPlaneCapacity.Add(customCapacity);
@@ -544,18 +508,14 @@ namespace FlightJobs.Controllers
                 {
                     dbEntity.CustomCargoCapacityWeight = cargo;
                     dbEntity.CustomPassengerCapacity = passengers;
+                    dbEntity.CustomPaxWeight = paxWeight;
                     statistics.CustomPlaneCapacity = dbEntity;
                     searchModel.CustomPlaneCapacity = dbEntity;
+
                 }
                 dbContext.SaveChanges();
             }
-            searchModel.CustomPlaneCapacityList = dbContext.CustomPlaneCapacity
-                                                           .Where(x => x.User.Id == user.Id).Select(c =>
-                                                            new SelectListItem
-                                                            {
-                                                                Text = c.CustomNameCapacity,
-                                                                Value = c.Id.ToString(),
-                                                            }).ToList();
+            searchModel.CustomPlaneCapacityList = GetUserCustomCapacity(user.Id); 
             return PartialView("CapacityListView", searchModel);
         }
 
@@ -572,19 +532,6 @@ namespace FlightJobs.Controllers
             else
             {
                 return null;
-            }
-        }
-
-        public void SetCustonCapacity(bool isChecked)
-        {
-            var dbContext = new ApplicationDbContext();
-            var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
-            var statistics = dbContext.StatisticsDbModels.FirstOrDefault(s => s.User.Id == user.Id);
-
-            if (statistics != null)
-            {
-                statistics.UseCustomPlaneCapacity = isChecked;
-                dbContext.SaveChanges();
             }
         }
 

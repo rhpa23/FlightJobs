@@ -64,7 +64,6 @@ namespace FlightJobs.Controllers
                 AviationType = "AirTransport",
                 PassengerWeight = paxWeight,
                 WeightUnit = weightUnit,
-                UseCustomPlaneCapacity = true,
                 CustomPlaneCapacity = new CustomPlaneCapacityDbModel()
                 { CustomPassengerCapacity = pax, CustomCargoCapacityWeight = cargo },
             };

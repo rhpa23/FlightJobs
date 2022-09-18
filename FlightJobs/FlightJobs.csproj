@@ -432,6 +432,10 @@
     <Compile Include="Migrations\202009051205157_WeightUnit.Designer.cs">
       <DependentUpon>202009051205157_WeightUnit.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202208281325560_Add-CustomPaxWeight.cs" />
+    <Compile Include="Migrations\202208281325560_Add-CustomPaxWeight.Designer.cs">
+      <DependentUpon>202208281325560_Add-CustomPaxWeight.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\AirlineFboView.cs" />
@@ -1012,6 +1016,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202009051205157_WeightUnit.resx">
       <DependentUpon>202009051205157_WeightUnit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202208281325560_Add-CustomPaxWeight.resx">
+      <DependentUpon>202208281325560_Add-CustomPaxWeight.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

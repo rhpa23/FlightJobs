@@ -27,6 +27,10 @@ namespace FlightJobs.Models
         [Required(ErrorMessage = "Capacity name is required")]
         public string CustomNameCapacity { get; set; }
 
+        [DisplayName("Passenger Weight")]
+        [Required(ErrorMessage = "Custom passenger Weight is required")]
+        public long CustomPaxWeight { get; set; }
+
         [NotMapped]
         public string ImagePath { get; set; }
     }

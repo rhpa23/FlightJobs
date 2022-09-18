@@ -100,13 +100,11 @@
                     <div class="col-md-9">
 
                         @{ 
-                            var pWeightVal = @TempData["PassengersWeightCookie"];
+                            var pWeightVal = @TempData["PassengersWeight"];
                         }
                         <label style="font-size: 12px; font-weight:normal;">Passenger weight for payload calculation: </label>
                         <label id="paxWeight-label" style="font-size: 11px;">@pWeightVal </label>
                         <label id="paxWeight-unit-label" style="font-size: 11px;">@TempData["PassengersWeightUnit"]</label>
-                        <input id="paxWeight-text" name="paxWeight-text" type="number" value="@pWeightVal" maxlength="3" max="400" min="20" class="" style="visibility: hidden;" />
-                        <a id="change-paxWeight-button" class="btn btn-info btn-xs" data-toggle="tooltip" data-html="true" data-placement="bottom">Change</a>
                     </div>
                     <div class="col-md-3 pull-right">
                         <div class="row">
@@ -193,7 +191,7 @@
                     payloadSum = parseFloat($('#cargoSummary').val());
                 }
 
-                var pWeight = parseInt($("#paxWeight-text").val());
+                var pWeight = parseInt($("#paxWeight-label").html());
                 if ($('#paxSummary').val() != "") {
                     payloadSum = payloadSum + (parseFloat($('#paxSummary').val()) * pWeight);
                 }
@@ -237,29 +235,6 @@
             $(".checkbox-job:input[type='checkbox']").each(function () {
                  $(this).trigger('click');
             });
-        });
-
-        $('#change-paxWeight-button').click(function () {
-
-
-            if ($('#paxWeight-text').css("visibility") === "visible") {
-                $("#paxWeight-text").css('visibility', 'hidden');
-                $('#change-paxWeight-button').text("Change");
-                $("#paxWeight-label").show();
-                $("#paxWeight-label").text($("#paxWeight-text").val());
-
-                $('table > tbody  > tr').each(function () {
-                    var checked = $(this).find("input:checkbox").prop("checked");
-                    if (checked) {
-                        $(this).trigger('click');
-                    }
-                });
-            }
-            else {
-                $('#change-paxWeight-button').text("Confirm");
-                $("#paxWeight-label").hide();
-                $("#paxWeight-text").css('visibility', 'visible');
-            }
         });
 
         $(function () {

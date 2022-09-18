@@ -587,3 +587,4 @@ C:\DotNetProjects\FlightJobs\FlightJobs\bin\System.Runtime.CompilerServices.Unsa
 C:\DotNetProjects\FlightJobs\FlightJobs\bin\System.Threading.Tasks.Extensions.xml
 C:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.Migrations.WeightUnit.resources
 C:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.csproj.AssemblyReference.cache
+C:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.Migrations.AddCustomPaxWeight.resources
