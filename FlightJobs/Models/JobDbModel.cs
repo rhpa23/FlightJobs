@@ -100,7 +100,7 @@ namespace FlightJobs.Models
             }
         }
 
-        [DisplayFormat(DataFormatString = "{0:C0}")]
+        [DisplayFormat(DataFormatString = "F{0:C0}")]
         [DisplayName("Pay")]
         public long Pay { get; set; }
 

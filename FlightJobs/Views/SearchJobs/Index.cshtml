@@ -96,6 +96,8 @@
                             <input id="arrival-tips-button" type="button" value="Tips" class="btn btn-info btn-xs" style="margin-top:26px;" />
                             <input id="random-button" type="button" value="Random" class="btn btn-info btn-xs" style="margin:26px 0px 0px 10px;" />
                             <img id="random-loading-img" src="~/Content/img/loading.gif" style="width:20px; display:none;" />
+                            <input id="simbrief-button" type="button" value="Simbrief" class="btn btn-info btn-xs" style="margin:26px 0px 0px 10px;" />
+                            <img id="simbrief-loading-img" src="~/Content/img/loading.gif" style="width:20px; display:none;" />
                         </div>
                         <div id="departure-required" style="display: none;"><i class="glyphicon glyphicon-alert"></i>  First set a valid departure.</div>
                         <div id="arrival-tips-table" style="display: none;" class="col-md-6">Loading...</div>
@@ -420,6 +422,44 @@
         return false;
     });
 
+    $('#simbrief-button').click(function () {
+        var sbId = getCookie('simbrief.id');
+        if (sbId) {
+            sbId = prompt('Inform your Simbrief Username:', sbId);
+        } else {
+            sbId = prompt('Inform your Simbrief Username:');
+        }
+
+        if (sbId) {
+            $('#simbrief-loading-img').show();
+            setCookie('simbrief.id', sbId);
+            $.ajax({
+                url: '@Url.Action("SimbriefLoadAsync", "SearchJobs")',
+                data: { simbriefId: sbId },
+                type: "Get",
+                success: function (result) {
+                    if (result) {
+                        let simbriefObj = $.parseJSON(result);
+                        $('#Arrival').val(simbriefObj.destination.icao_code);
+                        $('#Departure').val(simbriefObj.origin.icao_code);
+                        $('#Alternative').val(simbriefObj.alternate.icao_code);
+                        CalcDistance();
+                        LoadMapInfo();
+                        $(".map-container").show();
+                    } else {
+                        alert('No flight found on Simbrief for username ' + sbId);
+                    }
+                    $('#simbrief-loading-img').hide();
+                }
+            });
+        } else {
+            alert('You need to inform a valid Simbrief Username');
+        }
+
+
+        return false;
+    });
+
     $('#alternative-tips-button').click(function () {
         $('#alternative-tips-button').toggleClass('btn-info btn-default');
         $("#arrival-tips-table").hide();
@@ -604,6 +644,17 @@
                 });
             }
         });
+    }
+
+    function setCookie(key, value) {
+        var expires = new Date();
+        expires.setTime(expires.getTime() + (365 * 24 * 60 * 60 * 1000));
+        document.cookie = key + '=' + value + ';expires=' + expires.toUTCString();
+    }
+
+    function getCookie(key) {
+        var keyValue = document.cookie.match('(^|;) ?' + key + '=([^;]*)(;|$)');
+        return keyValue ? keyValue[2] : null;
     }
 
     $('#btnShowMap').click(function () {

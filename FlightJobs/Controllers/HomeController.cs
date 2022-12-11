@@ -379,7 +379,7 @@ namespace FlightJobs.Controllers
 
             if (newPilotBalance <= 0)
             {
-                var msg = $"Insufficient balance to make a transfer. Your current bank balance is: {string.Format("{0:C}", uStatistics.BankBalance)}";
+                var msg = $"Insufficient balance to make a transfer. Your current bank balance is: {string.Format("F{0:C}", uStatistics.BankBalance)}";
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest, msg);
             }
 

@@ -1,0 +1,29 @@
+﻿
+@{
+    ViewBag.Title = "Unsubscribe";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row" style="text-align: center; margin: 100px 5px 100px 5px; ">
+    @if (TempData["ConfirmedMessage"] == null)
+    {
+        <p>
+            <h4><b>Do you confirm the unsubscribe on FlightJobs emails? </b></h4>
+        </p>
+        <p>
+            (You can subscribe again at any time on the website)
+        </p>
+        <br /><br /><br /><br />
+        <button type="button" class="btn btn btn-info" style="margin-right:20px" title="Confirm Unsubscribe" onclick="location.href='@Url.Action("Unsubscribe")'">
+            Confirm
+        </button>
+    }
+    else
+    {
+        <p>
+            <h3 style="color:forestgreen;"><b>You unsubscribed with success. </b></h3>
+        </p>
+    }
+
+
+</div>

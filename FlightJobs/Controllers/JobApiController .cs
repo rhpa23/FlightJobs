@@ -480,9 +480,9 @@ namespace FlightJobs.Controllers
                     sb.Append($"<p><a href='https://www.flight-jobs.net' target='_blank'><img src='http://flight-jobs.net/Content/img/FlightJobsLogo0001.png' /></a></p><hr />");
                     sb.Append($"<p>Hi captain {pilotHired.User.UserName},</p>");
                     sb.Append("<p>FlightJobs is sending you this email because you have defined to be advised when your airline generates a Debt since one Job was finished.</p>");
-                    sb.Append("<p>You can disable this email warning any time unchecking the box in the Airline Balance Situation popup window.</p>");
+                    sb.Append("<p>You can disable this email warning any time unchecking the box in the Airline Balance Situation popup window or click <a href='https://www.flight-jobs.net/Profile/EmailUnsubscribeView' target='_blank'>unsubscribe</a> </p>");
                     sb.Append("<h3>A job at the airline generated bills to pay.</h3>");
-                    sb.Append($"<h4><p>The debt of {airline.Name} is <font color=\"red\"> {string.Format("{0:C}", airline.DebtValue)} </font> at the moment. </p></h4>");
+                    sb.Append($"<h4><p>The debt of {airline.Name} is <font color=\"red\"> {string.Format("F{0:C}", airline.DebtValue)} </font> at the moment. </p></h4>");
                     sb.Append($"<h4><p>The maturity date for the debt is <font color=\"red\"> {airline.DebtMaturityDate.ToShortDateString()} </font> </p></h4>");
                     sb.Append($"<p>If the owner does not pay bills before the due date the airline will not score, and the Jobs will generate more debts which could lead to the bankruptcy of the company.</p>  <hr />");
 
@@ -499,6 +499,8 @@ namespace FlightJobs.Controllers
                     sb.Append($"<li>Challenge: <b>{job.IsChallenge.ToString()} </b></li></ul><hr />");
 
                     sb.Append($"<p>Thanks for use FlightJobs.</p>");
+                    sb.Append($"<p>If you prefer not receive this type of communication from Flight-Jobs.net, please <a href='https://www.flight-jobs.net/Profile/EmailUnsubscribeView' target='_blank'>click here to unsubscribe</a>.</p>");
+
                     sb.Append($"<p>FlightJobs is free. If you like it, please consider making a donation in PayPal.</p>");
                     sb.Append($"https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=44VG35XYRJUCW&source=url");
                     sb.Append($"<p>https://www.flight-jobs.net</p>");

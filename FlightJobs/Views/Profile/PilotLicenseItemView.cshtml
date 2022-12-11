@@ -31,7 +31,7 @@
             </div>
             <div class="row">
                 <div class="col-sm-9">
-                    <span style="font-weight:bold; font-size:medium;">@string.Format("{0:C}", item.PilotLicenseItem.Price)</span>
+                    <span style="font-weight:bold; font-size:medium;">@string.Format("F{0:C}", item.PilotLicenseItem.Price)</span>
                     @if (!item.IsBought)
                     {
                     <button id="buy-license-item-button-@item.PilotLicenseItem.Id" onclick="buyLicenseItem(@item.PilotLicenseItem.Id)" class="btn btn-info btn-xs">Buy</button>

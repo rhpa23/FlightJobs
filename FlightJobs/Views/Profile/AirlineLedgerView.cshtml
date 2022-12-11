@@ -81,7 +81,7 @@
                             @Html.DisplayFor(modelItem => item.Job.UsedFuelWeightDisplay) @item.WeightUnit
                         </td>
                         <td>
-                            @string.Format("{0:C}", item.FuelPrice)
+                            @string.Format("F{0:C}", item.FuelPrice)
                             @if (item.Job.AviationType > 1) {
                                 <div class="smaller-text">(Jet-A)</div> 
                             } else {
@@ -89,31 +89,31 @@
                             }
                         </td>
                         <td class="debit">
-                            @string.Format("{0:C}", item.FuelCost)
+                            @string.Format("F{0:C}", item.FuelCost)
                         </td>
                         <td>
-                            @string.Format("{0:C}", item.FuelCostPerNM)
+                            @string.Format("F{0:C}", item.FuelCostPerNM)
                         </td>
                         <td class="debit">
-                            @string.Format("{0:C}", item.GroundCrewCost)
+                            @string.Format("F{0:C}", item.GroundCrewCost)
                         </td>
                         <td class="debit">
-                            @string.Format("{0:C}", item.FlightCrewCost)
+                            @string.Format("F{0:C}", item.FlightCrewCost)
                         </td>
                         <td class="debit">
-                            @string.Format("{0:C}", item.FlightAttendantCost)
+                            @string.Format("F{0:C}", item.FlightAttendantCost)
                         </td>
                         <td class="debit">
-                            @string.Format("{0:C}", item.TotalCrewCostLabor)
+                            @string.Format("F{0:C}", item.TotalCrewCostLabor)
                         </td>
                         <td class="debit">
-                            @string.Format("{0:C}", item.TotalFlightCost)
+                            @string.Format("F{0:C}", item.TotalFlightCost)
                         </td>
                         <td>
-                            @string.Format("{0:C}", item.RevenueEarned)
+                            @string.Format("F{0:C}", item.RevenueEarned)
                         </td>
                         <td class="credit">
-                            @string.Format("{0:C}", item.FlightIncome)
+                            @string.Format("F{0:C}", item.FlightIncome)
                         </td>
                         <td style="text-align:center;">
                             @if (!string.IsNullOrEmpty(item.Job.VideoUrl))

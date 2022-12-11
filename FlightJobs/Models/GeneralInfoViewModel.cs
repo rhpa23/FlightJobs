@@ -16,7 +16,7 @@ namespace FlightJobs.Models
 
         public long JobsActive { get; set; }
 
-        [DisplayFormat(DataFormatString = "{0:C0}")]
+        [DisplayFormat(DataFormatString = "F{0:C0}")]
         public long UsersBankBalance { get; set; }
 
         public string JobsDoneCurrentMonth { get; set; }

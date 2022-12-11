@@ -202,7 +202,7 @@
                             <span style="font-size:medium;border:none;">Bank balance:</span>
                             <br />
                             <span style="border:none;color:@cashTextColor">
-                                @string.Format("{0:C}", Model.Statistics.BankBalance)
+                                @string.Format("F{0:C}", Model.Statistics.BankBalance)
                             </span>
                             <br />
                             <img id="transfer-balance-loading-img" src="~/Content/img/loading.gif" style="width:20px; display:none;" />
@@ -283,7 +283,7 @@
                                 <img style="width:80px; border:none;" src="~/Content/img/cash-001.png" /><br />
                                 <span style="font-size:medium;border:none;">Bank balance:</span><br />
                                 <div style="font-size:smaller;line-height: 12px;border:none;">
-                                    @string.Format("{0:C}", @Model.Statistics.Airline.BankBalance)
+                                    @string.Format("F{0:C}", @Model.Statistics.Airline.BankBalance)
                                 </div>
                                 <img id="ledger-loading-img" src="~/Content/img/loading.gif" style="width:20px; display:none;" />
                             </div>
@@ -300,7 +300,7 @@
                                 <img style="width:80px;border:none;" src="~/Content/img/debt-001.png" /><br />
                                 <span style="font-size:medium;border:none;">Debt:</span><br />
                                 <span style="font-size:small;border:none; color:@debtTextColor">
-                                    @string.Format("{0:C}", @Model.Statistics.Airline.DebtValue)
+                                    @string.Format("F{0:C}", @Model.Statistics.Airline.DebtValue)
                                 </span>
                                 <br />
                                 <img id="airline-info-loading-img" src="~/Content/img/loading.gif" style="width:20px; display:none;" />
@@ -569,7 +569,7 @@
                                 <div class="row">@Model.Challenge.PayloadDisplay @Model.Challenge.WeightUnit</div>
                             </div>
                             <div class="col-sm-1 challenge-col">
-                                <div class="row"> @string.Format("{0:C}", Model.Challenge.Pay)</div>
+                                <div class="row"> @string.Format("F{0:C}", Model.Challenge.Pay)</div>
                             </div>
                         </div>
                     </a>
@@ -659,7 +659,7 @@
                     <div class="modal-footer">
                         <div class="pull-left">
                             <strong>Your bank balance:</strong>
-                            <span id="license-user-bank-balance" class="@(Model.Statistics.BankBalance < 0 ? "negativeBankBalance" : "")">@string.Format("{0:C}", Model.Statistics.BankBalance)</span>
+                            <span id="license-user-bank-balance" class="@(Model.Statistics.BankBalance < 0 ? "negativeBankBalance" : "")">@string.Format("F{0:C}", Model.Statistics.BankBalance)</span>
                         </div>
                         <button type="button" onclick="@("window.location.href='" + @Url.Action("Index") + "'");" class="btn btn-default" data-dismiss="modal">Close</button>
                     </div>

@@ -22,6 +22,8 @@ namespace FlightJobs.Controllers
 
         internal long PaxWeight = 84;
 
+        public static string SIMBRIEF_USER_ID_COOKIE = "simbrief.id";
+
         public int CalcDistance(string departure, string arrival)
         {
             var departureInfo = AirportDatabaseFile.FindAirportInfo(departure);

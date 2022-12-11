@@ -95,7 +95,7 @@
                 <div class="row">
                     <div align="left" class="col-md-8">
                         <ul style="color:white; margin-bottom:0px;">
-                            <li><strong>Debt value: </strong> @string.Format("{0:C}", Model.Airline.DebtValue)</li>
+                            <li><strong>Debt value: </strong> @string.Format("F{0:C}", Model.Airline.DebtValue)</li>
                             <li><strong>Debt maturity date: </strong> @Model.Airline.DebtMaturityDate.ToShortDateString()</li>
                         </ul>
                     </div>

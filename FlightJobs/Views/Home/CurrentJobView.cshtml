@@ -54,7 +54,7 @@
         <div class="row">
             <div class="col-sm-6">
                 <div class="row div-row">
-                    <div class="col-sm-2 icao-label" style="text-align:left;">
+                    <div class="col-sm-2 icao-label" style="text-align:left;width: auto !important;">
                         <strong>@Model.DepartureICAO</strong>
                     </div>
                     <div class="col-sm-2 div-route-line"></div>
@@ -75,7 +75,7 @@
                     <div class="col-sm-11 div-route-line-result"></div>
                 </div>
                 <div class="row">
-                    <div class="col-sm-10 payment">Payment: <strong> @string.Format("{0:C}", Model.Pay)</strong></div>
+                    <div class="col-sm-10 payment">Payment: <strong> @string.Format("F{0:C}", Model.Pay)</strong></div>
                 </div>
             </div>
             <div class="col-sm-5">

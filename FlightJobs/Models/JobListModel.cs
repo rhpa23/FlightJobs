@@ -23,7 +23,7 @@ namespace FlightJobs.Models
         public string PaxSummary { get; set; }
         public string CargoSummary { get; set; }
 
-        [DisplayFormat(DataFormatString = "{0:C0}")]
+        [DisplayFormat(DataFormatString = "F{0:C0}")]
         public long Pay { get; set; }
         public bool FirstClass { get; set; }
 

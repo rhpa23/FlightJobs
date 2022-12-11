@@ -42,7 +42,7 @@
                         @Html.DisplayFor(modelItem => item.GroundCrewDiscount)
                     </td>
                     <td class="text-center">
-                        @string.Format("{0:C}", item.Price)
+                        @string.Format("F{0:C}", item.Price)
                     </td>
                     <td>
                         <button id="btnHire" onclick="btnHireClickEvent('@item.Icao')" class="btn btn-info btn-xs" style="margin:0px;">Hire</button>
@@ -63,7 +63,7 @@
                 <div class="modal-body" height:auto;">
                     <ul>
                         <li>Only the owner has the permition to hire a FOB.</li>
-                        <li>@Model.CurrentAirline.Name has @string.Format("{0:C}", Model.CurrentAirline.BankBalance) of bank balance to hire FBOs.</li>
+                        <li>@Model.CurrentAirline.Name has @string.Format("F{0:C}", Model.CurrentAirline.BankBalance) of bank balance to hire FBOs.</li>
                     </ul>
                         
                     <p> Do you really want to hire this FOB?</p>

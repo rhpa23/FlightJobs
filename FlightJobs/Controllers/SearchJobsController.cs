@@ -9,6 +9,8 @@ using System.Web.Mvc;
 using PagedList;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Identity.Owin;
+using System.Net.Http;
+using System.Net.Http.Headers;
 
 namespace FlightJobs.Controllers
 {
@@ -196,7 +198,7 @@ namespace FlightJobs.Controllers
             //    JobsList = jobList,
             //    TotalPax = totalPax,
             //    TotalCargo = totalCargo,
-            //    TotalPay = string.Format("{0:C}", totalPay),
+            //    TotalPay = string.Format("F{0:C}", totalPay),
             //    TotalPayload = string.Format("{0:G}", (totalPax * PaxWeight) + totalCargo)
             //};
 
@@ -559,5 +561,30 @@ namespace FlightJobs.Controllers
             var randomJob = query.OrderBy(x => x.Id).Skip(index).FirstOrDefault();
             return Json(randomJob != null ? randomJob : new JobDbModel(), JsonRequestBehavior.AllowGet);
         }
+
+        public async Task<JsonResult> SimbriefLoadAsync(string simbriefId)
+        {
+            var url = $"https://www.simbrief.com/api/xml.fetcher.php?username={simbriefId}&json=1";
+
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri(url);
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                HttpResponseMessage response = await client.GetAsync(url);
+                if (response.IsSuccessStatusCode)
+                {
+                    string jsondata = await response.Content.ReadAsStringAsync();
+                    return Json(jsondata, "application/json", JsonRequestBehavior.AllowGet);
+                }
+                return Json("", JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        //private async string SimbriefLoadAsync(string simbriefId)
+        //{
+
+        //}
     }
 }

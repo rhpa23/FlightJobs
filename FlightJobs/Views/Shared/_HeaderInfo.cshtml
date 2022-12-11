@@ -9,7 +9,7 @@
 </style>
 @if (Model != null)
 {
-    <div class="tag"  style="padding-top: 10px;">@Html.DisplayNameFor(model => model.BankBalance): @string.Format("{0:C}", Model.BankBalance) </div>
+    <div class="tag"  style="padding-top: 10px;">@Html.DisplayNameFor(model => model.BankBalance): @string.Format("F{0:C}", Model.BankBalance) </div>
     <div class="tag">@Html.DisplayNameFor(model => model.PilotScore):  @Html.DisplayFor(model => model.PilotScore)</div>
 }
 

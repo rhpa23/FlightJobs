@@ -6,8 +6,8 @@
             <div class="col-md-7">
                 @Html.HiddenFor(model => model.Statistics.BankBalance)
                 @Html.HiddenFor(model => model.Statistics.Airline.BankBalance)
-                <div style="font-size:medium;">Pilot bank balance: @string.Format("{0:C}", Model.Statistics.BankBalance)</div>
-                <div style="font-size:medium;">Bank costs and tax (15%): @string.Format("{0:C}", (Model.Statistics.BankBalance * 0.15)) </div>
+                <div style="font-size:medium;">Pilot bank balance: @string.Format("F{0:C}", Model.Statistics.BankBalance)</div>
+                <div style="font-size:medium;">Bank costs and tax (15%): @string.Format("F{0:C}", (Model.Statistics.BankBalance * 0.15)) </div>
             </div>
             <div class="col-md-3" style="padding-right:0px;">
                 Transfer percent
@@ -23,7 +23,7 @@
             <div class="col-md-7">
                 <div style="font-size:medium;">
                     Pilot bank balance projection:
-                    <span id="pilot_projection"> @string.Format("{0:C}", ((Model.Statistics.BankBalance - (Model.Statistics.BankBalance * (Model.PilotTransferPercent / 100)))))</span>
+                    <span id="pilot_projection"> @string.Format("F{0:C}", ((Model.Statistics.BankBalance - (Model.Statistics.BankBalance * (Model.PilotTransferPercent / 100)))))</span>
                 </div>
             </div>
         </div>
@@ -31,7 +31,7 @@
             <div class="col-md-7">
                 <div style="font-size:medium;">
                     Airline financial projection:
-                    <span id="airline_projection"> @string.Format("{0:C}", ((Model.Statistics.BankBalance - (Model.Statistics.BankBalance * 0.15)) + Model.Statistics.Airline.BankBalance))</span>
+                    <span id="airline_projection"> @string.Format("F{0:C}", ((Model.Statistics.BankBalance - (Model.Statistics.BankBalance * 0.15)) + Model.Statistics.Airline.BankBalance))</span>
                 </div>
             </div>
         </div>
@@ -78,7 +78,7 @@
             neg = true;
             total = Math.abs(total);
         }
-        return (neg ? "-$" : '$') + parseFloat(total, 10).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString();
+        return (neg ? "-F$" : 'F$') + parseFloat(total, 10).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString();
     }
 
     function calcValues() {

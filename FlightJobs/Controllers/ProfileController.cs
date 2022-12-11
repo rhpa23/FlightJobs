@@ -297,7 +297,7 @@ namespace FlightJobs.Controllers
             }
             if (uStatistics.BankBalance <= 0)
             {
-                var msg = $"Insufficient balance to make a transfer. Your current bank balance is: {string.Format("{0:C}", uStatistics.BankBalance)}";
+                var msg = $"Insufficient balance to make a transfer. Your current bank balance is: {string.Format("F{0:C}", uStatistics.BankBalance)}";
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest, msg);
             }
 
@@ -359,7 +359,7 @@ namespace FlightJobs.Controllers
                 }
                 dbContext.SaveChanges();
 
-                return Json(string.Format("{0:C}", uStatistics.BankBalance), JsonRequestBehavior.AllowGet);
+                return Json(string.Format("F{0:C}", uStatistics.BankBalance), JsonRequestBehavior.AllowGet);
             }
             return Json(null, JsonRequestBehavior.AllowGet);
         }
@@ -596,6 +596,31 @@ namespace FlightJobs.Controllers
             userStatistics.SendAirlineBillsWarning = cked;
             userStatistics.AirlineBillsWarningSent = false;
             dbContext.SaveChanges();
+        }
+
+        public ActionResult EmailUnsubscribeView()
+        {
+            var dbContext = new ApplicationDbContext();
+            var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
+            if (user == null || user.Email == AccountController.GuestEmail)
+            {
+                return RedirectToAction("Login", "Account", new { returnUrl = @Url.Action("EmailUnsubscribeView", "Profile") });
+            }
+
+            return View();
+        }
+
+        public ActionResult Unsubscribe()
+        {
+            var dbContext = new ApplicationDbContext();
+            var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
+            var userStatistics = dbContext.StatisticsDbModels.FirstOrDefault(s => s.User.Id == user.Id);
+
+            userStatistics.SendAirlineBillsWarning = false;
+            userStatistics.SendLicenseWarning = false;
+            dbContext.SaveChanges();
+            TempData["ConfirmedMessage"] = "OK";
+            return RedirectToAction("EmailUnsubscribeView");
         }
     }
 }

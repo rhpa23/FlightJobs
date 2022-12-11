@@ -46,6 +46,7 @@ namespace FlightJobs.Schedule
                     sb.Append($"<h4><p>There are {requirements.Count()} requirement(s) that will expire soon. </p></h4>");
                     sb.Append($"<p>If the pilot License expires the next Jobs will not score and paid until you renew your license. Go to the Profile/License form and check your license requirements.</p>  <hr />");
                     sb.Append($"<p>Thanks for use FlightJobs.</p>");
+                    sb.Append($"<p>If you prefer not receive this type of communication from Flight-Jobs.net, please <a href='https://www.flight-jobs.net/Profile/EmailUnsubscribeView' target='_blank'>click here to unsubscribe</a>.</p>");
                     sb.Append($"<p>FlightJobs is free. If you like it, please consider making a donation in PayPal.</p>");
                     sb.Append($"https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=44VG35XYRJUCW&source=url");
                     sb.Append($"<p>https://www.flight-jobs.net</p>");

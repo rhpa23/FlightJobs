@@ -62,7 +62,7 @@
                             @Html.DisplayFor(modelItem => item.Cargo)
                         </td>
                         <td class="payCol">
-                            @string.Format("{0:C}", item.Pay)
+                            @string.Format("F{0:C}", item.Pay)
                         </td>
                         @if (item.IdJob > 0)
                         {

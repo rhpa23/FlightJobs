@@ -3,7 +3,7 @@
 
 <div style="font-size:xx-small; width:200px;">
     <b>Users: </b> @Model.UsersCount<br />
-    <b>Users bank balance: </b> @string.Format("{0:C}", Model.UsersBankBalance)  <br />
+    <b>Users bank balance: </b> @string.Format("F{0:C}", Model.UsersBankBalance)  <br />
     <b>Jobs in progress: </b> @Model.JobsInProgress<br />
     <b>Jobs done: </b> @Model.JobsDone<br />
     <b>Active Jobs: </b> @Model.JobsActive<br />
