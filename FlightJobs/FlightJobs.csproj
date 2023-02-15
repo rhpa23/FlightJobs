@@ -49,8 +49,8 @@
     <BaseAddress>7340032</BaseAddress>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BouncyCastle.Crypto, Version=1.8.3.0, Culture=neutral, PublicKeyToken=0e99375e54769942">
-      <HintPath>..\packages\BouncyCastle.1.8.3.1\lib\BouncyCastle.Crypto.dll</HintPath>
+    <Reference Include="BouncyCastle.Crypto, Version=1.8.5.0, Culture=neutral, PublicKeyToken=0e99375e54769942">
+      <HintPath>..\packages\BouncyCastle.1.8.5\lib\BouncyCastle.Crypto.dll</HintPath>
     </Reference>
     <Reference Include="Chart.Mvc, Version=1.0.0.2, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Chart.Mvc.1.0.0.2\lib\net45\Chart.Mvc.dll</HintPath>
@@ -64,12 +64,21 @@
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
-    <Reference Include="Google.Protobuf, Version=3.6.1.0, Culture=neutral, PublicKeyToken=a7d26565bac4d604, processorArchitecture=MSIL">
-      <HintPath>..\packages\Google.Protobuf.3.6.1\lib\net45\Google.Protobuf.dll</HintPath>
+    <Reference Include="Google.Protobuf, Version=3.14.0.0, Culture=neutral, PublicKeyToken=a7d26565bac4d604, processorArchitecture=MSIL">
+      <HintPath>..\packages\Google.Protobuf.3.14.0\lib\net45\Google.Protobuf.dll</HintPath>
+    </Reference>
+    <Reference Include="K4os.Compression.LZ4, Version=1.2.6.0, Culture=neutral, PublicKeyToken=2186fa9121ef231d, processorArchitecture=MSIL">
+      <HintPath>..\packages\K4os.Compression.LZ4.1.2.6\lib\net45\K4os.Compression.LZ4.dll</HintPath>
+    </Reference>
+    <Reference Include="K4os.Compression.LZ4.Streams, Version=1.2.6.0, Culture=neutral, PublicKeyToken=2186fa9121ef231d, processorArchitecture=MSIL">
+      <HintPath>..\packages\K4os.Compression.LZ4.Streams.1.2.6\lib\net45\K4os.Compression.LZ4.Streams.dll</HintPath>
+    </Reference>
+    <Reference Include="K4os.Hash.xxHash, Version=1.0.6.0, Culture=neutral, PublicKeyToken=32cd54395057cec3, processorArchitecture=MSIL">
+      <HintPath>..\packages\K4os.Hash.xxHash.1.0.6\lib\net45\K4os.Hash.xxHash.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="MySql.Data, Version=8.0.18.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
-      <HintPath>..\packages\MySql.Data.8.0.18\lib\net452\MySql.Data.dll</HintPath>
+    <Reference Include="MySql.Data, Version=8.0.28.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <HintPath>..\packages\MySql.Data.8.0.28\lib\net452\MySql.Data.dll</HintPath>
     </Reference>
     <Reference Include="MySql.Data.EntityFramework, Version=8.0.11.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
       <HintPath>..\packages\MySql.Data.EntityFramework.8.0.11\lib\net452\MySql.Data.EntityFramework.dll</HintPath>
@@ -91,8 +100,8 @@
       <HintPath>..\packages\SSH.NET.2016.1.0\lib\net40\Renci.SshNet.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Buffers, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Buffers.4.4.0\lib\netstandard1.1\System.Buffers.dll</HintPath>
+    <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Buffers.4.5.1\lib\netstandard1.1\System.Buffers.dll</HintPath>
     </Reference>
     <Reference Include="System.ComponentModel" />
     <Reference Include="System.Configuration.Install" />
@@ -101,14 +110,14 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Drawing.Design" />
     <Reference Include="System.Management" />
-    <Reference Include="System.Memory, Version=4.0.1.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Memory.4.5.0\lib\netstandard1.1\System.Memory.dll</HintPath>
+    <Reference Include="System.Memory, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Memory.4.5.4\lib\netstandard1.1\System.Memory.dll</HintPath>
     </Reference>
-    <Reference Include="System.Net.Http.Formatting, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
+    <Reference Include="System.Net.Http.Formatting, Version=5.2.9.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.9\lib\net45\System.Net.Http.Formatting.dll</HintPath>
     </Reference>
-    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.5.0\lib\netstandard1.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.5.0.0\lib\net45\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
     </Reference>
     <Reference Include="System.Runtime.Remoting" />
     <Reference Include="System.Security" />
@@ -122,8 +131,8 @@
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Web.Http, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.5.2.3\lib\net45\System.Web.Http.dll</HintPath>
+    <Reference Include="System.Web.Http, Version=5.2.9.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.5.2.9\lib\net45\System.Web.Http.dll</HintPath>
     </Reference>
     <Reference Include="System.Web.Http.WebHost, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.WebApi.WebHost.5.2.3\lib\net45\System.Web.Http.WebHost.dll</HintPath>
@@ -171,6 +180,9 @@
       <Private>True</Private>
       <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
     </Reference>
+    <Reference Include="Ubiety.Dns.Core, Version=2.2.1.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <HintPath>..\packages\MySql.Data.8.0.28\lib\net452\Ubiety.Dns.Core.dll</HintPath>
+    </Reference>
     <Reference Include="WebGrease">
       <Private>True</Private>
       <HintPath>..\packages\WebGrease.1.5.2\lib\WebGrease.dll</HintPath>
@@ -178,6 +190,9 @@
     <Reference Include="Antlr3.Runtime">
       <Private>True</Private>
       <HintPath>..\packages\Antlr.3.4.1.9004\lib\Antlr3.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="ZstdNet, Version=1.4.5.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <HintPath>..\packages\MySql.Data.8.0.28\lib\net452\ZstdNet.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -259,188 +274,27 @@
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\ProfileController.cs" />
     <Compile Include="Controllers\SearchJobsController.cs" />
+    <Compile Include="Controllers\UserApiController.cs" />
+    <Compile Include="DTOs\UserSettingsTO.cs" />
     <Compile Include="Enums\ChallengeTypeEnum.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helpers\HtmlHelpers.cs" />
-    <Compile Include="Migrations\201710111859366_InitialCreate.cs" />
-    <Compile Include="Migrations\201710111859366_InitialCreate.Designer.cs">
-      <DependentUpon>201710111859366_InitialCreate.cs</DependentUpon>
+    <Compile Include="Migrations\202212120048290_Initial.cs" />
+    <Compile Include="Migrations\202212120048290_Initial.Designer.cs">
+      <DependentUpon>202212120048290_Initial.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201710121103277_AddUserOnJobs.cs" />
-    <Compile Include="Migrations\201710121103277_AddUserOnJobs.Designer.cs">
-      <DependentUpon>201710121103277_AddUserOnJobs.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201710121110133_RemoveUserID.cs" />
-    <Compile Include="Migrations\201710121110133_RemoveUserID.Designer.cs">
-      <DependentUpon>201710121110133_RemoveUserID.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201710121226396_AddIsdoneToJobs.cs" />
-    <Compile Include="Migrations\201710121226396_AddIsdoneToJobs.Designer.cs">
-      <DependentUpon>201710121226396_AddIsdoneToJobs.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201710121232475_AddIsActivatedToJobs.cs" />
-    <Compile Include="Migrations\201710121232475_AddIsActivatedToJobs.Designer.cs">
-      <DependentUpon>201710121232475_AddIsActivatedToJobs.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201710121544120_AddStatisticsModel.cs" />
-    <Compile Include="Migrations\201710121544120_AddStatisticsModel.Designer.cs">
-      <DependentUpon>201710121544120_AddStatisticsModel.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201710192151168_AddedInProgressProp.cs" />
-    <Compile Include="Migrations\201710192151168_AddedInProgressProp.Designer.cs">
-      <DependentUpon>201710192151168_AddedInProgressProp.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201710192206169_TimeModelProps.cs" />
-    <Compile Include="Migrations\201710192206169_TimeModelProps.Designer.cs">
-      <DependentUpon>201710192206169_TimeModelProps.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201710211338573_description plane.cs" />
-    <Compile Include="Migrations\201710211338573_description plane.Designer.cs">
-      <DependentUpon>201710211338573_description plane.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201710211653326_AddAirlineCertification.cs" />
-    <Compile Include="Migrations\201710211653326_AddAirlineCertification.Designer.cs">
-      <DependentUpon>201710211653326_AddAirlineCertification.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201710211655439_ListCertificates.cs" />
-    <Compile Include="Migrations\201710211655439_ListCertificates.Designer.cs">
-      <DependentUpon>201710211655439_ListCertificates.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201710211659406_RemoveListCertificates.cs" />
-    <Compile Include="Migrations\201710211659406_RemoveListCertificates.Designer.cs">
-      <DependentUpon>201710211659406_RemoveListCertificates.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201710211703498_statisticsLogo.cs" />
-    <Compile Include="Migrations\201710211703498_statisticsLogo.Designer.cs">
-      <DependentUpon>201710211703498_statisticsLogo.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201710211900261_scoreBalanceToLong.cs" />
-    <Compile Include="Migrations\201710211900261_scoreBalanceToLong.Designer.cs">
-      <DependentUpon>201710211900261_scoreBalanceToLong.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201710212156563_AirlineCertificate.cs" />
-    <Compile Include="Migrations\201710212156563_AirlineCertificate.Designer.cs">
-      <DependentUpon>201710212156563_AirlineCertificate.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201710212253322_StatisticCertificatesDbModel.cs" />
-    <Compile Include="Migrations\201710212253322_StatisticCertificatesDbModel.Designer.cs">
-      <DependentUpon>201710212253322_StatisticCertificatesDbModel.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201710212255227_RemoveStatiticsID.cs" />
-    <Compile Include="Migrations\201710212255227_RemoveStatiticsID.Designer.cs">
-      <DependentUpon>201710212255227_RemoveStatiticsID.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201710212256413_RemoveCountryFroCertificates.cs" />
-    <Compile Include="Migrations\201710212256413_RemoveCountryFroCertificates.Designer.cs">
-      <DependentUpon>201710212256413_RemoveCountryFroCertificates.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201710252207451_UsedFuelWeight.cs" />
-    <Compile Include="Migrations\201710252207451_UsedFuelWeight.Designer.cs">
-      <DependentUpon>201710252207451_UsedFuelWeight.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201802151834268_AirlineProperties.cs" />
-    <Compile Include="Migrations\201802151834268_AirlineProperties.Designer.cs">
-      <DependentUpon>201802151834268_AirlineProperties.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201804071202563_AddAlternative.cs" />
-    <Compile Include="Migrations\201804071202563_AddAlternative.Designer.cs">
-      <DependentUpon>201804071202563_AddAlternative.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201804190057188_PaxWeightInJob.cs" />
-    <Compile Include="Migrations\201804190057188_PaxWeightInJob.Designer.cs">
-      <DependentUpon>201804190057188_PaxWeightInJob.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201804211505523_AirlineOwnerId.cs" />
-    <Compile Include="Migrations\201804211505523_AirlineOwnerId.Designer.cs">
-      <DependentUpon>201804211505523_AirlineOwnerId.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201804262150042_AirlineDebt.cs" />
-    <Compile Include="Migrations\201804262150042_AirlineDebt.Designer.cs">
-      <DependentUpon>201804262150042_AirlineDebt.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201805061205133_JobAirlineModel.cs" />
-    <Compile Include="Migrations\201805061205133_JobAirlineModel.Designer.cs">
-      <DependentUpon>201805061205133_JobAirlineModel.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201805221630222_PilotLicenseExpenses.cs" />
-    <Compile Include="Migrations\201805221630222_PilotLicenseExpenses.Designer.cs">
-      <DependentUpon>201805221630222_PilotLicenseExpenses.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201805242150018_OverdueProcessed.cs" />
-    <Compile Include="Migrations\201805242150018_OverdueProcessed.Designer.cs">
-      <DependentUpon>201805242150018_OverdueProcessed.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201805262343110_AirlineDescription.cs" />
-    <Compile Include="Migrations\201805262343110_AirlineDescription.Designer.cs">
-      <DependentUpon>201805262343110_AirlineDescription.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201806011423450_AviationType.cs" />
-    <Compile Include="Migrations\201806011423450_AviationType.Designer.cs">
-      <DependentUpon>201806011423450_AviationType.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201807062204491_AirlineFbo.cs" />
-    <Compile Include="Migrations\201807062204491_AirlineFbo.Designer.cs">
-      <DependentUpon>201807062204491_AirlineFbo.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201807062232255_AirlineFboNotMapped.cs" />
-    <Compile Include="Migrations\201807062232255_AirlineFboNotMapped.Designer.cs">
-      <DependentUpon>201807062232255_AirlineFboNotMapped.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201807081344186_ChangeDiscountToDouble.cs" />
-    <Compile Include="Migrations\201807081344186_ChangeDiscountToDouble.Designer.cs">
-      <DependentUpon>201807081344186_ChangeDiscountToDouble.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201809231652047_JobVideo.cs" />
-    <Compile Include="Migrations\201809231652047_JobVideo.Designer.cs">
-      <DependentUpon>201809231652047_JobVideo.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201809231718214_JobVideoDelRequired.cs" />
-    <Compile Include="Migrations\201809231718214_JobVideoDelRequired.Designer.cs">
-      <DependentUpon>201809231718214_JobVideoDelRequired.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201812021457050_AddSendEmailWarning.cs" />
-    <Compile Include="Migrations\201812021457050_AddSendEmailWarning.Designer.cs">
-      <DependentUpon>201812021457050_AddSendEmailWarning.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201812022003583_AddWarningSent.cs" />
-    <Compile Include="Migrations\201812022003583_AddWarningSent.Designer.cs">
-      <DependentUpon>201812022003583_AddWarningSent.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201812221859450_CustomPlaneCapacity.cs" />
-    <Compile Include="Migrations\201812221859450_CustomPlaneCapacity.Designer.cs">
-      <DependentUpon>201812221859450_CustomPlaneCapacity.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201812221933029_CustomPlaneCapacityFix01.cs" />
-    <Compile Include="Migrations\201812221933029_CustomPlaneCapacityFix01.Designer.cs">
-      <DependentUpon>201812221933029_CustomPlaneCapacityFix01.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201908181309579_Challenger.cs" />
-    <Compile Include="Migrations\201908181309579_Challenger.Designer.cs">
-      <DependentUpon>201908181309579_Challenger.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201912032010344_mysql.cs" />
-    <Compile Include="Migrations\201912032010344_mysql.Designer.cs">
-      <DependentUpon>201912032010344_mysql.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202005081341260_UseCustomPlaneCapacity.cs" />
-    <Compile Include="Migrations\202005081341260_UseCustomPlaneCapacity.Designer.cs">
-      <DependentUpon>202005081341260_UseCustomPlaneCapacity.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202009051205157_WeightUnit.cs" />
-    <Compile Include="Migrations\202009051205157_WeightUnit.Designer.cs">
-      <DependentUpon>202009051205157_WeightUnit.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202208281325560_Add-CustomPaxWeight.cs" />
-    <Compile Include="Migrations\202208281325560_Add-CustomPaxWeight.Designer.cs">
-      <DependentUpon>202208281325560_Add-CustomPaxWeight.cs</DependentUpon>
+    <Compile Include="Migrations\202301151530296_MsSqlServerAjusts.cs" />
+    <Compile Include="Migrations\202301151530296_MsSqlServerAjusts.Designer.cs">
+      <DependentUpon>202301151530296_MsSqlServerAjusts.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\AirlineFboView.cs" />
     <Compile Include="Models\AirlineFboDbModel.cs" />
     <Compile Include="Models\AirlineViewModel.cs" />
+    <Compile Include="DTOs\UserSimpleTO.cs" />
     <Compile Include="Models\CertificateViewModel.cs" />
     <Compile Include="Models\ChallengeViewModel.cs" />
     <Compile Include="Models\ChartViewModel.cs" />
@@ -890,137 +744,7 @@
     <Content Include="Views\Home\CurrentJobView.cshtml" />
     <Content Include="Views\Airlines\AirlinePilotsHiredView.cshtml" />
     <Content Include="Views\Profile\EmailUnsubscribeView.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Migrations\201710111859366_InitialCreate.resx">
-      <DependentUpon>201710111859366_InitialCreate.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201710121103277_AddUserOnJobs.resx">
-      <DependentUpon>201710121103277_AddUserOnJobs.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201710121110133_RemoveUserID.resx">
-      <DependentUpon>201710121110133_RemoveUserID.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201710121226396_AddIsdoneToJobs.resx">
-      <DependentUpon>201710121226396_AddIsdoneToJobs.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201710121232475_AddIsActivatedToJobs.resx">
-      <DependentUpon>201710121232475_AddIsActivatedToJobs.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201710121544120_AddStatisticsModel.resx">
-      <DependentUpon>201710121544120_AddStatisticsModel.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201710192151168_AddedInProgressProp.resx">
-      <DependentUpon>201710192151168_AddedInProgressProp.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201710192206169_TimeModelProps.resx">
-      <DependentUpon>201710192206169_TimeModelProps.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201710211338573_description plane.resx">
-      <DependentUpon>201710211338573_description plane.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201710211653326_AddAirlineCertification.resx">
-      <DependentUpon>201710211653326_AddAirlineCertification.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201710211655439_ListCertificates.resx">
-      <DependentUpon>201710211655439_ListCertificates.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201710211659406_RemoveListCertificates.resx">
-      <DependentUpon>201710211659406_RemoveListCertificates.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201710211703498_statisticsLogo.resx">
-      <DependentUpon>201710211703498_statisticsLogo.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201710211900261_scoreBalanceToLong.resx">
-      <DependentUpon>201710211900261_scoreBalanceToLong.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201710212156563_AirlineCertificate.resx">
-      <DependentUpon>201710212156563_AirlineCertificate.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201710212253322_StatisticCertificatesDbModel.resx">
-      <DependentUpon>201710212253322_StatisticCertificatesDbModel.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201710212255227_RemoveStatiticsID.resx">
-      <DependentUpon>201710212255227_RemoveStatiticsID.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201710212256413_RemoveCountryFroCertificates.resx">
-      <DependentUpon>201710212256413_RemoveCountryFroCertificates.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201710252207451_UsedFuelWeight.resx">
-      <DependentUpon>201710252207451_UsedFuelWeight.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201802151834268_AirlineProperties.resx">
-      <DependentUpon>201802151834268_AirlineProperties.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201804071202563_AddAlternative.resx">
-      <DependentUpon>201804071202563_AddAlternative.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201804190057188_PaxWeightInJob.resx">
-      <DependentUpon>201804190057188_PaxWeightInJob.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201804211505523_AirlineOwnerId.resx">
-      <DependentUpon>201804211505523_AirlineOwnerId.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201804262150042_AirlineDebt.resx">
-      <DependentUpon>201804262150042_AirlineDebt.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201805061205133_JobAirlineModel.resx">
-      <DependentUpon>201805061205133_JobAirlineModel.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201805221630222_PilotLicenseExpenses.resx">
-      <DependentUpon>201805221630222_PilotLicenseExpenses.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201805242150018_OverdueProcessed.resx">
-      <DependentUpon>201805242150018_OverdueProcessed.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201805262343110_AirlineDescription.resx">
-      <DependentUpon>201805262343110_AirlineDescription.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201806011423450_AviationType.resx">
-      <DependentUpon>201806011423450_AviationType.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201807062204491_AirlineFbo.resx">
-      <DependentUpon>201807062204491_AirlineFbo.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201807062232255_AirlineFboNotMapped.resx">
-      <DependentUpon>201807062232255_AirlineFboNotMapped.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201807081344186_ChangeDiscountToDouble.resx">
-      <DependentUpon>201807081344186_ChangeDiscountToDouble.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201809231652047_JobVideo.resx">
-      <DependentUpon>201809231652047_JobVideo.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201809231718214_JobVideoDelRequired.resx">
-      <DependentUpon>201809231718214_JobVideoDelRequired.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201812021457050_AddSendEmailWarning.resx">
-      <DependentUpon>201812021457050_AddSendEmailWarning.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201812022003583_AddWarningSent.resx">
-      <DependentUpon>201812022003583_AddWarningSent.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201812221859450_CustomPlaneCapacity.resx">
-      <DependentUpon>201812221859450_CustomPlaneCapacity.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201812221933029_CustomPlaneCapacityFix01.resx">
-      <DependentUpon>201812221933029_CustomPlaneCapacityFix01.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201908181309579_Challenger.resx">
-      <DependentUpon>201908181309579_Challenger.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201912032010344_mysql.resx">
-      <DependentUpon>201912032010344_mysql.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202005081341260_UseCustomPlaneCapacity.resx">
-      <DependentUpon>202005081341260_UseCustomPlaneCapacity.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202009051205157_WeightUnit.resx">
-      <DependentUpon>202009051205157_WeightUnit.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202208281325560_Add-CustomPaxWeight.resx">
-      <DependentUpon>202208281325560_Add-CustomPaxWeight.cs</DependentUpon>
-    </EmbeddedResource>
+    <Content Include="Views\Shared\_Redirect.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config">
@@ -1032,6 +756,14 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\202212120048290_Initial.resx">
+      <DependentUpon>202212120048290_Initial.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202301151530296_MsSqlServerAjusts.resx">
+      <DependentUpon>202301151530296_MsSqlServerAjusts.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

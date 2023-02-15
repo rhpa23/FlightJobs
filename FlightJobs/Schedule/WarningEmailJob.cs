@@ -38,7 +38,7 @@ namespace FlightJobs.Schedule
                     var sb = new StringBuilder();
                     var requirements = item.ToList();
                     var user = requirements.FirstOrDefault().StatisticsDbModel.User;
-                    sb.Append($"<p><a href='https://www.flight-jobs.net' target='_blank'><img src='http://flight-jobs.net/Content/img/FlightJobsLogo0001.png' /></a></p><hr />");
+                    sb.Append($"<p><a href='https://flightjobs.bsite.net' target='_blank'><img src='http://flightjobs.bsite.net/Content/img/FlightJobsLogo0001.png' /></a></p><hr />");
                     sb.Append($"<p>Hi captain {user.UserName},</p>");
                     sb.Append("<p>FlightJobs is sending you this email because you have set it to be advised when your license is close to expiring.</p>");
                     sb.Append("<p>You can disable this email warning any time unchecking the box in the License popup window.</p>");
@@ -46,10 +46,10 @@ namespace FlightJobs.Schedule
                     sb.Append($"<h4><p>There are {requirements.Count()} requirement(s) that will expire soon. </p></h4>");
                     sb.Append($"<p>If the pilot License expires the next Jobs will not score and paid until you renew your license. Go to the Profile/License form and check your license requirements.</p>  <hr />");
                     sb.Append($"<p>Thanks for use FlightJobs.</p>");
-                    sb.Append($"<p>If you prefer not receive this type of communication from Flight-Jobs.net, please <a href='https://www.flight-jobs.net/Profile/EmailUnsubscribeView' target='_blank'>click here to unsubscribe</a>.</p>");
+                    sb.Append($"<p>If you prefer not receive this type of communication from flightjobs.bsite.net, please <a href='https://flightjobs.bsite.net/Profile/EmailUnsubscribeView' target='_blank'>click here to unsubscribe</a>.</p>");
                     sb.Append($"<p>FlightJobs is free. If you like it, please consider making a donation in PayPal.</p>");
                     sb.Append($"https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=44VG35XYRJUCW&source=url");
-                    sb.Append($"<p>https://www.flight-jobs.net</p>");
+                    sb.Append($"<p>https://flightjobs.bsite.net</p>");
                     await new EmailService().SendAsync(new IdentityMessage()
                     {
                         Body = sb.ToString(),

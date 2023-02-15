@@ -43,5 +43,31 @@ namespace FlightJobs.Models
         {
             return new ApplicationDbContext();
         }
+
+        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<ApplicationUser>().ToTable("aspnetusers");
+            modelBuilder.Entity<IdentityRole>().ToTable("aspnetroles");
+            modelBuilder.Entity<IdentityUserRole>().ToTable("aspnetuserroles");
+            modelBuilder.Entity<IdentityUserClaim>().ToTable("aspnetuserclaims");
+            modelBuilder.Entity<IdentityUserLogin>().ToTable("aspnetuserlogins");
+            modelBuilder.Entity<StatisticsDbModel>().ToTable("statisticsdbmodels");
+            
+            modelBuilder.Entity<JobDbModel>().ToTable("jobdbmodels");
+            modelBuilder.Entity<AirlineDbModel>().ToTable("airlinedbmodels");
+            modelBuilder.Entity<AirlineCertificatesDbModel>().ToTable("airlinecertificatesdbmodels");
+            modelBuilder.Entity<StatisticCertificatesDbModel>().ToTable("statisticcertificatesdbmodels");
+            modelBuilder.Entity<CertificateDbModel>().ToTable("certificatedbmodels");
+            modelBuilder.Entity<JobAirlineDbModel>().ToTable("jobairlinedbmodels");
+            modelBuilder.Entity<PilotLicenseExpensesDbModel>().ToTable("pilotlicenseexpensesdbmodels");
+            modelBuilder.Entity<PilotLicenseItemDbModel>().ToTable("pilotlicenseitemdbmodels");
+            modelBuilder.Entity<LicenseItemUserDbModel>().ToTable("licenseitemuserdbmodels");
+            modelBuilder.Entity<PilotLicenseExpensesUserDbModel>().ToTable("pilotlicenseexpensesuserdbmodels");
+            modelBuilder.Entity<AirlineFboDbModel>().ToTable("airlinefbodbmodels");
+            modelBuilder.Entity<CustomPlaneCapacityDbModel>().ToTable("customplanecapacitydbmodels");
+
+        }
     }
 }

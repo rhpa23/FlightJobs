@@ -10,6 +10,7 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using FlightJobs.Models;
 using System.Configuration;
+using FlightJobs.DTOs;
 
 namespace FlightJobs.Controllers
 {
@@ -608,7 +609,7 @@ namespace FlightJobs.Controllers
             // TO TEST THE SEND E-MAIL
             user = UserManager.FindByName(User.Identity.Name);
 
-            var callbackUrl = "https://flight-jobs.net";
+            var callbackUrl = "https://flightjobs.bsite.net";
 
             string emailTemplateFileName = System.Web.HttpContext.Current.Server.MapPath("~/Content/templates/Confirm Email.html");
             bodyText = System.IO.File.ReadAllText(emailTemplateFileName);
