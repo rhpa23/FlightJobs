@@ -10,6 +10,7 @@ using System.Data;
 using FlightJobs.Util;
 using System.Net;
 using System.Security.Policy;
+using System.Threading.Tasks;
 
 namespace FlightJobs.Controllers
 {
@@ -119,11 +120,11 @@ namespace FlightJobs.Controllers
             return PartialView("CurrentJobView");
         }
 
-        public ActionResult DeleteJob(int id)
+        public ActionResult DeleteJob(int id, string userId)
         {
             var dbContext = new ApplicationDbContext();
             // Check GUEST
-            var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
+            var user = dbContext.Users.FirstOrDefault(u => u.Id == userId);
 
             if (user != null)
             {
@@ -142,6 +143,13 @@ namespace FlightJobs.Controllers
             }
 
             return RedirectToAction("Index");
+        }
+
+        public ActionResult DeleteJobWeb(int id)
+        {
+            var dbContext = new ApplicationDbContext();
+            var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
+            return DeleteJob(id, user.Id);
         }
 
         [AllowAnonymous]

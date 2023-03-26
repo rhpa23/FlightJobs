@@ -83,7 +83,7 @@ namespace FlightJobs.Controllers
             //return RedirectToAction("Index");
         }
 
-        private IPagedList<JobDbModel> GetSortedJobs(List<JobDbModel> listJobs, string sortOrder, string CurrentSort, int? pageNumber, ApplicationUser user)
+        internal IPagedList<JobDbModel> GetSortedJobs(List<JobDbModel> listJobs, string sortOrder, string CurrentSort, int? pageNumber)
         {
             int pageSize = 20;
             IPagedList<JobDbModel> jobSortedList = null;
@@ -201,7 +201,7 @@ namespace FlightJobs.Controllers
                 //}
                 TimeSpan t = new TimeSpan();
                 var allUserJobs = FilterJobs(user, filterModel, ref t);
-                var jobList = GetSortedJobs(allUserJobs, sortOrder, CurrentSort, pageNumber, user);
+                var jobList = GetSortedJobs(allUserJobs, sortOrder, CurrentSort, pageNumber);
                 homeModel.Jobs = jobList;
                 homeModel.WeightUnit = GetWeightUnit(Request);
 

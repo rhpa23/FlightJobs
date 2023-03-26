@@ -113,8 +113,8 @@
     <Reference Include="System.Memory, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Memory.4.5.4\lib\netstandard1.1\System.Memory.dll</HintPath>
     </Reference>
-    <Reference Include="System.Net.Http.Formatting, Version=5.2.9.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.9\lib\net45\System.Net.Http.Formatting.dll</HintPath>
+    <Reference Include="System.Net.Http.Formatting, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
     </Reference>
     <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.5.0.0\lib\net45\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
@@ -131,8 +131,8 @@
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Web.Http, Version=5.2.9.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.5.2.9\lib\net45\System.Web.Http.dll</HintPath>
+    <Reference Include="System.Web.Http, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.5.2.3\lib\net45\System.Web.Http.dll</HintPath>
     </Reference>
     <Reference Include="System.Web.Http.WebHost, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.WebApi.WebHost.5.2.3\lib\net45\System.Web.Http.WebHost.dll</HintPath>
@@ -268,13 +268,20 @@
     <Compile Include="Controllers\AirlinesController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\ChallengeController.cs" />
+    <Compile Include="Controllers\SearchApiController.cs" />
     <Compile Include="Controllers\JobApiController .cs" />
     <Compile Include="Controllers\AuthenticationApiController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\ProfileController.cs" />
+    <Compile Include="Controllers\MapsController.cs" />
     <Compile Include="Controllers\SearchJobsController.cs" />
     <Compile Include="Controllers\UserApiController.cs" />
+    <Compile Include="DTOs\CapacityTO.cs" />
+    <Compile Include="DTOs\JobSearchTO.cs" />
+    <Compile Include="DTOs\JobTO.cs" />
+    <Compile Include="DTOs\PaginatedJobsFilterTO.cs" />
+    <Compile Include="DTOs\PaginatedJobsTO.cs" />
     <Compile Include="DTOs\UserSettingsTO.cs" />
     <Compile Include="Enums\ChallengeTypeEnum.cs" />
     <Compile Include="Global.asax.cs">
@@ -745,6 +752,7 @@
     <Content Include="Views\Airlines\AirlinePilotsHiredView.cshtml" />
     <Content Include="Views\Profile\EmailUnsubscribeView.cshtml" />
     <Content Include="Views\Shared\_Redirect.cshtml" />
+    <Content Include="Views\Maps\GenerateJobsMap.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config">
@@ -752,6 +760,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="APIs\" />
     <Folder Include="Content\img\avatar\" />
   </ItemGroup>
   <ItemGroup>

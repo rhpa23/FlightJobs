@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNet.Identity.Owin;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using FlightJobs.DTOs;
 
 namespace FlightJobs.Controllers
 {
@@ -203,51 +204,63 @@ namespace FlightJobs.Controllers
             //};
 
 
-            return Confirm(jobList);
+            return Confirm(jobList.FirstOrDefault(), userStatistics.User.Id);
         }
 
-        public JsonResult Confirm(List<JobDbModel> jobList)
+        public void Confirm(JobTO job)
+        {
+            var jobModel = new JobDbModel()
+                {
+                    DepartureICAO = job.DepartureICAO,
+                    ArrivalICAO = job.ArrivalICAO,
+                    AlternativeICAO = job.AlternativeICAO,
+                    Dist = job.Dist,
+                    Pax = job.Pax,
+                    Cargo = job.Cargo,
+                    Pay = job.Pay,
+                    AviationType = GetAviationTypeId(job.AviationType)
+                };
+            
+            Confirm(jobModel, job.UserId);
+        }
+
+        public JsonResult Confirm(JobDbModel selJob, string userId)
         {
             var dbContext = new ApplicationDbContext();
-            bool isPounds = GetWeightUnit(Request) == DataConversion.UnitPounds;
 
             // Check GUEST
-            var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
+            var user = dbContext.Users.FirstOrDefault(u => u.Id == userId);
             if (user != null && user.Email == AccountController.GuestEmail)
             {
                 return Json("Guest can't save!!!", JsonRequestBehavior.AllowGet); ;
             }
 
-            if (jobList != null)
+            if (selJob != null)
             {
-                var userStatistics = GetWebUserStatistics();
+                var userStatistics = GetUserStatistics(userId);
                 PaxWeight = userStatistics.CustomPlaneCapacity != null ? userStatistics.CustomPlaneCapacity.CustomPaxWeight : 84;
 
-                var selJob = jobList.FirstOrDefault();
-                if (selJob != null)
+                selJob.User = user;
+                selJob.StartTime = DateTime.Now;
+                selJob.EndTime = DateTime.Now;
+                selJob.ChallengeExpirationDate = DateTime.Now.AddDays(-1);
+                selJob.PaxWeight = (int)PaxWeight;
+
+                if (userStatistics.WeightUnit == DataConversion.UnitPounds)
                 {
-                    selJob.User = user;
-                    selJob.StartTime = DateTime.Now;
-                    selJob.EndTime = DateTime.Now;
-                    selJob.ChallengeExpirationDate = DateTime.Now.AddDays(-1);
-                    selJob.PaxWeight = (int)PaxWeight;
-
-                    if (isPounds)
-                    {
-                        selJob.Cargo = DataConversion.ConvertPoundsToKilograms(selJob.Cargo);
-                    }
-
-                    if (Session["JobSerachModel"] != null)
-                    {
-                        JobSerachModel searchModel = (JobSerachModel)Session["JobSerachModel"];
-                        if (!string.IsNullOrEmpty(searchModel.Alternative) && searchModel.Alternative.Length == 4)
-                        {
-                            selJob.AlternativeICAO = searchModel.Alternative.ToUpper();
-                        }
-                    }
-
-                    dbContext.JobDbModels.Add(selJob);
+                    selJob.Cargo = DataConversion.ConvertPoundsToKilograms(selJob.Cargo);
                 }
+
+                if (Session != null && Session["JobSerachModel"] != null)
+                {
+                    JobSerachModel searchModel = (JobSerachModel)Session["JobSerachModel"];
+                    if (!string.IsNullOrEmpty(searchModel.Alternative) && searchModel.Alternative.Length == 4)
+                    {
+                        selJob.AlternativeICAO = searchModel.Alternative.ToUpper();
+                    }
+                }
+
+                dbContext.JobDbModels.Add(selJob);
                 
                 dbContext.SaveChanges();
 
@@ -262,20 +275,20 @@ namespace FlightJobs.Controllers
             return Json("Saved", JsonRequestBehavior.AllowGet); ;
         }
 
-        public ActionResult AlternativeTips(string destination, int range)
+        public IList<SearchJobTipsViewModel> SearchAlternativeTips(string arrival, int range)
         {
             var listTips = new List<SearchJobTipsViewModel>();
 
-            if (!string.IsNullOrEmpty(destination) && destination.Length > 2)
+            if (!string.IsNullOrEmpty(arrival) && arrival.Length > 2)
             {
-                var destinationInfo = AirportDatabaseFile.FindAirportInfo(destination);
+                var destinationInfo = AirportDatabaseFile.FindAirportInfo(arrival);
                 if (destinationInfo == null) return null;
 
                 var destCoord = new GeoCoordinate(destinationInfo.Latitude, destinationInfo.Longitude);
 
                 foreach (var airportInfo in AirportDatabaseFile.GetAllAirportInfo().OrderByDescending(x => x.RunwaySize))
                 {
-                    if (airportInfo.ICAO.ToUpper() != destination.ToUpper())
+                    if (airportInfo.ICAO.ToUpper() != arrival.ToUpper())
                     {
                         var airportInfoCoord = new GeoCoordinate(airportInfo.Latitude, airportInfo.Longitude);
                         var distMeters = destCoord.GetDistanceTo(airportInfoCoord);
@@ -301,11 +314,15 @@ namespace FlightJobs.Controllers
             {
                 return null;
             }
+            return listTips;
+        }
+        public ActionResult AlternativeTips(string destination, int range)
+        {
             TempData["RangeValue"] = range;
-            return PartialView("AlternativeTipsPartialView", listTips);
+            return PartialView("AlternativeTipsPartialView", SearchAlternativeTips(destination, range));
         }
 
-        public ActionResult ArrivalTips(string departure)
+        internal IList<SearchJobTipsViewModel> SearchJobTipsViewModels(string departure, string userId)
         {
             var listTips = new List<SearchJobTipsViewModel>();
 
@@ -317,7 +334,7 @@ namespace FlightJobs.Controllers
 
                 var departureCoord = new GeoCoordinate(departureInfo.Latitude, departureInfo.Longitude);
                 var dbContext = new ApplicationDbContext();
-                var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
+                var user = dbContext.Users.FirstOrDefault(u => u.Id == userId);
                 var allUserJobs = FilterJobs(user, "");
                 var filteredUserJobs = FilterJobs(user, departure);
                 foreach (var job in filteredUserJobs)
@@ -411,20 +428,36 @@ namespace FlightJobs.Controllers
             {
                 return null;
             }
-
-            return PartialView("ArrivalTipsPartialView", listTips);
+            return listTips;
         }
 
+        public ActionResult ArrivalTips(string departure)
+        {
+            var dbContext = new ApplicationDbContext();
+            var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
+            return PartialView("ArrivalTipsPartialView", SearchJobTipsViewModels(departure, user.Id));
+        }
+
+        public void ApplyCloneJob(long jobId, string userId)
+        {
+            var dbContext = new ApplicationDbContext();
+            var user = dbContext.Users.FirstOrDefault(u => u.Id == userId);
+            var job = dbContext.JobDbModels.FirstOrDefault(x => x.Id == jobId);
+
+            var cloneJob = JobDbModel.Clone(job, user);
+            var userJobs = dbContext.JobDbModels.Where(j => j.User.Id == userId && j.IsActivated);
+            userJobs.ToList().ForEach(j => j.IsActivated = false);
+
+            cloneJob.IsActivated = true;
+
+            dbContext.JobDbModels.Add(cloneJob);
+            dbContext.SaveChanges();
+        }
         public ActionResult CloneJob(long jobId)
         {
             var dbContext = new ApplicationDbContext();
             var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
-            var job = dbContext.JobDbModels.FirstOrDefault(x => x.Id == jobId);
-
-            var cloneJob = JobDbModel.Clone(job, user);
-
-            dbContext.JobDbModels.Add(cloneJob);
-            dbContext.SaveChanges();
+            ApplyCloneJob(jobId, user.Id);
 
             return RedirectToAction("Index", "Home");
         }
@@ -447,6 +480,13 @@ namespace FlightJobs.Controllers
         {
             var dbContext = new ApplicationDbContext();
             var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
+            return SelectCapacity(capacityId, user.Id);
+        }
+
+        private PartialViewResult SelectCapacity(long capacityId, string userId)
+        {
+            var dbContext = new ApplicationDbContext();
+            var user = dbContext.Users.FirstOrDefault(u => u.Id == userId);
             var statistics = dbContext.StatisticsDbModels.FirstOrDefault(s => s.User.Id == user.Id);
             var searchModel = new JobSerachModel();
 
@@ -462,14 +502,17 @@ namespace FlightJobs.Controllers
             return PartialView("CapacityListView", searchModel);
         }
 
-        public PartialViewResult RemoveCustomCapacity(int capacityId)
+        public void RemoveCapacity(CapacityTO capacity)
+        {
+            RemoveCapacity(capacity.Id, capacity.UserId);
+        }
+        public PartialViewResult RemoveCapacity(int capacityId, string userId)
         {
             var dbContext = new ApplicationDbContext();
-            var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
-            var statistics = dbContext.StatisticsDbModels.FirstOrDefault(s => s.User.Id == user.Id);
+            var statistics = dbContext.StatisticsDbModels.FirstOrDefault(s => s.User.Id == userId);
             var searchModel = new JobSerachModel();
 
-            var dbEntity = dbContext.CustomPlaneCapacity.FirstOrDefault(x => x.User.Id == user.Id && x.Id == capacityId);
+            var dbEntity = dbContext.CustomPlaneCapacity.FirstOrDefault(x => x.User.Id == userId && x.Id == capacityId);
             if (dbEntity != null)
             {
                 dbContext.CustomPlaneCapacity.Remove(dbEntity);
@@ -477,21 +520,43 @@ namespace FlightJobs.Controllers
                 searchModel.CustomPlaneCapacity = null;
                 dbContext.SaveChanges();
             }
-            searchModel.CustomPlaneCapacityList = GetUserCustomCapacity(user.Id);
+            searchModel.CustomPlaneCapacityList = GetUserCustomCapacity(userId);
 
             return PartialView("CapacityListView", searchModel);
         }
 
+        public PartialViewResult RemoveCustomCapacity(int capacityId)
+        {
+            var dbContext = new ApplicationDbContext();
+            var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
+            return RemoveCapacity(capacityId, user.Id);
+        }
+
+        public void SaveCapacity(CapacityTO capacity)
+        {
+            SaveCapacity(capacity.CustomPassengerCapacity,
+                               capacity.CustomCargoCapacityWeight,
+                               capacity.CustomNameCapacity,
+                               capacity.CustomPaxWeight,
+                               capacity.UserId);
+        }
+        // SearchJobs/SaveCustomCapacity?passengers=158&cargo=2500&name=A320+CEO+Fenix+MSFS+158pax&paxWeight=88 
         public PartialViewResult SaveCustomCapacity(int passengers, int cargo, string name, long paxWeight)
         {
             var dbContext = new ApplicationDbContext();
             var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
-            var statistics = dbContext.StatisticsDbModels.FirstOrDefault(s => s.User.Id == user.Id);
+            return SaveCapacity(passengers, cargo, name, paxWeight, user.Id);
+        }
+
+        public PartialViewResult SaveCapacity(int passengers, int cargo, string name, long paxWeight, string userId)
+        {
+            var dbContext = new ApplicationDbContext();
+            var statistics = dbContext.StatisticsDbModels.FirstOrDefault(s => s.User.Id == userId);
             var searchModel = new JobSerachModel();
 
             if (!string.IsNullOrEmpty(name) && cargo > 0 && passengers > 0 && statistics != null)
             {
-                var dbEntity = dbContext.CustomPlaneCapacity.FirstOrDefault(x => x.User.Id == user.Id && x.CustomNameCapacity.ToLower() == name.ToLower());
+                var dbEntity = dbContext.CustomPlaneCapacity.FirstOrDefault(x => x.User.Id == userId && x.CustomNameCapacity.ToLower() == name.ToLower());
                 if (dbEntity == null)
                 {
                     var customCapacity = new CustomPlaneCapacityDbModel()
@@ -500,7 +565,7 @@ namespace FlightJobs.Controllers
                         CustomPassengerCapacity = passengers,
                         CustomNameCapacity = name.Trim(),
                         CustomPaxWeight = paxWeight,
-                        User = user
+                        User = statistics.User
                     };
                     dbContext.CustomPlaneCapacity.Add(customCapacity);
                     statistics.CustomPlaneCapacity = customCapacity;
@@ -517,7 +582,7 @@ namespace FlightJobs.Controllers
                 }
                 dbContext.SaveChanges();
             }
-            searchModel.CustomPlaneCapacityList = GetUserCustomCapacity(user.Id); 
+            searchModel.CustomPlaneCapacityList = GetUserCustomCapacity(userId); 
             return PartialView("CapacityListView", searchModel);
         }
 
@@ -580,6 +645,23 @@ namespace FlightJobs.Controllers
                 }
                 return Json("", JsonRequestBehavior.AllowGet);
             }
+        }
+
+        public IList<JobListModel> GenerateJobs(JobSearchTO jobSearch)
+        {
+            var dbContext = new ApplicationDbContext();
+            var userStatistics = dbContext.StatisticsDbModels.FirstOrDefault(s => s.User.Id == jobSearch.userId);
+            var searchParams = new JobSerachModel()
+            {
+                Departure = jobSearch.Departure,
+                Arrival = jobSearch.Arrival,
+                Alternative = jobSearch.Alternative,
+                AviationType = jobSearch.AviationType,
+                CustomPlaneCapacity = jobSearch.CustomPlaneCapacity
+            };
+
+            SelectCapacity(jobSearch.CustomPlaneCapacity.Id, userStatistics.User.Id);
+            return GenerateBoardJobs(searchParams, userStatistics); 
         }
 
         //private async string SimbriefLoadAsync(string simbriefId)

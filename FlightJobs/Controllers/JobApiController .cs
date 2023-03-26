@@ -18,6 +18,7 @@ using Elmah;
 using Newtonsoft.Json;
 using System.Text;
 using System.Threading;
+using FlightJobs.DTOs;
 
 namespace FlightJobs.Controllers
 {
@@ -438,6 +439,41 @@ namespace FlightJobs.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, jobListJson);
         }
 
+        [System.Web.Http.HttpPost]
+        [System.Web.Mvc.AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<HttpResponseMessage> GetLastUserJob([FromBody] UserSimpleTO userSimpleTO)
+        {
+            var dbContext = new ApplicationDbContext();
+            var user = dbContext.Users.FirstOrDefault(u => u.Id == userSimpleTO.Id);
+            if (user == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest, "User not found.");
+            }
+
+            var userStatistics = dbContext.StatisticsDbModels.FirstOrDefault(s => s.User.Id == user.Id);
+
+            var lastJob = dbContext.JobDbModels
+                .OrderByDescending(x => x.EndTime)
+                .FirstOrDefault(x => x.User.Id == user.Id && x.IsDone);
+
+            if (lastJob != null)
+            {
+                BaseController baseController = new BaseController();
+                lastJob.PayloadDisplay = baseController.GetWeight(null, lastJob.Payload, userStatistics);
+                lastJob.Cargo = baseController.GetWeight(null, lastJob.Cargo, userStatistics);
+                lastJob.User = null;
+                lastJob.WeightUnit = userStatistics.WeightUnit;
+
+                var jobJson = JsonConvert.SerializeObject(lastJob, Formatting.None);
+                return Request.CreateResponse(HttpStatusCode.OK, jobJson);
+            }
+            else
+            {
+                return Request.CreateResponse(HttpStatusCode.NotFound);
+            }
+        }
+
         [System.Web.Http.HttpGet]
         [System.Web.Mvc.AllowAnonymous]
         [ValidateAntiForgeryToken]
@@ -525,6 +561,62 @@ namespace FlightJobs.Controllers
         {
             var list = AirportDatabaseFile.FindClosestLocation(Convert.ToDouble(lat), Convert.ToDouble(lon));
             return Request.CreateResponse(HttpStatusCode.OK, list.Select(x => x.ICAO));
+        }
+
+        [System.Web.Http.HttpPost]
+        [System.Web.Mvc.AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<HttpResponseMessage> GetUserPlaneCapacities([FromBody] UserSimpleTO userSimpleTO)
+        {
+            var dbContext = new ApplicationDbContext();
+            var list = dbContext.CustomPlaneCapacity.Where(x => x.User.Id == userSimpleTO.Id).ToList()
+                .Select(x => new CustomPlaneCapacityDbModel()
+                {
+                    CustomCargoCapacityWeight = x.CustomCargoCapacityWeight,
+                    CustomNameCapacity = x.CustomNameCapacity,
+                    CustomPassengerCapacity = x.CustomPassengerCapacity,
+                    CustomPaxWeight = x.CustomPaxWeight,
+                    Id = x.Id
+                }).OrderBy(x => x.CustomNameCapacity).ToList();
+            var listJson = JsonConvert.SerializeObject(list, Formatting.None);
+            return Request.CreateResponse(HttpStatusCode.OK, listJson);
+        }
+
+        [System.Web.Http.HttpPost]
+        [System.Web.Mvc.AllowAnonymous]
+        public HttpResponseMessage RemoveJob(int jobId, [FromBody] UserSimpleTO userTo)
+        {
+            new HomeController().DeleteJob(jobId, userTo.Id);
+            return Request.CreateResponse(HttpStatusCode.OK);
+        }
+
+        [System.Web.Http.HttpPost]
+        [System.Web.Mvc.AllowAnonymous]
+        public HttpResponseMessage GetUserJobsPaged(string sortOrder, string currentSort, int pageNumber, [FromBody] PaginatedJobsFilterTO jobsFilterTO)
+        {
+            sortOrder = String.IsNullOrEmpty(sortOrder) ? "Date" : sortOrder;
+            var user = new ApplicationUser() { Id = jobsFilterTO.UserId };
+            TimeSpan t = new TimeSpan();
+            var filterViewModel = new HomeViewModel() { 
+                ArrivalFilter = jobsFilterTO.ArrivalICAO, 
+                DepartureFilter = jobsFilterTO.DepartureICAO, 
+                ModelDescriptionFilter = jobsFilterTO.ModelDescription 
+            };
+            var userJobs = new BaseController().FilterJobs(user, filterViewModel, ref t);
+            var pagedJobs = new ProfileController().GetSortedJobs(userJobs, sortOrder, currentSort, pageNumber);
+            var paginatedJobs = new PaginatedJobsTO()
+            {
+                HasNextPage = pagedJobs.HasNextPage,
+                HasPreviousPage = pagedJobs.HasPreviousPage,
+                IsFirstPage = pagedJobs.IsFirstPage,
+                IsLastPage = pagedJobs.IsLastPage,
+                PageCount = pagedJobs.PageCount,
+                PageNumber = pagedJobs.PageNumber,
+                PageSize = pagedJobs.PageSize,
+                TotalItemCount = pagedJobs.TotalItemCount,
+                Jobs = pagedJobs.ToList()
+            };
+            return Request.CreateResponse(HttpStatusCode.OK, paginatedJobs);
         }
     }
 }

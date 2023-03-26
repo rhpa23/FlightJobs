@@ -195,6 +195,7 @@ namespace FlightJobs.Models
                 User = user,
                 StartTime = DateTime.Now,
                 EndTime = DateTime.Now,
+                ChallengeExpirationDate = DateTime.Now
             };
         }
     }

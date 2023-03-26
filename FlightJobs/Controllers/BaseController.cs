@@ -40,7 +40,7 @@ namespace FlightJobs.Controllers
             return 0;
         }
 
-        public JsonResult GetMapInfo(string departure, string arrival, string alternative)
+        public JsonResult GetMapInfo(string departure, string arrival, string alternative, string username = "")
         {
             /*
             {
@@ -128,7 +128,8 @@ namespace FlightJobs.Controllers
             {
                 using (var dbContext = new ApplicationDbContext())
                 {
-                    var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
+                    string userNameParam = string.IsNullOrEmpty(username) ? User.Identity.Name : username;
+                    var user = dbContext.Users.FirstOrDefault(u => u.UserName == userNameParam);
                     if (user != null)
                     {
                         TimeSpan t = new TimeSpan();
@@ -187,7 +188,6 @@ namespace FlightJobs.Controllers
 
             try
             {
-                var weightUnit = GetWeightUnit(Request);
                 var dep = AirportDatabaseFile.FindAirportInfo(model.Departure);
                 var arrival = AirportDatabaseFile.FindAirportInfo(model.Arrival);
 
@@ -209,7 +209,7 @@ namespace FlightJobs.Controllers
                 {
                     var customCapacity = model.CustomPlaneCapacity;
 
-                    if (GetWeightUnit(Request) == DataConversion.UnitPounds)
+                    if (statistics.WeightUnit == DataConversion.UnitPounds)
                     {
                         customCapacity.CustomCargoCapacityWeight = DataConversion.ConvertPoundsToKilograms(customCapacity.CustomCargoCapacityWeight);
                     }
@@ -334,7 +334,7 @@ namespace FlightJobs.Controllers
                             Pax = pob,
                             Cargo = cargo,
                             PayloadLabel = (isCargo) ? "[Cargo] " : (isFisrtClass) ? "[Full price] " : "[Promo] ",
-                            PayloadView = (isCargo) ? cargo + weightUnit : (isFisrtClass) ? pob + " Pax" : pob + " Pax",
+                            PayloadView = (isCargo) ? cargo + statistics.WeightUnit : (isFisrtClass) ? pob + " Pax" : pob + " Pax",
                             Pay = profit,
                             FirstClass = isFisrtClass,
                             AviationType = model.AviationType,
@@ -416,7 +416,7 @@ namespace FlightJobs.Controllers
                 }
 
             }
-            var statitics = GetWebUserStatistics();
+            var statitics = GetUserStatistics(user.Id);
             foreach (var j in allUserJobs.ToList())
             {
                 span += (j.EndTime - j.StartTime);

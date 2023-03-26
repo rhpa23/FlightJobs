@@ -1,0 +1,139 @@
+﻿
+@{
+    Layout = null;
+    if (@Request.QueryString.HasKeys())
+    {
+        <script src="../Scripts/jquery-2.1.1.js"></script>
+        <script src="../Scripts/jquery-ui-1.12.1.js"></script>
+    }
+}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" crossorigin="" />
+<script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js" crossorigin=""></script>
+@*<script src="../Scripts/jquery-2.1.1.js"></script>
+<script src="../Scripts/jquery-ui-1.12.1.js"></script>*@
+
+<style>
+    #mapid {
+        height: 490px;
+    }
+
+    .map-container {
+        margin-top: 10px;
+        border: 1px solid #D1D3D4;
+        display: none;
+    }
+</style>
+
+<div id="mapContainer" class="map-container"></div>
+
+
+<script>
+    let searchParams = new URLSearchParams(window.location.search);
+    let isParameterCall = false;
+    if (searchParams.has('departure') && searchParams.has('arrival') && searchParams.has('alternative') && searchParams.has('username')) {
+        LoadMapInfoByQueryParams();
+        $(".map-container").show();
+        isParameterCall = true;
+    }
+
+    function LoadMapInfoByQueryParams() {
+        //$('#map-loading-img').show();
+        var _departure = searchParams.get('departure');
+        var _arrival = searchParams.get('arrival');
+        var _alternative = searchParams.get('alternative');
+        var _username = searchParams.get('username');
+
+        $.ajax({
+            url: '@Url.Action("GetMapInfo", "SearchJobs")',
+            type: "Get",
+            data: { departure: _departure, arrival: _arrival, alternative: _alternative, username: _username },
+            success: function (result) {
+                if (result != null && result != '') {
+                    ShowMap(result);
+                }
+                //$('#map-loading-img').hide();
+            }
+        });
+    }
+
+    function ShowMap(markers) {
+        document.getElementById('mapContainer').innerHTML = "<div id='mapid'></div>";
+        var mymap = L.map('mapid');
+        var bounds = new L.latLngBounds();
+        var flight_path = [];
+
+        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}',
+            {
+                attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ',
+                maxZoom: 16,
+            }
+        ).addTo(mymap);
+
+        markers.forEach(function (marker) {
+            var marker_icon = L.icon({
+                iconUrl: marker.icon_url,
+                iconAnchor: [marker.icon_center_x, marker.icon_center_y],
+            });
+
+            var m = L.marker([marker.lat, marker.lng], { icon: marker_icon }).addTo(mymap);
+
+
+            var markerButtonsDef = '<br/><input type="button" value="Add to departure" onclick="setInputValue(\'Departure\', \'' + marker.icao + '\'); CalcDistance(); LoadMapInfo();" class="btn btn-defaut btn-xs">'
+                + '<br/><input type="button" value="Add to destination" onclick="setInputValue(\'Arrival\', \'' + marker.icao + '\'); CalcDistance(); LoadMapInfo();" class="btn btn-defaut btn-xs" style="margin-top:5px;">'
+                + '<br/><input type="button" value="Add to alternative" onclick="setInputValue(\'Alternative\', \'' + marker.icao + '\'); CalcDistance(); LoadMapInfo();" class="btn btn-defaut btn-xs" style="margin-top:5px;">';
+            if (isParameterCall) {
+                markerButtonsDef = '<br/><input type="button" value="Add to departure" onclick="updateURL(\'departure\', \'' + marker.icao + '\');" class="btn btn-defaut btn-xs">'
+                    + '<br/><input type="button" value="Add to destination" onclick="updateURL(\'arrival\', \'' + marker.icao + '\');" class="btn btn-defaut btn-xs" style="margin-top:5px;">'
+                    + '<br/><input type="button" value="Add to alternative" onclick="updateURL(\'alternative\', \'' + marker.icao + '\');" class="btn btn-defaut btn-xs" style="margin-top:5px;">'
+            }
+
+            m.bindPopup('<strong>' + marker.name + '</strong><br/>' +
+                marker.info + ' <br/> Runway size: ' +
+                marker.runway_size + '<br/>Elevation: ' +
+                marker.elevation + '<br/>Trasition: ' +
+                marker.trasition + markerButtonsDef);
+
+            if (marker.isRoute) {
+                flight_path.push([marker.lat, marker.lng]);
+
+                bounds.extend([marker.lat, marker.lng]);
+            }
+        });
+
+        if (flight_path.length > 0) {
+
+            L.polyline(flight_path, { color: '#5bc0de' }).addTo(mymap);
+
+            mymap.fitBounds(bounds, { padding: [25, 25] });
+        }
+        else {
+            mymap.setView([48.865195, 2.321033], 2);
+        }
+    }
+
+    //update URL Parameter
+    function updateURL(key, val) {
+        var url = window.location.href;
+        var reExp = new RegExp("[\?|\&]" + key + "=[0-9a-zA-Z\_\+\-\|\.\,\;]*");
+
+        if (reExp.test(url)) {
+            // update
+            var reExp = new RegExp("[\?&]" + key + "=([^&#]*)");
+            var delimiter = reExp.exec(url)[0].charAt(0);
+            url = url.replace(reExp, delimiter + key + "=" + val);
+        } else {
+            // add
+            var newParam = key + "=" + val;
+            if (!url.indexOf('?')) { url += '?'; }
+
+            if (url.indexOf('#') > -1) {
+                var urlparts = url.split('#');
+                url = urlparts[0] + "&" + newParam + (urlparts[1] ? "#" + urlparts[1] : '');
+            } else {
+                url += "&" + newParam;
+            }
+        }
+        //window.history.pushState(null, document.title, url);
+        window.location.href = url;
+    }
+</script>

@@ -11,6 +11,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Threading.Tasks;
 using FlightJobs.Models;
+using FlightJobs.Util;
 
 namespace FlightJobs.Controllers
 {
@@ -115,6 +116,49 @@ namespace FlightJobs.Controllers
             {
                 return "No jobs activated.";
             }
+        }
+
+        [System.Web.Http.HttpPost]
+        [System.Web.Mvc.AllowAnonymous]
+        public async Task<HttpResponseMessage> UserRegister([FromBody] RegisterViewModel userModel)
+        {
+            try
+            {
+                var user = new ApplicationUser { UserName = userModel.Name, Email = userModel.Email };
+                var result = await UserManager.CreateAsync(user, userModel.Password);
+                if (result.Succeeded)
+                {
+                    // Enviar um email com este link
+                    string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
+                    var callbackUrl = Url.Link("Default", new { controller = "Account", action = "ConfirmEmail", userId = user.Id, code = code });
+
+                    string emailTemplateFileName = HttpContext.Current.Server.MapPath("~/Content/templates/Confirm Email.html");
+                    var bodyText = System.IO.File.ReadAllText(emailTemplateFileName);
+                    bodyText = string.Format(bodyText, callbackUrl);
+                    await UserManager.SendEmailAsync(user.Id, "FlightJobs - Confirm your account (do not reply to this email)", bodyText);
+
+                    var dbContext = new ApplicationDbContext();
+                    dbContext.StatisticsDbModels.Add(new StatisticsDbModel()
+                    {
+                        User = dbContext.Users.FirstOrDefault(u => u.Id == user.Id),
+                        BankBalance = 2000,
+                        PilotScore = 5,
+                        WeightUnit = DataConversion.UnitKilograms,
+                        Logo = "/Content/img/default.jpg"
+                    });
+                    dbContext.SaveChanges();
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, result.Errors.FirstOrDefault());
+                }
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, $"Failed to send email. Please contact the support. {ex.Message}");
+            }
+
+            return Request.CreateResponse(HttpStatusCode.OK);
         }
     }
 }

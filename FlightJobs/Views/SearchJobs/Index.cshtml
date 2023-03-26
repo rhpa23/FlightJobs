@@ -5,12 +5,6 @@
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css"
-      integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
-      crossorigin="" />
-<script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"
-        integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og=="
-        crossorigin=""></script>
 
 <style>
     .uppercase {
@@ -130,8 +124,8 @@
                         </button>
 
                     </div>
-
-                    <div id="mapContainer" class="map-container"></div>
+                    @RenderPage("~/Views/Maps/GenerateJobsMap.cshtml")
+                    @*<div id="mapContainer" class="map-container"></div>*@
                 </div>
                 <br />
             </div>
@@ -571,52 +565,6 @@
                 $('#map-loading-img').hide();
             }
         });
-    }
-
-    function ShowMap(markers) {
-        document.getElementById('mapContainer').innerHTML = "<div id='mapid'></div>";
-        var mymap = L.map('mapid');
-        var bounds = new L.latLngBounds();
-        var flight_path = [];
-
-        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}',
-            {
-                attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ',
-                maxZoom: 18,
-            }
-        ).addTo(mymap);
-
-        markers.forEach(function (marker) {
-            var marker_icon = L.icon({
-                iconUrl: marker.icon_url,
-                iconAnchor: [marker.icon_center_x, marker.icon_center_y],
-            });
-
-            var m = L.marker([marker.lat, marker.lng], { icon: marker_icon }).addTo(mymap);
-            m.bindPopup('<strong>' + marker.name + '</strong><br/>' +
-                marker.info + ' <br/> Runway size: ' +
-                marker.runway_size + '<br/>Elevation: ' +
-                marker.elevation + '<br/>Trasition: ' +
-                marker.trasition + '<br/><input type="button" value="Add to departure" onclick="setInputValue(\'Departure\', \'' + marker.icao + '\'); CalcDistance(); LoadMapInfo();" class="btn btn-defaut btn-xs">'
-                + '<br/><input type="button" value="Add to destination" onclick="setInputValue(\'Arrival\', \'' + marker.icao + '\'); CalcDistance(); LoadMapInfo();" class="btn btn-defaut btn-xs" style="margin-top:5px;">'
-                + '<br/><input type="button" value="Add to alternative" onclick="setInputValue(\'Alternative\', \'' + marker.icao + '\'); CalcDistance(); LoadMapInfo();" class="btn btn-defaut btn-xs" style="margin-top:5px;">');
-
-            if (marker.isRoute) {
-                flight_path.push([marker.lat, marker.lng]);
-
-                bounds.extend([marker.lat, marker.lng]);
-            }
-        });
-
-        if (flight_path.length > 0) {
-
-            L.polyline(flight_path, { color: '#5bc0de' }).addTo(mymap);
-
-            mymap.fitBounds(bounds, { padding: [25, 25] });
-        }
-        else {
-            mymap.setView([48.865195, 2.321033], 2);
-        }
     }
 
     function clearInput(inputId) {

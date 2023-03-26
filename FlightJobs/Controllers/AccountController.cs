@@ -11,6 +11,7 @@ using Microsoft.Owin.Security;
 using FlightJobs.Models;
 using System.Configuration;
 using FlightJobs.DTOs;
+using FlightJobs.Util;
 
 namespace FlightJobs.Controllers
 {
@@ -230,6 +231,7 @@ namespace FlightJobs.Controllers
                             User = dbContext.Users.FirstOrDefault(u => u.Id == user.Id),
                             BankBalance = 2000,
                             PilotScore = 5,
+                            WeightUnit = DataConversion.UnitKilograms,
                             Logo = "/Content/img/default.jpg"
                         });
                         dbContext.SaveChanges();

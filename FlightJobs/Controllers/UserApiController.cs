@@ -55,8 +55,12 @@ namespace FlightJobs.Controllers
                 user.UserName = userSettingsTO.UserName;
                 var resultUpdate = UserManager.Update(user);
                 string code = await UserManager.GeneratePasswordResetTokenAsync(userSettingsTO.UserId);
-                var result = await UserManager.ResetPasswordAsync(userSettingsTO.UserId, code, userSettingsTO.Password);
-                if (result.Succeeded && resultUpdate.Succeeded)
+                if (!string.IsNullOrEmpty(userSettingsTO.Password))
+                {
+                    await UserManager.ResetPasswordAsync(userSettingsTO.UserId, code, userSettingsTO.Password);
+                }
+                
+                if (resultUpdate.Succeeded)
                 {
                     var dbContext = new ApplicationDbContext();
                     var statisticsDb = dbContext.StatisticsDbModels.FirstOrDefault(x => x.User.Id == userSettingsTO.UserId);
@@ -68,11 +72,7 @@ namespace FlightJobs.Controllers
                 else
                 {
                     string error = "";
-                    if (result.Errors?.Count() > 0)
-                    {
-                        error = result.Errors?.First();
-                    }
-                    else
+                    if (resultUpdate.Errors?.Count() > 0)
                     {
                         error = resultUpdate.Errors?.First();
                     }
@@ -86,6 +86,4 @@ namespace FlightJobs.Controllers
             return response;
         }
     }
-
-    
 }
