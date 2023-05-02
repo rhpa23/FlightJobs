@@ -60,5 +60,8 @@ namespace FlightJobs.Models
 
         [NotMapped]
         public List<AirlineFboDbModel> HiredFBOs { get; internal set; }
+
+        [NotMapped]
+        public List<StatisticsDbModel> HiredPilotsStatistics { get; set; }
     }
 }

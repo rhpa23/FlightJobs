@@ -81,10 +81,11 @@
             var markerButtonsDef = '<br/><input type="button" value="Add to departure" onclick="setInputValue(\'Departure\', \'' + marker.icao + '\'); CalcDistance(); LoadMapInfo();" class="btn btn-defaut btn-xs">'
                 + '<br/><input type="button" value="Add to destination" onclick="setInputValue(\'Arrival\', \'' + marker.icao + '\'); CalcDistance(); LoadMapInfo();" class="btn btn-defaut btn-xs" style="margin-top:5px;">'
                 + '<br/><input type="button" value="Add to alternative" onclick="setInputValue(\'Alternative\', \'' + marker.icao + '\'); CalcDistance(); LoadMapInfo();" class="btn btn-defaut btn-xs" style="margin-top:5px;">';
+
             if (isParameterCall) {
                 markerButtonsDef = '<br/><input type="button" value="Add to departure" onclick="updateURL(\'departure\', \'' + marker.icao + '\');" class="btn btn-defaut btn-xs">'
                     + '<br/><input type="button" value="Add to destination" onclick="updateURL(\'arrival\', \'' + marker.icao + '\');" class="btn btn-defaut btn-xs" style="margin-top:5px;">'
-                    + '<br/><input type="button" value="Add to alternative" onclick="updateURL(\'alternative\', \'' + marker.icao + '\');" class="btn btn-defaut btn-xs" style="margin-top:5px;">'
+                    + '<br/><input type="button" value="Add to alternative" onclick="updateURL(\'alternative\', \'' + marker.icao + '\');" class="btn btn-defaut btn-xs" style="margin-top:5px;">';
             }
 
             m.bindPopup('<strong>' + marker.name + '</strong><br/>' +

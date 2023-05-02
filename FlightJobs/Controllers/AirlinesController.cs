@@ -56,13 +56,19 @@ namespace FlightJobs.Controllers
             return View(list);
         }
 
-        public PartialViewResult PilotsHiredView(int id)
+        public IList<StatisticsDbModel> PilotsHired(int id)
         {
             var dbContext = new ApplicationDbContext();
             var airline = dbContext.AirlineDbModels.FirstOrDefault(x => x.Id == id);
             var airlinePilotsHired = dbContext.StatisticsDbModels.Where(s => s.Airline != null && s.Airline.Id == airline.Id).ToList();
             var ownerUserStatistic = airlinePilotsHired.FirstOrDefault(s => airline.UserId != null && s.User.Id == airline.UserId);
             if (ownerUserStatistic != null) ownerUserStatistic.User.UserName += " (Owner)";
+            return airlinePilotsHired;
+        }
+
+        public PartialViewResult PilotsHiredView(int id)
+        {
+            var airlinePilotsHired = PilotsHired(id);
             return PartialView("AirlinePilotsHiredView", airlinePilotsHired);
         }
         public ActionResult Sign(int id)

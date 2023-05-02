@@ -265,6 +265,7 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\AirlineApiController.cs" />
     <Compile Include="Controllers\AirlinesController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\ChallengeController.cs" />
@@ -280,7 +281,9 @@
     <Compile Include="DTOs\CapacityTO.cs" />
     <Compile Include="DTOs\JobSearchTO.cs" />
     <Compile Include="DTOs\JobTO.cs" />
+    <Compile Include="DTOs\PaginatedAirlineFilterTO.cs" />
     <Compile Include="DTOs\PaginatedJobsFilterTO.cs" />
+    <Compile Include="DTOs\PaginatedAirlinersTO.cs" />
     <Compile Include="DTOs\PaginatedJobsTO.cs" />
     <Compile Include="DTOs\UserSettingsTO.cs" />
     <Compile Include="Enums\ChallengeTypeEnum.cs" />
