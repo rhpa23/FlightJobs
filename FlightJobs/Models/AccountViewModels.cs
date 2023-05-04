@@ -69,6 +69,7 @@ namespace FlightJobs.Models
     public class RegisterViewModel
     {
         [Required]
+        [StringLength(30, ErrorMessage = "O/A {0} must be at least {2} characters.", MinimumLength = 5)]
         [Display(Name = "Nick Name")]
         public string Name { get; set; }
 

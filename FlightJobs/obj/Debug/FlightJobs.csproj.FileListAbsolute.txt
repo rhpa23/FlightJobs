@@ -553,6 +553,5 @@ C:\DotNetProjects\FlightJobs\FlightJobs\bin\Google.Protobuf.pdb
 C:\DotNetProjects\FlightJobs\FlightJobs\bin\K4os.Compression.LZ4.xml
 C:\DotNetProjects\FlightJobs\FlightJobs\bin\K4os.Compression.LZ4.Streams.xml
 C:\DotNetProjects\FlightJobs\FlightJobs\bin\K4os.Hash.xxHash.xml
-C:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.Migrations.Initial.resources
+C:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.Migrations.InitialCreate.resources
 C:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.csproj.GenerateResource.cache
-C:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.Migrations.MsSqlServerAjusts.resources

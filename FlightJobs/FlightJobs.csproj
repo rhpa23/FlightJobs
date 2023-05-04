@@ -291,13 +291,9 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helpers\HtmlHelpers.cs" />
-    <Compile Include="Migrations\202212120048290_Initial.cs" />
-    <Compile Include="Migrations\202212120048290_Initial.Designer.cs">
-      <DependentUpon>202212120048290_Initial.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202301151530296_MsSqlServerAjusts.cs" />
-    <Compile Include="Migrations\202301151530296_MsSqlServerAjusts.Designer.cs">
-      <DependentUpon>202301151530296_MsSqlServerAjusts.cs</DependentUpon>
+    <Compile Include="Migrations\202305021421534_InitialCreate.cs" />
+    <Compile Include="Migrations\202305021421534_InitialCreate.Designer.cs">
+      <DependentUpon>202305021421534_InitialCreate.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -770,11 +766,8 @@
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202212120048290_Initial.resx">
-      <DependentUpon>202212120048290_Initial.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202301151530296_MsSqlServerAjusts.resx">
-      <DependentUpon>202301151530296_MsSqlServerAjusts.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202305021421534_InitialCreate.resx">
+      <DependentUpon>202305021421534_InitialCreate.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
