@@ -13,6 +13,7 @@ using System.Text.RegularExpressions;
 using System.Net;
 using Microsoft.AspNet.Identity;
 using System.Threading.Tasks;
+using FlightJobs.DTOs;
 
 namespace FlightJobs.Controllers
 {
@@ -230,6 +231,24 @@ namespace FlightJobs.Controllers
             return GetAirlineLedgerView(airlineJobs, page);
         }
 
+        public IPagedList<JobAirlineDbModel> GetAirlineLedgerByFilter(int airlineId, int page, JobTO JobFilter)
+        {
+            var dbContext = new ApplicationDbContext();
+            var airlineJobs = dbContext.JobAirlineDbModels.Where(j => j.Job.IsDone &&
+                                                                      j.Airline.Id == airlineId);
+            if (!string.IsNullOrEmpty(JobFilter.DepartureICAO) && JobFilter.DepartureICAO.Length == 4)
+            {
+                airlineJobs = airlineJobs.Where(j => j.Job.DepartureICAO == JobFilter.DepartureICAO);
+            }
+
+            if (!string.IsNullOrEmpty(JobFilter.ArrivalICAO) && JobFilter.ArrivalICAO.Length == 4)
+            {
+                airlineJobs = airlineJobs.Where(j => j.Job.ArrivalICAO == JobFilter.ArrivalICAO);
+            }
+
+            return GetAirlineLedgerData(airlineJobs.OrderByDescending(o => o.Id).ToList(), JobFilter.UserId, page);
+        }
+
         public ActionResult FilterLedger(int airlineId, string departure, string arrival)
         {
             var dbContext = new ApplicationDbContext();
@@ -251,12 +270,19 @@ namespace FlightJobs.Controllers
         private ActionResult GetAirlineLedgerView(List<JobAirlineDbModel> airlineJobs, int page)
         {
             var dbContext = new ApplicationDbContext();
+            var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
+            return PartialView("AirlineLedgerView", GetAirlineLedgerData(airlineJobs, user.Id, page));
+        }
+
+        private IPagedList<JobAirlineDbModel> GetAirlineLedgerData(List<JobAirlineDbModel> airlineJobs, string userId, int page)
+        {
+            var dbContext = new ApplicationDbContext();
             int pageSize = 6;
 
             var pgList = airlineJobs.ToPagedList<JobAirlineDbModel>(page, pageSize);
 
-            var userStatistics = GetWebUserStatistics();
-            var weightUnit = GetWeightUnit(Request); 
+            var userStatistics = GetUserStatistics(userId);
+            var weightUnit = GetWeightUnit(Request, userId);
             foreach (var item in pgList)
             {
                 item.Job.PayloadDisplay = GetWeight(Request, item.Job.Payload, userStatistics);
@@ -267,10 +293,10 @@ namespace FlightJobs.Controllers
                 item.CalcAirlineJob(departureFbo);
             }
 
-            return PartialView("AirlineLedgerView", pgList);
+            return pgList;
         }
 
-        
+
 
         public ActionResult PilotLicenseProfile()
         {
@@ -402,6 +428,15 @@ namespace FlightJobs.Controllers
             dbContext.SaveChanges();
         }
 
+        public IList<AirlineFboDbModel> GetHiredFbos(int airlineId)
+        {
+            var dbContext = new ApplicationDbContext();
+
+            var hiredFBOs = dbContext.AirlineFbo.Where(x => x.Airline.Id == airlineId).ToList();
+            hiredFBOs.ForEach(x => x.Name = AirportDatabaseFile.FindAirportInfo(x.Icao).Name);
+            return hiredFBOs;
+        }
+
         public ActionResult FboProfile(int airlineId)
         {
             var dbContext = new ApplicationDbContext();
@@ -419,8 +454,7 @@ namespace FlightJobs.Controllers
 
             var airlineFboView = GetFboView(topAirports, fboInDB);
 
-            var hiredFBOs = dbContext.AirlineFbo.Where(x => x.Airline.Id == airlineId).ToList();
-            hiredFBOs.ForEach(x => x.Name = AirportDatabaseFile.FindAirportInfo(x.Icao).Name);
+            var hiredFBOs = GetHiredFbos(airlineId);
             airlineFboView.FboHired = new List<AirlineFboDbModel>();
             airlineFboView.FboHired.AddRange(hiredFBOs);
             airlineFboView.CurrentAirline = dbContext.AirlineDbModels.FirstOrDefault(x => x.Id == airlineId);
@@ -440,20 +474,55 @@ namespace FlightJobs.Controllers
             return airlineFboView;
         }
 
-        public ActionResult FilterFboList(string icao, int airlineId)
+        public AirlineFboView GetFboListByFilter(string icao, int airlineId)
         {
             var dbContext = new ApplicationDbContext();
-            var airports = AirportDatabaseFile.GetAllAirportInfo().Where(x => x.ICAO.ToLower().StartsWith(icao.ToLower())).ToList();
+            var airports = new List<AirportModel>();
+            if (string.IsNullOrEmpty(icao))
+            {
+                var jobsDone = dbContext.JobDbModels.Where(j => j.IsDone);
+                var topArrival = jobsDone.GroupBy(q => q.ArrivalICAO)
+                                .OrderByDescending(gp => gp.Count())
+                                .Select(g => g.Key)
+                                .Take(8).ToList();
+                topArrival.ForEach(x => airports.Add(AirportDatabaseFile.FindAirportInfo(x)));
+            }
+            else
+            {
+                airports = AirportDatabaseFile.GetAllAirportInfo().Where(x => x.ICAO.ToLower().StartsWith(icao.ToLower())).ToList();
+            }
+
             var temp = airports.Select(t => t.ICAO).ToList();
             var fboInDB = dbContext.AirlineFbo.Where(x => temp.Contains(x.Icao)).ToList();
 
             var airlineFboView = GetFboView(airports, fboInDB);
             airlineFboView.CurrentAirline = dbContext.AirlineDbModels.FirstOrDefault(x => x.Id == airlineId);
+            return airlineFboView;
+        }
 
-            return PartialView("FboResultsView", airlineFboView);
+        public ActionResult FilterFboList(string icao, int airlineId)
+        {
+            return PartialView("FboResultsView", GetFboListByFilter(icao, airlineId));
         }
 
         public ActionResult HireFbo(string icao)
+        {
+            var dbContext = new ApplicationDbContext();
+            var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
+
+            var airlineFboView = HireFboData(icao, user.Id);
+            if (airlineFboView.Data is AirlineFboView)
+            {
+                return PartialView("FboAirlineView", airlineFboView.Data);
+            }
+            else
+            {
+                return airlineFboView;
+            }
+            
+        }
+
+        public JsonResult HireFboData(string icao, string userId)
         {
             var dbContext = new ApplicationDbContext();
             var airport = AirportDatabaseFile.FindAirportInfo(icao);
@@ -462,9 +531,9 @@ namespace FlightJobs.Controllers
             {
                 return Json(new { error = true, responseText = "This FBO is not available. All contracts were hired." }, JsonRequestBehavior.AllowGet);
             }
-            var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
-            var userStatistics = dbContext.StatisticsDbModels.FirstOrDefault(x => x.User.Id == user.Id);
-            var airline = dbContext.AirlineDbModels.FirstOrDefault(a => a.Id == userStatistics.Airline.Id && a.UserId == user.Id);
+            
+            var userStatistics = dbContext.StatisticsDbModels.FirstOrDefault(x => x.User.Id == userId);
+            var airline = dbContext.AirlineDbModels.FirstOrDefault(a => a.Id == userStatistics.Airline.Id && a.UserId == userId);
 
             if (airline == null)
             {
@@ -490,9 +559,10 @@ namespace FlightJobs.Controllers
 
             var airlineFboView = new AirlineFboView();
             airlineFboView.FboHired = dbContext.AirlineFbo.Where(x => x.Airline.Id == airline.Id).ToList();
+            airlineFboView.FboHired.ToList().ForEach(x => x.Name = AirportDatabaseFile.FindAirportInfo(x.Icao).Name);
             airlineFboView.CurrentAirline = airline;
 
-            return PartialView("FboAirlineView", airlineFboView);
+            return Json(airlineFboView, JsonRequestBehavior.AllowGet);
         }
 
         private AirlineFboDbModel GetCalcAirlineFbo(AirportModel airport, int countFbosInDB)

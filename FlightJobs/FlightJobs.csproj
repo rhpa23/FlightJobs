@@ -85,7 +85,6 @@
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="PagedList, Version=1.17.0.0, Culture=neutral, PublicKeyToken=abbb863e9397c5e1, processorArchitecture=MSIL">
       <HintPath>..\packages\PagedList.1.17.0.0\lib\net40\PagedList.dll</HintPath>
@@ -278,12 +277,16 @@
     <Compile Include="Controllers\MapsController.cs" />
     <Compile Include="Controllers\SearchJobsController.cs" />
     <Compile Include="Controllers\UserApiController.cs" />
+    <Compile Include="DTOs\AirlineTO.cs" />
     <Compile Include="DTOs\CapacityTO.cs" />
+    <Compile Include="DTOs\HireFboTO.cs" />
     <Compile Include="DTOs\JobSearchTO.cs" />
+    <Compile Include="DTOs\JobStatusTO.cs" />
     <Compile Include="DTOs\JobTO.cs" />
     <Compile Include="DTOs\PaginatedAirlineFilterTO.cs" />
     <Compile Include="DTOs\PaginatedJobsFilterTO.cs" />
     <Compile Include="DTOs\PaginatedAirlinersTO.cs" />
+    <Compile Include="DTOs\PaginatedAirlineJobsTO.cs" />
     <Compile Include="DTOs\PaginatedJobsTO.cs" />
     <Compile Include="DTOs\UserSettingsTO.cs" />
     <Compile Include="Enums\ChallengeTypeEnum.cs" />

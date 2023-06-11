@@ -12,7 +12,7 @@ namespace FlightJobs.Controllers
 {
     public class AirlinesController : Controller
     {
-        private int airlinePrice = 40000;
+        internal static int AIRLINE_PRICE = 40000;
 
         private string path = "/Content/img/logo/";
 
@@ -267,7 +267,7 @@ namespace FlightJobs.Controllers
             }
             var statistics = dbContext.StatisticsDbModels.FirstOrDefault(s => s.User.Id == user.Id);
 
-            if (statistics != null && statistics.BankBalance >= airlinePrice)
+            if (statistics != null && statistics.BankBalance >= AIRLINE_PRICE)
             {
                 var dbModel = new AirlineDbModel()
                 {
@@ -289,7 +289,7 @@ namespace FlightJobs.Controllers
 
                 dbContext.AirlineDbModels.Add(dbModel);
 
-                statistics.BankBalance = statistics.BankBalance - airlinePrice;
+                statistics.BankBalance = statistics.BankBalance - AIRLINE_PRICE;
                 statistics.Airline = dbModel;
 
                 if (model.RequireCertificates)
@@ -343,7 +343,7 @@ namespace FlightJobs.Controllers
             var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
             var statistics = dbContext.StatisticsDbModels.FirstOrDefault(s => s.User.Id == user.Id);
             
-            if (statistics != null && statistics.BankBalance >= airlinePrice)
+            if (statistics != null && statistics.BankBalance >= AIRLINE_PRICE)
             {
 
                 var airlineModel = new AirlineViewModel();

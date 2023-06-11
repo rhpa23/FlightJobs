@@ -422,6 +422,13 @@ namespace FlightJobs.Controllers
         {
             var dbContext = new ApplicationDbContext();
             var user = dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
+            return PayDebt(id, user.Id);
+        }
+
+        public ActionResult PayDebt(int id, string userId)
+        {
+            var dbContext = new ApplicationDbContext();
+            var user = dbContext.Users.FirstOrDefault(u => u.Id == userId);
             var airline = dbContext.AirlineDbModels.FirstOrDefault(a => a.Id == id && a.UserId == user.Id);
 
             if (airline != null)

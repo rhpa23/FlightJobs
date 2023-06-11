@@ -61,6 +61,41 @@ namespace FlightJobs.Controllers
             return response;
         }
 
+        [System.Web.Http.HttpPost]
+        [System.Web.Mvc.AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<HttpResponseMessage> FinishJobMsfsPost([FromBody] JobStatusTO jobStatus)
+        {
+            var response = Request.CreateResponse(HttpStatusCode.BadRequest, "Process error.");
+            try
+            {
+                string icaoStr = "";
+                var airports = AirportDatabaseFile.FindClosestLocation(jobStatus.Latitude, jobStatus.Longitude);
+                if (airports.Count > 0)
+                {
+                    icaoStr = airports.First().ICAO;
+                }
+
+                response = FinishJob(icaoStr, jobStatus.PayloadKilograms.ToString(),
+                                                  jobStatus.UserId, jobStatus.FuelWeightKilograms.ToString(), "MSFS", 
+                                                  jobStatus.Title, jobStatus.ResultMessages, jobStatus.ResultScore);
+
+                var dbContext = new ApplicationDbContext();
+                var finishedJob = dbContext.JobDbModels
+                       .OrderByDescending(x => x.EndTime)
+                       .FirstOrDefault(x => x.User.Id == jobStatus.UserId && x.IsDone);
+
+                var jobJson = JsonConvert.SerializeObject(new { ResultMessage = response.RequestMessage, FinishedJob = finishedJob }, Formatting.None);
+                return Request.CreateResponse(HttpStatusCode.OK, jobJson);
+            }
+            catch (Exception e)
+            {
+                ErrorLog.GetDefault(null).Log(new Error(e));
+            }
+
+            return response;
+        }
+
         [System.Web.Http.HttpGet]
         [System.Web.Mvc.AllowAnonymous]
         [ValidateAntiForgeryToken]
@@ -214,7 +249,9 @@ namespace FlightJobs.Controllers
             return response;
         }
 
-        public HttpResponseMessage FinishJob(string icaoStr, string payloadStr, string usarIdStr, string fuelWeightStr, string tailNumberStr, string planeDescriptionStr)
+        public HttpResponseMessage FinishJob(string icaoStr, string payloadStr, string usarIdStr, 
+                                             string fuelWeightStr, string tailNumberStr, string planeDescriptionStr,
+                                             IList<string> resultMessages = null, long? pilotScore = null)
         {
             var response = Request.CreateResponse(HttpStatusCode.BadRequest, "Server error");
 
@@ -290,8 +327,8 @@ namespace FlightJobs.Controllers
                     return Request.CreateResponse(HttpStatusCode.Forbidden, $"Impossible to finish this {name} with {job.UsedFuelWeight}Kg burned fuel.");
                 }
 
-                var licenseExpired = UpdateStatistics(job, dbContext);
-                UpdateAirline(job, dbContext);
+                var licenseExpired = UpdateStatistics(job, dbContext, pilotScore);
+                UpdateAirline(job, dbContext, resultMessages);
 
                 dbContext.SaveChanges();
 
@@ -310,7 +347,7 @@ namespace FlightJobs.Controllers
             return response;
         }
 
-        private bool UpdateStatistics(JobDbModel job, ApplicationDbContext dbContext)
+        private bool UpdateStatistics(JobDbModel job, ApplicationDbContext dbContext, long? pilotScore = null)
         {
             var licenseOverdue = false;
             var statistics = dbContext.StatisticsDbModels.FirstOrDefault(s => s.User.Id == job.User.Id);
@@ -319,13 +356,20 @@ namespace FlightJobs.Controllers
                 licenseOverdue = IsLicenseOverdue(dbContext, job.User.Id);
                 if (!licenseOverdue)
                 {
-                    if (job.AviationType == 1)
+                    if (pilotScore != null)
                     {
-                        statistics.PilotScore += job.Dist / 10;
+                        statistics.PilotScore += pilotScore.Value;
                     }
                     else
                     {
-                        statistics.PilotScore += job.Dist / 15;
+                        if (job.AviationType == 1)
+                        {
+                            statistics.PilotScore += job.Dist / 10;
+                        }
+                        else
+                        {
+                            statistics.PilotScore += job.Dist / 15;
+                        }
                     }
                     
                     statistics.BankBalance += job.Pay;
@@ -345,7 +389,7 @@ namespace FlightJobs.Controllers
             return licenseOverdue;
         }
 
-        private void UpdateAirline(JobDbModel job, ApplicationDbContext dbContext)
+        private void UpdateAirline(JobDbModel job, ApplicationDbContext dbContext, IList<string> resultMessages = null)
         {
             var statistics = dbContext.StatisticsDbModels.FirstOrDefault(s => s.User.Id == job.User.Id);
             if (statistics != null && statistics.Airline != null)
@@ -389,7 +433,7 @@ namespace FlightJobs.Controllers
 
                     if (statistics.Airline.DebtValue > 0)
                     {
-                        Task.Factory.StartNew(() => SendEmailWarningForAirlineDebtAsync(statistics.Airline, job));
+                        Task.Factory.StartNew(() => SendEmailWarningForAirlineDebtAsync(statistics.Airline, job, resultMessages));
                     }
                 }
                 dbContext.JobAirlineDbModels.Add(jobAirline);
@@ -500,7 +544,7 @@ namespace FlightJobs.Controllers
             return Request.CreateResponse(HttpStatusCode.OK);
         }
 
-        private async Task SendEmailWarningForAirlineDebtAsync(AirlineDbModel airline, JobDbModel job)
+        private async Task SendEmailWarningForAirlineDebtAsync(AirlineDbModel airline, JobDbModel job, IList<string> resultMessages = null)
         {
             await Task.Delay(10000);
             var dbContext = new ApplicationDbContext();
@@ -533,6 +577,17 @@ namespace FlightJobs.Controllers
                     sb.Append($"<li>Pax: <b>{job.Pax}</b> </li>");
                     sb.Append($"<li>Cargo: <b>{job.Cargo}</b> </li>");
                     sb.Append($"<li>Challenge: <b>{job.IsChallenge.ToString()} </b></li></ul><hr />");
+
+                    if (resultMessages != null)
+                    {
+                        sb.Append($"<p><b>Flight results: </b></p>");
+                        sb.Append("<ul>");
+                        foreach (var msg in resultMessages)
+                        {
+                            sb.Append($"<li>{msg}</li>");
+                        }
+                        sb.Append("</ul><hr />");
+                    }
 
                     sb.Append($"<p>Thanks for use FlightJobs.</p>");
                     sb.Append($"<p>If you prefer not receive this type of communication from flightjobs.bsite.net, please <a href='https://flightjobs.bsite.net/Profile/EmailUnsubscribeView' target='_blank'>click here to unsubscribe</a>.</p>");
