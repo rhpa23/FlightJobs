@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Web;
 
@@ -16,5 +17,8 @@ namespace FlightJobs.Models
         public DateTime MaturityDate { get; set; }
 
         public bool OverdueProcessed { get; set; }
+
+        [NotMapped]
+        public IList<LicenseItemUserDbModel> LicenseItems { get; set; } = new List<LicenseItemUserDbModel>();
     }
 }

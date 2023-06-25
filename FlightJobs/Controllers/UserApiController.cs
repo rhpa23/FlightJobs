@@ -1,5 +1,6 @@
 ﻿using FlightJobs.DTOs;
 using System;
+using System.Data.Entity;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -85,5 +86,72 @@ namespace FlightJobs.Controllers
 
             return response;
         }
+
+        [System.Web.Http.HttpPost]
+        [System.Web.Mvc.AllowAnonymous]
+        public HttpResponseMessage GetUserFlightsInfo([FromBody] UserSimpleTO user)
+        {
+            var statistics = new HomeController().FlightsInfo(user.Id);
+            statistics.User.PasswordHash = ""; // For security reason
+            statistics.User.SecurityStamp = "";
+            statistics.Airline.HiredFBOs = null;
+            statistics.AirlinePilotsHired = null;
+            
+            var dbContext = new ApplicationDbContext();
+
+            statistics.LicensesOverdue = dbContext.PilotLicenseExpensesUser.Include(x => x.PilotLicenseExpense).Where(e =>
+                                                            e.MaturityDate < DateTime.Now &&
+                                                            e.User.Id == user.Id).ToList();
+
+            long[] overdueLicenseExpenseIds = statistics.LicensesOverdue.Select(x => x.PilotLicenseExpense.Id).ToArray();
+            var licenseItens = dbContext.LicenseItemUser.Include(x => x.PilotLicenseItem)
+                                                .Include(x => x.PilotLicenseItem.PilotLicenseExpense)
+                                                .Where(p => overdueLicenseExpenseIds.Contains(p.PilotLicenseItem.PilotLicenseExpense.Id) && p.User.Id == user.Id);
+
+            if (licenseItens?.Count() > 0)
+            {
+                foreach (var license in statistics.LicensesOverdue)
+                {
+                    license.LicenseItems = licenseItens.Where(x => x.PilotLicenseItem.PilotLicenseExpense.Id == license.PilotLicenseExpense.Id).ToList();
+                }
+            }
+
+            return Request.CreateResponse(HttpStatusCode.OK, statistics);
+        }
+
+
+        [System.Web.Http.HttpPost]
+        [System.Web.Mvc.AllowAnonymous]
+        public HttpResponseMessage BuyLicencePackage([FromBody] UserSimpleTO userTO, int licenseExpenseId)
+        {
+            var dbContext = new ApplicationDbContext();
+            var user = dbContext.Users.FirstOrDefault(u => u.Id == userTO.Id);
+            if (user != null && user.Email == AccountController.GuestEmail)
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest, "Guest user.");
+            }
+            var uStatistics = dbContext.StatisticsDbModels.FirstOrDefault(s => s.User.Id == user.Id);
+
+            var packageLicenseItens = dbContext.LicenseItemUser.Include(x => x.PilotLicenseItem).Include(x => x.PilotLicenseItem.PilotLicenseExpense)
+                                                 .Where(i => i.PilotLicenseItem.PilotLicenseExpense.Id == licenseExpenseId && !i.IsBought && i.User.Id == user.Id);
+            foreach (var pkgItem in packageLicenseItens)
+            {
+                pkgItem.IsBought = true;
+                uStatistics.BankBalance -= pkgItem.PilotLicenseItem.Price;
+                uStatistics.LicenseWarningSent = false;
+            }
+
+            var expenseUser = dbContext.PilotLicenseExpensesUser.Include(x => x.PilotLicenseExpense).FirstOrDefault(e =>
+                                e.PilotLicenseExpense.Id == licenseExpenseId &&
+                                e.User.Id == user.Id);
+
+            expenseUser.MaturityDate = DateTime.Now.AddDays(expenseUser.PilotLicenseExpense.DaysMaturity);
+            expenseUser.OverdueProcessed = false;
+
+            dbContext.SaveChanges();
+
+            return Request.CreateResponse(HttpStatusCode.OK, uStatistics);
+        }
+
     }
 }

@@ -89,5 +89,8 @@ namespace FlightJobs.Models
         public Dictionary<string, long> DestinationRanking { get; set; }
 
         public string WeightUnit { get; set; }
+
+        [NotMapped]
+        public IList<PilotLicenseExpensesUserDbModel> LicensesOverdue { get; set; }
     }
 }

@@ -84,9 +84,11 @@ namespace FlightJobs.Controllers
                 var finishedJob = dbContext.JobDbModels
                        .OrderByDescending(x => x.EndTime)
                        .FirstOrDefault(x => x.User.Id == jobStatus.UserId && x.IsDone);
+                finishedJob.User = null;
 
-                var jobJson = JsonConvert.SerializeObject(new { ResultMessage = response.RequestMessage, FinishedJob = finishedJob }, Formatting.None);
-                return Request.CreateResponse(HttpStatusCode.OK, jobJson);
+                string resultMsg = response.Content.ReadAsStringAsync().Result.Replace("\"", "");
+                var jobJson = JsonConvert.SerializeObject(new { ResultMessage = resultMsg, FinishedJob = finishedJob }, Formatting.None);
+                return Request.CreateResponse(response.StatusCode, jobJson);
             }
             catch (Exception e)
             {
@@ -631,6 +633,7 @@ namespace FlightJobs.Controllers
                     CustomNameCapacity = x.CustomNameCapacity,
                     CustomPassengerCapacity = x.CustomPassengerCapacity,
                     CustomPaxWeight = x.CustomPaxWeight,
+                    ImagePath = x.ImagePath,
                     Id = x.Id
                 }).OrderBy(x => x.CustomNameCapacity).ToList();
             var listJson = JsonConvert.SerializeObject(list, Formatting.None);

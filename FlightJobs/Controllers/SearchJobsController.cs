@@ -538,7 +538,8 @@ namespace FlightJobs.Controllers
                                capacity.CustomCargoCapacityWeight,
                                capacity.CustomNameCapacity,
                                capacity.CustomPaxWeight,
-                               capacity.UserId);
+                               capacity.UserId,
+                               capacity.ImagePath);
         }
         // SearchJobs/SaveCustomCapacity?passengers=158&cargo=2500&name=A320+CEO+Fenix+MSFS+158pax&paxWeight=88 
         public PartialViewResult SaveCustomCapacity(int passengers, int cargo, string name, long paxWeight)
@@ -548,7 +549,7 @@ namespace FlightJobs.Controllers
             return SaveCapacity(passengers, cargo, name, paxWeight, user.Id);
         }
 
-        public PartialViewResult SaveCapacity(int passengers, int cargo, string name, long paxWeight, string userId)
+        public PartialViewResult SaveCapacity(int passengers, int cargo, string name, long paxWeight, string userId, string imagePath = null)
         {
             var dbContext = new ApplicationDbContext();
             var statistics = dbContext.StatisticsDbModels.FirstOrDefault(s => s.User.Id == userId);
@@ -565,6 +566,7 @@ namespace FlightJobs.Controllers
                         CustomPassengerCapacity = passengers,
                         CustomNameCapacity = name.Trim(),
                         CustomPaxWeight = paxWeight,
+                        ImagePath = imagePath,
                         User = statistics.User
                     };
                     dbContext.CustomPlaneCapacity.Add(customCapacity);
@@ -578,7 +580,7 @@ namespace FlightJobs.Controllers
                     dbEntity.CustomPaxWeight = paxWeight;
                     statistics.CustomPlaneCapacity = dbEntity;
                     searchModel.CustomPlaneCapacity = dbEntity;
-
+                    if (imagePath != null) dbEntity.ImagePath = imagePath;
                 }
                 dbContext.SaveChanges();
             }

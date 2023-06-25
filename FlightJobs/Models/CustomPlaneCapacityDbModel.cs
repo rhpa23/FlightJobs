@@ -31,7 +31,7 @@ namespace FlightJobs.Models
         [Required(ErrorMessage = "Custom passenger Weight is required")]
         public long CustomPaxWeight { get; set; }
 
-        [NotMapped]
+        [DisplayName("Image thumbnail path")]
         public string ImagePath { get; set; }
     }
 }

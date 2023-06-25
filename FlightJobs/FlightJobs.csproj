@@ -83,8 +83,8 @@
     <Reference Include="MySql.Data.EntityFramework, Version=8.0.11.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
       <HintPath>..\packages\MySql.Data.EntityFramework.8.0.11\lib\net452\MySql.Data.EntityFramework.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="PagedList, Version=1.17.0.0, Culture=neutral, PublicKeyToken=abbb863e9397c5e1, processorArchitecture=MSIL">
       <HintPath>..\packages\PagedList.1.17.0.0\lib\net40\PagedList.dll</HintPath>
@@ -301,6 +301,10 @@
     <Compile Include="Migrations\202301151530296_MsSqlServerAjusts.cs" />
     <Compile Include="Migrations\202301151530296_MsSqlServerAjusts.Designer.cs">
       <DependentUpon>202301151530296_MsSqlServerAjusts.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202306122251183_aircraft_thumbnail.cs" />
+    <Compile Include="Migrations\202306122251183_aircraft_thumbnail.Designer.cs">
+      <DependentUpon>202306122251183_aircraft_thumbnail.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -610,6 +614,7 @@
     <None Include="Properties\PublishProfiles\Default Settings.pubxml" />
     <None Include="Properties\PublishProfiles\FlightJobs - Gearhost Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
+    <None Include="Properties\PublishProfiles\FTPProfile.pubxml" />
     <None Include="Properties\PublishProfiles\Locaweb FTP.pubxml" />
     <None Include="Properties\PublishProfiles\MyAspNet FTP.pubxml" />
     <None Include="Properties\PublishProfiles\MyAspNet.pubxml" />
@@ -778,6 +783,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202301151530296_MsSqlServerAjusts.resx">
       <DependentUpon>202301151530296_MsSqlServerAjusts.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202306122251183_aircraft_thumbnail.resx">
+      <DependentUpon>202306122251183_aircraft_thumbnail.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
