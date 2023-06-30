@@ -119,6 +119,19 @@ namespace FlightJobs.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, statistics);
         }
 
+        [System.Web.Http.HttpPost]
+        [System.Web.Mvc.AllowAnonymous]
+        public HttpResponseMessage GetUserLicensesOverdue([FromBody] UserSimpleTO user)
+        {
+            var dbContext = new ApplicationDbContext();
+
+            var licensesOverdue = dbContext.PilotLicenseExpensesUser.Include(x => x.PilotLicenseExpense).Where(e =>
+                                                            e.MaturityDate < DateTime.Now &&
+                                                            e.User.Id == user.Id).ToList();
+            
+            return Request.CreateResponse(HttpStatusCode.OK, licensesOverdue);
+        }
+
 
         [System.Web.Http.HttpPost]
         [System.Web.Mvc.AllowAnonymous]
