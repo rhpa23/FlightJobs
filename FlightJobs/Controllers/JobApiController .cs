@@ -253,7 +253,7 @@ namespace FlightJobs.Controllers
 
         public HttpResponseMessage FinishJob(string icaoStr, string payloadStr, string usarIdStr, 
                                              string fuelWeightStr, string tailNumberStr, string planeDescriptionStr,
-                                             IList<string> resultMessages = null, long? pilotScore = null)
+                                             IList<string> resultMessages = null, long? jobPilotScore = null)
         {
             var response = Request.CreateResponse(HttpStatusCode.BadRequest, "Server error");
 
@@ -319,6 +319,8 @@ namespace FlightJobs.Controllers
                 job.ModelName = tailNumberStr;
                 job.ModelDescription = planeDescriptionStr;
 
+                if (jobPilotScore != null) job.PilotScore = jobPilotScore.Value;
+
                 long fuelWeight = Convert.ToInt64(Math.Round(Convert.ToDouble(fuelWeightStr, new CultureInfo("en-US"))));
                 job.FinishFuelWeight = fuelWeight;
 
@@ -329,7 +331,7 @@ namespace FlightJobs.Controllers
                     return Request.CreateResponse(HttpStatusCode.Forbidden, $"Impossible to finish this {name} with {job.UsedFuelWeight}Kg burned fuel.");
                 }
 
-                var licenseExpired = UpdateStatistics(job, dbContext, pilotScore);
+                var licenseExpired = UpdateStatistics(job, dbContext, jobPilotScore);
                 UpdateAirline(job, dbContext, resultMessages);
 
                 dbContext.SaveChanges();
@@ -349,7 +351,7 @@ namespace FlightJobs.Controllers
             return response;
         }
 
-        private bool UpdateStatistics(JobDbModel job, ApplicationDbContext dbContext, long? pilotScore = null)
+        private bool UpdateStatistics(JobDbModel job, ApplicationDbContext dbContext, long? jobPilotScore = null)
         {
             var licenseOverdue = false;
             var statistics = dbContext.StatisticsDbModels.FirstOrDefault(s => s.User.Id == job.User.Id);
@@ -358,19 +360,22 @@ namespace FlightJobs.Controllers
                 licenseOverdue = IsLicenseOverdue(dbContext, job.User.Id);
                 if (!licenseOverdue)
                 {
-                    if (pilotScore != null)
+                    if (jobPilotScore != null)
                     {
-                        statistics.PilotScore += pilotScore.Value;
+                        statistics.PilotScore += jobPilotScore.Value;
+                        job.PilotScore = jobPilotScore.Value;
                     }
                     else
                     {
                         if (job.AviationType == 1)
                         {
                             statistics.PilotScore += job.Dist / 10;
+                            job.PilotScore = job.Dist / 10;
                         }
                         else
                         {
                             statistics.PilotScore += job.Dist / 15;
+                            job.PilotScore = job.Dist / 10;
                         }
                     }
                     

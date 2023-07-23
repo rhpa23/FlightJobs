@@ -134,3 +134,4 @@ C:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.csproj.CopyComplete
 C:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.dll
 C:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.pdb
 C:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.Migrations.aircraft_thumbnail.resources
+C:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.Migrations.add_job_pilot_score.resources

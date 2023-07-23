@@ -180,6 +180,8 @@ namespace FlightJobs.Models
         [NotMapped]
         public string WeightUnit { get; set; }
 
+        public long PilotScore { get; set; }
+
         public static JobDbModel Clone(JobDbModel job, ApplicationUser user)
         {
             return new JobDbModel()
@@ -192,6 +194,7 @@ namespace FlightJobs.Models
                 FirstClass = job.FirstClass,
                 Pax = job.Pax,
                 Pay = job.Pay,
+                PilotScore = job.PilotScore,
                 User = user,
                 StartTime = DateTime.Now,
                 EndTime = DateTime.Now,

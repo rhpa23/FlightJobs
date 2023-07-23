@@ -82,5 +82,38 @@ namespace FlightJobs.Controllers
             new SearchJobsController().Confirm(jobTO);
             return Request.CreateResponse(HttpStatusCode.OK);
         }
+
+        [System.Web.Mvc.AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<HttpResponseMessage> GetSimBriefData(string simbriefUserName)
+        {
+            try
+            {
+                var simBriefData = await new SearchJobsController().SimbriefLoadAsync(simbriefUserName);
+                var simBriefTO = JsonConvert.DeserializeObject<SimBriefTO>(simBriefData.Data.ToString());
+                return Request.CreateResponse(HttpStatusCode.OK, simBriefTO);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            
+        }
+
+        [System.Web.Mvc.AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<HttpResponseMessage> GetRandomFlight(string departure, string destination)
+        {
+            try
+            {
+                var randomData = new SearchJobsController().RandomFlight(departure, destination);
+                return Request.CreateResponse(HttpStatusCode.OK, randomData.Data);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+        }
     }
 }

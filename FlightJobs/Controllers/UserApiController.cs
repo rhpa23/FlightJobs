@@ -166,5 +166,50 @@ namespace FlightJobs.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, uStatistics);
         }
 
+        [System.Web.Http.HttpPost]
+        [System.Web.Mvc.AllowAnonymous]
+        public HttpResponseMessage SaveAvatar([FromBody] UserSimpleTO user, string fileName)
+        {
+            var dbContext = new ApplicationDbContext();
+
+            var statistics = dbContext.StatisticsDbModels.FirstOrDefault(s => s.User.Id == user.Id);
+            statistics.Logo = "/img/avatar/" + fileName;
+            dbContext.SaveChanges();
+
+            return Request.CreateResponse(HttpStatusCode.OK);
+        }
+
+        [System.Web.Http.HttpPost]
+        [System.Web.Mvc.AllowAnonymous]
+        public HttpResponseMessage TransferMoneyToAirline([FromBody] UserSimpleTO user, int percent)
+        {
+            if (percent > 100 || percent <= 0)
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest, $"Transfer percent out of range [1-100].");
+            }
+
+            var dbContext = new ApplicationDbContext();
+
+            var uStatistics = dbContext.StatisticsDbModels.FirstOrDefault(s => s.User.Id == user.Id);
+            if (uStatistics.Airline == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest, $"You need to sign a contract with an airline to transfer funds.");
+            }
+
+            var transferBB = uStatistics.BankBalance * (percent / (double)100);
+            var newPilotBalance = uStatistics.BankBalance - transferBB - (uStatistics.BankBalance * 0.15);
+
+            if (newPilotBalance <= 0)
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest, $"Insufficient balance to make a transfer. Your current bank balance is: {string.Format("F{0:C}", uStatistics.BankBalance)}");
+            }
+
+            uStatistics.BankBalance = (long)newPilotBalance;
+            uStatistics.Airline.BankBalance = (long)transferBB + uStatistics.Airline.BankBalance;
+
+            dbContext.SaveChanges();
+
+            return Request.CreateResponse(HttpStatusCode.OK, $"Transfer percentage successfully sent to {uStatistics.Airline.Name}.");
+        }
     }
 }

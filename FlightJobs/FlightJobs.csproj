@@ -288,6 +288,7 @@
     <Compile Include="DTOs\PaginatedAirlinersTO.cs" />
     <Compile Include="DTOs\PaginatedAirlineJobsTO.cs" />
     <Compile Include="DTOs\PaginatedJobsTO.cs" />
+    <Compile Include="DTOs\SimBriefTO.cs" />
     <Compile Include="DTOs\UserSettingsTO.cs" />
     <Compile Include="Enums\ChallengeTypeEnum.cs" />
     <Compile Include="Global.asax.cs">
@@ -305,6 +306,10 @@
     <Compile Include="Migrations\202306122251183_aircraft_thumbnail.cs" />
     <Compile Include="Migrations\202306122251183_aircraft_thumbnail.Designer.cs">
       <DependentUpon>202306122251183_aircraft_thumbnail.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202307091831584_add_job_pilot_score.cs" />
+    <Compile Include="Migrations\202307091831584_add_job_pilot_score.Designer.cs">
+      <DependentUpon>202307091831584_add_job_pilot_score.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -786,6 +791,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202306122251183_aircraft_thumbnail.resx">
       <DependentUpon>202306122251183_aircraft_thumbnail.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202307091831584_add_job_pilot_score.resx">
+      <DependentUpon>202307091831584_add_job_pilot_score.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

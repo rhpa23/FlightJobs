@@ -608,8 +608,8 @@ namespace FlightJobs.Controllers
         {
             var dbContext = new ApplicationDbContext();
             var query = dbContext.JobDbModels.AsQueryable();
-            var departureFilter = departure.Length == 4;
-            var destinationFilter = destination.Length == 4;
+            var departureFilter = departure?.Length == 4;
+            var destinationFilter = destination?.Length == 4;
 
             if (!departureFilter || !destinationFilter)
             {
