@@ -98,14 +98,14 @@ namespace FlightJobs.Controllers
 
         private ChallengeViewModel GetChallengerView(int pax, int cargo, long paxWeight, string departure, string arrival, string type, long totalPayment, long distance, string weightUnit, int jobId = 0)
         {
-            var departureModel = AirportDatabaseFile.FindAirportInfo(departure);
-            var arrivalModel = AirportDatabaseFile.FindAirportInfo(arrival);
+            var departureModel = _sqLiteDbContext.GetAirportByIcao(departure);
+            var arrivalModel = _sqLiteDbContext.GetAirportByIcao(arrival);
 
             var model = new ChallengeViewModel()
             {
                 WeightUnit = GetWeightUnit(Request),
-                ArrivalICAO = arrivalModel.ICAO,
-                DepartureICAO = departureModel.ICAO,
+                ArrivalICAO = arrivalModel.Ident,
+                DepartureICAO = departureModel.Ident,
                 Cargo = cargo,
                 Dist = distance,
                 Pax = pax,

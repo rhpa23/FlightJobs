@@ -1,4 +1,5 @@
-﻿using FlightJobs.Models;
+﻿using FlightJobs.Domain.Navdata;
+using FlightJobs.Models;
 using FlightJobs.Util;
 using System;
 using System.Collections.Generic;
@@ -24,14 +25,16 @@ namespace FlightJobs.Controllers
 
         public static string SIMBRIEF_USER_ID_COOKIE = "simbrief.id";
 
+        internal SqLiteDbContext _sqLiteDbContext = new SqLiteDbContext();
+
         public int CalcDistance(string departure, string arrival)
         {
-            var departureInfo = AirportDatabaseFile.FindAirportInfo(departure);
-            var arrivalInfo = AirportDatabaseFile.FindAirportInfo(arrival);
+            var departureInfo = _sqLiteDbContext.GetAirportByIcao(departure);
+            var arrivalInfo = _sqLiteDbContext.GetAirportByIcao(arrival);
             if (departureInfo != null && arrivalInfo != null)
             {
-                var departureCoord = new GeoCoordinate(departureInfo.Latitude, departureInfo.Longitude);
-                var arrivalCoord = new GeoCoordinate(arrivalInfo.Latitude, arrivalInfo.Longitude);
+                var departureCoord = new GeoCoordinate(departureInfo.Laty, departureInfo.Lonx);
+                var arrivalCoord = new GeoCoordinate(arrivalInfo.Laty, arrivalInfo.Lonx);
 
                 var distMeters = departureCoord.GetDistanceTo(arrivalCoord);
                 var distMiles = (int)DataConversion.ConvertMetersToMiles(distMeters);
@@ -52,14 +55,14 @@ namespace FlightJobs.Controllers
 	            "icon_center_y":13
             }*/
             var jsonList = new List<object>();
-            var alternativeInfo = string.IsNullOrEmpty(alternative) ? null : AirportDatabaseFile.FindAirportInfo(alternative);
+            var alternativeInfo = string.IsNullOrEmpty(alternative) ? null : _sqLiteDbContext.GetAirportByIcao(alternative);
             if (!string.IsNullOrEmpty(departure) && !string.IsNullOrEmpty(arrival))
             {
-                var departureInfo = AirportDatabaseFile.FindAirportInfo(departure);
-                var arrivalInfo = AirportDatabaseFile.FindAirportInfo(arrival);
+                var departureInfo = _sqLiteDbContext.GetAirportByIcao(departure);
+                var arrivalInfo = _sqLiteDbContext.GetAirportByIcao(arrival);
 
-                var departureCoord = new GeoCoordinate(departureInfo.Latitude, departureInfo.Longitude);
-                var arrivalCoord = new GeoCoordinate(arrivalInfo.Latitude, arrivalInfo.Longitude);
+                var departureCoord = new GeoCoordinate(departureInfo.Laty, departureInfo.Lonx);
+                var arrivalCoord = new GeoCoordinate(arrivalInfo.Laty, arrivalInfo.Lonx);
 
                 var depJson = new
                 {
@@ -68,10 +71,10 @@ namespace FlightJobs.Controllers
                     lng = departureCoord.Longitude,
                     name = departureInfo.Name,
                     info = "Departure airport",
-                    icao = departureInfo.ICAO,
-                    runway_size = departureInfo.RunwaySize + "ft",
-                    elevation = departureInfo.Elevation + "ft",
-                    trasition = departureInfo.Trasition + "ft",
+                    icao = departureInfo.Ident,
+                    runway_size = departureInfo.LongestRunwayLength + "ft",
+                    elevation = departureInfo.Altitude + "ft",
+                    //trasition = departureInfo.Trasition + "ft",
                     icon_url = "../Content/img/departing.png",
                     icon_center_x = 13,
                     icon_center_y = 13
@@ -84,10 +87,10 @@ namespace FlightJobs.Controllers
                     lng = arrivalCoord.Longitude,
                     name = arrivalInfo.Name,
                     info = "Arrival airport",
-                    icao = arrivalInfo.ICAO,
-                    runway_size = arrivalInfo.RunwaySize + "ft",
-                    elevation = arrivalInfo.Elevation + "ft",
-                    trasition = arrivalInfo.Trasition + "ft",
+                    icao = arrivalInfo.Ident,
+                    runway_size = arrivalInfo.LongestRunwayLength + "ft",
+                    elevation = arrivalInfo.Altitude + "ft",
+                    //trasition = arrivalInfo.Trasition + "ft",
                     icon_url = "../Content/img/arrival.png",
                     icon_center_x = 13,
                     icon_center_y = 13
@@ -98,7 +101,7 @@ namespace FlightJobs.Controllers
 
                 if (alternativeInfo != null)
                 {
-                    var alternativeCoord = new GeoCoordinate(alternativeInfo.Latitude, alternativeInfo.Longitude);
+                    var alternativeCoord = new GeoCoordinate(alternativeInfo.Laty, alternativeInfo.Lonx);
                     var altJson = new
                     {
                         isRoute = true,
@@ -106,10 +109,10 @@ namespace FlightJobs.Controllers
                         lng = alternativeCoord.Longitude,
                         name = alternativeInfo.Name,
                         info = "Alternative airport",
-                        icao = alternativeInfo.ICAO,
-                        runway_size = alternativeInfo.RunwaySize + "ft",
-                        elevation = alternativeInfo.Elevation + "ft",
-                        trasition = alternativeInfo.Trasition + "ft",
+                        icao = alternativeInfo.Ident,
+                        runway_size = alternativeInfo.LongestRunwayLength + "ft",
+                        elevation = alternativeInfo.Altitude + "ft",
+                        //trasition = alternativeInfo.Trasition + "ft",
                         icon_url = "../Content/img/alternative.png",
                         icon_center_x = 13,
                         icon_center_y = 13
@@ -142,8 +145,8 @@ namespace FlightJobs.Controllers
             }
             foreach (var icao in userJobsIcaos.Distinct())
             {
-                var favDptInfo = AirportDatabaseFile.FindAirportInfo(icao);
-                var favDptCoord = new GeoCoordinate(favDptInfo.Latitude, favDptInfo.Longitude);
+                var favDptInfo = _sqLiteDbContext.GetAirportByIcao(icao);
+                var favDptCoord = new GeoCoordinate(favDptInfo.Laty, favDptInfo.Lonx);
                 var favDptAirport = new
                 {
                     isRoute = false,
@@ -152,9 +155,9 @@ namespace FlightJobs.Controllers
                     name = favDptInfo.Name,
                     info = icao,
                     icao = icao,
-                    runway_size = favDptInfo.RunwaySize + "ft",
-                    elevation = favDptInfo.Elevation + "ft",
-                    trasition = favDptInfo.Trasition + "ft",
+                    runway_size = favDptInfo.LongestRunwayLength + "ft",
+                    elevation = favDptInfo.Altitude + "ft",
+                    //trasition = favDptInfo.Trasition + "ft",
                     icon_url = "../Content/img/favorite.png",
                     icon_center_x = 8,
                     icon_center_y = 8
@@ -188,24 +191,24 @@ namespace FlightJobs.Controllers
 
             try
             {
-                var dep = AirportDatabaseFile.FindAirportInfo(model.Departure);
-                var arrival = AirportDatabaseFile.FindAirportInfo(model.Arrival);
+                var dep = _sqLiteDbContext.GetAirportByIcao(model.Departure);
+                var arrival = _sqLiteDbContext.GetAirportByIcao(model.Arrival);
 
-                var depCoord = new GeoCoordinate(dep.Latitude, dep.Longitude);
+                var depCoord = new GeoCoordinate(dep.Laty, dep.Lonx);
                 var randomPob = new Random();
                 var randomCargo = new Random();
                 int id = 0;
                 bool validGaProfit = false;
 
-                var arrCoord = new GeoCoordinate(arrival.Latitude, arrival.Longitude);
+                var arrCoord = new GeoCoordinate(arrival.Laty, arrival.Lonx);
                 var distMeters = depCoord.GetDistanceTo(arrCoord);
                 var distMiles = (int)DataConversion.ConvertMetersToMiles(distMeters);
 
                 //                    if (distMiles >= model.MinRange && distMiles <= model.MaxRange && arrival.ICAO.ToUpper() != dep.ICAO.ToUpper() &&
                 //                        arrival.ICAO.ToUpper() == model.Arrival.ToUpper())
 
-                if (arrival.ICAO.ToUpper() != dep.ICAO.ToUpper() &&
-                    arrival.ICAO.ToUpper() == model.Arrival.ToUpper())
+                if (arrival.Ident.ToUpper() != dep.Ident.ToUpper() &&
+                    arrival.Ident.ToUpper() == model.Arrival.ToUpper())
                 {
                     var customCapacity = model.CustomPlaneCapacity;
 

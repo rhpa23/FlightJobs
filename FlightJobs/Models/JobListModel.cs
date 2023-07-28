@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using FlightJobs.Domain.Navdata.Entities;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Web;
 
 namespace FlightJobs.Models
 {
@@ -11,8 +7,8 @@ namespace FlightJobs.Models
     {
         public int Id { get; set; }
 
-        public AirportModel Departure { get; set; }
-        public AirportModel Arrival { get; set; }
+        public AirportEntity Departure { get; set; }
+        public AirportEntity Arrival { get; set; }
 
         public long Dist { get; set; }
         public string PayloadView { get; set; }

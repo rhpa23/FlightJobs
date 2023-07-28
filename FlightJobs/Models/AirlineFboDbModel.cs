@@ -17,10 +17,10 @@ namespace FlightJobs.Models
         public string Name { get; set; }
 
         [NotMapped]
-        public int RunwaySize { get; set; }
+        public long RunwaySize { get; set; }
 
         [NotMapped]
-        public int Elevation { get; set; }
+        public long Elevation { get; set; }
 
 
         public AirlineDbModel Airline { get; set; }

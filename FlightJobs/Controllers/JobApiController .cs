@@ -19,6 +19,7 @@ using Newtonsoft.Json;
 using System.Text;
 using System.Threading;
 using FlightJobs.DTOs;
+using FlightJobs.Domain.Navdata;
 
 namespace FlightJobs.Controllers
 {
@@ -26,7 +27,7 @@ namespace FlightJobs.Controllers
     {
 
         private const string CHALLENGE_EXPIRED = "Unfortunately, this Challenge is expired. Take another one.";
-
+        internal SqLiteDbContext _sqLiteDbContext = new SqLiteDbContext();
 
         [System.Web.Http.HttpGet]
         [System.Web.Mvc.AllowAnonymous]
@@ -37,20 +38,15 @@ namespace FlightJobs.Controllers
 
             try
             {
-                string icaoStr = "";
                 string latitude = Request.Headers.GetValues("Latitude").First();
                 string longitude = Request.Headers.GetValues("Longitude").First();
-                var airports = AirportDatabaseFile.FindClosestLocation(Convert.ToDouble(latitude.Replace(",", ".")), Convert.ToDouble(longitude.Replace(",", ".")));
-                if (airports.Count > 0)
-                {
-                    icaoStr = airports.First().ICAO;
-                }
+                var airport = _sqLiteDbContext.GetCloseAirport(Convert.ToDouble(latitude.Replace(",", ".")), Convert.ToDouble(longitude.Replace(",", ".")));
 
                 string payloadStr = Request.Headers.GetValues("Payload").First().Replace(",", ".");
                 string usarIdStr = Request.Headers.GetValues("UserId").First().Replace("\"", "");
                 string fuelWeightStr = Request.Headers.GetValues("FuelWeight").First().Replace(",", ".");
 
-                response = StartJob(icaoStr, payloadStr, usarIdStr, fuelWeightStr);
+                response = StartJob(airport.Ident, payloadStr, usarIdStr, fuelWeightStr);
             }
             catch (Exception e)
             {
@@ -69,14 +65,9 @@ namespace FlightJobs.Controllers
             var response = Request.CreateResponse(HttpStatusCode.BadRequest, "Process error.");
             try
             {
-                string icaoStr = "";
-                var airports = AirportDatabaseFile.FindClosestLocation(jobStatus.Latitude, jobStatus.Longitude);
-                if (airports.Count > 0)
-                {
-                    icaoStr = airports.First().ICAO;
-                }
+                var airport = _sqLiteDbContext.GetCloseAirport(jobStatus.Latitude, jobStatus.Longitude);
 
-                response = FinishJob(icaoStr, jobStatus.PayloadKilograms.ToString(),
+                response = FinishJob(airport.Ident, jobStatus.PayloadKilograms.ToString(),
                                                   jobStatus.UserId, jobStatus.FuelWeightKilograms.ToString(), "MSFS", 
                                                   jobStatus.Title, jobStatus.ResultMessages, jobStatus.ResultScore);
 
@@ -107,21 +98,16 @@ namespace FlightJobs.Controllers
 
             try
             {
-                string icaoStr = "";
                 string latitude = Request.Headers.GetValues("Latitude").First();
                 string longitude = Request.Headers.GetValues("Longitude").First();
-                var airports = AirportDatabaseFile.FindClosestLocation(Convert.ToDouble(latitude.Replace(",", ".")), Convert.ToDouble(longitude.Replace(",", ".")));
-                if (airports.Count > 0)
-                {
-                    icaoStr = airports.First().ICAO;
-                }
+                var airport = _sqLiteDbContext.GetCloseAirport(Convert.ToDouble(latitude.Replace(",", ".")), Convert.ToDouble(longitude.Replace(",", ".")));
 
                 string payloadStr = Request.Headers.GetValues("Payload").First().Replace(",", ".");
                 string usarIdStr = Request.Headers.GetValues("UserId").First().Replace("\"", "");
                 string fuelWeightStr = Request.Headers.GetValues("FuelWeight").First().Replace(",", ".");
                 string planeDescriptionStr = Request.Headers.GetValues("PlaneDescription").First().Replace(",", ".");
 
-                response = FinishJob(icaoStr, payloadStr, usarIdStr, fuelWeightStr, "MSFS", planeDescriptionStr);
+                response = FinishJob(airport.Ident, payloadStr, usarIdStr, fuelWeightStr, "MSFS", planeDescriptionStr);
             }
             catch (Exception e)
             {
@@ -621,8 +607,8 @@ namespace FlightJobs.Controllers
         [ValidateAntiForgeryToken]
         public async Task<HttpResponseMessage> FindClosestLocationTest(string lat, string lon)
         {
-            var list = AirportDatabaseFile.FindClosestLocation(Convert.ToDouble(lat), Convert.ToDouble(lon));
-            return Request.CreateResponse(HttpStatusCode.OK, list.Select(x => x.ICAO));
+            var airport = _sqLiteDbContext.GetCloseAirport(Convert.ToDouble(lat), Convert.ToDouble(lon));
+            return Request.CreateResponse(HttpStatusCode.OK, airport.Ident);
         }
 
         [System.Web.Http.HttpPost]

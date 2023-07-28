@@ -14,6 +14,7 @@ using System.Net;
 using Microsoft.AspNet.Identity;
 using System.Threading.Tasks;
 using FlightJobs.DTOs;
+using FlightJobs.Domain.Navdata.Entities;
 
 namespace FlightJobs.Controllers
 {
@@ -433,7 +434,7 @@ namespace FlightJobs.Controllers
             var dbContext = new ApplicationDbContext();
 
             var hiredFBOs = dbContext.AirlineFbo.Where(x => x.Airline.Id == airlineId).ToList();
-            hiredFBOs.ForEach(x => x.Name = AirportDatabaseFile.FindAirportInfo(x.Icao).Name);
+            hiredFBOs.ForEach(x => x.Name = _sqLiteDbContext.GetAirportByIcao(x.Icao).Name);
             return hiredFBOs;
         }
 
@@ -446,10 +447,10 @@ namespace FlightJobs.Controllers
                             .OrderByDescending(gp => gp.Count())
                             .Select(g => g.Key)
                             .Take(8).ToList();
-            var topAirports = new List<AirportModel>();
-            topArrival.ForEach(x => topAirports.Add(AirportDatabaseFile.FindAirportInfo(x)));
+            var topAirports = new List<AirportEntity>();
+            topArrival.ForEach(x => topAirports.Add(_sqLiteDbContext.GetAirportByIcao(x)));
 
-            var test = topAirports.Select(t => t.ICAO).ToList();
+            var test = topAirports.Select(t => t.Ident).ToList();
             var fboInDB = dbContext.AirlineFbo.Where(x => test.Contains(x.Icao)).ToList();
 
             var airlineFboView = GetFboView(topAirports, fboInDB);
@@ -461,13 +462,13 @@ namespace FlightJobs.Controllers
             return PartialView("AirlineFboView", airlineFboView);
         }
 
-        private AirlineFboView GetFboView(List<AirportModel> airports, List<AirlineFboDbModel> fboInDB)
+        private AirlineFboView GetFboView(List<AirportEntity> airports, List<AirlineFboDbModel> fboInDB)
         {
             var airlineFboView = new AirlineFboView();
             airlineFboView.FboResults = new List<AirlineFboDbModel>();
             foreach (var airport in airports)
             {
-                var countFbosInDB = fboInDB.Count(f => f.Icao == airport.ICAO);
+                var countFbosInDB = fboInDB.Count(f => f.Icao == airport.Ident);
 
                 airlineFboView.FboResults.Add(GetCalcAirlineFbo(airport, countFbosInDB));
             }
@@ -477,7 +478,7 @@ namespace FlightJobs.Controllers
         public AirlineFboView GetFboListByFilter(string icao, int airlineId)
         {
             var dbContext = new ApplicationDbContext();
-            var airports = new List<AirportModel>();
+            var airports = new List<AirportEntity>();
             if (string.IsNullOrEmpty(icao))
             {
                 var jobsDone = dbContext.JobDbModels.Where(j => j.IsDone);
@@ -485,14 +486,14 @@ namespace FlightJobs.Controllers
                                 .OrderByDescending(gp => gp.Count())
                                 .Select(g => g.Key)
                                 .Take(8).ToList();
-                topArrival.ForEach(x => airports.Add(AirportDatabaseFile.FindAirportInfo(x)));
+                topArrival.ForEach(x => airports.Add(_sqLiteDbContext.GetAirportByIcao(x)));
             }
             else
             {
-                airports = AirportDatabaseFile.GetAllAirportInfo().Where(x => x.ICAO.ToLower().StartsWith(icao.ToLower())).ToList();
+                airports = _sqLiteDbContext.GetAirportsByTerm(icao).ToList();
             }
 
-            var temp = airports.Select(t => t.ICAO).ToList();
+            var temp = airports.Select(t => t.Ident).ToList();
             var fboInDB = dbContext.AirlineFbo.Where(x => temp.Contains(x.Icao)).ToList();
 
             var airlineFboView = GetFboView(airports, fboInDB);
@@ -525,7 +526,7 @@ namespace FlightJobs.Controllers
         public JsonResult HireFboData(string icao, string userId)
         {
             var dbContext = new ApplicationDbContext();
-            var airport = AirportDatabaseFile.FindAirportInfo(icao);
+            var airport = _sqLiteDbContext.GetAirportByIcao(icao);
             var fboInDB = dbContext.AirlineFbo.Where(x => x.Icao == icao);
             if (fboInDB.Count() >= 15)
             {
@@ -559,25 +560,25 @@ namespace FlightJobs.Controllers
 
             var airlineFboView = new AirlineFboView();
             airlineFboView.FboHired = dbContext.AirlineFbo.Where(x => x.Airline.Id == airline.Id).ToList();
-            airlineFboView.FboHired.ToList().ForEach(x => x.Name = AirportDatabaseFile.FindAirportInfo(x.Icao).Name);
+            airlineFboView.FboHired.ToList().ForEach(x => x.Name = _sqLiteDbContext.GetAirportByIcao(x.Icao).Name);
             airlineFboView.CurrentAirline = airline;
 
             return Json(airlineFboView, JsonRequestBehavior.AllowGet);
         }
 
-        private AirlineFboDbModel GetCalcAirlineFbo(AirportModel airport, int countFbosInDB)
+        private AirlineFboDbModel GetCalcAirlineFbo(AirportEntity airport, int countFbosInDB)
         {
             return new AirlineFboDbModel()
             {
                 Name = airport.Name,
-                Elevation = airport.Elevation,
-                RunwaySize = airport.RunwaySize,
-                Icao = airport.ICAO,
+                Elevation = airport.Altitude,
+                RunwaySize = airport.LongestRunwayLength,
+                Icao = airport.Ident,
                 Availability = 15 - countFbosInDB,
-                FuelPriceDiscount = Math.Round(airport.RunwaySize / (double)62423, 2),
-                GroundCrewDiscount = Math.Round(airport.RunwaySize / (double)41093, 2),
-                ScoreIncrease = airport.RunwaySize / 1123,
-                Price = (airport.RunwaySize * 78)
+                FuelPriceDiscount = Math.Round(airport.LongestRunwayLength / (double)62423, 2),
+                GroundCrewDiscount = Math.Round(airport.LongestRunwayLength / (double)41093, 2),
+                ScoreIncrease = (int)airport.LongestRunwayLength / 1123,
+                Price = (int)airport.LongestRunwayLength * 78
             };
         }
 

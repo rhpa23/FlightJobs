@@ -105,6 +105,9 @@
     <Reference Include="System.ComponentModel" />
     <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Data.SQLite.EF6, Version=1.0.118.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Data.SQLite.EF6.1.0.118.0\lib\net451\System.Data.SQLite.EF6.dll</HintPath>
+    </Reference>
     <Reference Include="System.Device" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Drawing.Design" />
@@ -345,13 +348,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Schedule\WarningEmailJob.cs" />
     <Compile Include="Startup.cs" />
-    <Compile Include="Util\AirportDatabaseFile.cs" />
     <Compile Include="Util\DataConversion.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="App_Data\GlobalAirportDatabase.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="App_Readme\Elmah.txt" />
     <Content Include="Content\bootstrap-checkbox\dist\js\bootstrap-checkbox.js" />
     <Content Include="Content\bootstrap-checkbox\dist\js\bootstrap-checkbox.min.js" />
@@ -777,6 +776,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="APIs\" />
+    <Folder Include="App_Data\" />
     <Folder Include="Content\img\avatar\" />
   </ItemGroup>
   <ItemGroup>
@@ -795,6 +795,12 @@
     <EmbeddedResource Include="Migrations\202307091831584_add_job_pilot_score.resx">
       <DependentUpon>202307091831584_add_job_pilot_score.cs</DependentUpon>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\FlightJobs.Domain.Navdata\FlightJobs.Domain.Navdata.csproj">
+      <Project>{a712ce6d-8ff5-4691-8e5f-7bbf113c1680}</Project>
+      <Name>FlightJobs.Domain.Navdata</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

@@ -1,5 +1,4 @@
 C:\DotNetProjects\FlightJobs\FlightJobs\bin\ApplicationInsights.config
-C:\DotNetProjects\FlightJobs\FlightJobs\bin\App_Data\GlobalAirportDatabase.txt
 C:\DotNetProjects\FlightJobs\FlightJobs\bin\Content\templates\Confirm Email.html
 C:\DotNetProjects\FlightJobs\FlightJobs\bin\FlightJobs.dll.config
 C:\DotNetProjects\FlightJobs\FlightJobs\bin\FlightJobs.dll
@@ -135,3 +134,12 @@ C:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.dll
 C:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.pdb
 C:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.Migrations.aircraft_thumbnail.resources
 C:\DotNetProjects\FlightJobs\FlightJobs\obj\Debug\FlightJobs.Migrations.add_job_pilot_score.resources
+C:\DotNetProjects\FlightJobs\FlightJobs\bin\navdata.sqlite
+C:\DotNetProjects\FlightJobs\FlightJobs\bin\FlightJobs.Domain.Navdata.dll
+C:\DotNetProjects\FlightJobs\FlightJobs\bin\System.Data.SQLite.dll
+C:\DotNetProjects\FlightJobs\FlightJobs\bin\FlightJobs.Domain.Navdata.pdb
+C:\DotNetProjects\FlightJobs\FlightJobs\bin\FlightJobs.Domain.Navdata.dll.config
+C:\DotNetProjects\FlightJobs\FlightJobs\bin\System.Data.SQLite.xml
+C:\DotNetProjects\FlightJobs\FlightJobs\bin\System.Data.SQLite.EF6.dll
+C:\DotNetProjects\FlightJobs\FlightJobs\bin\x64\SQLite.Interop.dll
+C:\DotNetProjects\FlightJobs\FlightJobs\bin\x86\SQLite.Interop.dll
