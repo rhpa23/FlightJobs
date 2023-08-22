@@ -229,5 +229,13 @@ namespace FlightJobs.Controllers
                 return Request.CreateResponse(HttpStatusCode.NotFound);
             }
         }
+
+        public HttpResponseMessage GetRanking()
+        {
+            var dbContext = new ApplicationDbContext();
+            var listAirlines = dbContext.AirlineDbModels.OrderByDescending(a => a.AirlineScore).Take(5);
+
+            return Request.CreateResponse(HttpStatusCode.OK, listAirlines.ToList());
+        }
     }
 }

@@ -30,9 +30,9 @@
 
     <p>
         Departing from  
-        <b>@Html.DisplayFor(modelItem => Model.FirstOrDefault().Departure.Name)</b> (@Html.DisplayFor(modelItem => Model.FirstOrDefault().Departure.ICAO))
+        <b>@Html.DisplayFor(modelItem => Model.FirstOrDefault().Departure.Name)</b> (@Html.DisplayFor(modelItem => Model.FirstOrDefault().Departure.AirportId))
         to arrivel at 
-        <b>@Html.DisplayFor(modelItem => Model.FirstOrDefault().Arrival.Name)</b> (@Html.DisplayFor(modelItem => Model.FirstOrDefault().Arrival.ICAO))
+        <b>@Html.DisplayFor(modelItem => Model.FirstOrDefault().Arrival.Name)</b> (@Html.DisplayFor(modelItem => Model.FirstOrDefault().Arrival.AirportId))
     </p>
 
     <label id="paxSummary" style="font-size: 12px;"> </label>

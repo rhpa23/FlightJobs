@@ -43,7 +43,7 @@ namespace FlightJobs.Controllers
             return 0;
         }
 
-        public JsonResult GetMapInfo(string departure, string arrival, string alternative, string username = "")
+        public JsonResult GetMapInfo(string departure, string arrival, string alternative, string username = "", string iconsPath = "../Content/img/")
         {
             /*
             {
@@ -56,13 +56,10 @@ namespace FlightJobs.Controllers
             }*/
             var jsonList = new List<object>();
             var alternativeInfo = string.IsNullOrEmpty(alternative) ? null : _sqLiteDbContext.GetAirportByIcao(alternative);
-            if (!string.IsNullOrEmpty(departure) && !string.IsNullOrEmpty(arrival))
+            if (!string.IsNullOrEmpty(departure))
             {
                 var departureInfo = _sqLiteDbContext.GetAirportByIcao(departure);
-                var arrivalInfo = _sqLiteDbContext.GetAirportByIcao(arrival);
-
                 var departureCoord = new GeoCoordinate(departureInfo.Laty, departureInfo.Lonx);
-                var arrivalCoord = new GeoCoordinate(arrivalInfo.Laty, arrivalInfo.Lonx);
 
                 var depJson = new
                 {
@@ -75,10 +72,18 @@ namespace FlightJobs.Controllers
                     runway_size = departureInfo.LongestRunwayLength + "ft",
                     elevation = departureInfo.Altitude + "ft",
                     //trasition = departureInfo.Trasition + "ft",
-                    icon_url = "../Content/img/departing.png",
+                    icon_url = $"{iconsPath}departing.png",
                     icon_center_x = 13,
                     icon_center_y = 13
                 };
+
+                jsonList.Add(depJson);
+            }
+
+            if (!string.IsNullOrEmpty(arrival))
+            {
+                var arrivalInfo = _sqLiteDbContext.GetAirportByIcao(arrival);
+                var arrivalCoord = new GeoCoordinate(arrivalInfo.Laty, arrivalInfo.Lonx);
 
                 var arrJson = new
                 {
@@ -91,12 +96,11 @@ namespace FlightJobs.Controllers
                     runway_size = arrivalInfo.LongestRunwayLength + "ft",
                     elevation = arrivalInfo.Altitude + "ft",
                     //trasition = arrivalInfo.Trasition + "ft",
-                    icon_url = "../Content/img/arrival.png",
+                    icon_url = $"{iconsPath}arrival.png",
                     icon_center_x = 13,
                     icon_center_y = 13
                 };
 
-                jsonList.Add(depJson);
                 jsonList.Add(arrJson);
 
                 if (alternativeInfo != null)
@@ -113,7 +117,7 @@ namespace FlightJobs.Controllers
                         runway_size = alternativeInfo.LongestRunwayLength + "ft",
                         elevation = alternativeInfo.Altitude + "ft",
                         //trasition = alternativeInfo.Trasition + "ft",
-                        icon_url = "../Content/img/alternative.png",
+                        icon_url = $"{iconsPath}alternative.png",
                         icon_center_x = 13,
                         icon_center_y = 13
                     };
@@ -135,17 +139,17 @@ namespace FlightJobs.Controllers
                     var user = dbContext.Users.FirstOrDefault(u => u.UserName == userNameParam);
                     if (user != null)
                     {
-                        TimeSpan t = new TimeSpan();
-                        var allUserJobs = FilterJobs(user, null, ref t);
+                        var allUserJobs = dbContext.JobDbModels.Where(j => j.IsDone && j.User.Id == user.Id);
                         userJobsIcaos = allUserJobs.Select(x => x.DepartureICAO).ToList();
                         userJobsIcaos.AddRange(allUserJobs.Select(x => x.ArrivalICAO));
                         Session.Add(userJobsSessionKey, userJobsIcaos.Distinct().ToList());
                     }
                 }
             }
-            foreach (var icao in userJobsIcaos.Distinct())
+
+            var airportsinfos = _sqLiteDbContext.GetAirportsByIcaos(userJobsIcaos.Distinct().ToArray());
+            foreach (var favDptInfo in airportsinfos)
             {
-                var favDptInfo = _sqLiteDbContext.GetAirportByIcao(icao);
                 var favDptCoord = new GeoCoordinate(favDptInfo.Laty, favDptInfo.Lonx);
                 var favDptAirport = new
                 {
@@ -153,12 +157,12 @@ namespace FlightJobs.Controllers
                     lat = favDptCoord.Latitude,
                     lng = favDptCoord.Longitude,
                     name = favDptInfo.Name,
-                    info = icao,
-                    icao = icao,
+                    info = favDptInfo.Ident,
+                    icao = favDptInfo.Ident,
                     runway_size = favDptInfo.LongestRunwayLength + "ft",
                     elevation = favDptInfo.Altitude + "ft",
                     //trasition = favDptInfo.Trasition + "ft",
-                    icon_url = "../Content/img/favorite.png",
+                    icon_url = $"{iconsPath}favorite.png",
                     icon_center_x = 8,
                     icon_center_y = 8
                 };

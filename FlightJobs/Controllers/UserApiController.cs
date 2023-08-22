@@ -163,6 +163,8 @@ namespace FlightJobs.Controllers
 
             dbContext.SaveChanges();
 
+            dbContext.Entry(uStatistics).State = EntityState.Modified;
+            dbContext.Entry(expenseUser).State = EntityState.Modified;
             return Request.CreateResponse(HttpStatusCode.OK, uStatistics);
         }
 

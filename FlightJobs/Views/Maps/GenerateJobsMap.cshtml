@@ -9,12 +9,10 @@
 }
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" crossorigin="" />
 <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js" crossorigin=""></script>
-@*<script src="../Scripts/jquery-2.1.1.js"></script>
-<script src="../Scripts/jquery-ui-1.12.1.js"></script>*@
 
 <style>
     #mapid {
-        height: 490px;
+        height: 385px;
     }
 
     .map-container {
@@ -22,14 +20,29 @@
         border: 1px solid #D1D3D4;
         display: none;
     }
+
+    .div-map-loading {
+        text-align: center;
+        display: none;
+        height: 285px;
+        margin: 100px 0px 0px 0px;
+    }
+
 </style>
 
-<div id="mapContainer" class="map-container"></div>
 
+<div id="mapContainer" class="map-container">
+    <div id="mapLoadingPanel" class="div-map-loading" >
+        <label style="margin: 80px 0px 5px 0px">Loading map..</label><br />
+        <img src="/Content/img/loading.gif" style="width: 40px;">
+    </div>
+</div>
 
-<script>
+<script type="text/javascript">
+
     let searchParams = new URLSearchParams(window.location.search);
     let isParameterCall = false;
+
     if (searchParams.has('departure') && searchParams.has('arrival') && searchParams.has('alternative') && searchParams.has('username')) {
         LoadMapInfoByQueryParams();
         $(".map-container").show();
@@ -37,7 +50,7 @@
     }
 
     function LoadMapInfoByQueryParams() {
-        //$('#map-loading-img').show();
+        $('#mapLoadingPanel').show();
         var _departure = searchParams.get('departure');
         var _arrival = searchParams.get('arrival');
         var _alternative = searchParams.get('alternative');
@@ -51,7 +64,7 @@
                 if (result != null && result != '') {
                     ShowMap(result);
                 }
-                //$('#map-loading-img').hide();
+                $('#mapLoadingPanel').hide();
             }
         });
     }
@@ -105,6 +118,9 @@
             L.polyline(flight_path, { color: '#5bc0de' }).addTo(mymap);
 
             mymap.fitBounds(bounds, { padding: [25, 25] });
+
+            if (flight_path.length == 1)
+                mymap.setZoom(7);
         }
         else {
             mymap.setView([48.865195, 2.321033], 2);
@@ -133,7 +149,7 @@
                 url += "&" + newParam;
             }
         }
-        //window.history.pushState(null, document.title, url);
         window.location.href = url;
     }
+
 </script>

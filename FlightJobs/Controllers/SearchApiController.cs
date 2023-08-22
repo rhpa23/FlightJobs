@@ -115,5 +115,15 @@ namespace FlightJobs.Controllers
             }
 
         }
+
+        [System.Web.Mvc.AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public HttpResponseMessage GetMapInfo(string departure, string arrival, string alternative, string username = "")
+        {
+            var json = new SearchJobsController().GetMapInfo(departure, arrival, alternative, username, "img/icons/");
+            var response = Request.CreateResponse(HttpStatusCode.OK, json);
+            response.Headers.Add("Access-Control-Allow-Origin", "*");
+            return response;
+        }
     }
 }

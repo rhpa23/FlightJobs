@@ -76,6 +76,27 @@ namespace FlightJobs.Domain.Navdata
             }
         }
 
+        public IList<AirportEntity> GetAirportsByIcaos(string[] icaos)
+        {
+            var airportEntities = new List<AirportEntity>();
+            DataTable dt = new DataTable();
+            using (var cmd = _sqliteConnection.CreateCommand())
+            {
+                var icaoParams = string.Join("','", icaos);
+                cmd.CommandText = $"SELECT * FROM airport WHERE UPPER(ident) in ('{icaoParams}')";
+                var da = new SQLiteDataAdapter(cmd.CommandText, _sqliteConnection);
+                da.Fill(dt);
+
+                foreach (DataRow dr in dt.Rows)
+                {
+                    var airport = EntityDbMapper.CreateItemFromRow<AirportEntity>(dr);
+                    airportEntities.Add(airport);
+                }
+            }
+
+            return airportEntities;
+        }
+
         public IList<AirportEntity> GetAirportsByTerm(string icaoTerm)
         {
             var airportEntities = new List<AirportEntity>();
