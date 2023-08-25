@@ -63,5 +63,8 @@ namespace FlightJobs.Models
 
         [NotMapped]
         public List<StatisticsDbModel> HiredPilotsStatistics { get; set; }
+
+        [NotMapped]
+        public ChartViewModel ChartModel { get; set; }
     }
 }

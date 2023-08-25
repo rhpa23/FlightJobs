@@ -38,6 +38,7 @@ namespace FlightJobs.Controllers
         {
             var baseController = new BaseController();
             var userStatistics = baseController.GetUserStatistics(userTo.Id);
+            userStatistics.Airline.ChartModel = baseController.ChartAirline(userStatistics.Airline.Id);
             userStatistics.User.PasswordHash = ""; // For security reason
             userStatistics.User.SecurityStamp = "";
 

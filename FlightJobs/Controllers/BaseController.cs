@@ -513,7 +513,38 @@ namespace FlightJobs.Controllers
 
             if (chartModel.Data.Count > 0)
             {
-                chartModel.PayamentMonthGoal = chartModel.Data.Values.Max() + 1000;
+                chartModel.PayamentMonthGoal = chartModel.Data.Where(x => x.Key != DateTime.Now.ToString("MMM/yyyy")).Select(x => x.Value).Max() + 1000;
+            }
+
+            return chartModel;
+        }
+
+        internal ChartViewModel ChartAirline(int airlineId)
+        {
+            var dbContext = new ApplicationDbContext();
+            var tempDate = DateTime.Now.AddMonths(-3);
+            var dateFilter = new DateTime(tempDate.Year, tempDate.Month, 1);
+            var airlineJobs = dbContext.JobAirlineDbModels.Where(j => j.Job.IsDone && j.Airline.Id == airlineId && j.Job.StartTime > dateFilter).Select(x => x.Job).ToList();
+
+            var chartModel = new ChartViewModel() { Data = new Dictionary<string, double>() };
+
+            foreach (var jobAirline in airlineJobs)
+            {
+                if (!chartModel.Data.Keys.Contains(jobAirline.Month))
+                {
+                    chartModel.Data.Add(jobAirline.Month, jobAirline.Pay);
+                }
+                else
+                {
+                    chartModel.Data[jobAirline.Month] += jobAirline.Pay;
+                }
+
+                chartModel.PayamentTotal += jobAirline.Pay;
+            }
+
+            if (chartModel.Data.Count > 1)
+            {
+                chartModel.PayamentMonthGoal = chartModel.Data.Where(x => x.Key != DateTime.Now.ToString("MMM/yyyy")).Select(x => x.Value).Max() + 1000;
             }
 
             return chartModel;
