@@ -162,10 +162,11 @@ namespace FlightJobs.Controllers
             expenseUser.MaturityDate = DateTime.Now.AddDays(expenseUser.PilotLicenseExpense.DaysMaturity);
             expenseUser.OverdueProcessed = false;
 
-            dbContext.SaveChanges();
-
             dbContext.Entry(uStatistics).State = EntityState.Modified;
             dbContext.Entry(expenseUser).State = EntityState.Modified;
+
+            dbContext.SaveChanges();
+
             return Request.CreateResponse(HttpStatusCode.OK, uStatistics);
         }
 

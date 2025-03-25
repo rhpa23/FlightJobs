@@ -64,6 +64,9 @@ namespace FlightJobs.Controllers
                 var depJson = new
                 {
                     isRoute = true,
+                    isDeparture = true,
+                    isArrival = false,
+                    isAlternative = false,
                     lat = departureCoord.Latitude,
                     lng = departureCoord.Longitude,
                     name = departureInfo.Name,
@@ -88,6 +91,9 @@ namespace FlightJobs.Controllers
                 var arrJson = new
                 {
                     isRoute = true,
+                    isDeparture = false,
+                    isArrival = true,
+                    isAlternative = false,
                     lat = arrivalCoord.Latitude,
                     lng = arrivalCoord.Longitude,
                     name = arrivalInfo.Name,
@@ -109,6 +115,9 @@ namespace FlightJobs.Controllers
                     var altJson = new
                     {
                         isRoute = true,
+                        isDeparture = false,
+                        isArrival = false,
+                        isAlternative = true,
                         lat = alternativeCoord.Latitude,
                         lng = alternativeCoord.Longitude,
                         name = alternativeInfo.Name,
@@ -154,6 +163,9 @@ namespace FlightJobs.Controllers
                 var favDptAirport = new
                 {
                     isRoute = false,
+                    isDeparture = false,
+                    isArrival = false,
+                    isAlternative = false,
                     lat = favDptCoord.Latitude,
                     lng = favDptCoord.Longitude,
                     name = favDptInfo.Name,
@@ -340,7 +352,7 @@ namespace FlightJobs.Controllers
                             Dist = distMiles,
                             Pax = pob,
                             Cargo = cargo,
-                            PayloadLabel = (isCargo) ? "[Cargo] " : (isFisrtClass) ? "[Full price] " : "[Promo] ",
+                            PayloadLabel = (isCargo) ? "[Cargo] " : (isFisrtClass) ? "[Full price] " : "[On sale] ",
                             PayloadView = (isCargo) ? cargo + statistics.WeightUnit : (isFisrtClass) ? pob + " Pax" : pob + " Pax",
                             Pay = profit,
                             FirstClass = isFisrtClass,

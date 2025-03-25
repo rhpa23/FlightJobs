@@ -263,7 +263,7 @@
                     </div>
                     <div id="btnFlightsInfo" class="col-lg-4 linked card-area">
                         <div class="card card-user-info">
-                            <img style="width:80px; height:80px; padding:4px;border:none;" src="@Model.Statistics.Logo" />
+                            <img style="width:80px; height:80px; padding:4px;border:none;" src="@Model.Statistics.Logo" onerror="this.src='/Content/img/default.jpg'" />
                             <br />
                             <span style="font-size:medium;border:none;">Nº of Flights:</span>
                             <br />
@@ -309,7 +309,7 @@
                         </div>
                         <div id="btnFBO" class="col-md-6 linked card-area">
                             <div class="card card-user-info">
-                                <img style="width:80px;height:80px;padding:3px;border:none;" src="@Model.Statistics.Airline.Logo" />
+                                <img style="width:80px;height:80px;padding:3px;border:none;" src="@Model.Statistics.Airline.Logo" onerror="this.src='/Content/img/logo/LogoDefault.png'" />
                                 <br />
                                 <span style="font-size:smaller;line-height:11px;border:none;">Pilots hired: @Model.Statistics.AirlinePilotsHired.Count()</span>
                                 <br />
@@ -463,12 +463,11 @@
             </div>
             <br />*@
 
-                <hr />
-                <div class="row" style="margin-left:10px;">
+                <div class="row" style="margin-left:10px; margin-top: 20px;">
                     <div class="col-md-12">
-                        <div style="font-size:10pt; font-weight:bold; color:red;">The airport's database was updated. Before were 13445 airports and now 40709.</div>
-                        <div style="font-size:10pt;font-weight:bold;">[MSFS Desktop App] A completely new version for MSFS is close to the release. Follow the Discord channel for more info.</div>
-                        <div style="font-size:10pt;">If you liked it, please consider donating. Cheers.</div>
+                        <div style="font-size:12pt;font-weight:bold;">[MSFS Desktop App]</div>
+                        <div style="font-size:12pt;font-weight:bold;">[Download available NOW]</div>
+                        <div style="font-size:10pt;font-weight:bold;">A completely new version for MSFS was released.</div>
                     </div>
                 </div>
                 <br />
