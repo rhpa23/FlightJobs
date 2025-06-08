@@ -529,6 +529,38 @@ namespace FlightJobs.Controllers
             return RemoveCapacity(capacityId, user.Id);
         }
 
+        public async Task<bool> UpdateCapacity(CapacityTO capacity)
+        {
+            var dbContext = new ApplicationDbContext();
+            var statistics = dbContext.StatisticsDbModels.FirstOrDefault(s => s.User.Id == capacity.UserId);
+            var searchModel = new JobSerachModel();
+
+            if (!string.IsNullOrEmpty(capacity.CustomNameCapacity) && capacity.CustomCargoCapacityWeight > 0 && capacity.CustomPassengerCapacity > 0 && statistics != null)
+            {
+                var dbEntity = dbContext.CustomPlaneCapacity.FirstOrDefault(x => x.Id == capacity.Id);
+                
+                var hasSameName = dbContext.CustomPlaneCapacity.Any(x => x.Id != capacity.Id && x.User.Id == capacity.UserId && x.CustomNameCapacity.ToLower() == capacity.CustomNameCapacity.ToLower());
+                if (hasSameName) return false;
+
+                if (dbEntity != null)
+                {
+                    dbEntity.CustomNameCapacity = capacity.CustomNameCapacity;
+                    dbEntity.CustomCargoCapacityWeight = capacity.CustomCargoCapacityWeight;
+                    dbEntity.CustomPassengerCapacity = capacity.CustomPassengerCapacity;
+                    dbEntity.CustomPaxWeight = capacity.CustomPaxWeight;
+                    statistics.CustomPlaneCapacity = dbEntity;
+                    searchModel.CustomPlaneCapacity = dbEntity;
+                    if (capacity.ImagePath != null) dbEntity.ImagePath = capacity.ImagePath;
+                }
+                await dbContext.SaveChangesAsync();
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         public void SaveCapacity(CapacityTO capacity)
         {
             SaveCapacity(capacity.CustomPassengerCapacity,

@@ -57,6 +57,15 @@ namespace FlightJobs.Controllers
             return Request.CreateResponse(HttpStatusCode.OK);
         }
 
+        [System.Web.Http.HttpPut]
+        [System.Web.Mvc.AllowAnonymous]
+        public async Task<HttpResponseMessage> UpdateCapacity([FromBody] CapacityTO capacity)
+        {
+            var successResult = await new SearchJobsController().UpdateCapacity(capacity);
+            if (!successResult) return Request.CreateResponse(HttpStatusCode.BadRequest, capacity);
+            return Request.CreateResponse(HttpStatusCode.OK);
+        }
+
         [System.Web.Http.HttpPost]
         [System.Web.Mvc.AllowAnonymous]
         public async Task<HttpResponseMessage> RemoveCapacity([FromBody] CapacityTO capacity)
