@@ -147,7 +147,7 @@ namespace FlightJobs.Controllers
             var uStatistics = dbContext.StatisticsDbModels.FirstOrDefault(s => s.User.Id == user.Id);
 
             var packageLicenseItens = dbContext.LicenseItemUser.Include(x => x.PilotLicenseItem).Include(x => x.PilotLicenseItem.PilotLicenseExpense)
-                                                 .Where(i => i.PilotLicenseItem.PilotLicenseExpense.Id == licenseExpenseId && !i.IsBought && i.User.Id == user.Id);
+                                                 .Where(i => i.PilotLicenseItem.PilotLicenseExpense.Id == licenseExpenseId && i.User.Id == user.Id).ToList();
             foreach (var pkgItem in packageLicenseItens)
             {
                 pkgItem.IsBought = true;
