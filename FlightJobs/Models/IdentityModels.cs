@@ -35,7 +35,7 @@ namespace FlightJobs.Models
         public DbSet<CustomPlaneCapacityDbModel> CustomPlaneCapacity { get; set; }
 
         public ApplicationDbContext()
-            : base("DefaultConnection", throwIfV1Schema: false)
+            : base("FlightJobsLiteConnection", throwIfV1Schema: false)
         {
         }
 

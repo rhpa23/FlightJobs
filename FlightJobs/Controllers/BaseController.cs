@@ -708,12 +708,11 @@ namespace FlightJobs.Controllers
         internal List<SelectListItem> GetUserCustomCapacity(string userId)
         {
             var dbContext = new ApplicationDbContext();
-            return dbContext.CustomPlaneCapacity.Where(x => x.User.Id == userId).Select(c =>
-                                                                new SelectListItem
-                                                                {
-                                                                    Text = c.CustomNameCapacity,
-                                                                    Value = c.Id.ToString(),
-                                                                }).OrderBy(x => x.Text).ToList();
+            var planeCapacity = dbContext.CustomPlaneCapacity.Where(x => x.User.Id == userId).ToList();
+            return planeCapacity.Select(c => new SelectListItem {
+                        Text = c.CustomNameCapacity,
+                        Value = Convert.ToString(c.Id),
+                    }).OrderBy(x => x.Text).ToList();
         }
     }
 }
