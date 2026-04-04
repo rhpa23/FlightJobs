@@ -160,6 +160,7 @@ namespace FlightJobs.Domain.Navdata
                 var airportEntities = EntityDbMapper.CreateItemsFromRows<AirportEntity>(dt.Rows);
 
                 airportEntity = airportEntities.Select(x => new { nearest = x, co = new GeoCoordinate(x.Laty, x.Lonx) })
+                                                .Where(x => x.nearest.NumRunways > 0)
                                                .OrderBy(x => x.co.GetDistanceTo(coord))
                                                .Take(5)
                                                .FirstOrDefault(x => x.co.GetDistanceTo(coord) < minDistance).nearest;
