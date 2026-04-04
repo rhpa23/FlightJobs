@@ -143,3 +143,5 @@ C:\DotNetProjects\FlightJobs\FlightJobs\bin\System.Data.SQLite.xml
 C:\DotNetProjects\FlightJobs\FlightJobs\bin\System.Data.SQLite.EF6.dll
 C:\DotNetProjects\FlightJobs\FlightJobs\bin\x64\SQLite.Interop.dll
 C:\DotNetProjects\FlightJobs\FlightJobs\bin\x86\SQLite.Interop.dll
+C:\DotNetProjects\FlightJobs\FlightJobs\bin\App_Data\FlightJobsLite.db
+C:\DotNetProjects\FlightJobs\FlightJobs\bin\System.Data.SQLite.Linq.dll

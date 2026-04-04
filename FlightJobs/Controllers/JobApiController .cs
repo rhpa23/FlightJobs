@@ -539,7 +539,7 @@ namespace FlightJobs.Controllers
 
         private async Task SendEmailWarningForAirlineDebtAsync(AirlineDbModel airline, JobDbModel job, IList<string> resultMessages = null)
         {
-            await Task.Delay(10000);
+            //await Task.Delay(60000);
             var dbContext = new ApplicationDbContext();
             try
             {
@@ -599,16 +599,8 @@ namespace FlightJobs.Controllers
             catch (Exception e)
             {
                 Console.WriteLine($"Error sending license e-mail warning: {e.ToString()}", e);
+                throw;
             }
-        }
-
-        [System.Web.Http.HttpGet]
-        [System.Web.Mvc.AllowAnonymous]
-        [ValidateAntiForgeryToken]
-        public async Task<HttpResponseMessage> FindClosestLocationTest(string lat, string lon)
-        {
-            var airport = _sqLiteDbContext.GetCloseAirport(Convert.ToDouble(lat), Convert.ToDouble(lon));
-            return Request.CreateResponse(HttpStatusCode.OK, airport.Ident);
         }
 
         [System.Web.Http.HttpPost]
@@ -667,5 +659,62 @@ namespace FlightJobs.Controllers
             };
             return Request.CreateResponse(HttpStatusCode.OK, paginatedJobs);
         }
+
+        /// ************** Testes ****************************
+
+        //[System.Web.Http.HttpGet]
+        //[System.Web.Mvc.AllowAnonymous]
+        //[ValidateAntiForgeryToken]
+        //public async Task<HttpResponseMessage> FindClosestLocationTest(string lat, string lon)
+        //{
+        //    var airport = _sqLiteDbContext.GetCloseAirport(Convert.ToDouble(lat), Convert.ToDouble(lon));
+        //    return Request.CreateResponse(HttpStatusCode.OK, airport.Ident);
+        //}
+
+        //[System.Web.Http.HttpGet]
+        //[System.Web.Mvc.AllowAnonymous]
+        //[ValidateAntiForgeryToken]
+        //public async Task<HttpResponseMessage> SendEmailTest()
+        //{
+        //    var dbContext = new ApplicationDbContext();
+        //    var airline = await dbContext.AirlineDbModels.FirstOrDefaultAsync(x => x.Id == 3);
+        //    var job = await dbContext.JobDbModels.FirstOrDefaultAsync(X => X.Id == 82555);
+        //    await SendEmailWarningForAirlineDebtAsync(airline, job, null);
+        //    return Request.CreateResponse(HttpStatusCode.OK);
+        //}
+
+
+        //[System.Web.Http.HttpGet]
+        //[System.Web.Mvc.AllowAnonymous]
+        //[ValidateAntiForgeryToken]
+        //public async Task<HttpResponseMessage> UpdateAirlineTest()
+        //{
+        //    var dbContext = new ApplicationDbContext();
+        //    var airline = await dbContext.AirlineDbModels.FirstOrDefaultAsync(x => x.Id == 3);
+        //    var job = await dbContext.JobDbModels.FirstOrDefaultAsync(X => X.Id == 82555);
+        //    UpdateAirline(job, dbContext, null);
+        //    return Request.CreateResponse(HttpStatusCode.OK);
+        //}
+
+        //[System.Web.Http.HttpGet]
+        //[System.Web.Mvc.AllowAnonymous]
+        //[ValidateAntiForgeryToken]
+        //public async Task<HttpResponseMessage> FinishJobMsfsTest()
+        //{
+        //    var dbContext = new ApplicationDbContext();
+        //    var job = await dbContext.JobDbModels.FirstOrDefaultAsync(X => X.Id == 82555);
+        //    var airport = _sqLiteDbContext.GetAirportByIcao("SBCT");
+        //    var to = new JobStatusTO()
+        //    {
+        //        UserId = job.User.Id,
+        //        PayloadKilograms = job.Payload,
+        //        FuelWeightKilograms = 2000,
+        //        Title = "Teste 123",
+        //        Latitude = airport.Laty,
+        //        Longitude = airport.Lonx,
+        //        ResultScore = 0
+        //    };
+        //    return await FinishJobMsfsPost(to);
+        //}
     }
 }

@@ -16,7 +16,9 @@ namespace FlightJobs
     public class MvcApplication : System.Web.HttpApplication
     {
         private const string WARNING_EMAIL_JOB = "warning.email.job";
+        private const string BACKUP_JOB = "backup.job";
         private const string GROUP_EMAIL = "group.email";
+        private const string GROUP_BACKUP = "group.backup";
 
 
         protected void Application_Start()
@@ -36,13 +38,19 @@ namespace FlightJobs
             IScheduler sched = schedFact.GetScheduler().Result;
             sched.Start();
 
+            WarningEmailJobConfig(sched);
+            BackpupJobConfig(sched);
+        }
+
+        private void WarningEmailJobConfig(IScheduler sched)
+        {
             // define the job and tie it to our WarningEmailJob class
-            IJobDetail job = JobBuilder.Create<WarningEmailJob>()
+            IJobDetail emailJob = JobBuilder.Create<WarningEmailJob>()
                 .WithIdentity(WARNING_EMAIL_JOB, GROUP_EMAIL)
                 .Build();
 
             // Trigger the job to run now, and then every 40 seconds
-            var trigger = TriggerBuilder.Create()
+            var triggerEmailJob = TriggerBuilder.Create()
                                           .WithIdentity(WARNING_EMAIL_JOB, GROUP_EMAIL)
                                           //.StartNow()
                                           .WithSimpleSchedule(x => x
@@ -51,7 +59,27 @@ namespace FlightJobs
                                               .RepeatForever())
                                           .Build();
 
-            sched.ScheduleJob(job, trigger);
+            sched.ScheduleJob(emailJob, triggerEmailJob);
+        }
+
+        private void BackpupJobConfig(IScheduler sched)
+        {
+            // define the job and tie it to our BackpupJob class
+            IJobDetail backpupJob = JobBuilder.Create<BackpupJob>()
+                .WithIdentity(BACKUP_JOB, GROUP_BACKUP)
+                .Build();
+
+            // Trigger the job to run now, and then every 40 seconds
+            var triggerBackpupJob = TriggerBuilder.Create()
+                                          .WithIdentity(BACKUP_JOB, GROUP_BACKUP)
+                                          .StartNow()
+                                          .WithSimpleSchedule(x => x
+                                              //.WithIntervalInMinutes(5)
+                                              .WithIntervalInHours(8)
+                                              .RepeatForever())
+                                          .Build();
+
+            sched.ScheduleJob(backpupJob, triggerBackpupJob);
         }
 
         protected void Application_BeginRequest()
