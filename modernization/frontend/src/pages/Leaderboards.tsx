@@ -86,7 +86,7 @@ export const Leaderboards: React.FC = () => {
                     {index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `#${index + 1}`}
                   </td>
                   <td className="px-4 py-3 text-sm text-white">
-                    {entry.user?.firstName} {entry.user?.lastName}
+                    {entry.user?.userName || entry.user?.email || 'Piloto'}
                   </td>
                   <td className="px-4 py-3 text-sm text-green-400">
                     {activeTab === 'earnings'

@@ -10,6 +10,12 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 export class StatisticsController {
   constructor(private readonly statisticsService: StatisticsService) {}
 
+  @Get('dashboard')
+  @ApiOperation({ summary: 'Get dashboard data' })
+  async getDashboard(@Request() req) {
+    return this.statisticsService.getDashboard(req.user.userId);
+  }
+
   @Get('my-stats')
   @ApiOperation({ summary: 'Get current user stats' })
   getMyStats(@Request() req) {

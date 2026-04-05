@@ -41,14 +41,14 @@ export const Header: React.FC<HeaderProps> = ({ onToggleSidebar, sidebarOpen }) 
             <>
               <div className="hidden md:flex items-center space-x-2">
                 <span className="text-sm text-gray-400">
-                  {user.firstName} {user.lastName}
+                  {user.userName || user.email || 'Piloto'}
                 </span>
               </div>
               <div className="relative group">
                 <button className="flex items-center space-x-2 text-gray-400 hover:text-white">
                   <UserCircleIcon className="h-8 w-8" />
                 </button>
-                <div className="absolute right-0 mt-2 w-48 bg-gray-700 rounded-md shadow-lg py-1 hidden group-hover:block">
+                <div className="absolute right-0 top-6 mt-2 w-48 bg-gray-700 rounded-md shadow-lg py-1 hidden group-hover:block">
                   <Link
                     to="/profile"
                     className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-600"

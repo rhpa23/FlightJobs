@@ -38,10 +38,7 @@ export class AuthService {
       user: {
         id: user.id,
         email: user.email,
-        firstName: user.firstName,
-        lastName: user.lastName,
         userName: user.userName,
-        avatar: user.avatar,
       },
     };
   }
@@ -61,8 +58,6 @@ export class AuthService {
       id: newId,
       email: registerDto.email,
       passwordHash,
-      firstName: registerDto.firstName,
-      lastName: registerDto.lastName,
       userName: registerDto.userName || registerDto.email,
       emailConfirmed: true,
       lockoutEnabled: true,
@@ -72,12 +67,9 @@ export class AuthService {
 
     // Create statistics record
     const stats = this.statisticsRepository.create({
-      user: savedUser,
+      userId: savedUser.id,
       bankBalance: 0,
       pilotScore: 0,
-      numberFlights: 0,
-      flightTimeTotal: 0,
-      payloadTotal: 0,
     });
     await this.statisticsRepository.save(stats);
 
@@ -87,10 +79,7 @@ export class AuthService {
       user: {
         id: savedUser.id,
         email: savedUser.email,
-        firstName: savedUser.firstName,
-        lastName: savedUser.lastName,
         userName: savedUser.userName,
-        avatar: savedUser.avatar,
       },
     };
   }
@@ -98,7 +87,6 @@ export class AuthService {
   async getProfile(userId: string) {
     const user = await this.usersRepository.findOne({
       where: { id: userId },
-      relations: ['statistics'],
     });
     if (!user) {
       throw new BadRequestException('User not found');

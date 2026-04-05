@@ -1,4 +1,6 @@
-import { Entity, PrimaryColumn, Column } from 'typeorm';
+import { Entity, PrimaryColumn, Column, OneToMany } from 'typeorm';
+import { Job } from '../../jobs/entities/job.entity';
+import { Airline } from '../../airlines/entities/airline.entity';
 
 @Entity('aspnetusers')
 export class User {
@@ -37,4 +39,10 @@ export class User {
 
   @Column({ name: 'EmailConfirmed', default: 0 })
   emailConfirmed: boolean;
+
+  @OneToMany(() => Job, job => job.user)
+  jobs: Job[];
+
+  @OneToMany(() => Airline, airline => airline.owner)
+  airlines: Airline[];
 }

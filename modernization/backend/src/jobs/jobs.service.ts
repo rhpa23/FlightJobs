@@ -70,7 +70,6 @@ export class JobsService {
     job.modelDescription = completeDto.modelDescription;
     job.startFuelWeight = completeDto.startFuelWeight;
     job.finishFuelWeight = completeDto.finishFuelWeight;
-    job.usedFuelWeight = completeDto.usedFuelWeight;
     return this.jobsRepository.save(job);
   }
 

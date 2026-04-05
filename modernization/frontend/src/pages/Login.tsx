@@ -34,7 +34,7 @@ export const Login: React.FC = () => {
   }, [dispatch]);
 
   if (token && user) {
-    return <Navigate to="/dashboard" replace />;
+    return <Navigate to="/" replace />;
   }
 
   const onSubmit = (data: LoginForm) => {

@@ -31,7 +31,7 @@ export const Dashboard: React.FC = () => {
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold text-white">Dashboard</h1>
         <p className="text-gray-400">
-          Welcome back, {user?.firstName} {user?.lastName}!
+          Welcome back, {user?.userName || user?.email || 'Pilot'}!
         </p>
       </div>
 
@@ -51,7 +51,7 @@ export const Dashboard: React.FC = () => {
               <dl>
                 <dt className="text-sm font-medium text-gray-400 truncate">Bank Balance</dt>
                 <dd className="text-lg font-medium text-white">
-                  ${myStats?.bankBalance?.toLocaleString() || '0'}
+                  ${myStats?.bankBalance != null ? myStats.bankBalance.toLocaleString() : '0'}
                 </dd>
               </dl>
             </div>
@@ -71,7 +71,7 @@ export const Dashboard: React.FC = () => {
               <dl>
                 <dt className="text-sm font-medium text-gray-400 truncate">Pilot Score</dt>
                 <dd className="text-lg font-medium text-white">
-                  {myStats?.pilotScore?.toLocaleString() || '0'}
+                  {myStats?.pilotScore != null ? myStats.pilotScore.toLocaleString() : '0'}
                 </dd>
               </dl>
             </div>
@@ -91,7 +91,7 @@ export const Dashboard: React.FC = () => {
               <dl>
                 <dt className="text-sm font-medium text-gray-400 truncate">Total Flights</dt>
                 <dd className="text-lg font-medium text-white">
-                  {myStats?.numberFlights?.toLocaleString() || '0'}
+                  {myStats?.numberFlights != null ? myStats.numberFlights.toLocaleString() : '0'}
                 </dd>
               </dl>
             </div>
@@ -140,7 +140,7 @@ export const Dashboard: React.FC = () => {
             </div>
             <div>
               <p className="text-sm text-gray-400">Payment</p>
-              <p className="text-lg font-medium text-green-400">${currentJob.pay.toLocaleString()}</p>
+              <p className="text-lg font-medium text-green-400">${currentJob.pay != null ? currentJob.pay.toLocaleString() : '0'}</p>
             </div>
           </div>
         </div>
@@ -158,7 +158,7 @@ export const Dashboard: React.FC = () => {
                     {job.departureICAO} → {job.arrivalICAO}
                   </p>
                   <p className="text-sm text-gray-400">
-                    {job.distance} NM • ${job.pay.toLocaleString()}
+                    {job.distance} NM • ${job.pay != null ? job.pay.toLocaleString() : '0'}
                   </p>
                 </div>
                 <button className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
@@ -181,7 +181,7 @@ export const Dashboard: React.FC = () => {
             </div>
             <div className="text-right">
               <p className="text-sm text-gray-400">Salary</p>
-              <p className="text-lg font-medium text-green-400">${userAirline.salary.toLocaleString()}/hr</p>
+              <p className="text-lg font-medium text-green-400">${userAirline.salary != null ? userAirline.salary.toLocaleString() : '0'}/hr</p>
             </div>
           </div>
         </div>

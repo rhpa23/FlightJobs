@@ -11,8 +11,6 @@ const registerSchema = z.object({
   email: z.string().email('Invalid email address'),
   password: z.string().min(6, 'Password must be at least 6 characters'),
   confirmPassword: z.string().min(6, 'Password must be at least 6 characters'),
-  firstName: z.string().min(1, 'First name is required'),
-  lastName: z.string().min(1, 'Last name is required'),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords don't match",
   path: ['confirmPassword'],
@@ -34,15 +32,13 @@ export const Register: React.FC = () => {
   });
 
   if (token && user) {
-    return <Navigate to="/dashboard" replace />;
+    return <Navigate to="/" replace />;
   }
 
   const onSubmit = (data: RegisterForm) => {
     dispatch(register({
       email: data.email,
       password: data.password,
-      firstName: data.firstName,
-      lastName: data.lastName,
       userName: data.email,
     }));
   };
@@ -69,37 +65,6 @@ export const Register: React.FC = () => {
         
         <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
           <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label htmlFor="firstName" className="block text-sm font-medium text-gray-300">
-                  First Name
-                </label>
-                <input
-                  {...registerForm('firstName')}
-                  type="text"
-                  className="mt-1 block w-full px-3 py-2 border border-gray-600 rounded-md shadow-sm placeholder-gray-400 bg-gray-800 text-white focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="John"
-                />
-                {errors.firstName && (
-                  <p className="mt-1 text-sm text-red-400">{errors.firstName.message}</p>
-                )}
-              </div>
-              <div>
-                <label htmlFor="lastName" className="block text-sm font-medium text-gray-300">
-                  Last Name
-                </label>
-                <input
-                  {...registerForm('lastName')}
-                  type="text"
-                  className="mt-1 block w-full px-3 py-2 border border-gray-600 rounded-md shadow-sm placeholder-gray-400 bg-gray-800 text-white focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="Doe"
-                />
-                {errors.lastName && (
-                  <p className="mt-1 text-sm text-red-400">{errors.lastName.message}</p>
-                )}
-              </div>
-            </div>
-
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-300">
                 Email address

@@ -28,12 +28,12 @@ export const Profile: React.FC = () => {
         <div className="flex items-center space-x-4">
           <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center">
             <span className="text-2xl text-white">
-              {user?.firstName?.charAt(0)}{user?.lastName?.charAt(0)}
+              {(user?.userName || user?.email || 'P')?.charAt(0)}
             </span>
           </div>
           <div>
             <h2 className="text-xl font-medium text-white">
-              {user?.firstName} {user?.lastName}
+              {user?.userName || user?.email || 'Piloto'}
             </h2>
             <p className="text-gray-400">{user?.email}</p>
           </div>

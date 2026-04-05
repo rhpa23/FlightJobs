@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Provider } from 'react-redux';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { store } from './store/store';
+import { useAppDispatch, useAppSelector } from './store/hooks';
+import { fetchProfile } from './store/slices/authSlice';
 import { Login } from './pages/Login';
 import { Register } from './pages/Register';
 import { Dashboard } from './pages/Dashboard';
@@ -16,11 +18,19 @@ import { NotFound } from './pages/NotFound';
 import { ProtectedRoute } from './components/Auth/ProtectedRoute';
 import { Layout } from './components/layout/Layout';
 
-const App: React.FC = () => {
+const AppContent: React.FC = () => {
+  const dispatch = useAppDispatch();
+  const { token, user } = useAppSelector((state) => state.auth);
+
+  useEffect(() => {
+    if (token && !user) {
+      dispatch(fetchProfile());
+    }
+  }, [token, user, dispatch]);
+
   return (
-    <Provider store={store}>
-      <BrowserRouter>
-        <Routes>
+    <BrowserRouter>
+      <Routes>
           {/* Public routes */}
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
@@ -48,6 +58,13 @@ const App: React.FC = () => {
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
+    );
+};
+
+const App: React.FC = () => {
+  return (
+    <Provider store={store}>
+      <AppContent />
     </Provider>
   );
 };

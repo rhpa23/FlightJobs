@@ -4,8 +4,6 @@ import { authApi } from '../../services/api';
 interface User {
   id: string;
   email: string;
-  firstName: string;
-  lastName: string;
   userName?: string;
   avatar?: string;
   statistics?: any;
@@ -36,7 +34,7 @@ export const login = createAsyncThunk(
 
 export const register = createAsyncThunk(
   'auth/register',
-  async (userData: { email: string; password: string; firstName: string; lastName: string; userName?: string }) => {
+  async (userData: { email: string; password: string; userName?: string }) => {
     const response = await authApi.register(userData);
     localStorage.setItem('token', response.access_token);
     return response;
@@ -45,6 +43,11 @@ export const register = createAsyncThunk(
 
 export const logout = createAsyncThunk('auth/logout', async () => {
   localStorage.removeItem('token');
+});
+
+export const fetchProfile = createAsyncThunk('auth/fetchProfile', async () => {
+  const response = await authApi.getProfile();
+  return response;
 });
 
 export const refreshToken = createAsyncThunk('auth/refresh', async () => {
@@ -78,6 +81,14 @@ const authSlice = createSlice({
       .addCase(login.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.error.message || 'Login failed';
+      })
+      .addCase(fetchProfile.fulfilled, (state, action) => {
+        state.user = action.payload;
+      })
+      .addCase(fetchProfile.rejected, (state) => {
+        state.user = null;
+        state.token = null;
+        localStorage.removeItem('token');
       })
       .addCase(register.pending, (state) => {
         state.isLoading = true;

@@ -32,7 +32,7 @@ export const authApi = {
   login: (credentials: { email: string; password: string }) =>
     api.post('/auth/login', credentials).then(res => res.data),
   
-  register: (userData: { email: string; password: string; firstName: string; lastName: string; userName?: string }) =>
+  register: (userData: { email: string; password: string; userName?: string }) =>
     api.post('/auth/register', userData).then(res => res.data),
   
   refresh: () =>
