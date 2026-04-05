@@ -1,30 +1,19 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
-import { Airline } from './airline.entity';
+import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
-@Entity('airline_certificates')
+@Entity('airlinecertificatesdbmodels')
 export class AirlineCertificate {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({ name: 'Id' })
   id: number;
 
-  @Column({ name: 'airline_id' })
+  @Column({ name: 'AirlineId', nullable: true })
   airlineId: number;
 
-  @Column()
+  @Column({ name: 'Name', nullable: true })
   name: string;
 
-  @Column({ type: 'text', nullable: true })
+  @Column({ name: 'Description', nullable: true })
   description: string;
 
-  @Column({ default: 0 })
+  @Column({ name: 'Cost', default: 0 })
   cost: number;
-
-  @ManyToOne(() => Airline, airline => airline.certificates)
-  @JoinColumn({ name: 'airline_id' })
-  airline: Airline;
-
-  @Column({ name: 'created_at', type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
-  createdAt: Date;
-
-  @Column({ name: 'updated_at', type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
-  updatedAt: Date;
 }

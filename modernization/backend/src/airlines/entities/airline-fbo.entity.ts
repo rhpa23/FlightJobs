@@ -1,27 +1,16 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
-import { Airline } from './airline.entity';
+import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
-@Entity('airline_fbo')
+@Entity('airlinefbodbmodels')
 export class AirlineFbo {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({ name: 'Id' })
   id: number;
 
-  @Column({ name: 'airline_id' })
+  @Column({ name: 'AirlineId', nullable: true })
   airlineId: number;
 
-  @Column({ name: 'icao', length: 4 })
+  @Column({ name: 'Icao', length: 4, nullable: true })
   icao: string;
 
-  @Column({ name: 'contract_date', type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
+  @Column({ name: 'ContractDate', type: 'datetime', nullable: true })
   contractDate: Date;
-
-  @ManyToOne(() => Airline, airline => airline.fbos)
-  @JoinColumn({ name: 'airline_id' })
-  airline: Airline;
-
-  @Column({ name: 'created_at', type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
-  createdAt: Date;
-
-  @Column({ name: 'updated_at', type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
-  updatedAt: Date;
 }
