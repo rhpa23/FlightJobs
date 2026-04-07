@@ -4,12 +4,16 @@ import { JobsService } from './jobs.service';
 import { Job } from './entities/job.entity';
 import { SearchJobsDto } from './dto/search-jobs.dto';
 import { CompleteJobDto } from './dto/complete-job.dto';
+import { StartJobDto } from './dto/start-job.dto';
+import { FinishJobDto } from './dto/finish-job.dto';
+import { StartJobResponseDto } from './dto/start-job-response.dto';
+import { FinishJobResponseDto } from './dto/finish-job-response.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @ApiTags('jobs')
 @Controller('jobs')
 @UseGuards(JwtAuthGuard)
-@ApiBearerAuth()
+@ApiBearerAuth('JWT-auth')
 export class JobsController {
   constructor(private readonly jobsService: JobsService) {}
 
@@ -71,5 +75,21 @@ export class JobsController {
   @ApiOperation({ summary: 'Complete job' })
   completeJob(@Param('id') id: number, @Body() completeDto: CompleteJobDto) {
     return this.jobsService.completeJob(id, completeDto);
+  }
+
+  // ============================================================================
+  // NOVOS ENDPOINTS - StartJob e FinishJob (equivalentes ao legado)
+  // ============================================================================
+
+  @Post('start')
+  @ApiOperation({ summary: 'Start a job by coordinates (equivalent to StartJobMSFS)' })
+  async startJob(@Request() req, @Body() startDto: StartJobDto): Promise<StartJobResponseDto> {
+    return this.jobsService.startJob(req.user.userId, startDto);
+  }
+
+  @Post('finish')
+  @ApiOperation({ summary: 'Finish a job by coordinates (equivalent to FinishJobMsfsPost)' })
+  async finishJob(@Request() req, @Body() finishDto: FinishJobDto): Promise<FinishJobResponseDto> {
+    return this.jobsService.finishJob(req.user.userId, finishDto);
   }
 }

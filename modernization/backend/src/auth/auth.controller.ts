@@ -25,7 +25,7 @@ export class AuthController {
   @Post('refresh')
   @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Refresh token' })
-  @ApiBearerAuth()
+  @ApiBearerAuth('JWT-auth')
   async refresh(@Request() req) {
     return { message: 'Token refreshed', user: req.user };
   }
@@ -33,7 +33,7 @@ export class AuthController {
   @Post('logout')
   @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'User logout' })
-  @ApiBearerAuth()
+  @ApiBearerAuth('JWT-auth')
   async logout() {
     return { message: 'Logged out successfully' };
   }
@@ -41,7 +41,7 @@ export class AuthController {
   @Get('profile')
   @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Get current user profile' })
-  @ApiBearerAuth()
+  @ApiBearerAuth('JWT-auth')
   async getProfile(@Request() req) {
     return this.authService.getProfile(req.user.sub);
   }

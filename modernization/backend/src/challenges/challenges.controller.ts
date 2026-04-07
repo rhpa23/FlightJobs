@@ -5,7 +5,7 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 @ApiTags('challenges')
 @Controller('challenges')
 @UseGuards(JwtAuthGuard)
-@ApiBearerAuth()
+@ApiBearerAuth('JWT-auth')
 export class ChallengesController {
   @Get()
   @ApiOperation({ summary: 'List available challenges' })
