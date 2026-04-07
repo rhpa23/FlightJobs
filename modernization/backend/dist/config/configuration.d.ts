@@ -2,11 +2,7 @@ declare const _default: (() => {
     port: number;
     nodeEnv: string;
     database: {
-        host: string;
-        port: number;
-        username: string;
-        password: string;
-        database: string;
+        path: string;
     };
     jwt: {
         secret: string;
@@ -19,11 +15,7 @@ declare const _default: (() => {
     port: number;
     nodeEnv: string;
     database: {
-        host: string;
-        port: number;
-        username: string;
-        password: string;
-        database: string;
+        path: string;
     };
     jwt: {
         secret: string;

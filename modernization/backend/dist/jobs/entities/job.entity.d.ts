@@ -1,0 +1,31 @@
+import { User } from '../../users/entities/user.entity';
+export declare class Job {
+    id: number;
+    paxWeight: number;
+    departureICAO: string;
+    arrivalICAO: string;
+    alternativeICAO: string;
+    distance: number;
+    pax: number;
+    cargo: number;
+    pay: number;
+    firstClass: number;
+    isDone: boolean;
+    isActivated: boolean;
+    inProgress: boolean;
+    startTime: Date;
+    endTime: Date;
+    modelName: string;
+    modelDescription: string;
+    startFuelWeight: number;
+    finishFuelWeight: number;
+    aviationType: number;
+    videoUrl: string;
+    videoDescription: string;
+    challengeCreatorUserId: string;
+    isChallenge: boolean;
+    challengeExpirationDate: Date;
+    challengeType: number;
+    user: User;
+    pilotScore: number;
+}
