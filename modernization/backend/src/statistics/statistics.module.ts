@@ -8,6 +8,6 @@ import { StatisticsController } from './statistics.controller';
   imports: [TypeOrmModule.forFeature([Statistics])],
   providers: [StatisticsService],
   controllers: [StatisticsController],
-  exports: [StatisticsService],
+  exports: [StatisticsService, TypeOrmModule],
 })
 export class StatisticsModule {}

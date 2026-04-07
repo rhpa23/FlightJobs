@@ -11,6 +11,9 @@ import { JobsModule } from './jobs/jobs.module';
 import { AirlinesModule } from './airlines/airlines.module';
 import { StatisticsModule } from './statistics/statistics.module';
 import { ChallengesModule } from './challenges/challenges.module';
+import { NavdataModule } from './navdata/navdata.module';
+import { LicensesModule } from './licenses/licenses.module';
+import { JobAirlinesModule } from './job-airlines/job-airlines.module';
 
 @Module({
   imports: [
@@ -36,6 +39,9 @@ import { ChallengesModule } from './challenges/challenges.module';
     AirlinesModule,
     StatisticsModule,
     ChallengesModule,
+    NavdataModule,
+    LicensesModule,
+    JobAirlinesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

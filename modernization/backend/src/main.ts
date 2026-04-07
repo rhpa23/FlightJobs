@@ -39,6 +39,17 @@ async function bootstrap() {
     .setDescription('Modern FlightJobs backend API documentation')
     .setVersion('1.0')
     .addTag('app')
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        name: 'JWT',
+        description: 'Enter JWT token',
+        in: 'header',
+      },
+      'JWT-auth',
+    )
     .build();
 
   const document = SwaggerModule.createDocument(app, config);

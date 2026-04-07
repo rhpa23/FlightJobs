@@ -10,6 +10,6 @@ import { AirlinesController } from './airlines.controller';
   imports: [TypeOrmModule.forFeature([Airline, AirlineCertificate, AirlineFbo])],
   providers: [AirlinesService],
   controllers: [AirlinesController],
-  exports: [AirlinesService],
+  exports: [AirlinesService, TypeOrmModule],
 })
 export class AirlinesModule {}

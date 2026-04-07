@@ -1,10 +1,15 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 import { Airline } from '../../airlines/entities/airline.entity';
+import { User } from '../../users/entities/user.entity';
 
 @Entity('statisticsdbmodels')
 export class Statistics {
   @PrimaryGeneratedColumn({ name: 'Id' })
   id: number;
+
+  @ManyToOne(() => User, { nullable: true })
+  @JoinColumn({ name: 'User_Id' })
+  user: User;
 
   @Column({ name: 'BankBalance', default: 0 })
   bankBalance: number;
