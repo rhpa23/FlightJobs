@@ -1,5 +1,6 @@
 import { Controller, Get, Post, Delete, Param, Body, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
+import { CreateChallengeDto } from './dto/create-challenge.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @ApiTags('challenges')
@@ -21,7 +22,7 @@ export class ChallengesController {
 
   @Post()
   @ApiOperation({ summary: 'Create challenge' })
-  create(@Body() createChallengeDto: any) {
+  create(@Body() createChallengeDto: CreateChallengeDto) {
     return createChallengeDto;
   }
 

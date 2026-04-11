@@ -19,12 +19,6 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 export class JobsController {
   constructor(private readonly jobsService: JobsService) {}
 
-  @Get()
-  @ApiOperation({ summary: 'List all jobs' })
-  findAll() {
-    return this.jobsService.findAll();
-  }
-
   @Get('search')
   @ApiOperation({ summary: 'Search jobs' })
   search(@Query() searchDto: SearchJobsDto) {
@@ -51,8 +45,8 @@ export class JobsController {
 
   @Post()
   @ApiOperation({ summary: 'Create job' })
-  create(@Body() jobData: CreateJobDto) {
-    return this.jobsService.create(jobData);
+  create(@Body() jobData: CreateJobDto, @Request() req) {
+    return this.jobsService.create(req.user.userId, jobData);
   }
 
   @Put(':id')
@@ -69,14 +63,8 @@ export class JobsController {
 
   @Post(':id/activate')
   @ApiOperation({ summary: 'Activate job' })
-  activateJob(@Param('id') id: number) {
-    return this.jobsService.activateJob(id);
-  }
-
-  @Post(':id/complete')
-  @ApiOperation({ summary: 'Complete job' })
-  completeJob(@Param('id') id: number, @Body() completeDto: CompleteJobDto) {
-    return this.jobsService.completeJob(id, completeDto);
+  activateJob(@Param('id') id: number, @Request() req) {
+    return this.jobsService.activateJob(req.user.userId, id);
   }
 
   // ============================================================================

@@ -2,6 +2,8 @@ import { Injectable, NotFoundException, ForbiddenException, BadRequestException,
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource, LessThan } from 'typeorm';
 import { Job } from './entities/job.entity';
+import { CreateJobDto } from './dto/create-job.dto';
+import { UpdateJobDto } from './dto/update-job.dto';
 import { SearchJobsDto } from './dto/search-jobs.dto';
 import { CompleteJobDto } from './dto/complete-job.dto';
 import { StartJobDto } from './dto/start-job.dto';
@@ -47,10 +49,6 @@ export class JobsService {
     private dataSource: DataSource,
   ) {}
 
-  async findAll(): Promise<Job[]> {
-    return this.jobsRepository.find();
-  }
-
   async findOne(id: number): Promise<Job> {
     const job = await this.jobsRepository.findOne({ 
       where: { id },
@@ -64,8 +62,8 @@ export class JobsService {
 
   async search(searchDto: SearchJobsDto): Promise<Job[]> {
     const queryBuilder = this.jobsRepository.createQueryBuilder('job')
-      .where('job.isDone = :isDone', { isDone: false })
-      .andWhere('job.isActivated = :isActivated', { isActivated: false });
+      .where('job.isDone = :isDone', { isDone: false });
+      //.andWhere('job.isActivated = :isActivated', { isActivated: false });
 
     if (searchDto.departure) {
       queryBuilder.andWhere('job.departureICAO = :departure', { departure: searchDto.departure });
@@ -92,31 +90,40 @@ export class JobsService {
     });
   }
 
-  async activateJob(id: number): Promise<Job> {
-    const job = await this.findOne(id);
-    job.isActivated = true;
-    job.startTime = new Date();
-    return this.jobsRepository.save(job);
+  async activateJob(userId: string, jobId: number): Promise<void> {
+    // Find user to validate existence
+    const user = await this.usersRepository.findOne({ where: { id: userId } });
+    if (!user) {
+      throw new NotFoundException('User not found.');
+    }
+
+    // Find all incomplete jobs for the user
+    const jobList = await this.jobsRepository.find({
+      where: { 
+        user: { id: userId }, 
+        isDone: false 
+      }
+    });
+
+    // Deactivate all jobs and activate only the specified one
+    for (const job of jobList) {
+      job.isActivated = (job.id === jobId);
+    }
+
+    // Save all changes
+    await this.jobsRepository.save(jobList);
   }
 
-  async completeJob(id: number, completeDto: CompleteJobDto): Promise<Job> {
-    const job = await this.findOne(id);
-    job.isDone = true;
-    job.isActivated = false;
-    job.endTime = new Date();
-    job.modelName = completeDto.modelName;
-    job.modelDescription = completeDto.modelDescription;
-    job.startFuelWeight = completeDto.startFuelWeight;
-    job.finishFuelWeight = completeDto.finishFuelWeight;
-    return this.jobsRepository.save(job);
-  }
-
-  async create(jobData: Partial<Job>): Promise<Job> {
+  async create(userId: string, jobData: CreateJobDto): Promise<Job> {
     const job = this.jobsRepository.create(jobData);
+    job.startTime = new Date();
+    job.endTime = new Date();
+    job.challengeExpirationDate = new Date();
+    job.user = { id: userId } as User;
     return this.jobsRepository.save(job);
   }
 
-  async update(id: number, jobData: Partial<Job>): Promise<Job> {
+  async update(id: number, jobData: UpdateJobDto): Promise<Job> {
     const job = await this.findOne(id);
     Object.assign(job, jobData);
     return this.jobsRepository.save(job);
