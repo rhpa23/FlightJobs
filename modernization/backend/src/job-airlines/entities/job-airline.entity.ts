@@ -20,31 +20,31 @@ export class JobAirline {
   jobDebtValue: number;
 
   // Campos calculados (persistidos para histórico)
-  @Column({ name: 'FuelPrice', type: 'float', default: 0 })
+  //@Column({ name: 'FuelPrice', type: 'float', default: 0 })
   fuelPrice: number;
 
-  @Column({ name: 'FuelCost', type: 'float', default: 0 })
+  //@Column({ name: 'FuelCost', type: 'float', default: 0 })
   fuelCost: number;
 
-  @Column({ name: 'GroundCrewCost', type: 'float', default: 0 })
+  //@Column({ name: 'GroundCrewCost', type: 'float', default: 0 })
   groundCrewCost: number;
 
-  @Column({ name: 'FlightCrewCost', type: 'float', default: 0 })
+  //@Column({ name: 'FlightCrewCost', type: 'float', default: 0 })
   flightCrewCost: number;
 
-  @Column({ name: 'FlightAttendantCost', type: 'float', default: 0 })
+  //@Column({ name: 'FlightAttendantCost', type: 'float', default: 0 })
   flightAttendantCost: number;
 
-  @Column({ name: 'TotalCrewCostLabor', type: 'float', default: 0 })
+  //@Column({ name: 'TotalCrewCostLabor', type: 'float', default: 0 })
   totalCrewCostLabor: number;
 
-  @Column({ name: 'TotalFlightCost', type: 'float', default: 0 })
+  //@Column({ name: 'TotalFlightCost', type: 'float', default: 0 })
   totalFlightCost: number;
 
-  @Column({ name: 'RevenueEarned', type: 'float', default: 0 })
+  //@Column({ name: 'RevenueEarned', type: 'float', default: 0 })
   revenueEarned: number;
 
-  @Column({ name: 'FlightIncome', type: 'float', default: 0 })
+  //@Column({ name: 'FlightIncome', type: 'float', default: 0 })
   flightIncome: number;
 
   /**

@@ -225,7 +225,7 @@ export class JobsService {
     try {
       // 1. Encontrar aeroporto mais próximo pelas coordenadas
       const airport = this.navdataService.getCloseAirport(dto.latitude, dto.longitude);
-      
+
       if (!airport) {
         throw new BadRequestException('No airport found near the provided coordinates.');
       }
@@ -388,8 +388,8 @@ export class JobsService {
     const queryBuilder = this.jobsRepository.createQueryBuilder('job')
       .leftJoinAndSelect('job.user', 'user')
       .where('job.user.id = :userId', { userId })
-      .andWhere('job.isActivated = :isActivated', { isActivated: true })
-      .andWhere('job.inProgress = :inProgress', { inProgress: true });
+      .andWhere('job.isActivated = :isActivated', { isActivated: 1 })
+      .andWhere('job.inProgress = :inProgress', { inProgress: 1 });
 
     if (icaoStr.length === 3) {
       // Match parcial: últimos 3 caracteres
@@ -461,6 +461,7 @@ export class JobsService {
         }
         
         statistics.bankBalance += job.pay;
+        await this.statisticsRepository.update({ id: statistics.id }, statistics);
       }
     } else {
       // Criar novas estatísticas
