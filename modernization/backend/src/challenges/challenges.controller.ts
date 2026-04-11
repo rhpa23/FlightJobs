@@ -1,5 +1,6 @@
 import { Controller, Get, Post, Delete, Param, Body, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
+import { ChallengesService } from './challenges.service';
 import { CreateChallengeDto } from './dto/create-challenge.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
@@ -8,27 +9,29 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 @UseGuards(JwtAuthGuard)
 @ApiBearerAuth('JWT-auth')
 export class ChallengesController {
+  constructor(private readonly challengesService: ChallengesService) {}
+
   @Get()
   @ApiOperation({ summary: 'List available challenges' })
   findAll() {
-    return [];
+    return this.challengesService.findAll();
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get challenge details' })
   findOne(@Param('id') id: number) {
-    return { id };
+    return this.challengesService.findOne(id);
   }
 
   @Post()
   @ApiOperation({ summary: 'Create challenge' })
   create(@Body() createChallengeDto: CreateChallengeDto) {
-    return createChallengeDto;
+    return this.challengesService.create(createChallengeDto);
   }
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete challenge' })
   remove(@Param('id') id: number) {
-    return { message: `Challenge ${id} deleted` };
+    return this.challengesService.remove(id);
   }
 }

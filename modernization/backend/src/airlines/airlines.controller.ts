@@ -1,9 +1,15 @@
-import { Controller, Get, Post, Put, Delete, Param, Body, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Post, Param, Body, Query, UseGuards, Request, HttpCode, HttpStatus } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { AirlinesService } from './airlines.service';
-import { CreateAirlineDto } from './dto/create-airline.dto';
-import { UpdateAirlineDto } from './dto/update-airline.dto';
+import { PaginatedAirlineFilterDto } from './dto/paginated-airline-filter.dto';
+import { AirlineToDto } from './dto/airline-to.dto';
+import { HireFboDto } from './dto/hire-fbo.dto';
+import { JobFilterDto } from './dto/job-filter.dto';
+import { PaginatedAirlinesDto } from './dto/paginated-airlines.dto';
+import { PaginatedAirlineJobsDto } from './dto/paginated-airline-jobs.dto';
+import { UserSimpleDto } from './dto/user-simple.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { CreateAirlineDto } from './dto';
 
 @ApiTags('airlines')
 @Controller('airlines')
@@ -12,51 +18,100 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 export class AirlinesController {
   constructor(private readonly airlinesService: AirlinesService) {}
 
-  @Get()
-  @ApiOperation({ summary: 'List all airlines' })
-  findAll() {
-    return this.airlinesService.findAll();
+  @Post('airliners')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Get paginated airlines with filtering' })
+  async getAirliners(
+    @Query('sortOrder') sortOrder: string,
+    @Query('currentSort') currentSort: string,
+    @Query('pageNumber') pageNumber: number,
+    @Body() airlineFilter: PaginatedAirlineFilterDto
+  ): Promise<PaginatedAirlinesDto> {
+    return this.airlinesService.getAirliners(
+      sortOrder,
+      currentSort,
+      pageNumber,
+      airlineFilter
+    );
   }
 
-  @Get('my-airline')
-  @ApiOperation({ summary: "Get user's airline" })
-  findMyAirline(@Request() req) {
-    return this.airlinesService.findAll(); // Simplified - would filter by user in production
+  @Get(':id/pilots-hired')
+  @ApiOperation({ summary: 'Get pilots hired by airline' })
+  async getPilotsHired(@Param('id') id: number): Promise<UserSimpleDto[]> {
+    return this.airlinesService.getPilotsHired(id);
   }
 
-  @Get(':id')
-  @ApiOperation({ summary: 'Get airline details' })
-  findOne(@Param('id') id: number) {
-    return this.airlinesService.findOne(id);
+  @Get(':id/fbos')
+  @ApiOperation({ summary: 'Get airline FBOs' })
+  async getAirlineFBOs(@Param('id') id: number): Promise<any[]> {
+    return this.airlinesService.getAirlineFBOs(id);
   }
 
-  @Post()
+  @Post('create')
+  @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Create airline' })
-  create(@Body() createAirlineDto: CreateAirlineDto) {
-    return this.airlinesService.create(createAirlineDto);
+  async createAirline(@Body() airlineTo: CreateAirlineDto, @Request() req): Promise<any> {
+    return this.airlinesService.createAirline(airlineTo, req.user.userId);
   }
 
-  @Put(':id')
+  @Post('update')
+  @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Update airline' })
-  update(@Param('id') id: number, @Body() updateAirlineDto: UpdateAirlineDto) {
-    return this.airlinesService.update(id, updateAirlineDto);
+  async updateAirline(@Body() airlineTo: AirlineToDto, @Request() req): Promise<boolean> {
+    return this.airlinesService.updateAirline(airlineTo, req.user.userId);
   }
 
-  @Delete(':id')
-  @ApiOperation({ summary: 'Delete airline' })
-  remove(@Param('id') id: number) {
-    return this.airlinesService.remove(id);
+  @Post('pay-debts')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Pay airline debts' })
+  async payAirlineDebts(@Body() airlineTo: AirlineToDto, @Request() req): Promise<boolean> {
+    return this.airlinesService.payAirlineDebts(airlineTo, req.user.userId);
   }
 
-  @Post(':id/join')
+  @Post(':airlineId/ledger')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Get airline ledger with pagination' })
+  async getAirlineLedger(
+    @Param('airlineId') airlineId: number,
+    @Query('pageNumber') pageNumber: number,
+    @Body() jobFilter: JobFilterDto
+  ): Promise<PaginatedAirlineJobsDto> {
+    return this.airlinesService.getAirlineLedger(airlineId, pageNumber, jobFilter);
+  }
+
+  @Get('fbos')
+  @ApiOperation({ summary: 'Get FBOs by ICAO and airline' })
+  async getFOBs(
+    @Query('icao') icao: string,
+    @Query('airlineId') airlineId: number
+  ): Promise<any[]> {
+    return this.airlinesService.getFOBs(icao, airlineId);
+  }
+
+  @Post('hire-fbo')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Hire airline FBO' })
+  async hireAirlineFbo(@Body() hireFboTo: HireFboDto, @Request() req): Promise<any> {
+    return this.airlinesService.hireAirlineFbo(hireFboTo, req.user.userId);
+  }
+
+  @Post('join')
+  @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Join airline' })
-  joinAirline(@Param('id') id: number) {
-    return { message: `Joined airline ${id}` };
+  async joinAirline(@Body() airlineTo: AirlineToDto, @Request() req): Promise<string> {
+    return this.airlinesService.joinAirline(airlineTo, req.user.userId);
   }
 
-  @Post(':id/leave')
-  @ApiOperation({ summary: 'Leave airline' })
-  leaveAirline(@Param('id') id: number) {
-    return { message: `Left airline ${id}` };
+  @Post('exit')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Exit airline' })
+  async exitAirline(@Body() airlineTo: AirlineToDto, @Request() req): Promise<void> {
+    return this.airlinesService.exitAirline(airlineTo, req.user.userId);
+  }
+
+  @Get('ranking')
+  @ApiOperation({ summary: 'Get airline ranking' })
+  async getRanking(): Promise<any[]> {
+    return this.airlinesService.getRanking();
   }
 }

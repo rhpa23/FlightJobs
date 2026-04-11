@@ -1,7 +1,11 @@
-import { IsString, IsNumber, Min, IsOptional, IsBoolean, MinLength } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { IsString, IsNumber, Min, IsOptional, IsBoolean, MinLength } from 'class-validator';
 
-export class CreateAirlineDto {
+export class AirlineToDto {
+  @ApiProperty()
+  @IsNumber()
+  id?: number;
+
   @ApiProperty()
   @IsString()
   @MinLength(3)
@@ -10,7 +14,7 @@ export class CreateAirlineDto {
   @ApiProperty({ required: false })
   @IsString()
   @IsOptional()
-  description: string;
+  description?: string;
 
   @ApiProperty()
   @IsString()
@@ -29,5 +33,5 @@ export class CreateAirlineDto {
   @ApiProperty({ required: false })
   @IsBoolean()
   @IsOptional()
-  requireCertificates: boolean;
+  requireCertificates?: boolean;
 }
