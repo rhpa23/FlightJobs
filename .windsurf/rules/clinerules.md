@@ -1,3 +1,6 @@
+---
+trigger: always_on
+---
 # Idioma e Localidade
 
 - **Idioma Obrigatório:** Todas as interações, explicações, comentários de código e logs devem ser feitos exclusivamente em **Português do Brasil (pt-BR)**.

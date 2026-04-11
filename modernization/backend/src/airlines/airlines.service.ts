@@ -225,7 +225,7 @@ export class AirlinesService {
     // Pay debt
     statistics.bankBalance = statistics.bankBalance - airline.debtValue;
     airline.debtValue = 0;
-    airline.debtMaturityDate = null;
+    airline.debtMaturityDate = new Date();
 
     await this.statisticsRepository.save(statistics);
     await this.airlinesRepository.save(airline);
@@ -244,7 +244,7 @@ export class AirlinesService {
     // Build query for jobs related to this airline
     const queryBuilder = this.jobsRepository.createQueryBuilder('job')
       .leftJoinAndSelect('job.user', 'user')
-      .where('job.user IN (SELECT userId FROM statisticsdbmodels WHERE airlineId = :airlineId)', { airlineId });
+      .where('job.user IN (SELECT User_Id FROM statisticsdbmodels WHERE Airline_Id = :airlineId)', { airlineId });
 
     // Apply filters if provided
     if (jobFilter.icao) {
@@ -360,9 +360,9 @@ export class AirlinesService {
     };
   }
 
-  async joinAirline(airlineTo: AirlineToDto, userId: string): Promise<string> {
+  async joinAirline(airlineId: number, userId: string): Promise<string> {
     const airline = await this.airlinesRepository.findOne({
-      where: { id: airlineTo.id }
+      where: { id: airlineId }
     });
 
     if (!airline) {
@@ -402,7 +402,7 @@ export class AirlinesService {
     }
   }
 
-  async exitAirline(airlineTo: AirlineToDto, userId: string): Promise<void> {
+  async exitAirline(airlineId: number, userId: string): Promise<void> {
     // Get user statistics
     const statistics = await this.statisticsRepository.findOne({
       where: { userId },
@@ -414,13 +414,13 @@ export class AirlinesService {
     }
 
     // Check if user is actually in the specified airline
-    if (!statistics.airline || statistics.airline.id !== airlineTo.id) {
+    if (!statistics.airline || statistics.airline.id !== airlineId) {
       throw new NotFoundException('User not found in specified airline');
     }
 
     // Check if user is the airline owner (they cannot exit their own airline)
     const airline = await this.airlinesRepository.findOne({
-      where: { id: airlineTo.id }
+      where: { id: airlineId }
     });
 
     if (airline && airline.userId === userId) {

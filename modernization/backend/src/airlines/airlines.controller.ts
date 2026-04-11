@@ -4,6 +4,8 @@ import { AirlinesService } from './airlines.service';
 import { PaginatedAirlineFilterDto } from './dto/paginated-airline-filter.dto';
 import { AirlineToDto } from './dto/airline-to.dto';
 import { HireFboDto } from './dto/hire-fbo.dto';
+import { JoinAirlineDto } from './dto/join-airline.dto';
+import { ExitAirlineDto } from './dto/exit-airline.dto';
 import { JobFilterDto } from './dto/job-filter.dto';
 import { PaginatedAirlinesDto } from './dto/paginated-airlines.dto';
 import { PaginatedAirlineJobsDto } from './dto/paginated-airline-jobs.dto';
@@ -98,15 +100,15 @@ export class AirlinesController {
   @Post('join')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Join airline' })
-  async joinAirline(@Body() airlineTo: AirlineToDto, @Request() req): Promise<string> {
-    return this.airlinesService.joinAirline(airlineTo, req.user.userId);
+  async joinAirline(@Body() joinAirlineDto: JoinAirlineDto, @Request() req): Promise<string> {
+    return this.airlinesService.joinAirline(joinAirlineDto.airlineId, req.user.userId);
   }
 
   @Post('exit')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Exit airline' })
-  async exitAirline(@Body() airlineTo: AirlineToDto, @Request() req): Promise<void> {
-    return this.airlinesService.exitAirline(airlineTo, req.user.userId);
+  async exitAirline(@Body() exitAirlineDto: ExitAirlineDto, @Request() req): Promise<void> {
+    return this.airlinesService.exitAirline(exitAirlineDto.airlineId, req.user.userId);
   }
 
   @Get('ranking')
