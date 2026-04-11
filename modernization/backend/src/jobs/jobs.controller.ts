@@ -2,6 +2,8 @@ import { Controller, Get, Post, Put, Delete, Param, Body, Query, UseGuards, Requ
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { JobsService } from './jobs.service';
 import { Job } from './entities/job.entity';
+import { CreateJobDto } from './dto/create-job.dto';
+import { UpdateJobDto } from './dto/update-job.dto';
 import { SearchJobsDto } from './dto/search-jobs.dto';
 import { CompleteJobDto } from './dto/complete-job.dto';
 import { StartJobDto } from './dto/start-job.dto';
@@ -49,13 +51,13 @@ export class JobsController {
 
   @Post()
   @ApiOperation({ summary: 'Create job' })
-  create(@Body() jobData: Partial<Job>) {
+  create(@Body() jobData: CreateJobDto) {
     return this.jobsService.create(jobData);
   }
 
   @Put(':id')
   @ApiOperation({ summary: 'Update job' })
-  update(@Param('id') id: number, @Body() jobData: Partial<Job>) {
+  update(@Param('id') id: number, @Body() jobData: UpdateJobDto) {
     return this.jobsService.update(id, jobData);
   }
 
