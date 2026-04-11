@@ -30,16 +30,16 @@ export class Job {
   @Column({ name: 'Pay', default: 0 })
   pay: number;
 
-  @Column({ name: 'FirstClass', type: 'simple-enum', default: 0 })
-  firstClass: number;
+  @Column({ name: 'FirstClass', type: 'boolean', default: false })
+  firstClass: boolean;
 
-  @Column({ name: 'IsDone', type: 'simple-enum', default: 0 })
+  @Column({ name: 'IsDone', type: 'boolean', default: false })
   isDone: boolean;
 
-  @Column({ name: 'IsActivated', type: 'simple-enum', default: 0 })
+  @Column({ name: 'IsActivated', type: 'boolean', default: false })
   isActivated: boolean;
 
-  @Column({ name: 'InProgress', type: 'simple-enum', default: 0 })
+  @Column({ name: 'InProgress', type: 'boolean', default: false })
   inProgress: boolean;
 
   @Column({ name: 'StartTime', type: 'datetime', nullable: true })
@@ -72,7 +72,7 @@ export class Job {
   @Column({ name: 'ChallengeCreatorUserId', nullable: true })
   challengeCreatorUserId: string;
 
-  @Column({ name: 'IsChallenge', type: 'simple-enum', default: 0 })
+  @Column({ name: 'IsChallenge', type: 'boolean', default: false })
   isChallenge: boolean;
 
   @Column({ name: 'ChallengeExpirationDate', type: 'datetime', nullable: true })

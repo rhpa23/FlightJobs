@@ -20,19 +20,19 @@ export class Statistics {
   @Column({ name: 'Logo', nullable: true })
   logo: string;
 
-  @Column({ name: 'SendLicenseWarning', default: 0 })
+  @Column({ name: 'SendLicenseWarning', type: 'boolean', default: false })
   sendLicenseWarning: boolean;
 
-  @Column({ name: 'SendAirlineBillsWarning', default: 0 })
+  @Column({ name: 'SendAirlineBillsWarning', type: 'boolean', default: false })
   sendAirlineBillsWarning: boolean;
 
-  @Column({ name: 'LicenseWarningSent', default: 0 })
+  @Column({ name: 'LicenseWarningSent', type: 'boolean', default: false })
   licenseWarningSent: boolean;
 
-  @Column({ name: 'AirlineBillsWarningSent', default: 0 })
+  @Column({ name: 'AirlineBillsWarningSent', type: 'boolean', default: false })
   airlineBillsWarningSent: boolean;
 
-  @Column({ name: 'UseCustomPlaneCapacity', default: 0 })
+  @Column({ name: 'UseCustomPlaneCapacity', type: 'boolean', default: false })
   useCustomPlaneCapacity: boolean;
 
   @Column({ name: 'WeightUnit', nullable: true })

@@ -27,7 +27,4 @@ export class AirlineFbo {
 
   @Column({ name: 'Price', default: 0 })
   price: number;
-
-  @Column({ name: 'ContractDate', type: 'datetime', nullable: true })
-  contractDate: Date;
 }

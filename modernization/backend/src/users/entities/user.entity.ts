@@ -22,22 +22,22 @@ export class User {
   @Column({ name: 'PhoneNumber', nullable: true })
   phoneNumber: string;
 
-  @Column({ name: 'PhoneNumberConfirmed', default: 0 })
+  @Column({ name: 'PhoneNumberConfirmed', type: 'boolean', default: false })
   phoneNumberConfirmed: boolean;
 
-  @Column({ name: 'TwoFactorEnabled', default: 0 })
+  @Column({ name: 'TwoFactorEnabled', type: 'boolean', default: false })
   twoFactorEnabled: boolean;
 
   @Column({ name: 'LockoutEndDateUtc', type: 'datetime', nullable: true })
   lockoutEnd: Date;
 
-  @Column({ name: 'LockoutEnabled', default: 1 })
+  @Column({ name: 'LockoutEnabled', type: 'boolean', default: true })
   lockoutEnabled: boolean;
 
   @Column({ name: 'AccessFailedCount', default: 0 })
   accessFailedCount: number;
 
-  @Column({ name: 'EmailConfirmed', default: 0 })
+  @Column({ name: 'EmailConfirmed', type: 'boolean', default: false })
   emailConfirmed: boolean;
 
   @OneToMany(() => Job, job => job.user)
