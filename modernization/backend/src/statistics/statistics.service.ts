@@ -13,6 +13,7 @@ export class StatisticsService {
   async getMyStats(userId: string): Promise<any> {
     const stats = await this.statisticsRepository.findOne({
       where: { userId },
+      relations: ['customPlaneCapacity'],
     });
     if (!stats) {
       // Retorna stats padrão se não existir
@@ -24,6 +25,7 @@ export class StatisticsService {
         flightTimeTotal: '0',
         payloadTotal: '0',
         weightUnit: 'kg',
+        customPlaneCapacity: null,
       };
     }
     return {
@@ -34,6 +36,14 @@ export class StatisticsService {
       flightTimeTotal: '0',
       payloadTotal: '0',
       weightUnit: stats.weightUnit || 'kg',
+      customPlaneCapacity: stats.customPlaneCapacity ? {
+        id: stats.customPlaneCapacity.id,
+        planeName: stats.customPlaneCapacity.planeName,
+        paxCapacity: stats.customPlaneCapacity.paxCapacity,
+        paxWeight: stats.customPlaneCapacity.paxWeight,
+        cargoCapacity: stats.customPlaneCapacity.cargoCapacity,
+        imageUrl: stats.customPlaneCapacity.imageUrl,
+      } : null,
     };
   }
 

@@ -290,3 +290,7 @@ FlightJobs/Content/img/avatar
 FlightJobs/Content/img/avatar/*.*
 FlightJobs/Web.config
 Web.config
+
+# Modernization backend dist folder
+modernization/backend/dist
+modernization/backend/tsconfig.tsbuildinfo

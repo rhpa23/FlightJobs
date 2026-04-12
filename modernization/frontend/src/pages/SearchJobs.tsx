@@ -306,6 +306,7 @@ interface CapacityModalProps {
   onClose: () => void;
   onSelect: (c: CustomCapacity) => void;
   capacities: CustomCapacity[];
+  selectedCapacity?: CustomCapacity | null;
   onSave: (d: Omit<CustomCapacity, 'id'>) => Promise<void>;
   onUpdate: (id: number, d: Omit<CustomCapacity, 'id'>) => Promise<void>;
   onRemove: (id: number) => Promise<void>;
@@ -313,7 +314,7 @@ interface CapacityModalProps {
 }
 
 function CustomCapacityModal({
-  isOpen, onClose, onSelect, capacities, onSave, onUpdate, onRemove, weightUnit = 'kg',
+  isOpen, onClose, onSelect, capacities, selectedCapacity, onSave, onUpdate, onRemove, weightUnit = 'kg',
 }: CapacityModalProps) {
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [isNewMode, setIsNewMode] = useState(false);
@@ -329,7 +330,8 @@ function CustomCapacityModal({
   /* Sync form from selected capacity */
   useEffect(() => {
     if (isOpen && capacities.length > 0 && !isNewMode) {
-      const id = selectedId ?? capacities[0].id;
+      // Usar o selectedCapacity do Statistics se disponível, senão usar o primeiro
+      const id = selectedCapacity?.id ?? selectedId ?? capacities[0].id;
       setSelectedId(id);
       const cap = capacities.find((c) => c.id === id) ?? capacities[0];
       setForm({
@@ -340,7 +342,7 @@ function CustomCapacityModal({
         imagePath: cap.imagePath ?? '',
       });
     }
-  }, [isOpen, selectedId, capacities, isNewMode]);
+  }, [isOpen, selectedId, capacities, isNewMode, selectedCapacity]);
 
   const flash = (text: string, ok = true) => {
     setMsg({ text, ok });
@@ -1082,7 +1084,15 @@ export const SearchJobs: React.FC = () => {
         // Buscar statistics para obter a última capacity usada
         statisticsApi.getMyStats().then((stats: any) => {
           if (stats.customPlaneCapacity) {
-            setSelectedCapacity(stats.customPlaneCapacity);
+            // Mapear campos do backend para o formato do frontend
+            setSelectedCapacity({
+              id: stats.customPlaneCapacity.id,
+              customNameCapacity: stats.customPlaneCapacity.planeName,
+              customPassengerCapacity: stats.customPlaneCapacity.paxCapacity,
+              customPaxWeight: stats.customPlaneCapacity.paxWeight,
+              customCargoCapacityWeight: stats.customPlaneCapacity.cargoCapacity,
+              imagePath: stats.customPlaneCapacity.imageUrl,
+            });
           }
         }).catch(() => {
           // Ignorar erro se não houver statistics
@@ -1436,6 +1446,7 @@ export const SearchJobs: React.FC = () => {
         onClose={() => setShowCapModal(false)}
         onSelect={handleCapacitySelect}
         capacities={capacities}
+        selectedCapacity={selectedCapacity}
         onSave={onSaveCap}
         onUpdate={onUpdateCap}
         onRemove={onRemoveCap}

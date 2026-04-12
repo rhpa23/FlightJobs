@@ -56,7 +56,7 @@ export class CustomCapacityService {
     imageUrl?: string,
   ): Promise<CustomPlaneCapacity> {
     const statistics = await this.statisticsRepository.findOne({
-      where: { user: { id: userId } },
+      where: { userId },
       relations: ['user'],
     });
 
@@ -111,7 +111,7 @@ export class CustomCapacityService {
     imageUrl?: string,
   ): Promise<CustomPlaneCapacity> {
     const statistics = await this.statisticsRepository.findOne({
-      where: { user: { id: userId } },
+      where: { userId },
     });
 
     if (!statistics) {
@@ -154,7 +154,7 @@ export class CustomCapacityService {
    */
   async selectCapacity(capacityId: number, userId: string): Promise<Statistics> {
     const statistics = await this.statisticsRepository.findOne({
-      where: { user: { id: userId } },
+      where: { userId },
       relations: ['user'],
     });
 
@@ -181,7 +181,7 @@ export class CustomCapacityService {
    */
   async removeCapacity(capacityId: number, userId: string): Promise<void> {
     const statistics = await this.statisticsRepository.findOne({
-      where: { user: { id: userId } },
+      where: { userId },
     });
 
     if (!statistics) {
@@ -196,14 +196,14 @@ export class CustomCapacityService {
       throw new NotFoundException('Capacity not found');
     }
 
-    await this.customCapacityRepository.remove(capacity);
-
-    // Se a capacidade removida era a selecionada, limpa a referência
+    // Primeiro limpa a referência no Statistics antes de remover a capacidade
     if (statistics.customPlaneCapacityId === capacityId) {
       statistics.customPlaneCapacity = null;
       statistics.customPlaneCapacityId = null;
       await this.statisticsRepository.save(statistics);
     }
+
+    await this.customCapacityRepository.remove(capacity);
   }
 
   /**
