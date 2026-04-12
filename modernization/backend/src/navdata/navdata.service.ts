@@ -2,6 +2,7 @@ import { Injectable, OnModuleInit, OnModuleDestroy, Logger } from '@nestjs/commo
 import Database from 'better-sqlite3';
 import * as path from 'path';
 import { Airport } from './entities/airport.entity';
+import { MapInfoDto } from './dto/map-info.dto';
 
 @Injectable()
 export class NavdataService implements OnModuleInit, OnModuleDestroy {
@@ -78,6 +79,157 @@ export class NavdataService implements OnModuleInit, OnModuleDestroy {
       this.logger.error(`Erro ao buscar aeroporto por ICAO: ${error.message}`);
       return null;
     }
+  }
+
+  /**
+   * Busca múltiplos aeroportos por uma lista de ICAOs
+   * Equivalente ao GetAirportsByIcaos do legado
+   */
+  getAirportsByIcaos(icaos: string[]): Airport[] {
+    if (!icaos || icaos.length === 0) {
+      return [];
+    }
+
+    const icaoParams = icaos.map(icao => icao.toUpperCase()).join("','");
+    const query = `SELECT * FROM airport WHERE UPPER(ident) in ('${icaoParams}')`;
+
+    try {
+      const rows = this.db.prepare(query).all();
+      return rows.map((row: any) => this.mapRowToAirport(row));
+    } catch (error) {
+      this.logger.error(`Erro ao buscar aeroportos por ICAOs: ${error.message}`);
+      return [];
+    }
+  }
+
+  /**
+   * Calcula a distância entre dois aeroportos em milhas
+   * Equivalente ao CalcDistance do BaseController.cs
+   */
+  calcDistance(departure: string, arrival: string): number {
+    const departureInfo = this.getAirportByIcao(departure);
+    const arrivalInfo = this.getAirportByIcao(arrival);
+
+    if (departureInfo && arrivalInfo) {
+      const distMeters = this.haversineDistance(
+        departureInfo.laty,
+        departureInfo.lonx,
+        arrivalInfo.laty,
+        arrivalInfo.lonx
+      );
+      // Converte metros para milhas (1 milha = 1609.344 metros)
+      const distMiles = Math.round(distMeters / 1609.344);
+      return distMiles;
+    }
+    return 0;
+  }
+
+  /**
+   * Retorna informações de aeroportos para o mapa
+   * Equivalente ao GetMapInfo do BaseController.cs
+   */
+  getMapInfo(
+    departure: string,
+    arrival: string,
+    alternative?: string,
+    iconsPath: string = '../Content/img/',
+    favoriteIcaos?: string[]
+  ): MapInfoDto[] {
+    const jsonList: MapInfoDto[] = [];
+
+    // Busca aeroporto alternativo se fornecido
+    const alternativeInfo = alternative ? this.getAirportByIcao(alternative) : null;
+
+    // Adiciona aeroporto de partida
+    if (departure) {
+      const departureInfo = this.getAirportByIcao(departure);
+      if (departureInfo) {
+        jsonList.push({
+          isRoute: true,
+          isDeparture: true,
+          isArrival: false,
+          isAlternative: false,
+          lat: departureInfo.laty,
+          lng: departureInfo.lonx,
+          name: departureInfo.name,
+          info: 'Departure airport',
+          icao: departureInfo.ident,
+          runway_size: `${departureInfo.longestRunwayLength}ft`,
+          elevation: `${departureInfo.altitude}ft`,
+          icon_url: `${iconsPath}departing.png`,
+          icon_center_x: 13,
+          icon_center_y: 13,
+        });
+      }
+    }
+
+    // Adiciona aeroporto de chegada
+    if (arrival) {
+      const arrivalInfo = this.getAirportByIcao(arrival);
+      if (arrivalInfo) {
+        jsonList.push({
+          isRoute: true,
+          isDeparture: false,
+          isArrival: true,
+          isAlternative: false,
+          lat: arrivalInfo.laty,
+          lng: arrivalInfo.lonx,
+          name: arrivalInfo.name,
+          info: 'Arrival airport',
+          icao: arrivalInfo.ident,
+          runway_size: `${arrivalInfo.longestRunwayLength}ft`,
+          elevation: `${arrivalInfo.altitude}ft`,
+          icon_url: `${iconsPath}arrival.png`,
+          icon_center_x: 13,
+          icon_center_y: 13,
+        });
+
+        // Adiciona aeroporto alternativo se fornecido
+        if (alternativeInfo) {
+          jsonList.push({
+            isRoute: true,
+            isDeparture: false,
+            isArrival: false,
+            isAlternative: true,
+            lat: alternativeInfo.laty,
+            lng: alternativeInfo.lonx,
+            name: alternativeInfo.name,
+            info: 'Alternative airport',
+            icao: alternativeInfo.ident,
+            runway_size: `${alternativeInfo.longestRunwayLength}ft`,
+            elevation: `${alternativeInfo.altitude}ft`,
+            icon_url: `${iconsPath}alternative.png`,
+            icon_center_x: 13,
+            icon_center_y: 13,
+          });
+        }
+      }
+    }
+
+    // Adiciona aeroportos favoritos do usuário
+    if (favoriteIcaos && favoriteIcaos.length > 0) {
+      const favoriteAirports = this.getAirportsByIcaos(favoriteIcaos);
+      for (const favDptInfo of favoriteAirports) {
+        jsonList.push({
+          isRoute: false,
+          isDeparture: false,
+          isArrival: false,
+          isAlternative: false,
+          lat: favDptInfo.laty,
+          lng: favDptInfo.lonx,
+          name: favDptInfo.name,
+          info: favDptInfo.ident,
+          icao: favDptInfo.ident,
+          runway_size: `${favDptInfo.longestRunwayLength}ft`,
+          elevation: `${favDptInfo.altitude}ft`,
+          icon_url: `${iconsPath}favorite.png`,
+          icon_center_x: 8,
+          icon_center_y: 8,
+        });
+      }
+    }
+
+    return jsonList;
   }
 
   private mapRowToAirport(row: any): Airport {

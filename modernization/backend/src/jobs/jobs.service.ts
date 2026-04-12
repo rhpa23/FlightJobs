@@ -90,6 +90,25 @@ export class JobsService {
     });
   }
 
+  /**
+   * Busca os ICAOs dos jobs concluídos do usuário (para favoritos no mapa)
+   * Equivalente à lógica de userJobsIcaos do GetMapInfo do legado
+   */
+  async getUserJobIcaos(userId: string): Promise<string[]> {
+    const jobs = await this.jobsRepository.find({
+      where: { user: { id: userId }, isDone: true },
+      select: ['departureICAO', 'arrivalICAO']
+    });
+
+    const icaos = new Set<string>();
+    jobs.forEach(job => {
+      if (job.departureICAO) icaos.add(job.departureICAO);
+      if (job.arrivalICAO) icaos.add(job.arrivalICAO);
+    });
+
+    return Array.from(icaos);
+  }
+
   async activateJob(userId: string, jobId: number): Promise<void> {
     // Find user to validate existence
     const user = await this.usersRepository.findOne({ where: { id: userId } });

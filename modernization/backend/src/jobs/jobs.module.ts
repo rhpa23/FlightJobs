@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Job } from './entities/job.entity';
 import { JobsService } from './jobs.service';
@@ -24,11 +24,11 @@ import { NavdataModule } from '../navdata/navdata.module';
       AirlineFbo,
       JobAirline
     ]),
-    NavdataModule
+    forwardRef(() => NavdataModule)
   ],
   providers: [
-    JobsService, 
-    DistanceCalculatorService, 
+    JobsService,
+    DistanceCalculatorService,
     PaymentCalculatorService
   ],
   controllers: [JobsController],
