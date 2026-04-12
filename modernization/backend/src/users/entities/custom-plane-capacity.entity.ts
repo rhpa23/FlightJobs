@@ -1,28 +1,30 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { User } from './user.entity';
 
-@Entity('custom_plane_capacity')
+@Entity('customplanecapacitydbmodels')
 export class CustomPlaneCapacity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ name: 'user_id' })
-  userId: number;
+  @ManyToOne(() => User, { nullable: true })
+  @JoinColumn({ name: 'User_Id' })
+  user: User;
 
-  @Column({ name: 'plane_name' })
+  @Column({ name: 'User_Id' })
+  userId: string;
+
+  @Column({ name: 'CustomNameCapacity' })
   planeName: string;
 
-  @Column({ name: 'pax_capacity' })
+  @Column({ name: 'CustomPassengerCapacity' })
   paxCapacity: number;
 
-  @Column({ name: 'cargo_capacity' })
+  @Column({ name: 'CustomCargoCapacityWeight' })
   cargoCapacity: number;
 
-  @Column({ name: 'image_url', nullable: true })
+  @Column({ name: 'CustomPaxWeight', default: 84 })
+  paxWeight: number;
+
+  @Column({ name: 'ImagePath', nullable: true })
   imageUrl: string;
-
-  @Column({ name: 'created_at', type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
-  createdAt: Date;
-
-  @Column({ name: 'updated_at', type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
-  updatedAt: Date;
 }

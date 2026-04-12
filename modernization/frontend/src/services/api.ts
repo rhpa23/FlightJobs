@@ -186,26 +186,61 @@ export const searchApi = {
 
 export const capacityApi = {
   getCapacities: () =>
-    api.get('/users/capacities').then((res) => res.data),
+    api.get('/custom-capacity').then((res) =>
+      res.data.map((item: any) => ({
+        id: item.id,
+        customNameCapacity: item.planeName,
+        customPassengerCapacity: item.paxCapacity,
+        customPaxWeight: item.paxWeight,
+        customCargoCapacityWeight: item.cargoCapacity,
+        imagePath: item.imageUrl,
+      }))
+    ),
 
   saveCapacity: (data: {
-    name: string;
-    passengers: number;
+    planeName: string;
+    paxCapacity: number;
     paxWeight: number;
-    cargoWeight: number;
-    imagePath?: string;
-  }) => api.post('/users/capacities', data).then((res) => res.data),
+    cargoCapacity: number;
+    imageUrl?: string;
+  }) =>
+    api.post('/custom-capacity', data).then((res) => ({
+      id: res.data.id,
+      customNameCapacity: res.data.planeName,
+      customPassengerCapacity: res.data.paxCapacity,
+      customPaxWeight: res.data.paxWeight,
+      customCargoCapacityWeight: res.data.cargoCapacity,
+      imagePath: res.data.imageUrl,
+    })),
 
   updateCapacity: (
     id: number,
-    data: { name: string; passengers: number; paxWeight: number; cargoWeight: number; imagePath?: string }
-  ) => api.put(`/users/capacities/${id}`, data).then((res) => res.data),
+    data: { planeName: string; paxCapacity: number; paxWeight: number; cargoCapacity: number; imageUrl?: string }
+  ) =>
+    api.put(`/custom-capacity/${id}`, data).then((res) => ({
+      id: res.data.id,
+      customNameCapacity: res.data.planeName,
+      customPassengerCapacity: res.data.paxCapacity,
+      customPaxWeight: res.data.paxWeight,
+      customCargoCapacityWeight: res.data.cargoCapacity,
+      imagePath: res.data.imageUrl,
+    })),
 
   removeCapacity: (id: number) =>
-    api.delete(`/users/capacities/${id}`).then((res) => res.data),
+    api.delete(`/custom-capacity/${id}`).then((res) => res.data),
 
   getCapacityById: (id: number) =>
-    api.get(`/users/capacities/${id}`).then((res) => res.data),
+    api.get(`/custom-capacity/${id}`).then((res) => ({
+      id: res.data.id,
+      customNameCapacity: res.data.planeName,
+      customPassengerCapacity: res.data.paxCapacity,
+      customPaxWeight: res.data.paxWeight,
+      customCargoCapacityWeight: res.data.cargoCapacity,
+      imagePath: res.data.imageUrl,
+    })),
+
+  selectCapacity: (id: number) =>
+    api.post(`/custom-capacity/${id}/select`).then((res) => res.data),
 };
 
 export default api;

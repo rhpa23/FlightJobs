@@ -1,6 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 import { Airline } from '../../airlines/entities/airline.entity';
 import { User } from '../../users/entities/user.entity';
+import { CustomPlaneCapacity } from '../../users/entities/custom-plane-capacity.entity';
 
 @Entity('statisticsdbmodels')
 export class Statistics {
@@ -41,6 +42,10 @@ export class Statistics {
   @ManyToOne(() => Airline, { nullable: true })
   @JoinColumn({ name: 'Airline_Id' })
   airline: Airline;
+
+  @ManyToOne(() => CustomPlaneCapacity, { nullable: true })
+  @JoinColumn({ name: 'CustomPlaneCapacity_Id' })
+  customPlaneCapacity: CustomPlaneCapacity;
 
   @Column({ name: 'CustomPlaneCapacity_Id', nullable: true })
   customPlaneCapacityId: number;

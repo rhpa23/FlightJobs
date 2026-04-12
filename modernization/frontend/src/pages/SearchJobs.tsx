@@ -19,7 +19,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { CheckCircleIcon } from '@heroicons/react/24/solid';
 import { useNavigate } from 'react-router-dom';
-import { searchApi, capacityApi } from '../services/api';
+import { searchApi, capacityApi, statisticsApi } from '../services/api';
 import 'leaflet/dist/leaflet.css';
 
 /* ── Fix Leaflet icon paths with CRA/webpack ─────────────────────────────── */
@@ -333,10 +333,10 @@ function CustomCapacityModal({
       setSelectedId(id);
       const cap = capacities.find((c) => c.id === id) ?? capacities[0];
       setForm({
-        customNameCapacity: cap.customNameCapacity,
-        customPassengerCapacity: cap.customPassengerCapacity,
-        customPaxWeight: cap.customPaxWeight,
-        customCargoCapacityWeight: cap.customCargoCapacityWeight,
+        customNameCapacity: cap.customNameCapacity || '',
+        customPassengerCapacity: cap.customPassengerCapacity || 0,
+        customPaxWeight: cap.customPaxWeight || 84,
+        customCargoCapacityWeight: cap.customCargoCapacityWeight || 0,
         imagePath: cap.imagePath ?? '',
       });
     }
@@ -1051,22 +1051,47 @@ export const SearchJobs: React.FC = () => {
   /* ── Capacity CRUD handlers ──────────────────────────────────────────── */
   const onSaveCap = async (d: Omit<CustomCapacity, 'id'>) => {
     const saved = await capacityApi.saveCapacity({
-      name: d.customNameCapacity, passengers: d.customPassengerCapacity,
-      paxWeight: d.customPaxWeight, cargoWeight: d.customCargoCapacityWeight, imagePath: d.imagePath,
+      planeName: d.customNameCapacity,
+      paxCapacity: d.customPassengerCapacity,
+      paxWeight: d.customPaxWeight,
+      cargoCapacity: d.customCargoCapacityWeight,
+      imageUrl: d.imagePath,
     });
     setCapacities((p) => [...p, saved]);
   };
   const onUpdateCap = async (id: number, d: Omit<CustomCapacity, 'id'>) => {
-    await capacityApi.updateCapacity(id, {
-      name: d.customNameCapacity, passengers: d.customPassengerCapacity,
-      paxWeight: d.customPaxWeight, cargoWeight: d.customCargoCapacityWeight, imagePath: d.imagePath,
+    const updated = await capacityApi.updateCapacity(id, {
+      planeName: d.customNameCapacity,
+      paxCapacity: d.customPassengerCapacity,
+      paxWeight: d.customPaxWeight,
+      cargoCapacity: d.customCargoCapacityWeight,
+      imageUrl: d.imagePath,
     });
-    setCapacities((p) => p.map((c) => (c.id === id ? { ...c, ...d } : c)));
+    setCapacities((p) => p.map((c) => (c.id === id ? updated : c)));
   };
   const onRemoveCap = async (id: number) => {
     await capacityApi.removeCapacity(id);
     setCapacities((p) => p.filter((c) => c.id !== id));
   };
+
+  /* ── Load capacities when modal opens ──────────────────────────────────── */
+  useEffect(() => {
+    if (showCapModal) {
+      capacityApi.getCapacities().then((data) => {
+        setCapacities(data);
+        // Buscar statistics para obter a última capacity usada
+        statisticsApi.getMyStats().then((stats: any) => {
+          if (stats.customPlaneCapacity) {
+            setSelectedCapacity(stats.customPlaneCapacity);
+          }
+        }).catch(() => {
+          // Ignorar erro se não houver statistics
+        });
+      }).catch(() => {
+        // Ignorar erro ao carregar capacities
+      });
+    }
+  }, [showCapModal]);
 
   /* ── Map helpers ─────────────────────────────────────────────────────── */
   const getIcon = (m: MapMarker) => {
