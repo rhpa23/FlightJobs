@@ -102,8 +102,8 @@ export class NavdataController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('JWT-auth')
   @ApiOperation({ summary: 'Gera opções de jobs baseadas nos parâmetros de busca' })
-  async generateJobs(@Body() generateDto: GenerateJobsDto): Promise<GeneratedJobDto[]> {
-    return this.navdataService.generateJobs(generateDto);
+  async generateJobs(@Body() generateDto: GenerateJobsDto, @Request() req): Promise<GeneratedJobDto[]> {
+    return this.navdataService.generateJobs(generateDto, req.user.userId);
   }
 
   @Post('confirm')

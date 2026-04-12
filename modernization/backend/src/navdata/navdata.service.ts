@@ -13,6 +13,7 @@ import { User } from '../users/entities/user.entity';
 import { Statistics } from '../statistics/entities/statistics.entity';
 import { CustomPlaneCapacity } from '../users/entities/custom-plane-capacity.entity';
 import { CreateJobDto } from '../jobs/dto/create-job.dto';
+import { CustomCapacityService } from '../users/custom-capacity.service';
 import * as https from 'https';
 
 @Injectable()
@@ -29,6 +30,7 @@ export class NavdataService implements OnModuleInit, OnModuleDestroy {
     private statisticsRepository: Repository<Statistics>,
     @InjectRepository(CustomPlaneCapacity)
     private customCapacityRepository: Repository<CustomPlaneCapacity>,
+    private readonly customCapacityService: CustomCapacityService,
   ) {}
 
   onModuleInit() {
@@ -506,7 +508,7 @@ export class NavdataService implements OnModuleInit, OnModuleDestroy {
    * Gera opções de jobs baseadas nos parâmetros de busca
    * Equivalente ao GenerateBoardJobs do BaseController.cs
    */
-  async generateJobs(generateDto: GenerateJobsDto): Promise<GeneratedJobDto[]> {
+  async generateJobs(generateDto: GenerateJobsDto, userId?: string): Promise<GeneratedJobDto[]> {
     const { departure, arrival, alternative, aviationType, passengers, paxWeight, cargoWeight, capacityId } = generateDto;
 
     const departureInfo = this.getAirportByIcao(departure);
@@ -544,14 +546,23 @@ export class NavdataService implements OnModuleInit, OnModuleDestroy {
       if (customCapacity) {
         customPassengerCapacity = customCapacity.paxCapacity || customPassengerCapacity;
         customCargoCapacityWeight = customCapacity.cargoCapacity || customCargoCapacityWeight;
+
+        // Salva a customPlaneCapacity selecionada nas Statistics do usuário antes de ir para a tela de confirmação
+        if (userId) {
+          try {
+            await this.customCapacityService.selectCapacity(capacityId, userId);
+          } catch (error) {
+            this.logger.warn(`Não foi possível salvar a capacidade selecionada nas Statistics: ${error.message}`);
+          }
+        }
       }
     }
 
     // Busca estatísticas do usuário para verificar unidade de peso
     let statistics: Statistics | null = null;
-    if (generateDto['userId']) {
+    if (userId) {
       statistics = await this.statisticsRepository.findOne({
-        where: { user: { id: generateDto['userId'] } }
+        where: { user: { id: userId } }
       });
     }
 
