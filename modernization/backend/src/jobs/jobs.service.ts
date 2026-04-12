@@ -109,6 +109,45 @@ export class JobsService {
     return Array.from(icaos);
   }
 
+  /**
+   * Busca todos os jobs concluídos do usuário (para arrival-tips)
+   */
+  async getUserJobs(userId: string): Promise<any[]> {
+    return this.jobsRepository.find({
+      where: { user: { id: userId }, isDone: true },
+      select: ['id', 'departureICAO', 'arrivalICAO', 'cargo', 'pax', 'pay', 'distance']
+    });
+  }
+
+  /**
+   * Busca um job aleatório do banco com filtros opcionais
+   * Equivalente ao RandomFlight do SearchJobsController.cs
+   */
+  async getRandomFlight(departure?: string, destination?: string): Promise<Job | null> {
+    const departureFilter = departure && departure.length === 4;
+    const destinationFilter = destination && destination.length === 4;
+
+    let query = this.jobsRepository.createQueryBuilder('job');
+
+    // Se ambos departure e destination forem válidos (4 caracteres), não filtra
+    // Se apenas um for válido, filtra por aquele
+    if (departureFilter && !destinationFilter) {
+      query = query.where('job.departureICAO = :departure', { departure });
+    } else if (destinationFilter && !departureFilter) {
+      query = query.where('job.arrivalICAO = :destination', { destination });
+    }
+
+    const jobs = await query.getMany();
+    const jobCount = jobs.length;
+
+    if (jobCount === 0) {
+      return null;
+    }
+
+    const randomIndex = Math.floor(Math.random() * jobCount);
+    return jobs[randomIndex];
+  }
+
   async activateJob(userId: string, jobId: number): Promise<void> {
     // Find user to validate existence
     const user = await this.usersRepository.findOne({ where: { id: userId } });

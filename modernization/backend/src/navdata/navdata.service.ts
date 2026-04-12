@@ -3,6 +3,8 @@ import Database from 'better-sqlite3';
 import * as path from 'path';
 import { Airport } from './entities/airport.entity';
 import { MapInfoDto } from './dto/map-info.dto';
+import { ArrivalTipsDto } from './dto/arrival-tips.dto';
+import * as https from 'https';
 
 @Injectable()
 export class NavdataService implements OnModuleInit, OnModuleDestroy {
@@ -98,6 +100,32 @@ export class NavdataService implements OnModuleInit, OnModuleDestroy {
       return rows.map((row: any) => this.mapRowToAirport(row));
     } catch (error) {
       this.logger.error(`Erro ao buscar aeroportos por ICAOs: ${error.message}`);
+      return [];
+    }
+  }
+
+  /**
+   * Busca todos os aeroportos próximos de um aeroporto
+   * Equivalente ao GetAllCloseAirports do legado
+   */
+  getAllCloseAirports(airport: Airport): Airport[] {
+    const latDownOffset = airport.laty - 2;
+    const latUpOffset = airport.laty + 2;
+    const lonDownOffset = airport.lonx - 2;
+    const lonUpOffset = airport.lonx + 2;
+
+    const query = `
+      SELECT * FROM airport
+      WHERE ident <> '${airport.ident}'
+      AND laty > ${latDownOffset} AND laty < ${latUpOffset}
+      AND lonx > ${lonDownOffset} AND lonx < ${lonUpOffset}
+    `;
+
+    try {
+      const rows = this.db.prepare(query).all();
+      return rows.map((row: any) => this.mapRowToAirport(row));
+    } catch (error) {
+      this.logger.error(`Erro ao buscar aeroportos próximos: ${error.message}`);
       return [];
     }
   }
@@ -230,6 +258,186 @@ export class NavdataService implements OnModuleInit, OnModuleDestroy {
     }
 
     return jsonList;
+  }
+
+  /**
+   * Retorna dicas de chegada para um aeroporto de partida
+   * Equivalente ao SearchJobTipsViewModels do SearchJobsController.cs
+   */
+  getArrivalTips(
+    departure: string,
+    userJobs: any[]
+  ): ArrivalTipsDto[] {
+    const listTips: ArrivalTipsDto[] = [];
+
+    if (!departure || departure.length <= 2) {
+      return listTips;
+    }
+
+    const departureInfo = this.getAirportByIcao(departure);
+    if (!departureInfo) {
+      return listTips;
+    }
+
+    // Adiciona arrivals dos jobs do usuário filtrados pelo departure
+    const filteredJobs = userJobs.filter(job =>
+      job.departureICAO && job.departureICAO.includes(departure)
+    );
+
+    for (const job of filteredJobs) {
+      const arrivalAirportInfo = this.getAirportByIcao(job.arrivalICAO);
+      if (arrivalAirportInfo) {
+        listTips.push({
+          idJob: job.id,
+          airportICAO: job.arrivalICAO,
+          cargo: job.cargo,
+          pax: job.pax,
+          pay: job.pay,
+          payload: job.payload,
+          airportName: arrivalAirportInfo.name,
+          airportElevation: arrivalAirportInfo.altitude,
+          airportRunwaySize: arrivalAirportInfo.longestRunwayLength,
+          distance: job.distance
+        });
+      }
+    }
+
+    // Adiciona arrivals aleatórios de outros jobs do usuário
+    if (userJobs.length > 1) {
+      const index = Math.floor(Math.random() * (userJobs.length - 1)) + 1;
+      const count = Math.floor(Math.random() * (userJobs.length - index));
+      const randomJobs = userJobs.slice(index, index + count).slice(0, 7);
+
+      for (const job of randomJobs) {
+        if (!listTips.some(x => x.airportICAO === job.arrivalICAO) &&
+            job.arrivalICAO !== departure) {
+          const arrivalAirportInfo = this.getAirportByIcao(job.arrivalICAO);
+          if (arrivalAirportInfo) {
+            const distMeters = this.haversineDistance(
+              departureInfo.laty,
+              departureInfo.lonx,
+              arrivalAirportInfo.laty,
+              arrivalAirportInfo.lonx
+            );
+            const distMiles = Math.round(distMeters / 1609.344);
+
+            listTips.push({
+              airportICAO: job.arrivalICAO,
+              airportName: arrivalAirportInfo.name,
+              distance: distMiles,
+              airportElevation: arrivalAirportInfo.altitude,
+              airportRunwaySize: arrivalAirportInfo.longestRunwayLength
+            });
+          }
+        }
+      }
+    }
+
+    // Adiciona aeroportos próximos aleatórios (até 600 milhas)
+    const closeAirports = this.getAllCloseAirports(departureInfo);
+    const tempTips: ArrivalTipsDto[] = [];
+
+    for (const airport of closeAirports) {
+      const distMeters = this.haversineDistance(
+        departureInfo.laty,
+        departureInfo.lonx,
+        airport.laty,
+        airport.lonx
+      );
+      const distMiles = Math.round(distMeters / 1609.344);
+
+      if (distMiles < 600) {
+        tempTips.push({
+          airportICAO: airport.ident,
+          airportName: airport.name,
+          distance: distMiles,
+          airportElevation: airport.altitude,
+          airportRunwaySize: airport.longestRunwayLength
+        });
+      }
+    }
+
+    // Embaralha e adiciona até 10 aeroportos próximos
+    const shuffled = tempTips.sort(() => Math.random() - 0.5);
+    listTips.push(...shuffled.slice(0, 10));
+
+    return listTips;
+  }
+
+  /**
+   * Retorna aeroportos alternativos dentro de um range específico
+   * Equivalente ao SearchAlternativeTips do SearchJobsController.cs
+   */
+  getAlternativeTips(arrival: string, range: number): ArrivalTipsDto[] {
+    const listTips: ArrivalTipsDto[] = [];
+
+    if (!arrival || arrival.length <= 2) {
+      return listTips;
+    }
+
+    const destinationInfo = this.getAirportByIcao(arrival);
+    if (!destinationInfo) {
+      return listTips;
+    }
+
+    const closeAirports = this.getAllCloseAirports(destinationInfo);
+
+    for (const airport of closeAirports) {
+      const distMeters = this.haversineDistance(
+        destinationInfo.laty,
+        destinationInfo.lonx,
+        airport.laty,
+        airport.lonx
+      );
+      const distMiles = Math.round(distMeters / 1609.344);
+
+      if (distMiles < range) {
+        listTips.push({
+          airportICAO: airport.ident,
+          airportName: airport.name,
+          distance: distMiles,
+          airportElevation: airport.altitude,
+          airportRunwaySize: airport.longestRunwayLength
+        });
+      }
+    }
+
+    return listTips;
+  }
+
+  /**
+   * Busca dados do Simbrief API
+   * Equivalente ao SimbriefLoadAsync do SearchJobsController.cs
+   */
+  async getSimbriefData(username: string): Promise<any> {
+    const url = `https://www.simbrief.com/api/xml.fetcher.php?username=${username}&json=1`;
+
+    return new Promise((resolve, reject) => {
+      https.get(url, (res) => {
+        let data = '';
+
+        res.on('data', (chunk) => {
+          data += chunk;
+        });
+
+        res.on('end', () => {
+          try {
+            if (data) {
+              const jsonData = JSON.parse(data);
+              resolve(jsonData);
+            } else {
+              resolve(null);
+            }
+          } catch (error) {
+            this.logger.error(`Erro ao parsear JSON do Simbrief: ${error.message}`);
+            resolve(null);
+          }
+        });
+      }).on('error', (error) => {
+        this.logger.error(`Erro ao buscar dados do Simbrief: ${error.message}`);
+        resolve(null);
+      });
+    });
   }
 
   private mapRowToAirport(row: any): Airport {
