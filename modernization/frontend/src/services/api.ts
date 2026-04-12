@@ -147,4 +147,65 @@ export const statisticsApi = {
     api.get(`/statistics/airline-stats/${airlineId}`).then(res => res.data),
 };
 
+export const searchApi = {
+  getMapInfo: (departure: string, arrival: string, alternative?: string) =>
+    api.get('/search/map-info', { params: { departure, arrival, alternative } }).then((res) => res.data),
+
+  getArrivalTips: (departure: string) =>
+    api.get('/search/arrival-tips', { params: { departure } }).then((res) => res.data),
+
+  getAlternativeTips: (arrival: string, range: number) =>
+    api.get('/search/alternative-tips', { params: { arrival, range } }).then((res) => res.data),
+
+  getRandomAirports: (departure?: string, destination?: string) =>
+    api.get('/search/random', { params: { departure, destination } }).then((res) => res.data),
+
+  getSimbriefData: (username: string) =>
+    api.get('/search/simbrief', { params: { username } }).then((res) => res.data),
+
+  generateConfirmJobs: (params: {
+    departure: string;
+    arrival: string;
+    alternative?: string;
+    aviationType: string;
+    capacityId?: number;
+    passengers?: number;
+    paxWeight?: number;
+    cargoWeight?: number;
+  }) => api.post('/search/generate', params).then((res) => res.data),
+
+  confirmJobs: (jobsIds: number[]) =>
+    api.post('/search/confirm', { jobsIds }).then((res) => res.data),
+
+  cloneJob: (jobId: number) =>
+    api.post('/search/clone-job', { jobId }).then((res) => res.data),
+
+  calcDistance: (departure: string, arrival: string) =>
+    api.get('/search/distance', { params: { departure, arrival } }).then((res) => res.data),
+};
+
+export const capacityApi = {
+  getCapacities: () =>
+    api.get('/users/capacities').then((res) => res.data),
+
+  saveCapacity: (data: {
+    name: string;
+    passengers: number;
+    paxWeight: number;
+    cargoWeight: number;
+    imagePath?: string;
+  }) => api.post('/users/capacities', data).then((res) => res.data),
+
+  updateCapacity: (
+    id: number,
+    data: { name: string; passengers: number; paxWeight: number; cargoWeight: number; imagePath?: string }
+  ) => api.put(`/users/capacities/${id}`, data).then((res) => res.data),
+
+  removeCapacity: (id: number) =>
+    api.delete(`/users/capacities/${id}`).then((res) => res.data),
+
+  getCapacityById: (id: number) =>
+    api.get(`/users/capacities/${id}`).then((res) => res.data),
+};
+
 export default api;
