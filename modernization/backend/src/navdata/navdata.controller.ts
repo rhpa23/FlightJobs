@@ -1,8 +1,10 @@
-import { Controller, Get, Query, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Post, Query, UseGuards, Request, Body } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiQuery, ApiBearerAuth } from '@nestjs/swagger';
 import { NavdataService } from './navdata.service';
 import { MapInfoDto } from './dto/map-info.dto';
 import { ArrivalTipsDto } from './dto/arrival-tips.dto';
+import { GenerateJobsDto, GeneratedJobDto } from './dto/generate-jobs.dto';
+import { ConfirmJobsDto } from './dto/confirm-jobs.dto';
 import { JobsService } from '../jobs/jobs.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
@@ -94,5 +96,21 @@ export class NavdataController {
   @ApiQuery({ name: 'username', description: 'Nome de usuário do Simbrief' })
   async getSimbriefData(@Query('username') username: string) {
     return this.navdataService.getSimbriefData(username);
+  }
+
+  @Post('generate')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('JWT-auth')
+  @ApiOperation({ summary: 'Gera opções de jobs baseadas nos parâmetros de busca' })
+  async generateJobs(@Body() generateDto: GenerateJobsDto): Promise<GeneratedJobDto[]> {
+    return this.navdataService.generateJobs(generateDto);
+  }
+
+  @Post('confirm')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('JWT-auth')
+  @ApiOperation({ summary: 'Confirma e cria os jobs selecionados' })
+  async confirmJobs(@Body() confirmDto: ConfirmJobsDto, @Request() req) {
+    return this.navdataService.confirmJobs(confirmDto, req.user.userId);
   }
 }

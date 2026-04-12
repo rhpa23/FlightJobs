@@ -1030,8 +1030,23 @@ export const SearchJobs: React.FC = () => {
   const handleConfirm = async (selected: GeneratedJobOption[]) => {
     if (!selected.length) return;
     try {
-      const ids = selected.map((j) => j.id).filter((id): id is number => id != null);
-      if (ids.length > 0) await searchApi.confirmJobs(ids);
+      // Converter os dados dos jobs para o formato esperado pelo backend
+      const jobsData = selected.map((j) => ({
+        departureICAO: departure,
+        arrivalICAO: arrival,
+        alternativeICAO: alternative.length >= 3 ? alternative : undefined,
+        distance: parseInt(distance || '0'),
+        pax: j.typeCategory === 'passenger' ? parseInt(j.payload) || 0 : 0,
+        cargo: j.typeCategory === 'cargo' ? parseInt(j.payload) || 0 : 0,
+        pay: parseInt(j.pay.replace('F$', '').replace(/,/g, '')) || 0,
+        aviationType: aviationType === 'GeneralAviation' ? 0 : 
+                    aviationType === 'AirTransport' ? 1 :
+                    aviationType === 'HeavyAirTransport' ? 2 : 3,
+        firstClass: j.type === 'Full price',
+        paxWeight: selectedCapacity?.customPaxWeight || 87,
+      }));
+
+      await searchApi.confirmJobs(jobsData);
       setShowConfirmModal(false);
       toast('Job confirmed! Redirecting to dashboard…', 'success');
       setTimeout(() => navigate('/'), 1800);

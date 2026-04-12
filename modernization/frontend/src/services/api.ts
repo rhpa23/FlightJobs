@@ -174,8 +174,8 @@ export const searchApi = {
     cargoWeight?: number;
   }) => api.post('/search/generate', params).then((res) => res.data),
 
-  confirmJobs: (jobsIds: number[]) =>
-    api.post('/search/confirm', { jobsIds }).then((res) => res.data),
+  confirmJobs: (jobs: any[]) =>
+    api.post('/search/confirm', { jobs }).then((res) => res.data),
 
   cloneJob: (jobId: number) =>
     api.post('/search/clone-job', { jobId }).then((res) => res.data),

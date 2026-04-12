@@ -1,15 +1,35 @@
-import { Injectable, OnModuleInit, OnModuleDestroy, Logger } from '@nestjs/common';
+import { Injectable, OnModuleInit, OnModuleDestroy, Logger, NotFoundException, ForbiddenException, BadRequestException } from '@nestjs/common';
 import Database from 'better-sqlite3';
 import * as path from 'path';
 import { Airport } from './entities/airport.entity';
 import { MapInfoDto } from './dto/map-info.dto';
 import { ArrivalTipsDto } from './dto/arrival-tips.dto';
+import { GenerateJobsDto, GeneratedJobDto } from './dto/generate-jobs.dto';
+import { ConfirmJobsDto } from './dto/confirm-jobs.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Job } from '../jobs/entities/job.entity';
+import { User } from '../users/entities/user.entity';
+import { Statistics } from '../statistics/entities/statistics.entity';
+import { CustomPlaneCapacity } from '../users/entities/custom-plane-capacity.entity';
+import { CreateJobDto } from '../jobs/dto/create-job.dto';
 import * as https from 'https';
 
 @Injectable()
 export class NavdataService implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(NavdataService.name);
   private db: Database.Database;
+
+  constructor(
+    @InjectRepository(Job)
+    private jobsRepository: Repository<Job>,
+    @InjectRepository(User)
+    private usersRepository: Repository<User>,
+    @InjectRepository(Statistics)
+    private statisticsRepository: Repository<Statistics>,
+    @InjectRepository(CustomPlaneCapacity)
+    private customCapacityRepository: Repository<CustomPlaneCapacity>,
+  ) {}
 
   onModuleInit() {
     // Caminho para o navdata.sqlite - ajusta conforme necessário
@@ -480,5 +500,173 @@ export class NavdataService implements OnModuleInit, OnModuleDestroy {
 
   private toRadians(degrees: number): number {
     return degrees * (Math.PI / 180);
+  }
+
+  /**
+   * Gera opções de jobs baseadas nos parâmetros de busca
+   * Equivalente ao GenerateBoardJobs do SearchJobsController.cs
+   */
+  async generateJobs(generateDto: GenerateJobsDto): Promise<GeneratedJobDto[]> {
+    const { departure, arrival, alternative, aviationType, passengers, paxWeight, cargoWeight } = generateDto;
+
+    const departureInfo = this.getAirportByIcao(departure);
+    const arrivalInfo = this.getAirportByIcao(arrival);
+
+    if (!departureInfo || !arrivalInfo) {
+      throw new BadRequestException('Invalid departure or arrival airport');
+    }
+
+    const distance = this.calcDistance(departure, arrival);
+    const jobs: GeneratedJobDto[] = [];
+
+    // Mapeamento de aviation type para ID (equivalente ao GetAviationTypeId do legado)
+    const aviationTypeMap: Record<string, number> = {
+      'GeneralAviation': 0,
+      'AirTransport': 1,
+      'HeavyAirTransport': 2,
+      'Cargo': 3,
+    };
+    const aviationTypeId = aviationTypeMap[aviationType] || 1;
+
+    // Gera jobs baseados na capacidade
+    const paxCapacity = passengers || 180;
+    const paxW = paxWeight || 84;
+    const cargoCapacity = cargoWeight || 2000;
+
+    // Gera variações de jobs (cargo e passageiros)
+    // Cargo jobs
+    const cargoVariations = [0.2, 0.4, 0.6, 0.8, 1.0];
+    for (const factor of cargoVariations) {
+      const cargo = Math.round(cargoCapacity * factor);
+      const pay = Math.round((distance * cargo * 0.01) + (distance * 10));
+      
+      jobs.push({
+        type: 'Cargo',
+        typeCategory: 'cargo',
+        payload: `${cargo} kg`,
+        pay: `F$${pay}`,
+        departureICAO: departure,
+        arrivalICAO: arrival,
+        alternativeICAO: alternative,
+        distance,
+        cargo,
+        payAmount: pay,
+        aviationType: aviationTypeId,
+        firstClass: false,
+        paxWeight: paxW,
+      });
+    }
+
+    // Passenger jobs
+    const paxVariations = [0.2, 0.4, 0.6, 0.8, 1.0];
+    for (const factor of paxVariations) {
+      const pax = Math.round(paxCapacity * factor);
+      const payload = (pax * paxW);
+      const pay = Math.round((distance * pax * 0.5) + (distance * 20));
+      
+      jobs.push({
+        type: factor > 0.7 ? 'Full price' : 'On sale',
+        typeCategory: 'passenger',
+        payload: `${pax} Pax`,
+        pay: `F$${pay}`,
+        departureICAO: departure,
+        arrivalICAO: arrival,
+        alternativeICAO: alternative,
+        distance,
+        pax,
+        cargo: 0,
+        payAmount: pay,
+        aviationType: aviationTypeId,
+        firstClass: factor > 0.8,
+        paxWeight: paxW,
+      });
+    }
+
+    return jobs;
+  }
+
+  /**
+   * Confirma e cria os jobs selecionados
+   * Equivalente ao Confirm do SearchJobsController.cs
+   */
+  async confirmJobs(confirmDto: ConfirmJobsDto, userId: string): Promise<{ message: string }> {
+    const { jobs: jobsToConfirm } = confirmDto;
+
+    // Buscar usuário para validar existência
+    const user = await this.usersRepository.findOne({ where: { id: userId } });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    // Verificar se usuário não é GUEST
+    if (user.email === 'guest@flightjobs.com') {
+      throw new ForbiddenException('Guest accounts cannot save jobs.');
+    }
+
+    // Buscar estatísticas do usuário
+    const statistics = await this.statisticsRepository.findOne({
+      where: { user: { id: userId } },
+      relations: ['customPlaneCapacity']
+    });
+
+    const paxWeight = statistics?.customPlaneCapacity?.paxWeight || 84;
+
+    const uniqueList = new Map<string, CreateJobDto>();
+
+    // Criar jobs
+    for (const jobData of jobsToConfirm) {
+
+      if (!uniqueList.has(jobData.arrivalICAO)) {
+        const createJobDto: CreateJobDto = {
+          departureICAO: jobData.departureICAO,
+          arrivalICAO: jobData.arrivalICAO,
+          alternativeICAO: jobData.alternativeICAO,
+          distance: jobData.distance,
+          pax: jobData.pax || 0,
+          cargo: jobData.cargo || 0,
+          pay: jobData.pay,
+          aviationType: jobData.aviationType || 1,
+          firstClass: jobData.firstClass || false,
+          paxWeight: jobData.paxWeight || paxWeight,
+        };
+
+        uniqueList.set(jobData.arrivalICAO, createJobDto);
+        
+      } else {
+        const existingJob = uniqueList.get(jobData.arrivalICAO);
+        existingJob.pax += jobData.pax;
+        existingJob.cargo += jobData.cargo;
+        existingJob.pay += jobData.pay;
+      }
+    }
+    // jobList.FirstOrDefault()
+    const jobToSave = uniqueList.values().next().value;
+
+    await this.jobsRepository.save({
+        ...jobToSave,
+        user: { id: userId } as User,
+        startTime: new Date(),
+        endTime: new Date(),
+        challengeExpirationDate: new Date(Date.now() - 24 * 60 * 60 * 1000), // Ontem
+      });
+
+    // Ativar o último job criado e desativar os outros
+    const userJobs = await this.jobsRepository.find({
+      where: { 
+        user: { id: userId }, 
+        isDone: false,
+        isChallenge: false
+      },
+      order: { id: 'DESC' }
+    });
+
+    if (userJobs.length > 0) {
+      for (const job of userJobs) {
+        job.isActivated = job.id === userJobs[0].id;
+      }
+      await this.jobsRepository.save(userJobs);
+    }
+
+    return { message: 'Saved' };
   }
 }
