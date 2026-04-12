@@ -175,24 +175,37 @@ interface ToastProps {
 ### 3.2 Search Jobs Page
 
 ```tsx
-// src/pages/SearchJobs.tsx
-// Features:
-// - Search form:
-//   - Origin airport (autocomplete)
-//   - Destination airport (autocomplete)
-//   - Alternative airport (optional)
-//   - Range slider (10-450 NM)
-//   - Aviation type filter
-//   - Custom plane capacity selector
-// - Search results table:
-//   - Selectable rows
-//   - Distance, pax, cargo, pay columns
-//   - Total summary
-// - Airport tips:
-//   - Alternative suggestions
-//   - Arrival suggestions
-// - Confirm button
-// - SimBrief integration
+src/pages/SearchJobs.tsx
+Features:
+- Search form:
+  - Origin airport (required, min 3 characters)
+  - Destination airport (required, min 3 characters)
+  - Alternative airport (optional, min 3 characters)
+  - Aviation type filter
+  - Custom plane capacity selector
+- Airport tips:
+  - Alternative suggestions
+  - Arrival suggestions
+  - Map display button
+- SimBrief integration
+  - Ask for a simbriefId
+  - Load Origin, Destination and Alternative airports from SimBrief
+  - LoadMapInfo (AJAX call to backend)
+- Random Origin, Destination and Alternative airports
+- Search results display:
+  - LoadMapInfo (AJAX call to backend)
+  - ShowMap (renders the map from https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x} with zoom level 10)
+  - Map markers for airports (geo coordinates from LoadMapInfo results)
+  - Map line connecting airports (Origin to Destination and Alternative)
+  - CalcDistance (updates distance display)
+  - Map circular range slider (based on Origin airport location)
+- Generate button (triggers AJAX call to backend to add a new Job)
+  - Show Custom plane modal to select
+  - Show Confirmation modal to select the randon generated payload and confirm the job generation
+  - Save job to database
+  - Redirect to Dashboard page
+  - Show success toast
+  - Show the generated job in the dashboard as the active job
 ```
 
 ### 3.3 Airlines Page
