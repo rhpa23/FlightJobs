@@ -504,10 +504,10 @@ export class NavdataService implements OnModuleInit, OnModuleDestroy {
 
   /**
    * Gera opções de jobs baseadas nos parâmetros de busca
-   * Equivalente ao GenerateBoardJobs do SearchJobsController.cs
+   * Equivalente ao GenerateBoardJobs do BaseController.cs
    */
   async generateJobs(generateDto: GenerateJobsDto): Promise<GeneratedJobDto[]> {
-    const { departure, arrival, alternative, aviationType, passengers, paxWeight, cargoWeight } = generateDto;
+    const { departure, arrival, alternative, aviationType, passengers, paxWeight, cargoWeight, capacityId } = generateDto;
 
     const departureInfo = this.getAirportByIcao(departure);
     const arrivalInfo = this.getAirportByIcao(arrival);
@@ -516,73 +516,194 @@ export class NavdataService implements OnModuleInit, OnModuleDestroy {
       throw new BadRequestException('Invalid departure or arrival airport');
     }
 
+    // Verifica se arrival != departure e arrival == model.Arrival
+    if (arrivalInfo.ident.toUpperCase() === departureInfo.ident.toUpperCase() ||
+        arrivalInfo.ident.toUpperCase() !== arrival.toUpperCase()) {
+      return [];
+    }
+
     const distance = this.calcDistance(departure, arrival);
     const jobs: GeneratedJobDto[] = [];
 
-    // Mapeamento de aviation type para ID (equivalente ao GetAviationTypeId do legado)
-    const aviationTypeMap: Record<string, number> = {
-      'GeneralAviation': 1,
-      'AirTransport': 2,
-      'HeavyAirTransport': 3,
-      'Cargo': 4,
-    };
-    const aviationTypeId = aviationTypeMap[aviationType] || 0;
+    // Taxas equivalentes às do BaseController
+    const taxEcon = 0.008; // por NM
+    const taxFirstC = 0.012; // por NM
+    const taxCargo = 0.0004; // por NM
 
-    // Gera jobs baseados na capacidade
-    const paxCapacity = passengers || 180;
+    const taxEconGE = 0.165; // por NM
+    const taxFirstGE = 0.175; // por NM
+    const taxCargoGE = 0.0041; // por NM
+
     const paxW = paxWeight || 84;
-    const cargoCapacity = cargoWeight || 2000;
+    let customPassengerCapacity = passengers || 180;
+    let customCargoCapacityWeight = cargoWeight || 2000;
 
-    // Gera variações de jobs (cargo e passageiros)
-    // Cargo jobs
-    const cargoVariations = [0.2, 0.4, 0.6, 0.8, 1.0];
-    for (const factor of cargoVariations) {
-      const cargo = Math.round(cargoCapacity * factor);
-      const pay = Math.round((distance * cargo * 0.01) + (distance * 10));
-      
+    // Se capacityId for fornecido, busca a capacidade personalizada do usuário
+    if (capacityId) {
+      const customCapacity = await this.customCapacityRepository.findOne({ where: { id: capacityId } });
+      if (customCapacity) {
+        customPassengerCapacity = customCapacity.paxCapacity || customPassengerCapacity;
+        customCargoCapacityWeight = customCapacity.cargoCapacity || customCargoCapacityWeight;
+      }
+    }
+
+    // Busca estatísticas do usuário para verificar unidade de peso
+    let statistics: Statistics | null = null;
+    if (generateDto['userId']) {
+      statistics = await this.statisticsRepository.findOne({
+        where: { user: { id: generateDto['userId'] } }
+      });
+    }
+
+    // Converte de pounds para kg se necessário
+    if (statistics && statistics.weightUnit === 'pounds') {
+      customCargoCapacityWeight = Math.round(customCargoCapacityWeight / 2.20462);
+    }
+
+    const randomPob = Math.random;
+    const randomCargo = Math.random;
+    let id = 0;
+    let validGaProfit = false;
+
+    const flightType = aviationType.trim();
+    const index = Math.floor(randomPob() * (25 - 14 + 1)) + 14; // Next(14, 25)
+
+    if (flightType === 'GeneralAviation') {
+      validGaProfit = customCargoCapacityWeight < 3000 && customPassengerCapacity < 30;
+    }
+
+    let gePobCount = 0;
+    let auxCargoCount = 0;
+
+    for (let i = 0; i < index; i++) {
+      let pob = 0;
+      let cargo = 0;
+      let profit = 0;
+      const isFisrtClass = Math.floor(randomPob() * 2) === 1; // Next(2)
+
+      const alternateCargo = Math.floor(randomPob() * 2); // Next(2)
+      const isCargo = alternateCargo === 0 || flightType === 'Cargo';
+
+      if (isCargo) {
+        let minCargo = 5;
+        let maxCargo = 160;
+        if (flightType === 'AirTransport') { minCargo = 0; maxCargo = 3000; }
+        if (flightType === 'Cargo') { minCargo = 10; maxCargo = 3500; }
+        if (flightType === 'HeavyAirTransport') { minCargo = 0; maxCargo = 6000; }
+
+        let cargoCapacity = customCargoCapacityWeight;
+        if (cargoCapacity < minCargo) cargoCapacity = minCargo + 1;
+        cargo = Math.floor(randomCargo() * (cargoCapacity - minCargo + 1)) + minCargo; // Next(minCargo, cargoCapacity)
+
+        if (auxCargoCount + cargo > cargoCapacity) {
+          cargo = cargoCapacity - auxCargoCount;
+          auxCargoCount = cargoCapacity;
+        } else {
+          auxCargoCount += cargo;
+        }
+
+        if (cargo === 0) continue;
+
+        if (flightType === 'GeneralAviation') {
+          if (validGaProfit) {
+            profit = Math.round(taxCargoGE * distance * cargo);
+            profit += Math.round(140 / customCargoCapacityWeight);
+          } else {
+            profit = Math.round(taxCargo * distance * cargo);
+          }
+        } else if (flightType === 'AirTransport') {
+          profit = Math.round(taxCargo * distance * cargo);
+        } else if (flightType === 'Cargo') {
+          profit = Math.round((taxCargo + 0.0005) * distance * cargo);
+        } else { // HeavyAirTransport
+          profit = Math.round(taxCargo * distance * cargo);
+        }
+      } else {
+        let minPob = 1;
+        let maxPob = 12;
+        if (flightType === 'AirTransport') { minPob = 10; maxPob = 80; }
+        if (flightType === 'HeavyAirTransport') { minPob = 50; maxPob = 140; }
+
+        let passengerCapacity = customPassengerCapacity;
+        if (passengerCapacity < minPob) passengerCapacity = minPob + 1;
+        pob = Math.floor(randomPob() * (passengerCapacity - minPob + 1)) + minPob; // Next(minPob, passengerCapacity)
+
+        if (gePobCount + pob > passengerCapacity) {
+          pob = passengerCapacity - gePobCount;
+          if (pob === 0) continue;
+          gePobCount = passengerCapacity;
+        } else {
+          gePobCount += pob;
+        }
+
+        if (flightType === 'GeneralAviation') {
+          // Always premium for GA
+          if (validGaProfit) {
+            profit = Math.round(taxFirstGE * distance * pob);
+            profit += Math.round((distance * 2) / passengerCapacity);
+          } else {
+            profit = Math.round(taxFirstC * distance * pob);
+          }
+        } else if (flightType === 'AirTransport') {
+          profit = isFisrtClass ? Math.round(taxFirstC * distance * pob) : Math.round(taxEcon * distance * pob);
+        } else { // HeavyAirTransport
+          profit = isFisrtClass ? Math.round(taxFirstC * distance * pob) : Math.round(taxEcon * distance * pob);
+        }
+      }
+
+      // Converte cargo para a unidade de peso do usuário
+      let convertedCargo = cargo;
+      if (statistics && statistics.weightUnit === 'pounds') {
+        convertedCargo = Math.round(cargo * 2.20462);
+      }
+
+      const weightUnit = statistics?.weightUnit === 'pounds' ? 'lbs' : 'kg';
+
       jobs.push({
-        type: 'Cargo',
-        typeCategory: 'cargo',
-        payload: `${cargo} kg`,
-        pay: `F$${pay}`,
+        id: id++,
+        type: isCargo ? '[Cargo] ' : (isFisrtClass ? '[Full price] ' : '[On sale] '),
+        typeCategory: isCargo ? 'cargo' : 'passenger',
+        payload: isCargo ? `${convertedCargo} ${weightUnit}` : `${pob} Pax`,
+        pay: `F$${profit}`,
         departureICAO: departure,
         arrivalICAO: arrival,
         alternativeICAO: alternative,
         distance,
-        cargo,
-        payAmount: pay,
-        aviationType: aviationTypeId,
-        firstClass: false,
+        pax: pob,
+        cargo: convertedCargo,
+        payAmount: profit,
+        aviationType: this.getAviationTypeId(aviationType),
+        firstClass: isFisrtClass,
         paxWeight: paxW,
       });
     }
 
-    // Passenger jobs
-    const paxVariations = [0.2, 0.4, 0.6, 0.8, 1.0];
-    for (const factor of paxVariations) {
-      const pax = Math.round(paxCapacity * factor);
-      const payload = (pax * paxW);
-      const pay = Math.round((distance * pax * 0.5) + (distance * 20));
-      
-      jobs.push({
-        type: factor > 0.7 ? 'Full price' : 'On sale',
-        typeCategory: 'passenger',
-        payload: `${pax} Pax`,
-        pay: `F$${pay}`,
-        departureICAO: departure,
-        arrivalICAO: arrival,
-        alternativeICAO: alternative,
-        distance,
-        pax,
-        cargo: 0,
-        payAmount: pay,
-        aviationType: aviationTypeId,
-        firstClass: factor > 0.8,
-        paxWeight: paxW,
-      });
-    }
+    // Ordena por Arrival e PayloadLabel
+    return jobs.sort((a, b) => {
+      if (a.arrivalICAO !== b.arrivalICAO) {
+        return a.arrivalICAO.localeCompare(b.arrivalICAO);
+      }
+      return a.type.localeCompare(b.type);
+    });
+  }
 
-    return jobs;
+  /**
+   * Retorna o ID do tipo de aviação
+   * Equivalente ao GetAviationTypeId do BaseController.cs
+   */
+  private getAviationTypeId(aviationType: string): number {
+    switch (aviationType) {
+      case 'GeneralAviation':
+        return 1;
+      case 'AirTransport':
+        return 2;
+      case 'HeavyAirTransport':
+        return 3;
+      case 'Cargo':
+        return 4;
+      default:
+        return 0;
+    }
   }
 
   /**

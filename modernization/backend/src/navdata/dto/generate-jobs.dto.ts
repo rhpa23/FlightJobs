@@ -41,6 +41,11 @@ export class GenerateJobsDto {
   @IsOptional()
   @IsNumber()
   cargoWeight?: number;
+
+  @ApiProperty({ required: false, description: 'ID do usuário para buscar estatísticas' })
+  @IsOptional()
+  @IsString()
+  userId?: string;
 }
 
 export class GeneratedJobDto {
