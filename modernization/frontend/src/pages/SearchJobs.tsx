@@ -1039,9 +1039,10 @@ export const SearchJobs: React.FC = () => {
         pax: j.typeCategory === 'passenger' ? parseInt(j.payload) || 0 : 0,
         cargo: j.typeCategory === 'cargo' ? parseInt(j.payload) || 0 : 0,
         pay: parseInt(j.pay.replace('F$', '').replace(/,/g, '')) || 0,
-        aviationType: aviationType === 'GeneralAviation' ? 0 : 
-                    aviationType === 'AirTransport' ? 1 :
-                    aviationType === 'HeavyAirTransport' ? 2 : 3,
+        aviationType: aviationType === 'GeneralAviation' ? 1 :
+                    aviationType === 'AirTransport' ? 2 :
+                    aviationType === 'HeavyAirTransport' ? 3 :
+                    aviationType === 'Cargo' ? 4 : 0,
         firstClass: j.type === 'Full price',
         paxWeight: selectedCapacity?.customPaxWeight || 87,
       }));

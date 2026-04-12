@@ -521,12 +521,12 @@ export class NavdataService implements OnModuleInit, OnModuleDestroy {
 
     // Mapeamento de aviation type para ID (equivalente ao GetAviationTypeId do legado)
     const aviationTypeMap: Record<string, number> = {
-      'GeneralAviation': 0,
-      'AirTransport': 1,
-      'HeavyAirTransport': 2,
-      'Cargo': 3,
+      'GeneralAviation': 1,
+      'AirTransport': 2,
+      'HeavyAirTransport': 3,
+      'Cargo': 4,
     };
-    const aviationTypeId = aviationTypeMap[aviationType] || 1;
+    const aviationTypeId = aviationTypeMap[aviationType] || 0;
 
     // Gera jobs baseados na capacidade
     const paxCapacity = passengers || 180;
