@@ -327,11 +327,11 @@ function CustomCapacityModal({
     imagePath: '',
   });
 
-  /* Sync form from selected capacity */
+  /* Sync form from selected capacity on modal open */
   useEffect(() => {
     if (isOpen && capacities.length > 0 && !isNewMode) {
-      // Usar o selectedCapacity do Statistics se disponível, senão usar o primeiro
-      const id = selectedCapacity?.id ?? selectedId ?? capacities[0].id;
+      // Usar o selectedCapacity do Statistics se disponível, senão usar o selecionado ou o primeiro
+      const id = selectedCapacity?.id ?? (selectedId != null ? selectedId : capacities[0].id);
       setSelectedId(id);
       const cap = capacities.find((c) => c.id === id) ?? capacities[0];
       setForm({
@@ -342,7 +342,23 @@ function CustomCapacityModal({
         imagePath: cap.imagePath ?? '',
       });
     }
-  }, [isOpen, selectedId, capacities, isNewMode, selectedCapacity]);
+  }, [isOpen, capacities, isNewMode, selectedCapacity]);
+
+  /* Update form when selectedId changes (user selects from dropdown) */
+  useEffect(() => {
+    if (selectedId != null && !isNewMode && capacities.length > 0) {
+      const cap = capacities.find((c) => c.id === selectedId);
+      if (cap) {
+        setForm({
+          customNameCapacity: cap.customNameCapacity || '',
+          customPassengerCapacity: cap.customPassengerCapacity || 0,
+          customPaxWeight: cap.customPaxWeight || 84,
+          customCargoCapacityWeight: cap.customCargoCapacityWeight || 0,
+          imagePath: cap.imagePath ?? '',
+        });
+      }
+    }
+  }, [selectedId, capacities, isNewMode]);
 
   const flash = (text: string, ok = true) => {
     setMsg({ text, ok });
