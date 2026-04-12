@@ -294,3 +294,7 @@ Web.config
 # Modernization backend dist folder
 modernization/backend/dist
 modernization/backend/tsconfig.tsbuildinfo
+
+# Database files
+**/App_Data/*.db
+**/App_Data/*.mdf
