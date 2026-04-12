@@ -34,10 +34,24 @@ L.Icon.Default.mergeOptions({
 /* ── Custom SVG marker icons ─────────────────────────────────────────────── */
 const mkIcon = (color: string, ring = 'white') =>
   L.divIcon({
-    html: `<svg width="26" height="26" viewBox="0 0 26 26" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="13" cy="13" r="11" fill="${color}" opacity="0.95" stroke="${ring}" stroke-width="2.5"/>
-      <circle cx="13" cy="13" r="4" fill="white"/>
-    </svg>`,
+    html: `<div style="
+      background-color: ${color};
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      border: 2.5px solid ${ring};
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0.95;
+    ">
+      <div style="
+        width: 8px;
+        height: 8px;
+        background-color: white;
+        border-radius: 50%;
+      "></div>
+    </div>`,
     className: '',
     iconSize: [26, 26],
     iconAnchor: [13, 13],
@@ -60,7 +74,7 @@ interface MapMarker {
   lat: number;
   lng: number;
   info?: string;
-  runwaySize?: string;
+  runway_size?: string;
   elevation?: string;
   isRoute: boolean;
   isDeparture: boolean;
@@ -1382,7 +1396,7 @@ export const SearchJobs: React.FC = () => {
                     <div className="text-xs space-y-1 min-w-[160px]">
                       <p className="font-bold text-gray-800">{m.icao} – {m.name}</p>
                       {m.info && <p className="text-gray-600">{m.info}</p>}
-                      {m.runwaySize && <p className="text-gray-500">Runway: {m.runwaySize}</p>}
+                      {m.runway_size && <p className="text-gray-500">Runway: {m.runway_size} ({Math.round(parseInt(m.runway_size) * 0.3048)}m)</p>}
                       {m.elevation && <p className="text-gray-500">Elev: {m.elevation}</p>}
                       <div className="flex flex-col gap-1 pt-1">
                         <button
