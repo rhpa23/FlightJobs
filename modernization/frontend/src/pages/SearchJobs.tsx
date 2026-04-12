@@ -207,9 +207,9 @@ function TipsTable({
   }
 
   return (
-    <div className="overflow-x-auto">
+    <div className="overflow-x-auto max-h-[300px] overflow-y-auto">
       <table className="w-full text-xs border-collapse">
-        <thead>
+        <thead className="sticky top-0 z-10 bg-gray-900">
           <tr className="bg-blue-600/15 text-blue-300 border-b border-gray-700">
             <th className="px-2 py-2 text-left font-semibold">ICAO</th>
             <th className="px-2 py-2 text-left font-semibold">Name</th>
@@ -669,9 +669,10 @@ function ConfirmModal({
 
                       {/* Jobs table */}
                       <div className="rounded-xl border border-gray-700/80 overflow-hidden">
-                        <table className="w-full text-sm">
-                          <thead>
-                            <tr className="bg-gray-800 text-[10px] uppercase text-gray-400 tracking-wider">
+                        <div className="overflow-x-auto max-h-[400px] overflow-y-auto">
+                          <table className="w-full text-sm">
+                            <thead className="sticky top-0 z-10 bg-gray-900">
+                              <tr className="bg-gray-800 text-[10px] uppercase text-gray-400 tracking-wider">
                               <th className="px-3 py-2.5 w-10 text-center">
                                 {/* Select-all checkbox */}
                                 <button
@@ -726,6 +727,7 @@ function ConfirmModal({
                             ))}
                           </tbody>
                         </table>
+                      </div>
                       </div>
                     </>
                   )}
