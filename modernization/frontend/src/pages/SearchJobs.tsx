@@ -36,8 +36,8 @@ const mkIcon = (color: string, ring = 'white') =>
   L.divIcon({
     html: `<div style="
       background-color: ${color};
-      width: 26px;
-      height: 26px;
+      width: 22px;
+      height: 22px;
       border-radius: 50%;
       border: 2.5px solid ${ring};
       display: flex;
@@ -53,7 +53,7 @@ const mkIcon = (color: string, ring = 'white') =>
       "></div>
     </div>`,
     className: '',
-    iconSize: [26, 26],
+    iconSize: [22, 22],
     iconAnchor: [13, 13],
     popupAnchor: [0, -16],
   });
@@ -110,6 +110,8 @@ interface GeneratedJobOption {
   payload: string;
   pay: string;
   isSelected: boolean;
+  pax?: number;
+  cargo?: number;
 }
 
 interface ToastMsg {
@@ -623,6 +625,22 @@ function ConfirmModal({
   const allSelected = jobs.length > 0 && jobs.every((j) => j.isSelected);
   const selected = jobs.filter((j) => j.isSelected);
 
+  /* ── Cálculos de resumo (similar ao legado Result.cshtml linhas 147-220) ── */
+  const totalPax = selected
+    .filter((j) => j.typeCategory === 'passenger')
+    .reduce((sum, j) => sum + (j.pax ?? (parseInt(j.payload) || 0)), 0);
+
+  const totalCargo = selected
+    .filter((j) => j.typeCategory === 'cargo')
+    .reduce((sum, j) => sum + (j.cargo ?? (parseInt(j.payload) || 0)), 0);
+
+  const pilotPayment = selected.reduce((sum, j) => {
+    const payValue = parseInt(j.pay.replace('F$', '').replace(/,/g, '')) || 0;
+    return sum + payValue;
+  }, 0);
+
+  const totalPayload = totalCargo + (totalPax * paxWeight);
+
   return (
     <Transition appear show={isOpen} as={Fragment}>
       <Dialog as="div" className="relative z-50" onClose={isLoading ? () => {} : onClose}>
@@ -679,6 +697,26 @@ function ConfirmModal({
                           {' '}to arrival at{' '}
                           <span className="text-white font-bold">{arrival}</span>
                         </p>
+
+                        {/* Resumo de seleções (similar ao legado) */}
+                        {selected.length > 0 && (
+                          <>
+                            <div className="flex items-center justify-center gap-6 pt-2 text-xs">
+                              <span className="text-gray-300">
+                                Total pax: <span className="font-bold text-white">{totalPax}</span>
+                              </span>
+                              <span className="text-gray-300">
+                                Total cargo: <span className="font-bold text-white">{totalCargo} {weightUnit}</span>
+                              </span>
+                              <span className="text-gray-300">
+                                Pilot Payment: <span className="font-bold text-green-400">F${pilotPayment.toLocaleString()}</span>
+                              </span>
+                            </div>
+                            <div className="pt-1 text-xs text-gray-300">
+                              Total payload: <span className="font-bold text-white">{totalPayload} {weightUnit}</span>
+                            </div>
+                          </>
+                        )}
                       </div>
 
                       {/* Jobs table */}
@@ -880,7 +918,7 @@ export const SearchJobs: React.FC = () => {
 
   /* ── Load map info ───────────────────────────────────────────────────── */
   const loadMap = useCallback(async (dep: string, arr: string, alt?: string) => {
-    if (dep.length < 3 || arr.length < 3) return;
+    if (dep.length < 3) return;
     setLoadingMap(true);
     try {
       const markers: MapMarker[] = await searchApi.getMapInfo(dep, arr, alt);
@@ -1303,7 +1341,7 @@ export const SearchJobs: React.FC = () => {
             type="button"
             onClick={() => {
               setShowMap((s) => !s);
-              if (!showMap && departure.length === 4 && arrival.length === 4) {
+              if (!showMap && departure.length === 4) {// && arrival.length === 4) {
                 loadMap(departure, arrival, alternative.length >= 3 ? alternative : undefined);
               }
             }}
