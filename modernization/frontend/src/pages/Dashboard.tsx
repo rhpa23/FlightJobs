@@ -1,9 +1,10 @@
-import React, { useEffect } from 'react';
-import { InformationCircleIcon } from '@heroicons/react/24/outline';
+import React, { useEffect, useState, useCallback } from 'react';
+import { InformationCircleIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { fetchMyStats } from '../store/slices/statisticsSlice';
-import { fetchPendingJobs, fetchActiveJob } from '../store/slices/jobsSlice';
+import { fetchPendingJobs, fetchActiveJob, deleteJob } from '../store/slices/jobsSlice';
 import { fetchMyAirline } from '../store/slices/airlinesSlice';
+import { ToastContainer, ToastMsg } from '../components/Toast';
 
 export const Dashboard: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -11,6 +12,17 @@ export const Dashboard: React.FC = () => {
   const { myStats, isLoading } = useAppSelector((state) => state.statistics);
   const { pendingJobs, currentJob } = useAppSelector((state) => state.jobs);
   const { userAirline } = useAppSelector((state) => state.airlines);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [toasts, setToasts] = useState<ToastMsg[]>([]);
+
+  const addToast = useCallback((message: string, type: ToastMsg['type'] = 'success') => {
+    const id = Date.now();
+    setToasts((prev) => [...prev, { id, message, type }]);
+  }, []);
+
+  const dismissToast = useCallback((id: number) => {
+    setToasts((prev) => prev.filter((t) => t.id !== id));
+  }, []);
 
   useEffect(() => {
     dispatch(fetchMyStats());
@@ -123,7 +135,16 @@ export const Dashboard: React.FC = () => {
       {/* Current Job */}
       {currentJob && (
         <div className="bg-gray-800 p-6 rounded-lg">
-          <h2 className="text-lg font-medium text-white mb-4">Current Flight</h2>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-medium text-white">Current Flight</h2>
+            <button
+              onClick={() => setShowConfirmModal(true)}
+              className="p-2 text-gray-400 hover:text-red-500 hover:bg-gray-700 rounded-lg transition-colors"
+              title="Delete current job"
+            >
+              <TrashIcon className="w-5 h-5" />
+            </button>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <p className="text-sm text-gray-400">Route</p>
@@ -211,6 +232,41 @@ export const Dashboard: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* Confirmation Modal */}
+      {showConfirmModal && currentJob && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-gray-800 p-6 rounded-lg max-w-md w-full mx-4">
+            <h3 className="text-lg font-medium text-white mb-4">Confirm Deletion</h3>
+            <p className="text-gray-400 mb-6">
+              Are you sure you want to delete the current job from{' '}
+              <span className="text-white">{currentJob.departureICAO}</span> to{' '}
+              <span className="text-white">{currentJob.arrivalICAO}</span>?
+            </p>
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => setShowConfirmModal(false)}
+                className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={async () => {
+                  await dispatch(deleteJob(currentJob.id));
+                  setShowConfirmModal(false);
+                  addToast('Job removed successfully', 'success');
+                  dispatch(fetchActiveJob());
+                }}
+                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <ToastContainer toasts={toasts} onDismiss={dismissToast} />
     </div>
   );
 };

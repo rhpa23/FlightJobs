@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { Toast, ToastMsg } from '../components/Toast';
 import { MapContainer, TileLayer, Marker, Popup, Polyline, Circle, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import { Dialog, Transition } from '@headlessui/react';
@@ -112,12 +113,6 @@ interface GeneratedJobOption {
   isSelected: boolean;
   pax?: number;
   cargo?: number;
-}
-
-interface ToastMsg {
-  id: number;
-  message: string;
-  type: 'success' | 'error' | 'warning' | 'info';
 }
 
 /* ── Aviation type definitions ───────────────────────────────────────────── */
@@ -816,37 +811,6 @@ function ConfirmModal({
         </div>
       </Dialog>
     </Transition>
-  );
-}
-
-/* ── Toast ───────────────────────────────────────────────────────────────── */
-function Toast({ toast, onDismiss }: { toast: ToastMsg; onDismiss: (id: number) => void }) {
-  useEffect(() => {
-    const t = setTimeout(() => onDismiss(toast.id), 4500);
-    return () => clearTimeout(t);
-  }, [toast.id, onDismiss]);
-
-  const cls: Record<ToastMsg['type'], string> = {
-    success: 'bg-emerald-500/20 border-emerald-500/40 text-emerald-300',
-    error: 'bg-red-500/20 border-red-500/40 text-red-300',
-    warning: 'bg-yellow-500/20 border-yellow-500/40 text-yellow-300',
-    info: 'bg-blue-500/20 border-blue-500/40 text-blue-300',
-  };
-
-  const emoji: Record<ToastMsg['type'], string> = {
-    success: '✅', error: '❌', warning: '⚠️', info: 'ℹ️',
-  };
-
-  return (
-    <div className={`flex items-center gap-3 px-4 py-3 rounded-xl border backdrop-blur-sm shadow-2xl text-sm font-medium ${cls[toast.type]}`}
-      style={{ animation: 'slideUp 0.25s ease-out' }}
-    >
-      <span>{emoji[toast.type]}</span>
-      <span className="flex-1">{toast.message}</span>
-      <button onClick={() => onDismiss(toast.id)} className="opacity-50 hover:opacity-100 transition-opacity">
-        <XMarkIcon className="w-4 h-4" />
-      </button>
-    </div>
   );
 }
 
