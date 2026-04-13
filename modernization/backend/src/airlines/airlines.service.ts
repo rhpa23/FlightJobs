@@ -441,6 +441,20 @@ export class AirlinesService {
     return airlines;
   }
 
+  async getMyAirline(userId: string): Promise<any> {
+    // Get user statistics to find their airline
+    const userStatistics = await this.statisticsRepository.findOne({
+      where: { userId },
+      relations: ['airline']
+    });
+
+    if (!userStatistics?.airline) {
+      return null;
+    }
+
+    return userStatistics.airline;
+  }
+
   // Keep existing methods for backward compatibility
   async findAll(): Promise<Airline[]> {
     return this.airlinesRepository.find();

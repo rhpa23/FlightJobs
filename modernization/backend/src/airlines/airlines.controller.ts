@@ -116,4 +116,10 @@ export class AirlinesController {
   async getRanking(): Promise<any[]> {
     return this.airlinesService.getRanking();
   }
+
+  @Get('my-airline')
+  @ApiOperation({ summary: 'Get current user airline' })
+  async getMyAirline(@Request() req): Promise<any> {
+    return this.airlinesService.getMyAirline(req.user.userId);
+  }
 }

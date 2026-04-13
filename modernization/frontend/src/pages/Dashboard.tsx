@@ -123,7 +123,7 @@ export const Dashboard: React.FC = () => {
       {currentJob && (
         <div className="bg-gray-800 p-6 rounded-lg">
           <h2 className="text-lg font-medium text-white mb-4">Current Flight</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <p className="text-sm text-gray-400">Route</p>
               <p className="text-lg font-medium text-white">
@@ -131,12 +131,20 @@ export const Dashboard: React.FC = () => {
               </p>
             </div>
             <div>
-              <p className="text-sm text-gray-400">Aircraft</p>
-              <p className="text-lg font-medium text-white">{currentJob.modelName || 'N/A'}</p>
+              <p className="text-sm text-gray-400">Pax</p>
+              <p className="text-lg font-medium text-white">{currentJob.pax || 'N/A'}</p>
+            </div>
+            <div>
+              <p className="text-sm text-gray-400">Total payload</p>
+              <p className="text-lg font-medium text-green-400">{currentJob.pax != null && currentJob.cargo != null ? (currentJob.pax + currentJob.cargo).toLocaleString()  + ' ' + (myStats?.weightUnit || '') : '0'}</p>
             </div>
             <div>
               <p className="text-sm text-gray-400">Distance</p>
               <p className="text-lg font-medium text-white">{currentJob.distance} NM</p>
+            </div>
+            <div>
+              <p className="text-sm text-gray-400">Cargo</p>
+              <p className="text-lg font-medium text-white">{currentJob.cargo + ' ' + (myStats?.weightUnit || '')}</p>
             </div>
             <div>
               <p className="text-sm text-gray-400">Payment</p>
