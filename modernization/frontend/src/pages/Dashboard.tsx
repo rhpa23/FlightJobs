@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { InformationCircleIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { fetchMyStats } from '../store/slices/statisticsSlice';
-import { fetchPendingJobs, fetchActiveJob, deleteJob } from '../store/slices/jobsSlice';
+import { fetchPendingJobs, fetchActiveJob, deleteJob, activateJob } from '../store/slices/jobsSlice';
 import { fetchMyAirline } from '../store/slices/airlinesSlice';
 import { ToastContainer, ToastMsg } from '../components/Toast';
 
@@ -13,6 +13,8 @@ export const Dashboard: React.FC = () => {
   const { pendingJobs, currentJob } = useAppSelector((state) => state.jobs);
   const { userAirline } = useAppSelector((state) => state.airlines);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [showActivateModal, setShowActivateModal] = useState(false);
+  const [selectedJob, setSelectedJob] = useState<typeof pendingJobs[0] | null>(null);
   const [toasts, setToasts] = useState<ToastMsg[]>([]);
 
   const addToast = useCallback((message: string, type: ToastMsg['type'] = 'success') => {
@@ -207,8 +209,14 @@ export const Dashboard: React.FC = () => {
                     {job.distance} NM • ${job.pay != null ? job.pay.toLocaleString() : '0'}
                   </p>
                 </div>
-                <button className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-                  Start Flight
+                <button
+                  onClick={() => {
+                    setSelectedJob(job);
+                    setShowActivateModal(true);
+                  }}
+                  className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                >
+                  Activate
                 </button>
               </div>
             ))}
@@ -260,6 +268,46 @@ export const Dashboard: React.FC = () => {
                 className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
               >
                 Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Activate Confirmation Modal */}
+      {showActivateModal && selectedJob && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-gray-800 p-6 rounded-lg max-w-md w-full mx-4">
+            <h3 className="text-lg font-medium text-white mb-4">Confirm Activation</h3>
+            <p className="text-gray-400 mb-6">
+              Are you sure you want to activate the job from{' '}
+              <span className="text-white">{selectedJob.departureICAO}</span> to{' '}
+              <span className="text-white">{selectedJob.arrivalICAO}</span>?
+              <br /><br />
+              This will become your current flight.
+            </p>
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => {
+                  setShowActivateModal(false);
+                  setSelectedJob(null);
+                }}
+                className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={async () => {
+                  await dispatch(activateJob(selectedJob.id));
+                  setShowActivateModal(false);
+                  setSelectedJob(null);
+                  addToast('Job activated successfully', 'success');
+                  dispatch(fetchPendingJobs());
+                  dispatch(fetchActiveJob());
+                }}
+                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+              >
+                Activate
               </button>
             </div>
           </div>

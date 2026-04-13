@@ -1,0 +1,3 @@
+Preciso de uma logomarca para uma aplicação web, chamada FlightJobs, que é voltada para simulação de aviação (Microsoft Flight Simulator, X-Plane). A aplicação funciona como uma plataforma de gerenciamento de voos virtuais, onde pilotos podem aceitar jobs (voos), gerenciar licenças, criar companhias aéreas virtuais e participar de desafios.
+Estou modernizando essa aplicação e o logo antigo está em anexo.
+Preciso que o novo logo seja moderno e que traduza o objetivo da aplicação. 
