@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { InformationCircleIcon } from '@heroicons/react/24/outline';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { fetchMyStats } from '../store/slices/statisticsSlice';
 import { fetchPendingJobs, fetchActiveJob } from '../store/slices/jobsSlice';
@@ -131,12 +132,28 @@ export const Dashboard: React.FC = () => {
               </p>
             </div>
             <div>
-              <p className="text-sm text-gray-400">Pax</p>
+              <p className="text-sm text-gray-400 flex items-center gap-1">
+                Pax
+                <span className="relative group">
+                  <InformationCircleIcon className="w-4 h-4 text-gray-500 cursor-help" />
+                  <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-1 bg-gray-700 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+                    Weight for each pax: {currentJob.paxWeight} {myStats?.weightUnit || ''}
+                  </span>
+                </span>
+              </p>
               <p className="text-lg font-medium text-white">{currentJob.pax || 'N/A'}</p>
             </div>
             <div>
-              <p className="text-sm text-gray-400">Total payload</p>
-              <p className="text-lg font-medium text-green-400">{currentJob.pax != null && currentJob.cargo != null ? (currentJob.pax + currentJob.cargo).toLocaleString()  + ' ' + (myStats?.weightUnit || '') : '0'}</p>
+              <p className="text-sm text-gray-400 flex items-center gap-1">
+                Total payload
+                <span className="relative group">
+                  <InformationCircleIcon className="w-4 h-4 text-gray-500 cursor-help" />
+                  <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-1 bg-gray-700 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+                    (Pax * PaxWeight) + CargoWeight
+                  </span>
+                </span>
+              </p>
+              <p className="text-lg font-medium text-green-400">{currentJob.pax != null && currentJob.cargo != null ? ((currentJob.pax * currentJob.paxWeight) + currentJob.cargo).toLocaleString()  + ' ' + (myStats?.weightUnit || '') : '0'}</p>
             </div>
             <div>
               <p className="text-sm text-gray-400">Distance</p>

@@ -8,6 +8,7 @@ interface Job {
   alternativeICAO?: string;
   distance: number;
   pax: number;
+  paxWeight: number;
   cargo: number;
   pay: number;
   isDone: boolean;
