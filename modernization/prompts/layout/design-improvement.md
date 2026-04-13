@@ -1,6 +1,7 @@
 O design atual da aplicação precisa de melhorias para ficar mais moderno e profissional. Preciso que você analise o layout atual e proponha melhorias no design, mantendo a funcionalidade e a usabilidade.
 Adicionei o novo logo da aplicação na pasta plans/images e quero que ele seja usado como favicon e logo principal da aplicação. 
-No dashboard, quero que o layout seja mais moderno e profissional com icones adequados, mas sem muita poluição visual. Depois vou inserir mais informações, como badges, gráficos, etc. Incluir os links, em forma de ícones, das seguintes redes sociais:
+No dashboard, quero que o layout seja mais moderno e profissional com icones adequados, mas sem muita poluição visual. Depois vou inserir mais informações, como badges, gráficos, etc. Pode adicionar um resumo bem sucinto e discreto do que é a aplicação para que está acessado pela primeira vez entender do que se trata.
+Incluir os links, em forma de ícones, das seguintes redes sociais:
 - Facebook (https://fb.me/rhpa23)
 - YouTube (https://www.youtube.com/channel/UCBHN8OG2yilRq3SrxAGaIaw)
 - Discord (https://discordapp.com/invite/xmpAWz7)

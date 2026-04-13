@@ -1,5 +1,20 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { InformationCircleIcon, TrashIcon } from '@heroicons/react/24/outline';
+import {
+  InformationCircleIcon,
+  TrashIcon,
+  BanknotesIcon,
+  StarIcon,
+  PaperAirplaneIcon,
+  ClockIcon,
+  MapPinIcon,
+  BuildingOfficeIcon,
+  UsersIcon,
+  CubeIcon,
+  ArrowPathIcon,
+  BriefcaseIcon,
+  ChartBarIcon,
+  ChevronRightIcon,
+} from '@heroicons/react/24/outline';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { fetchMyStats } from '../store/slices/statisticsSlice';
 import { fetchPendingJobs, fetchActiveJob, deleteJob, activateJob } from '../store/slices/jobsSlice';
@@ -43,180 +58,223 @@ export const Dashboard: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold text-white">Dashboard</h1>
-        <p className="text-gray-400">
-          Welcome back, {user?.userName || user?.email || 'Pilot'}!
-        </p>
+      {/* Welcome Section with App Summary */}
+      <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-6 border border-gray-700">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-bold text-white flex items-center gap-2">
+              <PaperAirplaneIcon className="h-7 w-7 text-blue-400" />
+              Dashboard
+            </h1>
+            <p className="text-gray-400 mt-1">
+              Welcome back, <span className="text-blue-400 font-medium">{user?.userName || user?.email || 'Pilot'}</span>!
+            </p>
+          </div>
+          <div className="flex items-center gap-2 text-xs text-gray-500 bg-gray-800/50 px-3 py-2 rounded-lg border border-gray-700/50">
+            <InformationCircleIcon className="h-4 w-4 flex-shrink-0" />
+            <span className="max-w-md">
+              FlightJobs is an aviation career platform for flight simulators.
+              Complete aviation jobs, earn rewards, work for a virtual airline and build your career as a virtual pilot.
+            </span>
+          </div>
+        </div>
       </div>
 
-      {/* Statistics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="bg-gray-800 p-6 rounded-lg">
-          <div className="flex items-center">
-            <div className="flex-shrink-0">
-              <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
-                <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z" />
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662.5.5 0 00-.223.67.5.5 0 00.662.223 3.535 3.535 0 011.237-.47v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582a2.305 2.305 0 01.567-.267V6.092a4.535 4.535 0 00-1.676-.662.5.5 0 00-.223-.67.5.5 0 00-.662.223 3.535 3.535 0 01-1.237.47v1.698a2.305 2.305 0 01.567.267C8.07 8.34 8 8.566 8 8.68c0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267v1.698a4.535 4.535 0 001.676.662.5.5 0 00.223.67.5.5 0 00.662-.223 3.535 3.535 0 011.237-.47v-1.698a2.305 2.305 0 01-.567-.267C11.93 8.66 12 8.434 12 8.32c0-.114-.07-.34-.433-.582a2.305 2.305 0 01-.567-.267V6.092a4.535 4.535 0 00-1.676-.662z" clipRule="evenodd" />
-                </svg>
+      {/* Statistics Cards - Modern Design */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* Bank Balance */}
+        <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-5 border border-gray-700/50 hover:border-green-500/30 transition-all group">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="p-2.5 bg-green-500/10 rounded-lg group-hover:bg-green-500/20 transition-colors">
+                <BanknotesIcon className="h-6 w-6 text-green-400" />
               </div>
-            </div>
-            <div className="ml-5 w-0 flex-1">
-              <dl>
-                <dt className="text-sm font-medium text-gray-400 truncate">Bank Balance</dt>
-                <dd className="text-lg font-medium text-white">
+              <div>
+                <p className="text-xs font-medium text-gray-400 uppercase tracking-wide">Bank Balance</p>
+                <p className="text-xl font-bold text-white">
                   ${myStats?.bankBalance != null ? myStats.bankBalance.toLocaleString() : '0'}
-                </dd>
-              </dl>
+                </p>
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="bg-gray-800 p-6 rounded-lg">
-          <div className="flex items-center">
-            <div className="flex-shrink-0">
-              <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
-                <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                </svg>
+        {/* Pilot Score */}
+        <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-5 border border-gray-700/50 hover:border-blue-500/30 transition-all group">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="p-2.5 bg-blue-500/10 rounded-lg group-hover:bg-blue-500/20 transition-colors">
+                <StarIcon className="h-6 w-6 text-blue-400" />
               </div>
-            </div>
-            <div className="ml-5 w-0 flex-1">
-              <dl>
-                <dt className="text-sm font-medium text-gray-400 truncate">Pilot Score</dt>
-                <dd className="text-lg font-medium text-white">
+              <div>
+                <p className="text-xs font-medium text-gray-400 uppercase tracking-wide">Pilot Score</p>
+                <p className="text-xl font-bold text-white">
                   {myStats?.pilotScore != null ? myStats.pilotScore.toLocaleString() : '0'}
-                </dd>
-              </dl>
+                </p>
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="bg-gray-800 p-6 rounded-lg">
-          <div className="flex items-center">
-            <div className="flex-shrink-0">
-              <div className="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center">
-                <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.293a1 1 0 00-1.414 0L10 10.586 8.707 9.293a1 1 0 00-1.414 0l-2 2a1 1 0 101.414 1.414L8 10.414l1.293 1.293a1 1 0 001.414 0l4-4a1 1 0 000-1.414z" clipRule="evenodd" />
-                </svg>
+        {/* Total Flights */}
+        <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-5 border border-gray-700/50 hover:border-yellow-500/30 transition-all group">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="p-2.5 bg-yellow-500/10 rounded-lg group-hover:bg-yellow-500/20 transition-colors">
+                <PaperAirplaneIcon className="h-6 w-6 text-yellow-400" />
               </div>
-            </div>
-            <div className="ml-5 w-0 flex-1">
-              <dl>
-                <dt className="text-sm font-medium text-gray-400 truncate">Total Flights</dt>
-                <dd className="text-lg font-medium text-white">
+              <div>
+                <p className="text-xs font-medium text-gray-400 uppercase tracking-wide">Total Flights</p>
+                <p className="text-xl font-bold text-white">
                   {myStats?.numberFlights != null ? myStats.numberFlights.toLocaleString() : '0'}
-                </dd>
-              </dl>
+                </p>
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="bg-gray-800 p-6 rounded-lg">
-          <div className="flex items-center">
-            <div className="flex-shrink-0">
-              <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center">
-                <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
-                </svg>
+        {/* Flight Hours */}
+        <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-5 border border-gray-700/50 hover:border-purple-500/30 transition-all group">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="p-2.5 bg-purple-500/10 rounded-lg group-hover:bg-purple-500/20 transition-colors">
+                <ClockIcon className="h-6 w-6 text-purple-400" />
               </div>
-            </div>
-            <div className="ml-5 w-0 flex-1">
-              <dl>
-                <dt className="text-sm font-medium text-gray-400 truncate">Flight Hours</dt>
-                <dd className="text-lg font-medium text-white">
+              <div>
+                <p className="text-xs font-medium text-gray-400 uppercase tracking-wide">Flight Hours</p>
+                <p className="text-xl font-bold text-white">
                   {myStats?.flightTimeTotal || '0h'}
-                </dd>
-              </dl>
+                </p>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Current Job */}
+      {/* Current Job - Modern Design */}
       {currentJob && (
-        <div className="bg-gray-800 p-6 rounded-lg">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-medium text-white">Current Flight</h2>
+        <div className="bg-gradient-to-br from-blue-900/20 to-gray-800 rounded-xl p-6 border border-blue-500/20">
+          <div className="flex items-center justify-between mb-5">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-blue-500/20 rounded-lg">
+                <MapPinIcon className="h-5 w-5 text-blue-400" />
+              </div>
+              <h2 className="text-lg font-semibold text-white">Current Flight</h2>
+            </div>
             <button
               onClick={() => setShowConfirmModal(true)}
-              className="p-2 text-gray-400 hover:text-red-500 hover:bg-gray-700 rounded-lg transition-colors"
+              className="p-2 text-gray-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all"
               title="Delete current job"
             >
               <TrashIcon className="w-5 h-5" />
             </button>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <p className="text-sm text-gray-400">Route</p>
-              <p className="text-lg font-medium text-white">
-                {currentJob.departureICAO} → {currentJob.arrivalICAO}
-              </p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            <div className="flex items-start gap-3">
+              <ArrowPathIcon className="h-5 w-5 text-gray-500 mt-0.5 flex-shrink-0" />
+              <div>
+                <p className="text-xs font-medium text-gray-400 uppercase tracking-wide">Route</p>
+                <p className="text-lg font-semibold text-white">
+                  {currentJob.departureICAO} <span className="text-blue-400">→</span> {currentJob.arrivalICAO}
+                </p>
+              </div>
             </div>
-            <div>
-              <p className="text-sm text-gray-400 flex items-center gap-1">
-                Pax
-                <span className="relative group">
-                  <InformationCircleIcon className="w-4 h-4 text-gray-500 cursor-help" />
-                  <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-1 bg-gray-700 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
-                    Weight for each pax: {currentJob.paxWeight} {myStats?.weightUnit || ''}
+            <div className="flex items-start gap-3">
+              <UsersIcon className="h-5 w-5 text-gray-500 mt-0.5 flex-shrink-0" />
+              <div>
+                <p className="text-xs font-medium text-gray-400 uppercase tracking-wide flex items-center gap-1">
+                  Pax
+                  <span className="relative group">
+                    <InformationCircleIcon className="w-3.5 h-3.5 text-gray-600 cursor-help" />
+                    <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-1 bg-gray-900 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10 border border-gray-700">
+                      Weight for each pax: {currentJob.paxWeight} {myStats?.weightUnit || ''}
+                    </span>
                   </span>
-                </span>
-              </p>
-              <p className="text-lg font-medium text-white">{currentJob.pax || 'N/A'}</p>
+                </p>
+                <p className="text-lg font-semibold text-white">{currentJob.pax || 'N/A'}</p>
+              </div>
             </div>
-            <div>
-              <p className="text-sm text-gray-400 flex items-center gap-1">
-                Total payload
-                <span className="relative group">
-                  <InformationCircleIcon className="w-4 h-4 text-gray-500 cursor-help" />
-                  <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-1 bg-gray-700 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
-                    (Pax * PaxWeight) + CargoWeight
+            <div className="flex items-start gap-3">
+              <CubeIcon className="h-5 w-5 text-gray-500 mt-0.5 flex-shrink-0" />
+              <div>
+                <p className="text-xs font-medium text-gray-400 uppercase tracking-wide flex items-center gap-1">
+                  Total Payload
+                  <span className="relative group">
+                    <InformationCircleIcon className="w-3.5 h-3.5 text-gray-600 cursor-help" />
+                    <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-1 bg-gray-900 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10 border border-gray-700">
+                      (Pax * PaxWeight) + CargoWeight
+                    </span>
                   </span>
-                </span>
-              </p>
-              <p className="text-lg font-medium text-green-400">{currentJob.pax != null && currentJob.cargo != null ? ((currentJob.pax * currentJob.paxWeight) + currentJob.cargo).toLocaleString()  + ' ' + (myStats?.weightUnit || '') : '0'}</p>
+                </p>
+                <p className="text-lg font-semibold text-green-400">
+                  {currentJob.pax != null && currentJob.cargo != null ? ((currentJob.pax * currentJob.paxWeight) + currentJob.cargo).toLocaleString() + ' ' + (myStats?.weightUnit || '') : '0'}
+                </p>
+              </div>
             </div>
-            <div>
-              <p className="text-sm text-gray-400">Distance</p>
-              <p className="text-lg font-medium text-white">{currentJob.distance} NM</p>
+            <div className="flex items-start gap-3">
+              <svg className="h-5 w-5 text-gray-500 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0121 18.382V7.618a1 1 0 01-.894-.447L15 4m0 13V4m0 0L9 7" />
+              </svg>
+              <div>
+                <p className="text-xs font-medium text-gray-400 uppercase tracking-wide">Distance</p>
+                <p className="text-lg font-semibold text-white">{currentJob.distance} NM</p>
+              </div>
             </div>
-            <div>
-              <p className="text-sm text-gray-400">Cargo</p>
-              <p className="text-lg font-medium text-white">{currentJob.cargo + ' ' + (myStats?.weightUnit || '')}</p>
+            <div className="flex items-start gap-3">
+              <CubeIcon className="h-5 w-5 text-gray-500 mt-0.5 flex-shrink-0" />
+              <div>
+                <p className="text-xs font-medium text-gray-400 uppercase tracking-wide">Cargo</p>
+                <p className="text-lg font-semibold text-white">{currentJob.cargo + ' ' + (myStats?.weightUnit || '')}</p>
+              </div>
             </div>
-            <div>
-              <p className="text-sm text-gray-400">Payment</p>
-              <p className="text-lg font-medium text-green-400">${currentJob.pay != null ? currentJob.pay.toLocaleString() : '0'}</p>
+            <div className="flex items-start gap-3">
+              <BanknotesIcon className="h-5 w-5 text-gray-500 mt-0.5 flex-shrink-0" />
+              <div>
+                <p className="text-xs font-medium text-gray-400 uppercase tracking-wide">Payment</p>
+                <p className="text-lg font-semibold text-green-400">${currentJob.pay != null ? currentJob.pay.toLocaleString() : '0'}</p>
+              </div>
             </div>
           </div>
         </div>
       )}
 
-      {/* Pending Jobs */}
+      {/* Pending Jobs - Modern Design */}
       {pendingJobs && pendingJobs.length > 0 && (
-        <div className="bg-gray-800 p-6 rounded-lg">
-          <h2 className="text-lg font-medium text-white mb-4">Pending Jobs ({pendingJobs.length})</h2>
+        <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-6 border border-gray-700/50">
+          <div className="flex items-center gap-3 mb-5">
+            <div className="p-2 bg-yellow-500/10 rounded-lg">
+              <BriefcaseIcon className="h-5 w-5 text-yellow-400" />
+            </div>
+            <h2 className="text-lg font-semibold text-white">Pending Jobs</h2>
+            <span className="px-2.5 py-0.5 bg-yellow-500/10 text-yellow-400 text-xs font-medium rounded-full">
+              {pendingJobs.length}
+            </span>
+          </div>
           <div className="space-y-3">
             {pendingJobs.slice(0, 5).map((job) => (
-              <div key={job.id} className="flex items-center justify-between p-3 bg-gray-700 rounded-lg">
-                <div>
-                  <p className="text-white font-medium">
-                    {job.departureICAO} → {job.arrivalICAO}
-                  </p>
-                  <p className="text-sm text-gray-400">
-                    {job.distance} NM • ${job.pay != null ? job.pay.toLocaleString() : '0'}
-                  </p>
+              <div key={job.id} className="flex items-center justify-between p-4 bg-gray-800/80 rounded-lg border border-gray-700/50 hover:border-gray-600 transition-all">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-blue-500/10 rounded-lg">
+                    <ArrowPathIcon className="h-4 w-4 text-blue-400" />
+                  </div>
+                  <div>
+                    <p className="text-white font-medium">
+                      {job.departureICAO} <span className="text-gray-500">→</span> {job.arrivalICAO}
+                    </p>
+                    <p className="text-sm text-gray-400">
+                      {job.distance} NM • ${job.pay != null ? job.pay.toLocaleString() : '0'}
+                    </p>
+                  </div>
                 </div>
                 <button
                   onClick={() => {
                     setSelectedJob(job);
                     setShowActivateModal(true);
                   }}
-                  className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                  className="flex items-center gap-1.5 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium rounded-lg transition-all"
                 >
                   Activate
+                  <ChevronRightIcon className="h-4 w-4" />
                 </button>
               </div>
             ))}
@@ -224,91 +282,117 @@ export const Dashboard: React.FC = () => {
         </div>
       )}
 
-      {/* Airline Info */}
+      {/* Airline Info - Modern Design */}
       {userAirline && (
-        <div className="bg-gray-800 p-6 rounded-lg">
-          <h2 className="text-lg font-medium text-white mb-4">My Airline</h2>
+        <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-6 border border-gray-700/50">
+          <div className="flex items-center gap-3 mb-5">
+            <div className="p-2 bg-indigo-500/10 rounded-lg">
+              <BuildingOfficeIcon className="h-5 w-5 text-indigo-400" />
+            </div>
+            <h2 className="text-lg font-semibold text-white">My Airline</h2>
+          </div>
           <div className="flex items-center justify-between">
-            <div>
-              <p className="text-lg font-medium text-white">{userAirline.name}</p>
-              <p className="text-sm text-gray-400">{userAirline.country}</p>
+            <div className="flex items-center gap-3">
+              <div className="h-12 w-12 bg-indigo-500/20 rounded-full flex items-center justify-center">
+                <span className="text-lg font-bold text-indigo-400">{userAirline.name.charAt(0).toUpperCase()}</span>
+              </div>
+              <div>
+                <p className="text-lg font-semibold text-white">{userAirline.name}</p>
+                <p className="text-sm text-gray-400">{userAirline.country}</p>
+              </div>
             </div>
             <div className="text-right">
-              <p className="text-sm text-gray-400">Salary</p>
-              <p className="text-lg font-medium text-green-400">${userAirline.salary != null ? userAirline.salary.toLocaleString() : '0'}/hr</p>
+              <p className="text-xs font-medium text-gray-400 uppercase tracking-wide">Salary/Hour</p>
+              <p className="text-xl font-bold text-green-400">${userAirline.salary != null ? userAirline.salary.toLocaleString() : '0'}</p>
             </div>
           </div>
         </div>
       )}
 
-      {/* Confirmation Modal */}
+      {/* Confirmation Modal - Modern Design */}
       {showConfirmModal && currentJob && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-gray-800 p-6 rounded-lg max-w-md w-full mx-4">
-            <h3 className="text-lg font-medium text-white mb-4">Confirm Deletion</h3>
-            <p className="text-gray-400 mb-6">
-              Are you sure you want to delete the current job from{' '}
-              <span className="text-white">{currentJob.departureICAO}</span> to{' '}
-              <span className="text-white">{currentJob.arrivalICAO}</span>?
-            </p>
-            <div className="flex justify-end gap-3">
-              <button
-                onClick={() => setShowConfirmModal(false)}
-                className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={async () => {
-                  await dispatch(deleteJob(currentJob.id));
-                  setShowConfirmModal(false);
-                  addToast('Job removed successfully', 'success');
-                  dispatch(fetchActiveJob());
-                }}
-                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
-              >
-                Delete
-              </button>
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl max-w-md w-full mx-4 border border-gray-700 shadow-2xl">
+            <div className="p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="p-2 bg-red-500/10 rounded-lg">
+                  <TrashIcon className="h-6 w-6 text-red-400" />
+                </div>
+                <h3 className="text-lg font-semibold text-white">Confirm Cancellation</h3>
+              </div>
+              <p className="text-gray-400 mb-6">
+                Are you sure you want to cancel the current flight from{' '}
+                <span className="text-white font-medium">{currentJob.departureICAO}</span> to{' '}
+                <span className="text-white font-medium">{currentJob.arrivalICAO}</span>?
+              </p>
+              <div className="flex justify-end gap-3">
+                <button
+                  onClick={() => setShowConfirmModal(false)}
+                  className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={async () => {
+                    await dispatch(deleteJob(currentJob.id));
+                    setShowConfirmModal(false);
+                    addToast('Flight cancelled successfully', 'success');
+                    dispatch(fetchActiveJob());
+                  }}
+                  className="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-500 text-white rounded-lg transition-colors"
+                >
+                  <TrashIcon className="h-4 w-4" />
+                  Confirm
+                </button>
+              </div>
             </div>
           </div>
         </div>
       )}
 
-      {/* Activate Confirmation Modal */}
+      {/* Activate Confirmation Modal - Modern Design */}
       {showActivateModal && selectedJob && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-gray-800 p-6 rounded-lg max-w-md w-full mx-4">
-            <h3 className="text-lg font-medium text-white mb-4">Confirm Activation</h3>
-            <p className="text-gray-400 mb-6">
-              Are you sure you want to activate the job from{' '}
-              <span className="text-white">{selectedJob.departureICAO}</span> to{' '}
-              <span className="text-white">{selectedJob.arrivalICAO}</span>?
-              <br /><br />
-              This will become your current flight.
-            </p>
-            <div className="flex justify-end gap-3">
-              <button
-                onClick={() => {
-                  setShowActivateModal(false);
-                  setSelectedJob(null);
-                }}
-                className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={async () => {
-                  await dispatch(activateJob(selectedJob.id));
-                  setShowActivateModal(false);
-                  setSelectedJob(null);
-                  addToast('Job activated successfully', 'success');
-                  dispatch(fetchPendingJobs());
-                  dispatch(fetchActiveJob());
-                }}
-                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
-              >
-                Activate
-              </button>
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl max-w-md w-full mx-4 border border-gray-700 shadow-2xl">
+            <div className="p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="p-2 bg-blue-500/10 rounded-lg">
+                  <ArrowPathIcon className="h-6 w-6 text-blue-400" />
+                </div>
+                <h3 className="text-lg font-semibold text-white">Confirm Activation</h3>
+              </div>
+              <p className="text-gray-400 mb-6">
+                Do you want to activate the job from{' '}
+                <span className="text-white font-medium">{selectedJob.departureICAO}</span> to{' '}
+                <span className="text-white font-medium">{selectedJob.arrivalICAO}</span>?
+                <br /><br />
+                <span className="text-sm text-gray-500">This will become your current flight.</span>
+              </p>
+              <div className="flex justify-end gap-3">
+                <button
+                  onClick={() => {
+                    setShowActivateModal(false);
+                    setSelectedJob(null);
+                  }}
+                  className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={async () => {
+                    await dispatch(activateJob(selectedJob.id));
+                    setShowActivateModal(false);
+                    setSelectedJob(null);
+                    addToast('Job activated successfully', 'success');
+                    dispatch(fetchPendingJobs());
+                    dispatch(fetchActiveJob());
+                  }}
+                  className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg transition-colors"
+                >
+                  <ArrowPathIcon className="h-4 w-4" />
+                  Activate
+                </button>
+              </div>
             </div>
           </div>
         </div>
