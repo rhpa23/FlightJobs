@@ -43,6 +43,6 @@ export class AuthController {
   @ApiOperation({ summary: 'Get current user profile' })
   @ApiBearerAuth('JWT-auth')
   async getProfile(@Request() req) {
-    return this.authService.getProfile(req.user.sub);
+    return this.authService.getProfile(req.user.userId);
   }
 }
