@@ -52,7 +52,9 @@ export const Dashboard: React.FC = () => {
   const { userAirline } = useAppSelector((state) => state.airlines);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [showActivateModal, setShowActivateModal] = useState(false);
+  const [showDeletePendingModal, setShowDeletePendingModal] = useState(false);
   const [selectedJob, setSelectedJob] = useState<typeof pendingJobs[0] | null>(null);
+  const [pendingJobToDelete, setPendingJobToDelete] = useState<typeof pendingJobs[0] | null>(null);
   const [toasts, setToasts] = useState<ToastMsg[]>([]);
 
   const addToast = useCallback((message: string, type: ToastMsg['type'] = 'success') => {
@@ -188,7 +190,7 @@ export const Dashboard: React.FC = () => {
             <button
               onClick={() => setShowConfirmModal(true)}
               className="p-2 text-gray-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all"
-              title="Delete current job"
+              title="Delete current Flight"
             >
               <TrashIcon className="w-5 h-5" />
             </button>
@@ -262,14 +264,14 @@ export const Dashboard: React.FC = () => {
         </div>
       )}
 
-      {/* Pending Jobs - Modern Design */}
+      {/* Pending Filghts - Modern Design */}
       {pendingJobs && pendingJobs.length > 0 && (
         <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-6 border border-gray-700/50">
           <div className="flex items-center gap-3 mb-5">
             <div className="p-2 bg-yellow-500/10 rounded-lg">
               <BriefcaseIcon className="h-5 w-5 text-yellow-400" />
             </div>
-            <h2 className="text-lg font-semibold text-white">Pending Jobs</h2>
+            <h2 className="text-lg font-semibold text-white">Pending Filghts</h2>
             <span className="px-2.5 py-0.5 bg-yellow-500/10 text-yellow-400 text-xs font-medium rounded-full">
               {pendingJobs.length}
             </span>
@@ -290,16 +292,28 @@ export const Dashboard: React.FC = () => {
                     </p>
                   </div>
                 </div>
-                <button
-                  onClick={() => {
-                    setSelectedJob(job);
-                    setShowActivateModal(true);
-                  }}
-                  className="flex items-center gap-1.5 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium rounded-lg transition-all"
-                >
-                  Activate
-                  <ChevronRightIcon className="h-4 w-4" />
-                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => {
+                      setPendingJobToDelete(job);
+                      setShowDeletePendingModal(true);
+                    }}
+                    className="p-2 text-gray-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all"
+                    title="Delete Flight"
+                  >
+                    <TrashIcon className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => {
+                      setSelectedJob(job);
+                      setShowActivateModal(true);
+                    }}
+                    className="flex items-center gap-1.5 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium rounded-lg transition-all"
+                  >
+                    Activate
+                    <ChevronRightIcon className="h-4 w-4" />
+                  </button>
+                </div>
               </div>
             ))}
           </div>
@@ -345,7 +359,7 @@ export const Dashboard: React.FC = () => {
                 <h3 className="text-lg font-semibold text-white">Confirm Cancellation</h3>
               </div>
               <p className="text-gray-400 mb-6">
-                Are you sure you want to cancel the current flight from{' '}
+                Are you sure you want to cancel the current Flight from{' '}
                 <span className="text-white font-medium">{currentJob.departureICAO}</span> to{' '}
                 <span className="text-white font-medium">{currentJob.arrivalICAO}</span>?
               </p>
@@ -374,6 +388,51 @@ export const Dashboard: React.FC = () => {
         </div>
       )}
 
+      {/* Delete Pending Flight Confirmation Modal */}
+      {showDeletePendingModal && pendingJobToDelete && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl max-w-md w-full mx-4 border border-gray-700 shadow-2xl">
+            <div className="p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="p-2 bg-red-500/10 rounded-lg">
+                  <TrashIcon className="h-6 w-6 text-red-400" />
+                </div>
+                <h3 className="text-lg font-semibold text-white">Confirm Deletion</h3>
+              </div>
+              <p className="text-gray-400 mb-6">
+                Are you sure you want to delete the pending Flight from{' '}
+                <span className="text-white font-medium">{pendingJobToDelete.departureICAO}</span> to{' '}
+                <span className="text-white font-medium">{pendingJobToDelete.arrivalICAO}</span>?
+              </p>
+              <div className="flex justify-end gap-3">
+                <button
+                  onClick={() => {
+                    setShowDeletePendingModal(false);
+                    setPendingJobToDelete(null);
+                  }}
+                  className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={async () => {
+                    await dispatch(deleteJob(pendingJobToDelete.id));
+                    setShowDeletePendingModal(false);
+                    setPendingJobToDelete(null);
+                    addToast('Flight deleted successfully', 'success');
+                    dispatch(fetchPendingJobs());
+                  }}
+                  className="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-500 text-white rounded-lg transition-colors"
+                >
+                  <TrashIcon className="h-4 w-4" />
+                  Confirm
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Activate Confirmation Modal - Modern Design */}
       {showActivateModal && selectedJob && (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50">
@@ -386,11 +445,11 @@ export const Dashboard: React.FC = () => {
                 <h3 className="text-lg font-semibold text-white">Confirm Activation</h3>
               </div>
               <p className="text-gray-400 mb-6">
-                Do you want to activate the job from{' '}
+                Do you want to activate the Flight from{' '}
                 <span className="text-white font-medium">{selectedJob.departureICAO}</span> to{' '}
                 <span className="text-white font-medium">{selectedJob.arrivalICAO}</span>?
                 <br /><br />
-                <span className="text-sm text-gray-500">This will become your current flight.</span>
+                <span className="text-sm text-gray-500">This will become your current Flight.</span>
               </p>
               <div className="flex justify-end gap-3">
                 <button
@@ -407,7 +466,7 @@ export const Dashboard: React.FC = () => {
                     await dispatch(activateJob(selectedJob.id));
                     setShowActivateModal(false);
                     setSelectedJob(null);
-                    addToast('Job activated successfully', 'success');
+                    addToast('Flight activated successfully', 'success');
                     dispatch(fetchPendingJobs());
                     dispatch(fetchActiveJob());
                   }}

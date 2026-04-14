@@ -35,13 +35,13 @@ export const Header: React.FC<HeaderProps> = ({ onToggleSidebar, sidebarOpen }) 
           </button>
           <Link to="/" className="ml-4 flex items-center space-x-3 group">
             <img
-              src="/logo.png"
+              src="/logo1478.png"
               alt="FlightJobs Logo"
-              className="h-10 w-10 object-contain group-hover:scale-105 transition-transform"
+              className="h-10 w-36 object-contain group-hover:scale-105 transition-transform"
             />
-            <span className="text-xl font-bold text-white tracking-tight">
+            {/* <span className="text-xl font-bold text-white tracking-tight">
               Flight<span className="text-blue-400">Jobs</span>
-            </span>
+            </span> */}
           </Link>
         </div>
 

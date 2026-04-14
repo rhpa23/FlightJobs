@@ -8,10 +8,8 @@ import { Login } from './pages/Login';
 import { Register } from './pages/Register';
 import { Dashboard } from './pages/Dashboard';
 import { SearchJobs } from './pages/SearchJobs';
-import { MyJobs } from './pages/MyJobs';
 import { Airlines } from './pages/Airlines';
 import { Profile } from './pages/Profile';
-import { Challenges } from './pages/Challenges';
 import { Leaderboards } from './pages/Leaderboards';
 import { Settings } from './pages/Settings';
 import { NotFound } from './pages/NotFound';
@@ -46,9 +44,7 @@ const AppContent: React.FC = () => {
           >
             <Route index element={<Dashboard />} />
             <Route path="search" element={<SearchJobs />} />
-            <Route path="jobs" element={<MyJobs />} />
             <Route path="airlines" element={<Airlines />} />
-            <Route path="challenges" element={<Challenges />} />
             <Route path="profile" element={<Profile />} />
             <Route path="leaderboards" element={<Leaderboards />} />
             <Route path="settings" element={<Settings />} />

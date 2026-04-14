@@ -3,9 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import {
   HomeIcon,
   MagnifyingGlassIcon,
-  BriefcaseIcon,
   BuildingOfficeIcon,
-  TrophyIcon,
   UserIcon,
   ChartBarIcon,
   Cog6ToothIcon,
@@ -19,9 +17,7 @@ interface SidebarProps {
 const navigation = [
   { name: 'Dashboard', href: '/', icon: HomeIcon },
   { name: 'Search Jobs', href: '/search', icon: MagnifyingGlassIcon },
-  { name: 'My Jobs', href: '/jobs', icon: BriefcaseIcon },
   { name: 'Airlines', href: '/airlines', icon: BuildingOfficeIcon },
-  { name: 'Challenges', href: '/challenges', icon: TrophyIcon },
   { name: 'Profile', href: '/profile', icon: UserIcon },
   { name: 'Leaderboards', href: '/leaderboards', icon: ChartBarIcon },
   { name: 'Settings', href: '/settings', icon: Cog6ToothIcon },
@@ -49,13 +45,13 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
         {/* Logo Area */}
         <div className="flex items-center gap-3 px-6 py-4 border-b border-gray-800">
           <img
-            src="/logo.png"
+            src="/logo1478.png"
             alt="FlightJobs Logo"
-            className="h-8 w-8 object-contain"
+            className="h-8 w-36 object-contain"
           />
-          <span className="text-lg font-bold text-white">
+          {/* <span className="text-lg font-bold text-white">
             Flight<span className="text-blue-400">Jobs</span>
-          </span>
+          </span> */}
         </div>
 
         <nav className="mt-4 px-3">
