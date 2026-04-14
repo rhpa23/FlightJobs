@@ -43,16 +43,16 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
         }`}
       >
         {/* Logo Area */}
-        <div className="flex items-center gap-3 px-6 py-4 border-b border-gray-800">
+        <Link to="/" className="flex items-center gap-3 px-6 py-4 border-b border-gray-800 space-x-3 group">
           <img
             src="/logo1478.png"
             alt="FlightJobs Logo"
-            className="h-8 w-36 object-contain"
+            className="h-8 w-36 object-contain group-hover:scale-105 transition-transform"
           />
           {/* <span className="text-lg font-bold text-white">
             Flight<span className="text-blue-400">Jobs</span>
           </span> */}
-        </div>
+        </Link>
 
         <nav className="mt-4 px-3">
           <div className="space-y-1">
