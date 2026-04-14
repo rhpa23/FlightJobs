@@ -16,15 +16,38 @@ import {
   ChevronRightIcon,
 } from '@heroicons/react/24/outline';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
-import { fetchMyStats } from '../store/slices/statisticsSlice';
+import { fetchMyStats, fetchMonthlyEarnings } from '../store/slices/statisticsSlice';
 import { fetchPendingJobs, fetchActiveJob, deleteJob, activateJob } from '../store/slices/jobsSlice';
 import { fetchMyAirline } from '../store/slices/airlinesSlice';
 import { ToastContainer, ToastMsg } from '../components/Toast';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+  Filler,
+} from 'chart.js';
+import { Line } from 'react-chartjs-2';
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+  Filler
+);
 
 export const Dashboard: React.FC = () => {
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state) => state.auth);
-  const { myStats, isLoading } = useAppSelector((state) => state.statistics);
+  const { myStats, monthlyEarnings, isLoading } = useAppSelector((state) => state.statistics);
   const { pendingJobs, currentJob } = useAppSelector((state) => state.jobs);
   const { userAirline } = useAppSelector((state) => state.airlines);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -46,6 +69,7 @@ export const Dashboard: React.FC = () => {
     dispatch(fetchPendingJobs());
     dispatch(fetchActiveJob());
     dispatch(fetchMyAirline());
+    dispatch(fetchMonthlyEarnings());
   }, [dispatch]);
 
   if (isLoading) {
@@ -92,7 +116,7 @@ export const Dashboard: React.FC = () => {
               <div>
                 <p className="text-xs font-medium text-gray-400 uppercase tracking-wide">Bank Balance</p>
                 <p className="text-xl font-bold text-white">
-                  ${myStats?.bankBalance != null ? myStats.bankBalance.toLocaleString() : '0'}
+                  F$ {myStats?.bankBalance != null ? myStats.bankBalance.toLocaleString() : '0'}
                 </p>
               </div>
             </div>
@@ -231,7 +255,7 @@ export const Dashboard: React.FC = () => {
               <BanknotesIcon className="h-5 w-5 text-gray-500 mt-0.5 flex-shrink-0" />
               <div>
                 <p className="text-xs font-medium text-gray-400 uppercase tracking-wide">Payment</p>
-                <p className="text-lg font-semibold text-green-400">${currentJob.pay != null ? currentJob.pay.toLocaleString() : '0'}</p>
+                <p className="text-lg font-semibold text-green-400">F$ {currentJob.pay != null ? currentJob.pay.toLocaleString() : '0'}</p>
               </div>
             </div>
           </div>
@@ -262,7 +286,7 @@ export const Dashboard: React.FC = () => {
                       {job.departureICAO} <span className="text-gray-500">→</span> {job.arrivalICAO}
                     </p>
                     <p className="text-sm text-gray-400">
-                      {job.distance} NM • ${job.pay != null ? job.pay.toLocaleString() : '0'}
+                      {job.distance} NM • F$ {job.pay != null ? job.pay.toLocaleString() : '0'}
                     </p>
                   </div>
                 </div>
@@ -303,7 +327,7 @@ export const Dashboard: React.FC = () => {
             </div>
             <div className="text-right">
               <p className="text-xs font-medium text-gray-400 uppercase tracking-wide">Salary/Hour</p>
-              <p className="text-xl font-bold text-green-400">${userAirline.salary != null ? userAirline.salary.toLocaleString() : '0'}</p>
+              <p className="text-xl font-bold text-green-400">F$ {userAirline.salary != null ? userAirline.salary.toLocaleString() : '0'}</p>
             </div>
           </div>
         </div>
@@ -394,6 +418,104 @@ export const Dashboard: React.FC = () => {
                 </button>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Gráfico de Ganhos Mensais */}
+      {monthlyEarnings && monthlyEarnings.labels.length > 0 && (
+        <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-6 border border-gray-700/50">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-blue-500/10 rounded-lg">
+                <ChartBarIcon className="h-5 w-5 text-blue-400" />
+              </div>
+              <div>
+                <h2 className="text-lg font-semibold text-white">Monthly Earnings</h2>
+                <p className="text-sm text-gray-400">Last 6 months performance</p>
+              </div>
+            </div>
+            <div className="text-right">
+              <p className="text-xs font-medium text-gray-400 uppercase tracking-wide">Month Goal</p>
+              <p className="text-xl font-bold text-green-400">
+                F$ {monthlyEarnings.monthGoal.toLocaleString()}
+              </p>
+            </div>
+          </div>
+
+          <div className="mb-4">
+            <p className="text-sm text-gray-400">
+              Total of 6 months:{' '}
+              <span className="text-white font-semibold">
+                F$ {monthlyEarnings.totalSixMonths.toLocaleString()}
+              </span>
+            </p>
+          </div>
+
+          <div className="h-64">
+            <Line
+              data={{
+                labels: monthlyEarnings.labels,
+                datasets: [
+                  {
+                    label: 'Earnings (F$)',
+                    data: monthlyEarnings.data,
+                    borderColor: 'rgb(96, 165, 250)',
+                    backgroundColor: 'rgba(96, 165, 250, 0.1)',
+                    fill: true,
+                    tension: 0.4,
+                    pointBackgroundColor: 'rgb(96, 165, 250)',
+                    pointBorderColor: 'rgb(59, 130, 246)',
+                    pointBorderWidth: 2,
+                    pointRadius: 5,
+                    pointHoverRadius: 7,
+                  },
+                ],
+              }}
+              options={{
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                  legend: {
+                    display: false,
+                  },
+                  tooltip: {
+                    backgroundColor: 'rgba(17, 24, 39, 0.9)',
+                    titleColor: 'rgb(156, 163, 175)',
+                    bodyColor: 'rgb(255, 255, 255)',
+                    borderColor: 'rgba(75, 85, 99, 0.5)',
+                    borderWidth: 1,
+                    padding: 10,
+                    callbacks: {
+                      label: (context) => {
+                        const value = context.parsed.y;
+                        return `F$ ${value != null ? value.toLocaleString() : '0'}`;
+                      },
+                    },
+                  },
+                },
+                scales: {
+                  x: {
+                    grid: {
+                      color: 'rgba(75, 85, 99, 0.2)',
+                    },
+                    ticks: {
+                      color: 'rgb(156, 163, 175)',
+                    },
+                  },
+                  y: {
+                    beginAtZero: true,
+                    grid: {
+                      color: 'rgba(75, 85, 99, 0.2)',
+                    },
+                    ticks: {
+                      color: 'rgb(156, 163, 175)',
+                      callback: (value) => `F$ ${Number(value).toLocaleString()}`,
+                    },
+                  },
+                },
+              }}
+            />
           </div>
         </div>
       )}

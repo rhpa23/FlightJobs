@@ -145,6 +145,9 @@ export const statisticsApi = {
   
   getAirlineStats: (airlineId: string) =>
     api.get(`/statistics/airline-stats/${airlineId}`).then(res => res.data),
+
+  getMonthlyEarnings: () =>
+    api.get('/statistics/monthly-earnings').then(res => res.data),
 };
 
 export const searchApi = {

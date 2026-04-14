@@ -102,11 +102,82 @@ export class StatisticsService {
       order: { pilotScore: 'DESC' },
       take: 100,
     });
-    
+
     return statsList.map((stats, index) => ({
       user: { id: stats.userId },
       statistics: stats,
       rank: index + 1,
     }));
+  }
+
+  async getMonthlyEarnings(userId: string): Promise<any> {
+    // Data de 6 meses atrás
+    const tempDate = new Date();
+    tempDate.setMonth(tempDate.getMonth() - 6);
+    const dateFilter = new Date(tempDate.getFullYear(), tempDate.getMonth(), 1);
+
+    // Busca jobs concluídos dos últimos 6 meses usando QueryBuilder
+    const completedJobs = await this.jobRepository
+      .createQueryBuilder('job')
+      .leftJoinAndSelect('job.user', 'user')
+      .where('user.id = :userId', { userId })
+      .andWhere('job.isDone = :isDone', { isDone: true })
+      .andWhere('job.startTime > :dateFilter', { dateFilter })
+      .getMany();
+
+    // Agrupa por mês e soma os pagamentos
+    const monthlyData: Record<string, number> = {};
+    let totalEarnings = 0;
+
+    for (const job of completedJobs) {
+      if (!job.startTime) continue;
+
+      // Formata o mês como "MMM/yyyy" (ex: "Jan/2026")
+      const monthKey = this.formatMonthKey(job.startTime);
+
+      if (!monthlyData[monthKey]) {
+        monthlyData[monthKey] = 0;
+      }
+      monthlyData[monthKey] += job.pay || 0;
+      totalEarnings += job.pay || 0;
+    }
+
+    // Calcula a meta do mês atual (máximo dos meses anteriores + 1000)
+    let monthGoal = 0;
+    const currentMonthKey = this.formatMonthKey(new Date());
+    const previousMonths = Object.entries(monthlyData).filter(([key]) => key !== currentMonthKey);
+
+    if (previousMonths.length > 0) {
+      const maxPrevious = Math.max(...previousMonths.map(([, value]) => value));
+      monthGoal = maxPrevious + 1000;
+    } else if (Object.keys(monthlyData).length > 0) {
+      monthGoal = Math.max(...Object.values(monthlyData)) + 1000;
+    }
+
+    // Ordena os meses cronologicamente
+    const sortedMonths = Object.entries(monthlyData).sort((a, b) => {
+      return this.parseMonthKey(a[0]).getTime() - this.parseMonthKey(b[0]).getTime();
+    });
+
+    return {
+      labels: sortedMonths.map(([month]) => month),
+      data: sortedMonths.map(([, value]) => value),
+      totalSixMonths: totalEarnings,
+      monthGoal,
+    };
+  }
+
+  private formatMonthKey(date: Date): string {
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    return `${months[date.getMonth()]}/${date.getFullYear()}`;
+  }
+
+  private parseMonthKey(monthKey: string): Date {
+    const months: Record<string, number> = {
+      'Jan': 0, 'Feb': 1, 'Mar': 2, 'Apr': 3, 'May': 4, 'Jun': 5,
+      'Jul': 6, 'Aug': 7, 'Sep': 8, 'Oct': 9, 'Nov': 10, 'Dec': 11,
+    };
+    const [month, year] = monthKey.split('/');
+    return new Date(parseInt(year), months[month] || 0, 1);
   }
 }

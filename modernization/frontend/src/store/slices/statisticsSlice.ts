@@ -54,6 +54,13 @@ interface MonthlyStats {
   };
 }
 
+interface MonthlyEarnings {
+  labels: string[];
+  data: number[];
+  totalSixMonths: number;
+  monthGoal: number;
+}
+
 interface StatisticsState {
   myStats: Statistics | null;
   userStats: Statistics | null;
@@ -63,6 +70,7 @@ interface StatisticsState {
   airlineRankings: any[];
   careerSummary: CareerSummary | null;
   monthlyStats: MonthlyStats | null;
+  monthlyEarnings: MonthlyEarnings | null;
   airlineStats: any;
   isLoading: boolean;
   error: string | null;
@@ -77,6 +85,7 @@ const initialState: StatisticsState = {
   airlineRankings: [],
   careerSummary: null,
   monthlyStats: null,
+  monthlyEarnings: null,
   airlineStats: null,
   isLoading: false,
   error: null,
@@ -122,6 +131,11 @@ export const fetchMonthlyStats = createAsyncThunk('statistics/fetchMonthlyStats'
   return response;
 });
 
+export const fetchMonthlyEarnings = createAsyncThunk('statistics/fetchMonthlyEarnings', async () => {
+  const response = await statisticsApi.getMonthlyEarnings();
+  return response;
+});
+
 export const fetchAirlineStats = createAsyncThunk('statistics/fetchAirlineStats', async (airlineId: string) => {
   const response = await statisticsApi.getAirlineStats(airlineId);
   return response;
@@ -142,6 +156,9 @@ const statisticsSlice = createSlice({
     },
     clearMonthlyStats: (state) => {
       state.monthlyStats = null;
+    },
+    clearMonthlyEarnings: (state) => {
+      state.monthlyEarnings = null;
     },
     clearAirlineStats: (state) => {
       state.airlineStats = null;
@@ -182,17 +199,21 @@ const statisticsSlice = createSlice({
       .addCase(fetchMonthlyStats.fulfilled, (state, action) => {
         state.monthlyStats = action.payload;
       })
+      .addCase(fetchMonthlyEarnings.fulfilled, (state, action) => {
+        state.monthlyEarnings = action.payload;
+      })
       .addCase(fetchAirlineStats.fulfilled, (state, action) => {
         state.airlineStats = action.payload;
       });
   },
 });
 
-export const { 
-  clearError, 
-  clearUserStats, 
-  clearCareerSummary, 
-  clearMonthlyStats, 
-  clearAirlineStats 
+export const {
+  clearError,
+  clearUserStats,
+  clearCareerSummary,
+  clearMonthlyStats,
+  clearMonthlyEarnings,
+  clearAirlineStats
 } = statisticsSlice.actions;
 export default statisticsSlice.reducer;

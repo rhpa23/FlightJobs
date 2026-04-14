@@ -39,4 +39,10 @@ export class StatisticsController {
   getEarningsLeaderboard() {
     return this.statisticsService.getLeaderboard();
   }
+
+  @Get('monthly-earnings')
+  @ApiOperation({ summary: 'Get monthly earnings for the last 6 months' })
+  getMonthlyEarnings(@Request() req) {
+    return this.statisticsService.getMonthlyEarnings(req.user.userId);
+  }
 }
