@@ -54,6 +54,19 @@ export interface Fbo {
   price: number;
 }
 
+export interface AvailableFbo {
+  icao: string;
+  name: string;
+  elevation: number;
+  runwaySize: number;
+  availability: number;
+  scoreIncrease: number;
+  fuelPriceDiscount: number;
+  groundCrewDiscount: number;
+  price: number;
+  isHired: boolean;
+}
+
 interface AirlinesState {
   airlines: Airline[];
   userAirline: Airline | null;
@@ -61,6 +74,7 @@ interface AirlinesState {
   airlineStats: AirlineStats | null;
   pilots: Pilot[];
   fbos: Fbo[];
+  availableFbos: AvailableFbo[];
   isLoading: boolean;
   error: string | null;
 }
@@ -72,6 +86,7 @@ const initialState: AirlinesState = {
   airlineStats: null,
   pilots: [],
   fbos: [],
+  availableFbos: [],
   isLoading: false,
   error: null,
 };
@@ -143,6 +158,16 @@ export const fetchMyAirline = createAsyncThunk('airlines/fetchMyAirline', async 
 
 export const payDebt = createAsyncThunk('airlines/payDebt', async ({ id, amount }: { id: number; amount: number }) => {
   const response = await airlinesApi.payDebt(id, amount);
+  return response;
+});
+
+export const fetchAvailableFbos = createAsyncThunk('airlines/fetchAvailableFbos', async ({ icao, airlineId }: { icao: string; airlineId: number }) => {
+  const response = await airlinesApi.getAvailableFbos(icao, airlineId);
+  return response;
+});
+
+export const hireFbo = createAsyncThunk('airlines/hireFbo', async (icao: string) => {
+  const response = await airlinesApi.hireFboByIcao(icao);
   return response;
 });
 
@@ -247,6 +272,21 @@ const airlinesSlice = createSlice({
       })
       .addCase(payDebt.fulfilled, (state, action) => {
         // Debt paid successfully, will be refreshed by fetchMyAirline
+      })
+      .addCase(fetchAvailableFbos.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(fetchAvailableFbos.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.availableFbos = action.payload;
+      })
+      .addCase(fetchAvailableFbos.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.error.message || 'Failed to fetch available FBOs';
+      })
+      .addCase(hireFbo.fulfilled, (state, action) => {
+        // FBO hired successfully, will refresh data
       });
   },
 });

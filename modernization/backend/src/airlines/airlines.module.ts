@@ -8,9 +8,10 @@ import { User } from '../users/entities/user.entity';
 import { Job } from '../jobs/entities/job.entity';
 import { AirlinesService } from './airlines.service';
 import { AirlinesController } from './airlines.controller';
+import { NavdataModule } from '../navdata/navdata.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Airline, AirlineCertificate, AirlineFbo, Statistics, User, Job])],
+  imports: [TypeOrmModule.forFeature([Airline, AirlineCertificate, AirlineFbo, Statistics, User, Job]), NavdataModule],
   providers: [AirlinesService],
   controllers: [AirlinesController],
   exports: [AirlinesService, TypeOrmModule],

@@ -1,6 +1,6 @@
-import { Injectable, NotFoundException, HttpException, HttpStatus, Inject } from '@nestjs/common';
+import { Injectable, NotFoundException, HttpException, HttpStatus, Inject, forwardRef } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, In } from 'typeorm';
 import { Airline } from './entities/airline.entity';
 import { AirlineFbo } from './entities/airline-fbo.entity';
 import { Statistics } from '../statistics/entities/statistics.entity';
@@ -15,6 +15,7 @@ import { PaginatedAirlinesDto } from './dto/paginated-airlines.dto';
 import { PaginatedAirlineJobsDto } from './dto/paginated-airline-jobs.dto';
 import { UserSimpleDto } from './dto/user-simple.dto';
 import { CreateAirlineDto } from './dto';
+import { NavdataService } from '../navdata/navdata.service';
 
 @Injectable()
 export class AirlinesService {
@@ -29,6 +30,8 @@ export class AirlinesService {
     private usersRepository: Repository<User>,
     @InjectRepository(Job)
     private jobsRepository: Repository<Job>,
+    @Inject(forwardRef(() => NavdataService))
+    private navdataService: NavdataService,
   ) {}
 
   async getAirliners(
@@ -293,27 +296,66 @@ export class AirlinesService {
   }
 
   async getFOBs(icao: string, airlineId: number): Promise<any[]> {
-    // Check if airline already has this FBO hired
-    const existingHire = await this.airlineFboRepository.findOne({
+    let airports: any[] = [];
+
+    if (!icao || icao.trim() === '') {
+      // Get top 8 arrival airports from completed jobs
+      const jobsDone = await this.jobsRepository.find({
+        where: { isDone: true },
+        select: ['arrivalICAO']
+      });
+
+      // Count arrivals per airport
+      const arrivalCounts = new Map<string, number>();
+      jobsDone.forEach(job => {
+        const jobIcao = job.arrivalICAO?.toUpperCase();
+        if (jobIcao) {
+          arrivalCounts.set(jobIcao, (arrivalCounts.get(jobIcao) || 0) + 1);
+        }
+      });
+
+      // Get top 5 airports
+      const topArrivals = Array.from(arrivalCounts.entries())
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 5)
+        .map(entry => entry[0]);
+
+      // Fetch airport data from navdata using NavdataService
+      airports = this.navdataService.getAirportsByIcaos(topArrivals);
+    } else {
+      // Search airports by ICAO term
+      airports = this.navdataService.getAirportsByTerm(icao);
+    }
+
+    // Get existing FBO hires for these airports
+    const airportIcaos = airports.map(a => a.ident);
+    const existingHires = await this.airlineFboRepository.find({
       where: { 
         airline: { id: airlineId },
-        icao: icao.toUpperCase()
+        icao: In(airportIcaos)
       }
     });
 
-    // Return FBO information based on ICAO (no separate FBO entity)
-    return [{
-      icao: icao.toUpperCase(),
-      name: icao.toUpperCase(), // Use ICAO as name since no separate FBO entity
-      runwaySize: 0,
-      elevation: 0,
-      hasFuel: true,
-      hasGroundCrew: true,
-      fuelPrice: 1.0,
-      groundCrewPrice: 100.0,
-      isHired: !!existingHire,
-      existingHireId: existingHire?.id || null
-    }];
+    // Calculate FBO data for each airport
+    const fboResults = airports.map(airport => {
+      const countFbosInDB = existingHires.filter(f => f.icao === airport.ident).length;
+      const runwaySize = airport.longestRunwayLength || 0;
+
+      return {
+        icao: airport.ident,
+        name: airport.name,
+        elevation: airport.altitude || 0,
+        runwaySize: runwaySize,
+        availability: 15 - countFbosInDB,
+        scoreIncrease: Math.floor(runwaySize / 1123),
+        fuelPriceDiscount: Math.round((runwaySize / 62423) * 100) / 100,
+        groundCrewDiscount: Math.round((runwaySize / 41093) * 100) / 100,
+        price: runwaySize * 78,
+        isHired: existingHires.some(f => f.icao === airport.ident)
+      };
+    });
+
+    return fboResults;
   }
 
   async hireAirlineFbo(hireFboTo: HireFboDto, userId: string): Promise<any> {
@@ -327,6 +369,27 @@ export class AirlinesService {
       throw new HttpException('User does not have an airline', HttpStatus.BAD_REQUEST);
     }
 
+    // Check if user is the owner of the airline
+    const airline = await this.airlinesRepository.findOne({
+      where: { 
+        id: userStatistics.airline.id,
+        userId: userId
+      }
+    });
+
+    if (!airline) {
+      throw new HttpException('Only the owner can hire FBOs for the airline', HttpStatus.BAD_REQUEST);
+    }
+
+    // Check if FBO already has 15 contracts
+    const existingFboCount = await this.airlineFboRepository.count({
+      where: { icao: hireFboTo.icao.toUpperCase() }
+    });
+
+    if (existingFboCount >= 15) {
+      throw new HttpException('This FBO is not available. All contracts were hired.', HttpStatus.BAD_REQUEST);
+    }
+
     // Check if airline already hired this FBO
     const existingHire = await this.airlineFboRepository.findOne({
       where: { 
@@ -336,38 +399,46 @@ export class AirlinesService {
     });
 
     if (existingHire) {
-      throw new HttpException('FBO already hired by this airline', HttpStatus.BAD_REQUEST);
+      throw new HttpException('This airline already hired this FBO', HttpStatus.BAD_REQUEST);
     }
 
-    // Set default FBO price (no separate FBO entity)
-    const fboPrice = 50000; // Default price
-    if (userStatistics.bankBalance < fboPrice) {
-      throw new HttpException('Insufficient balance to hire FBO', HttpStatus.BAD_REQUEST);
+    // Get airport data to calculate FBO price
+    const airport = this.navdataService.getAirportByIcao(hireFboTo.icao);
+    if (!airport) {
+      throw new HttpException('Airport not found', HttpStatus.NOT_FOUND);
     }
 
-    // Create airline FBO record
+    const runwaySize = airport.longestRunwayLength || 0;
+    const fboPrice = runwaySize * 78;
+
+    // Check if airline has sufficient balance
+    if (airline.bankBalance < fboPrice) {
+      throw new HttpException('Your airline doesn\'t have enough money to hire this FBO', HttpStatus.BAD_REQUEST);
+    }
+
+    // Create airline FBO record with calculated values
     const airlineFbo = this.airlineFboRepository.create({
       icao: hireFboTo.icao.toUpperCase(),
-      airline: userStatistics.airline,
-      availability: 100,
-      scoreIncrease: 10,
-      fuelPriceDiscount: 0.1,
-      groundCrewDiscount: 0.15,
+      airline: airline,
+      availability: 15 - existingFboCount,
+      scoreIncrease: Math.floor(runwaySize / 1123),
+      fuelPriceDiscount: Math.round((runwaySize / 62423) * 100) / 100,
+      groundCrewDiscount: Math.round((runwaySize / 41093) * 100) / 100,
       price: fboPrice
     });
 
     const savedAirlineFbo = await this.airlineFboRepository.save(airlineFbo);
 
-    // Update user balance
-    userStatistics.bankBalance = userStatistics.bankBalance - fboPrice;
-    await this.statisticsRepository.save(userStatistics);
+    // Deduct from airline bank balance (not user balance)
+    airline.bankBalance = airline.bankBalance - fboPrice;
+    await this.airlinesRepository.save(airline);
 
     return {
       data: {
         fboHired: {
           id: savedAirlineFbo.id,
           icao: savedAirlineFbo.icao,
-          name: savedAirlineFbo.icao, // Use ICAO as name
+          name: airport.name,
           price: savedAirlineFbo.price,
           fuelPriceDiscount: savedAirlineFbo.fuelPriceDiscount,
           groundCrewDiscount: savedAirlineFbo.groundCrewDiscount

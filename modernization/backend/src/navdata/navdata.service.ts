@@ -127,6 +127,27 @@ export class NavdataService implements OnModuleInit, OnModuleDestroy {
   }
 
   /**
+   * Busca aeroportos por termo de ICAO
+   * Equivalente ao GetAirportsByTerm do legado
+   */
+  getAirportsByTerm(icaoTerm: string): Airport[] {
+    if (!icaoTerm || icaoTerm.trim() === '') {
+      return [];
+    }
+
+    const query = `SELECT * FROM airport WHERE UPPER(ident) LIKE ?`;
+    const searchTerm = `${icaoTerm.toUpperCase()}%`;
+
+    try {
+      const rows = this.db.prepare(query).all(searchTerm);
+      return rows.map((row: any) => this.mapRowToAirport(row));
+    } catch (error) {
+      this.logger.error(`Erro ao buscar aeroportos por termo: ${error.message}`);
+      return [];
+    }
+  }
+
+  /**
    * Busca todos os aeroportos próximos de um aeroporto
    * Equivalente ao GetAllCloseAirports do legado
    */

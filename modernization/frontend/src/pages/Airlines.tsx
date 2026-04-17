@@ -9,6 +9,8 @@ import {
   ChartBarIcon,
   InformationCircleIcon,
   ArrowPathIcon,
+  CheckIcon,
+  MagnifyingGlassIcon,
 } from '@heroicons/react/24/outline';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import {
@@ -22,7 +24,10 @@ import {
   joinAirline,
   leaveAirline,
   payDebt,
+  fetchAvailableFbos,
+  hireFbo,
   Airline,
+  AvailableFbo,
 } from '../store/slices/airlinesSlice';
 import { fetchMyStats } from '../store/slices/statisticsSlice';
 import { Modal } from '../components/ui/Modal';
@@ -103,7 +108,7 @@ const initialFormData: AirlineFormData = {
 
 export const Airlines: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { airlines, userAirline, pilots, fbos, airlineStats, isLoading } = useAppSelector((state) => state.airlines);
+  const { airlines, userAirline, pilots, fbos, airlineStats, availableFbos, isLoading } = useAppSelector((state) => state.airlines);
   const { myStats } = useAppSelector((state) => state.statistics);
 
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -112,6 +117,9 @@ export const Airlines: React.FC = () => {
   const [showPayDebtModal, setShowPayDebtModal] = useState(false);
   const [showFboModal, setShowFboModal] = useState(false);
   const [showExitConfirm, setShowExitConfirm] = useState(false);
+  const [showHireConfirm, setShowHireConfirm] = useState(false);
+  const [selectedFbo, setSelectedFbo] = useState<AvailableFbo | null>(null);
+  const [fboSearchTerm, setFboSearchTerm] = useState('');
 
   const [formData, setFormData] = useState<AirlineFormData>(initialFormData);
   const [editingAirlineId, setEditingAirlineId] = useState<number | null>(null);
@@ -288,6 +296,45 @@ export const Airlines: React.FC = () => {
       setIsSubmitting(false);
     }
   }, [userAirline, myStats, dispatch, addToast]);
+
+  const handleOpenFboModal = useCallback(async () => {
+    if (!userAirline) {
+      addToast('No airline found.', 'error');
+      return;
+    }
+    setFboSearchTerm('');
+    await dispatch(fetchAvailableFbos({ icao: '', airlineId: userAirline.id }));
+    setShowFboModal(true);
+  }, [userAirline, dispatch]);
+
+  const handleFboSearch = useCallback(async () => {
+    if (!userAirline) return;
+    await dispatch(fetchAvailableFbos({ icao: fboSearchTerm, airlineId: userAirline.id }));
+  }, [fboSearchTerm, userAirline, dispatch]);
+
+  const handleOpenHireConfirm = useCallback((fbo: AvailableFbo) => {
+    setSelectedFbo(fbo);
+    setShowHireConfirm(true);
+  }, []);
+
+  const handleHireFbo = useCallback(async () => {
+    if (!selectedFbo) return;
+    setIsSubmitting(true);
+    try {
+      await dispatch(hireFbo(selectedFbo.icao)).unwrap();
+      setShowHireConfirm(false);
+      setShowFboModal(false);
+      setSelectedFbo(null);
+      addToast('FBO hired successfully!', 'success');
+      dispatch(fetchMyAirline());
+      dispatch(fetchAirlineFbos(userAirline?.id || 0));
+    } catch (error: any) {
+      const errorMessage = typeof error === 'string' ? error : error?.message || 'Failed to hire FBO.';
+      addToast(errorMessage, 'error');
+    } finally {
+      setIsSubmitting(false);
+    }
+  }, [selectedFbo, dispatch, userAirline]);
 
   // Check if user has an airline (either as owner or pilot)
   const hasAirline = !!userAirline;
@@ -475,7 +522,7 @@ export const Airlines: React.FC = () => {
               )}
               {userAirline.alowEdit && (
                 <button
-                  onClick={() => setShowFboModal(true)}
+                  onClick={handleOpenFboModal}
                   className="flex items-center gap-2 px-4 py-2 bg-purple-600/20 hover:bg-purple-600/30 text-purple-400 rounded-lg transition-all text-sm font-medium"
                 >
                   <BuildingOfficeIcon className="h-4 w-4" />
@@ -1021,14 +1068,183 @@ export const Airlines: React.FC = () => {
         isOpen={showFboModal}
         onClose={() => setShowFboModal(false)}
         title="FBO Management"
-        size="lg"
+        size="2xl"
       >
-        <div className="text-center py-8">
-          <BuildingOfficeIcon className="h-12 w-12 text-gray-500 mx-auto mb-4" />
-          <p className="text-gray-400">FBO management coming soon.</p>
-          <p className="text-gray-500 text-sm mt-2">
-            This feature will allow you to hire and manage FBOs for your airline.
+        <div className="space-y-4">
+          {/* Search Filter */}
+          <div className="flex gap-3">
+            <div className="flex-1 relative">
+              <MagnifyingGlassIcon className="h-5 w-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" />
+              <input
+                type="text"
+                value={fboSearchTerm}
+                onChange={(e) => setFboSearchTerm(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && handleFboSearch()}
+                placeholder="Search by airport ICAO..."
+                className="w-full pl-10 pr-4 py-2 border border-gray-600 rounded-lg bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
+              />
+            </div>
+            <button
+              onClick={handleFboSearch}
+              className="px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-lg transition-colors"
+            >
+              Search
+            </button>
+          </div>
+
+          {/* FBOs Table */}
+          <div className="overflow-x-auto" style={{ maxHeight: '400px' }}>
+            <table className="w-full text-sm">
+              <thead className="sticky top-0 bg-gray-800">
+                <tr className="border-b border-gray-700">
+                  <th className="text-left py-3 px-4 text-gray-400 font-medium w-1/4">Airport Name</th>
+                  <th className="text-left py-3 px-4 text-gray-400 font-medium">Elevation</th>
+                  <th className="text-left py-3 px-4 text-gray-400 font-medium">Runway Size</th>
+                  <th className="text-left py-3 px-4 text-gray-400 font-medium">Score Increase</th>
+                  <th className="text-left py-3 px-4 text-gray-400 font-medium">Fuel Price %</th>
+                  <th className="text-left py-3 px-4 text-gray-400 font-medium">Ground Crew %</th>
+                  <th className="text-left py-3 px-4 text-gray-400 font-medium">FBO Price</th>
+                  <th className="text-left py-3 px-4 text-gray-400 font-medium">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {isLoading ? (
+                  <tr>
+                    <td colSpan={8} className="text-center py-8 text-gray-400">
+                      Loading...
+                    </td>
+                  </tr>
+                ) : availableFbos.length === 0 ? (
+                  <tr>
+                    <td colSpan={8} className="text-center py-8 text-gray-400">
+                      No FBOs found. Try a different search term.
+                    </td>
+                  </tr>
+                ) : (
+                  availableFbos.map((fbo: AvailableFbo) => (
+                    <tr
+                      key={fbo.icao}
+                      className="border-b border-gray-700/50 hover:bg-gray-700/30 transition-colors"
+                    >
+                      <td className="py-3 px-4 text-white">
+                        <div className="font-medium">{fbo.name}</div>
+                        <div className="text-xs text-gray-400">{fbo.icao}</div>
+                      </td>
+                      <td className="py-3 px-4 text-gray-300">{fbo.elevation.toLocaleString()} ft</td>
+                      <td className="py-3 px-4 text-gray-300">{fbo.runwaySize.toLocaleString()} ft</td>
+                      <td className="py-3 px-4 text-gray-300">+{fbo.scoreIncrease}</td>
+                      <td className="py-3 px-4 text-green-400">{(fbo.fuelPriceDiscount * 100).toFixed(0)}%</td>
+                      <td className="py-3 px-4 text-green-400">{(fbo.groundCrewDiscount * 100).toFixed(0)}%</td>
+                      <td className="py-3 px-4 text-white font-medium">F$ {fbo.price.toLocaleString()}</td>
+                      <td className="py-3 px-4">
+                        {fbo.isHired ? (
+                          <span className="text-green-400 text-sm">Hired</span>
+                        ) : (
+                          <button
+                            onClick={() => handleOpenHireConfirm(fbo)}
+                            disabled={fbo.availability <= 0}
+                            className="px-3 py-1 bg-purple-600 hover:bg-purple-500 disabled:bg-gray-600 disabled:cursor-not-allowed text-white rounded text-sm transition-colors"
+                          >
+                            Hire
+                          </button>
+                        )}
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          <p className="text-xs text-gray-500 mt-2">
+            * Airports are ordered by most frequent destinations from completed jobs
           </p>
+        </div>
+      </Modal>
+
+      {/* Hire FBO Confirmation Modal */}
+      <Modal
+        isOpen={showHireConfirm}
+        onClose={() => setShowHireConfirm(false)}
+        title="Confirm FBO Hire"
+        size="md"
+        footer={
+          <div className="flex justify-end gap-3">
+            <button
+              onClick={() => setShowHireConfirm(false)}
+              className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors"
+              disabled={isSubmitting}
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleHireFbo}
+              className="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-lg transition-colors disabled:opacity-50"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? (
+                <>
+                  <ArrowPathIcon className="h-4 w-4 animate-spin" />
+                  Hiring...
+                </>
+              ) : (
+                <>
+                  <CheckIcon className="h-4 w-4" />
+                  Confirm Hire
+                </>
+              )}
+            </button>
+          </div>
+        }
+      >
+        <div className="space-y-4">
+          <p className="text-gray-400">
+            Only the owner is permitted to hire FBOs. Your airline has F$ {userAirline?.bankBalance?.toLocaleString() || '0'} in bank balance to hire FBOs. 
+            <br />
+            <b>Do you really want to hire this FBO?</b>
+          </p>
+          
+          {selectedFbo && (
+            <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700">
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                <div>
+                  <span className="text-gray-400">Airport:</span>
+                  <p className="text-white font-medium">{selectedFbo.name} ({selectedFbo.icao})</p>
+                </div>
+                <div>
+                  <span className="text-gray-400">Price:</span>
+                  <p className="text-white font-medium">F$ {selectedFbo.price.toLocaleString()}</p>
+                </div>
+                <div>
+                  <span className="text-gray-400">Score Increase:</span>
+                  <p className="text-white font-medium">+{selectedFbo.scoreIncrease}</p>
+                </div>
+                <div>
+                  <span className="text-gray-400">Fuel Discount:</span>
+                  <p className="text-white font-medium">{(selectedFbo.fuelPriceDiscount * 100).toFixed(0)}%</p>
+                </div>
+                <div>
+                  <span className="text-gray-400">Ground Crew Discount:</span>
+                  <p className="text-white font-medium">{(selectedFbo.groundCrewDiscount * 100).toFixed(0)}%</p>
+                </div>
+                <div>
+                  <span className="text-gray-400">Availability:</span>
+                  <p className="text-white font-medium">{selectedFbo.availability} slots</p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {userAirline && userAirline.bankBalance < (selectedFbo?.price || 0) && (
+            <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-3">
+              <div className="flex items-start gap-2">
+                <ExclamationTriangleIcon className="h-5 w-5 text-red-400 flex-shrink-0 mt-0.5" />
+                <p className="text-sm text-red-400">
+                  Insufficient funds. You need F$ {((selectedFbo?.price || 0) - userAirline.bankBalance).toLocaleString()} more.
+                </p>
+              </div>
+            </div>
+          )}
         </div>
       </Modal>
 

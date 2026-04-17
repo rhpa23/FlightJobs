@@ -123,6 +123,12 @@ export const airlinesApi = {
   getFbos: (id: number) =>
     api.get(`/airlines/${id}/fbos`).then(res => res.data),
 
+  getAvailableFbos: (icao: string, airlineId: number) =>
+    api.get('/airlines/fbos', { params: { icao, airlineId } }).then(res => res.data),
+
+  hireFboByIcao: (icao: string) =>
+    api.post('/airlines/hire-fbo', { icao }).then(res => res.data),
+
   hireFbo: (id: number, fboData: any) =>
     api.post(`/airlines/${id}/fbos`, fboData).then(res => res.data),
 
