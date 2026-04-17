@@ -3,6 +3,7 @@ import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { AirlinesService } from './airlines.service';
 import { PaginatedAirlineFilterDto } from './dto/paginated-airline-filter.dto';
 import { AirlineToDto } from './dto/airline-to.dto';
+import { PayDebtDto } from './dto/pay-debt.dto';
 import { HireFboDto } from './dto/hire-fbo.dto';
 import { JoinAirlineDto } from './dto/join-airline.dto';
 import { ExitAirlineDto } from './dto/exit-airline.dto';
@@ -12,6 +13,7 @@ import { PaginatedAirlineJobsDto } from './dto/paginated-airline-jobs.dto';
 import { UserSimpleDto } from './dto/user-simple.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CreateAirlineDto } from './dto';
+import { Airline } from './entities/airline.entity';
 
 @ApiTags('airlines')
 @Controller('airlines')
@@ -19,6 +21,12 @@ import { CreateAirlineDto } from './dto';
 @ApiBearerAuth('JWT-auth')
 export class AirlinesController {
   constructor(private readonly airlinesService: AirlinesService) {}
+
+  @Get()
+  @ApiOperation({ summary: 'Get all airlines' })
+  async findAll(): Promise<Airline[]> {
+    return this.airlinesService.findAll();
+  }
 
   @Post('airliners')
   @HttpCode(HttpStatus.OK)
@@ -66,8 +74,8 @@ export class AirlinesController {
   @Post('pay-debts')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Pay airline debts' })
-  async payAirlineDebts(@Body() airlineTo: AirlineToDto, @Request() req): Promise<boolean> {
-    return this.airlinesService.payAirlineDebts(airlineTo, req.user.userId);
+  async payAirlineDebts(@Body() payDebtDto: PayDebtDto, @Request() req): Promise<boolean> {
+    return this.airlinesService.payAirlineDebts(payDebtDto, req.user.userId);
   }
 
   @Post(':airlineId/ledger')
@@ -121,5 +129,11 @@ export class AirlinesController {
   @ApiOperation({ summary: 'Get current user airline' })
   async getMyAirline(@Request() req): Promise<any> {
     return this.airlinesService.getMyAirline(req.user.userId);
+  }
+
+  @Get(':id/statistics')
+  @ApiOperation({ summary: 'Get airline statistics' })
+  async getStatistics(@Param('id') id: number): Promise<any> {
+    return this.airlinesService.getStatistics(id);
   }
 }

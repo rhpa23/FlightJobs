@@ -1,16 +1,16 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { airlinesApi } from '../../services/api';
 
-interface Pilot {
+export interface Pilot {
   id: string;
   email: string;
   firstName: string;
   lastName: string;
   userName?: string;
-  statistics?: any;
+  pilotScore?: number;
 }
 
-interface Airline {
+export interface Airline {
   id: number;
   name: string;
   description: string;
@@ -19,17 +19,48 @@ interface Airline {
   score: number;
   logo?: string;
   bankBalance: number;
-  owner?: any;
+  bankDebt: number;
+  debtMaturityDate?: string;
+  owner?: {
+    id: string;
+    userName: string;
+  };
   pilots?: Pilot[];
+  fboCount?: number;
+  requireCertificates?: boolean;
+  alowEdit?: boolean;
+  alowExit?: boolean;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface AirlineStats {
+  monthlyEarnings: {
+    labels: string[];
+    data: number[];
+    total: number;
+  };
+  totalPilots: number;
+  totalFbos: number;
+}
+
+export interface Fbo {
+  id: number;
+  icao: string;
+  name: string;
+  availability: number;
+  fuelPriceDiscount: number;
+  groundCrewDiscount: number;
+  price: number;
 }
 
 interface AirlinesState {
   airlines: Airline[];
   userAirline: Airline | null;
   selectedAirline: Airline | null;
-  airlineStats: any;
+  airlineStats: AirlineStats | null;
+  pilots: Pilot[];
+  fbos: Fbo[];
   isLoading: boolean;
   error: string | null;
 }
@@ -39,6 +70,8 @@ const initialState: AirlinesState = {
   userAirline: null,
   selectedAirline: null,
   airlineStats: null,
+  pilots: [],
+  fbos: [],
   isLoading: false,
   error: null,
 };
@@ -78,8 +111,13 @@ export const leaveAirline = createAsyncThunk('airlines/leaveAirline', async (id:
   return response;
 });
 
-export const fetchAirlinePilots = createAsyncThunk('airlines/fetchPilots', async (id: number) => {
+export const fetchAirlinePilots = createAsyncThunk('airlines/fetchAirlinePilots', async (id: number) => {
   const response = await airlinesApi.getPilots(id);
+  return response;
+});
+
+export const fetchAirlineFbos = createAsyncThunk('airlines/fetchAirlineFbos', async (id: number) => {
+  const response = await airlinesApi.getFbos(id);
   return response;
 });
 
@@ -93,13 +131,18 @@ export const firePilot = createAsyncThunk('airlines/firePilot', async ({ id, use
   return response;
 });
 
-export const fetchAirlineStats = createAsyncThunk('airlines/fetchStats', async (id: number) => {
+export const fetchAirlineStats = createAsyncThunk('airlines/fetchAirlineStats', async (id: number) => {
   const response = await airlinesApi.getStatistics(id);
   return response;
 });
 
 export const fetchMyAirline = createAsyncThunk('airlines/fetchMyAirline', async () => {
   const response = await airlinesApi.getMyAirline();
+  return response;
+});
+
+export const payDebt = createAsyncThunk('airlines/payDebt', async ({ id, amount }: { id: number; amount: number }) => {
+  const response = await airlinesApi.payDebt(id, amount);
   return response;
 });
 
@@ -116,6 +159,9 @@ const airlinesSlice = createSlice({
     clearAirlineStats: (state) => {
       state.airlineStats = null;
     },
+    setPilots: (state, action: PayloadAction<Pilot[]>) => {
+      state.pilots = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -131,12 +177,30 @@ const airlinesSlice = createSlice({
         state.isLoading = false;
         state.error = action.error.message || 'Failed to fetch airlines';
       })
+      .addCase(fetchAirline.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
       .addCase(fetchAirline.fulfilled, (state, action) => {
+        state.isLoading = false;
         state.selectedAirline = action.payload;
       })
+      .addCase(fetchAirline.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.error.message || 'Failed to fetch airline';
+      })
+      .addCase(createAirline.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
       .addCase(createAirline.fulfilled, (state, action) => {
+        state.isLoading = false;
         state.airlines.push(action.payload);
         state.userAirline = action.payload;
+      })
+      .addCase(createAirline.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.error.message || 'Failed to create airline';
       })
       .addCase(updateAirline.fulfilled, (state, action) => {
         const index = state.airlines.findIndex(airline => airline.id === action.payload.id);
@@ -161,7 +225,6 @@ const airlinesSlice = createSlice({
       })
       .addCase(joinAirline.fulfilled, (state, action) => {
         state.userAirline = action.payload;
-        // Update the airline in the list
         const index = state.airlines.findIndex(airline => airline.id === action.payload.id);
         if (index !== -1) {
           state.airlines[index] = action.payload;
@@ -170,14 +233,23 @@ const airlinesSlice = createSlice({
       .addCase(leaveAirline.fulfilled, (state) => {
         state.userAirline = null;
       })
+      .addCase(fetchAirlinePilots.fulfilled, (state, action) => {
+        state.pilots = action.payload;
+      })
+      .addCase(fetchAirlineFbos.fulfilled, (state, action) => {
+        state.fbos = action.payload;
+      })
       .addCase(fetchAirlineStats.fulfilled, (state, action) => {
         state.airlineStats = action.payload;
       })
       .addCase(fetchMyAirline.fulfilled, (state, action) => {
         state.userAirline = action.payload;
+      })
+      .addCase(payDebt.fulfilled, (state, action) => {
+        // Debt paid successfully, will be refreshed by fetchMyAirline
       });
   },
 });
 
-export const { clearError, setSelectedAirline, clearAirlineStats } = airlinesSlice.actions;
+export const { clearError, setSelectedAirline, clearAirlineStats, setPilots } = airlinesSlice.actions;
 export default airlinesSlice.reducer;

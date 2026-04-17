@@ -11,3 +11,4 @@ trigger: always_on
 
 1. Antes de realizar qualquer alteração estrutural, explique brevemente o que será feito em português.
 2. Ao finalizar uma tarefa, forneça um resumo do que foi entregue.
+3. Sempre que fizer uma alteração no backend, me avise no final, de forma bem destacada, para me lembrar reiniciar o backend no console.

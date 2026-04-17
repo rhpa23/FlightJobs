@@ -211,17 +211,22 @@ Features:
 ### 3.3 Airlines Page
 
 ```tsx
-// src/pages/Airlines.tsx
-// Features:
-// - Airlines list with cards
-// - Create airline modal
-// - Edit airline modal
-// - Airline details view
-// - Certificate management
-// - Pilot list
-// - Join/leave airline
-// - Airline ledger
-// - FBO management
+src/pages/Airlines.tsx
+Features:
+- If the logged user is owner of an airline or is a pilot of an airline, show the airline details section as below:
+  - Airline icon (The owner's can choose an icon for the airline, a list of icons is provided)
+  - Airline name with an description and the country flag
+  - Airline details (Owner name, Bank balance, bank debt [in red if > 0], pilots hired count [show names of pilots], FBOs count)
+  - Um gráfico funcional mostrando o acumulado de dinheiro virtual da Airline ganho nos últimos 3 meses (quando tiver dado para isso). Junto mostre o total acumulado dos últimos 3 meses.
+  - Edit button (only for owners)
+  - Exit button (only for pilots)
+  - FBO management button (only for owners). When clicked, open a modal with FBO management page
+  - Pay debt button (only for owners). When clicked, open a modal to pay the debt. (Modal info: invoice totals, maturity date, bank balance, balance forecast)
+- If the logged user is not owner of an airline or is not a pilot of an airline, show the airlines list with cards
+- The airlines list with cards data should have the airline icon, name, description, country flag, owner name, bank balance, bank debt, pilots hired count, FBOs count, score, ranking position (based on score) and a button to join the airline
+- Buy a new Airline button, open a modal to create a new airline (only for users without an airline). {Modal fields: Airline name, Airline description, Airline icon, Airline country and minimum pilot score to join the airline}. Pilots can buy an airline for $40,000 of their virtual money and this will be deducted from their balance.
+//- Certificate management
+//- Airline ledger
 ```
 
 ### 3.4 Profile Page

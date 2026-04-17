@@ -8,6 +8,7 @@ import { User } from '../users/entities/user.entity';
 import { Job } from '../jobs/entities/job.entity';
 import { PaginatedAirlineFilterDto } from './dto/paginated-airline-filter.dto';
 import { AirlineToDto } from './dto/airline-to.dto';
+import { PayDebtDto } from './dto/pay-debt.dto';
 import { HireFboDto } from './dto/hire-fbo.dto';
 import { JobFilterDto } from './dto/job-filter.dto';
 import { PaginatedAirlinesDto } from './dto/paginated-airlines.dto';
@@ -193,10 +194,10 @@ export class AirlinesService {
     return true;
   }
 
-  async payAirlineDebts(airlineTo: AirlineToDto, userId: string): Promise<boolean> {
+  async payAirlineDebts(payDebtDto: PayDebtDto, userId: string): Promise<boolean> {
     // Get airline
     const airline = await this.airlinesRepository.findOne({
-      where: { id: airlineTo.id }
+      where: { id: payDebtDto.id }
     });
 
     if (!airline) {
@@ -452,7 +453,88 @@ export class AirlinesService {
       return null;
     }
 
-    return userStatistics.airline;
+    // Get full airline data with owner relation
+    const airline = await this.airlinesRepository.findOne({
+      where: { id: userStatistics.airline.id },
+      relations: ['owner']
+    });
+
+    if (!airline) {
+      return null;
+    }
+
+    // Get FBO count for this airline
+    const fboCount = await this.airlineFboRepository.count({
+      where: { airline: { id: airline.id } }
+    });
+
+    // Determine if user is the owner
+    const isOwner = airline.userId === userId;
+
+    // Return enriched airline data
+    return {
+      ...airline,
+      bankDebt: airline.debtValue,
+      fboCount: fboCount,
+      alowEdit: isOwner,
+      alowExit: !isOwner
+    };
+  }
+
+  async getStatistics(id: number): Promise<any> {
+    // Get airline to verify it exists
+    const airline = await this.airlinesRepository.findOne({ where: { id } });
+    if (!airline) {
+      throw new NotFoundException(`Airline with ID ${id} not found`);
+    }
+
+    // Get all users in this airline
+    const userStatistics = await this.statisticsRepository.find({
+      where: { airline: { id } },
+      relations: ['user']
+    });
+
+    const userIds = userStatistics.map(stat => stat.userId);
+
+    // Calculate monthly earnings for the last 3 months
+    const now = new Date();
+    const months: string[] = [];
+    const earnings: number[] = [];
+
+    for (let i = 2; i >= 0; i--) {
+      const monthDate = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const monthName = monthDate.toLocaleString('default', { month: 'short' });
+      months.push(monthName);
+
+      const startOfMonth = new Date(monthDate.getFullYear(), monthDate.getMonth(), 1);
+      const endOfMonth = new Date(monthDate.getFullYear(), monthDate.getMonth() + 1, 0, 23, 59, 59);
+
+      let monthEarnings = 0;
+
+      // Get completed jobs for all users in this airline in this month
+      if (userIds.length > 0) {
+        const jobsQuery = this.jobsRepository.createQueryBuilder('job')
+          .where('job.isDone = :isDone', { isDone: true })
+          .andWhere('job.endTime >= :startOfMonth', { startOfMonth: startOfMonth.toISOString() })
+          .andWhere('job.endTime <= :endOfMonth', { endOfMonth: endOfMonth.toISOString() })
+          .andWhere('job.User_Id IN (:...userIds)', { userIds });
+
+        const jobsInMonth = await jobsQuery.getMany();
+        monthEarnings = jobsInMonth.reduce((sum, job) => sum + (job.pay || 0), 0);
+      }
+
+      earnings.push(monthEarnings);
+    }
+
+    const totalEarnings = earnings.reduce((sum, val) => sum + val, 0);
+
+    return {
+      monthlyEarnings: {
+        labels: months,
+        data: earnings,
+        total: totalEarnings
+      }
+    };
   }
 
   // Keep existing methods for backward compatibility

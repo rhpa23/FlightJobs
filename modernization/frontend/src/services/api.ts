@@ -91,7 +91,7 @@ export const airlinesApi = {
     api.post('/airlines', airlineData).then(res => res.data),
   
   updateAirline: (id: number, airlineData: any) =>
-    api.patch(`/airlines/${id}`, airlineData).then(res => res.data),
+    api.post('/airlines/update', { id, ...airlineData }).then(res => res.data),
   
   deleteAirline: (id: number) =>
     api.delete(`/airlines/${id}`).then(res => res.data),
@@ -103,7 +103,7 @@ export const airlinesApi = {
     api.post(`/airlines/${id}/leave`).then(res => res.data),
   
   getPilots: (id: number) =>
-    api.get(`/airlines/${id}/pilots`).then(res => res.data),
+    api.get(`/airlines/${id}/pilots-hired`).then(res => res.data),
   
   hirePilot: (id: number, userId: string) =>
     api.post(`/airlines/${id}/hire-pilot`, { userId }).then(res => res.data),
@@ -116,6 +116,24 @@ export const airlinesApi = {
   
   getMyAirline: () =>
     api.get('/airlines/my-airline').then(res => res.data),
+
+  payDebt: (id: number, _amount: number) =>
+    api.post('/airlines/pay-debts', { id }).then(res => res.data),
+
+  getFbos: (id: number) =>
+    api.get(`/airlines/${id}/fbos`).then(res => res.data),
+
+  hireFbo: (id: number, fboData: any) =>
+    api.post(`/airlines/${id}/fbos`, fboData).then(res => res.data),
+
+  fireFbo: (id: number, fboId: number) =>
+    api.delete(`/airlines/${id}/fbos/${fboId}`).then(res => res.data),
+
+  getLedger: (id: number) =>
+    api.get(`/airlines/${id}/ledger`).then(res => res.data),
+
+  checkNameAvailable: (name: string) =>
+    api.get('/airlines/check-name', { params: { name } }).then(res => res.data),
 };
 
 export const statisticsApi = {
