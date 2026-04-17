@@ -33,7 +33,7 @@ import { fetchMyStats } from '../store/slices/statisticsSlice';
 import { Modal } from '../components/ui/Modal';
 import { Tooltip } from '../components/ui/Tooltip';
 import { AirlineCardComponent } from '../components/ui/AirlineCard';
-import { IconSelector, renderIcon } from '../components/ui/IconMapper';
+import { IconSelector, renderIcon, ICON_OPTIONS } from '../components/ui/IconMapper';
 import { ToastContainer, ToastMsg } from '../components/Toast';
 import {
   Chart as ChartJS,
@@ -88,6 +88,12 @@ const getCountryFlag = (country: string): string => {
 
 const AIRLINE_PRICE = 40000;
 
+// Função para obter um ícone aleatório
+const getRandomIcon = (): string => {
+  const randomIndex = Math.floor(Math.random() * ICON_OPTIONS.length);
+  return ICON_OPTIONS[randomIndex].name;
+};
+
 interface AirlineFormData {
   name: string;
   description: string;
@@ -127,6 +133,7 @@ export const Airlines: React.FC = () => {
 
   const [toasts, setToasts] = useState<ToastMsg[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [imageError, setImageError] = useState(false);
 
   const addToast = useCallback((message: string, type: ToastMsg['type'] = 'success') => {
     const id = Date.now();
@@ -393,14 +400,16 @@ export const Airlines: React.FC = () => {
                     <div className="h-20 w-20 flex items-center justify-center">
                       {renderIcon(userAirline.logo, 'h-10 w-10 text-gray-400')}
                     </div>
+                  ) : imageError ? (
+                    <div className="h-20 w-20 flex items-center justify-center">
+                      {renderIcon(getRandomIcon(), 'h-10 w-10 text-gray-400')}
+                    </div>
                   ) : (
                     <img
                       src={userAirline.logo}
                       alt={userAirline.name}
                       className="h-full w-full object-cover rounded-xl"
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).src = '/logo.png';
-                      }}
+                      onError={() => setImageError(true)}
                     />
                   )
                 ) : (

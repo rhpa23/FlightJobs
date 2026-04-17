@@ -7,7 +7,7 @@ import {
   StarIcon,
 } from '@heroicons/react/24/outline';
 import { Tooltip } from './Tooltip';
-import { renderIcon } from './IconMapper';
+import { renderIcon, ICON_OPTIONS } from './IconMapper';
 import { Airline } from '../../store/slices/airlinesSlice';
 
 interface AirlineCardProps {
@@ -48,6 +48,12 @@ const getCountryFlag = (country: string): string => {
   return flags[country] || '🌍';
 };
 
+// Função para obter um ícone aleatório
+const getRandomIcon = (): string => {
+  const randomIndex = Math.floor(Math.random() * ICON_OPTIONS.length);
+  return ICON_OPTIONS[randomIndex].name;
+};
+
 export const AirlineCardComponent: React.FC<AirlineCardProps> = ({
   airline,
   isUserAirline = false,
@@ -58,6 +64,7 @@ export const AirlineCardComponent: React.FC<AirlineCardProps> = ({
   onManageFbo,
   onPayDebt,
 }) => {
+  const [imageError, setImageError] = React.useState(false);
   const flag = getCountryFlag(airline.country);
 
   return (
@@ -76,14 +83,14 @@ export const AirlineCardComponent: React.FC<AirlineCardProps> = ({
               // Check if logo is an SVG icon name (starts with uppercase and ends with Icon)
               /^[A-Z][a-zA-Z]*Icon$/.test(airline.logo) ? (
                 renderIcon(airline.logo, 'h-7 w-7 text-gray-400')
+              ) : imageError ? (
+                renderIcon(getRandomIcon(), 'h-7 w-7 text-gray-400')
               ) : (
                 <img
                   src={airline.logo}
                   alt={airline.name}
                   className="h-full w-full object-cover"
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).src = '/logo.png';
-                  }}
+                  onError={() => setImageError(true)}
                 />
               )
             ) : (
