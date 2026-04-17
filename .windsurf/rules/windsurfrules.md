@@ -145,4 +145,10 @@ FlightJobs.Domain.Navdata/
 - Falta de testes unitários
 - Configurações hardcoded no código
 
+### Importante (Regras de Ouro)
+- Não se repita - reutilize o mesmo código, use componentes e hooks
+- Mantenha simples e limpo (KISS) - evite complexidade desnecessária
+- Você não vai precisar disso (YAGNI) - não implemente funcionalidades que você não precisa
+- Separação de responsabilidades - mantenha o código organizado e fácil de manter
+
 Este resumo fornece uma base completa para entender a arquitetura atual e planejar a modernização da aplicação FlightJobs.
