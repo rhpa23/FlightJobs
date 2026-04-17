@@ -7,6 +7,7 @@ import {
   StarIcon,
 } from '@heroicons/react/24/outline';
 import { Tooltip } from './Tooltip';
+import { renderIcon } from './IconMapper';
 import { Airline } from '../../store/slices/airlinesSlice';
 
 interface AirlineCardProps {
@@ -72,14 +73,19 @@ export const AirlineCardComponent: React.FC<AirlineCardProps> = ({
         <div className="flex items-center gap-3">
           <div className="h-14 w-14 bg-gray-700/50 rounded-lg flex items-center justify-center overflow-hidden">
             {airline.logo ? (
-              <img
-                src={airline.logo}
-                alt={airline.name}
-                className="h-full w-full object-cover"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).src = '/logo.png';
-                }}
-              />
+              // Check if logo is an SVG icon name (starts with uppercase and ends with Icon)
+              /^[A-Z][a-zA-Z]*Icon$/.test(airline.logo) ? (
+                renderIcon(airline.logo, 'h-7 w-7 text-gray-400')
+              ) : (
+                <img
+                  src={airline.logo}
+                  alt={airline.name}
+                  className="h-full w-full object-cover"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = '/logo.png';
+                  }}
+                />
+              )
             ) : (
               <BuildingOfficeIcon className="h-7 w-7 text-gray-400" />
             )}

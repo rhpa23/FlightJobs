@@ -28,6 +28,7 @@ import { fetchMyStats } from '../store/slices/statisticsSlice';
 import { Modal } from '../components/ui/Modal';
 import { Tooltip } from '../components/ui/Tooltip';
 import { AirlineCardComponent } from '../components/ui/AirlineCard';
+import { IconSelector, renderIcon } from '../components/ui/IconMapper';
 import { ToastContainer, ToastMsg } from '../components/Toast';
 import {
   Chart as ChartJS,
@@ -155,13 +156,15 @@ export const Airlines: React.FC = () => {
     const airline = airlines.find((a) => a.id === id);
     if (airline) {
       setEditingAirlineId(id);
+      // Check if logo is an SVG icon name (starts with uppercase and ends with Icon)
+      const isIconName = airline.logo && /^[A-Z][a-zA-Z]*Icon$/.test(airline.logo);
       setFormData({
         name: airline.name,
         description: airline.description,
         country: airline.country,
         score: airline.score,
         requireCertificates: airline.requireCertificates ?? true,
-        selectedIcon: '✈️',
+        selectedIcon: (isIconName && airline.logo) || 'BuildingOfficeIcon',
       });
       setShowEditModal(true);
     }
@@ -242,6 +245,7 @@ export const Airlines: React.FC = () => {
           country: formData.country,
           score: formData.score,
           requireCertificates: formData.requireCertificates,
+          logo: formData.selectedIcon,
         },
       })).unwrap();
       setShowEditModal(false);
@@ -337,14 +341,21 @@ export const Airlines: React.FC = () => {
             <div className="flex flex-col md:flex-row md:items-center gap-4">
               <div className="h-20 w-20 bg-gray-700/50 rounded-xl flex items-center justify-center text-4xl">
                 {userAirline.logo ? (
-                  <img
-                    src={userAirline.logo}
-                    alt={userAirline.name}
-                    className="h-full w-full object-cover rounded-xl"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).src = '/logo.png';
-                    }}
-                  />
+                  // Check if logo is an SVG icon name (starts with uppercase and ends with Icon)
+                  /^[A-Z][a-zA-Z]*Icon$/.test(userAirline.logo) ? (
+                    <div className="h-20 w-20 flex items-center justify-center">
+                      {renderIcon(userAirline.logo, 'h-10 w-10 text-gray-400')}
+                    </div>
+                  ) : (
+                    <img
+                      src={userAirline.logo}
+                      alt={userAirline.name}
+                      className="h-full w-full object-cover rounded-xl"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = '/logo.png';
+                      }}
+                    />
+                  )
                 ) : (
                   <span>✈️</span>
                 )}
@@ -863,6 +874,11 @@ export const Airlines: React.FC = () => {
               Require certificates for pilots
             </label>
           </div>
+
+          <IconSelector
+            selectedIcon={formData.selectedIcon}
+            onSelect={(iconName) => setFormData({ ...formData, selectedIcon: iconName })}
+          />
         </div>
       </Modal>
 
