@@ -88,7 +88,7 @@ export const airlinesApi = {
     api.get(`/airlines/${id}`).then(res => res.data),
   
   createAirline: (airlineData: any) =>
-    api.post('/airlines', airlineData).then(res => res.data),
+    api.post('/airlines/create', airlineData).then(res => res.data),
   
   updateAirline: (id: number, airlineData: any) =>
     api.post('/airlines/update', { id, ...airlineData }).then(res => res.data),

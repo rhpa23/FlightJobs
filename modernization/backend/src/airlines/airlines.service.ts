@@ -72,6 +72,21 @@ export class AirlinesService {
       airlines = airlines.filter(airline => airline.id !== userStatistics.airline.id);
     }
 
+    // Add pilots count for each airline
+    const airlinesWithPilotsCount = await Promise.all(
+      airlines.map(async (airline) => {
+        const pilotCount = await this.statisticsRepository
+          .createQueryBuilder('stats')
+          .where('stats.Airline_Id = :airlineId', { airlineId: airline.id })
+          .getCount();
+        return {
+          ...airline,
+          pilots: Array(pilotCount).fill(null), // Create array with pilot count for frontend compatibility
+          pilotsCount: pilotCount
+        };
+      })
+    );
+
     const pageCount = Math.ceil(totalItemCount / pageSize);
 
     return {
@@ -83,7 +98,7 @@ export class AirlinesService {
       pageNumber: actualPageNumber,
       pageSize,
       totalItemCount,
-      airlines
+      airlines: airlinesWithPilotsCount
     };
   }
 
@@ -539,7 +554,24 @@ export class AirlinesService {
 
   // Keep existing methods for backward compatibility
   async findAll(): Promise<Airline[]> {
-    return this.airlinesRepository.find();
+    const airlines = await this.airlinesRepository.find();
+
+    // Add pilots count for each airline
+    const airlinesWithPilotsCount = await Promise.all(
+      airlines.map(async (airline) => {
+        const pilotCount = await this.statisticsRepository
+          .createQueryBuilder('stats')
+          .where('stats.Airline_Id = :airlineId', { airlineId: airline.id })
+          .getCount();
+        return {
+          ...airline,
+          pilots: Array(pilotCount).fill(null), // Create array with pilot count for frontend compatibility
+          pilotsCount: pilotCount
+        };
+      })
+    );
+
+    return airlinesWithPilotsCount;
   }
 
   async findOne(id: number): Promise<Airline> {

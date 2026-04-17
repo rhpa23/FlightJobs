@@ -286,7 +286,7 @@ export const Airlines: React.FC = () => {
   }, [userAirline, myStats, dispatch, addToast]);
 
   // Check if user has an airline (either as owner or pilot)
-  const hasAirline = userAirline !== null;
+  const hasAirline = !!userAirline;
 
   // Sort airlines: user's airline first, then by score descending
   const sortedAirlines = [...airlines].sort((a, b) => {

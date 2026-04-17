@@ -93,9 +93,11 @@ export const AirlineCardComponent: React.FC<AirlineCardProps> = ({
                 {flag}
               </span>
             </div>
-            <Tooltip content={airline.description}>
+            <Tooltip content={airline.description || ''}>
               <p className="text-sm text-gray-400 truncate">
-                {airline.description}
+                {airline.description && airline.description.length > 50
+                  ? `${airline.description.slice(0, 50)}...`
+                  : airline.description || ''}
               </p>
             </Tooltip>
           </div>

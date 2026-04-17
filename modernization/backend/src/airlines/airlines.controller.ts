@@ -112,11 +112,25 @@ export class AirlinesController {
     return this.airlinesService.joinAirline(joinAirlineDto.airlineId, req.user.userId);
   }
 
+  @Post(':id/join')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Join airline by ID' })
+  async joinAirlineById(@Param('id') id: number, @Request() req): Promise<string> {
+    return this.airlinesService.joinAirline(id, req.user.userId);
+  }
+
   @Post('exit')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Exit airline' })
   async exitAirline(@Body() exitAirlineDto: ExitAirlineDto, @Request() req): Promise<void> {
     return this.airlinesService.exitAirline(exitAirlineDto.airlineId, req.user.userId);
+  }
+
+  @Post(':id/leave')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Exit airline by ID' })
+  async exitAirlineById(@Param('id') id: number, @Request() req): Promise<void> {
+    return this.airlinesService.exitAirline(id, req.user.userId);
   }
 
   @Get('ranking')
