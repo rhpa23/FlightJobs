@@ -211,6 +211,43 @@ export const searchApi = {
     api.get('/search/distance', { params: { departure, arrival } }).then((res) => res.data),
 };
 
+export const profileApi = {
+  getLogbook: (params?: {
+    pageNumber?: number;
+    sortOrder?: string;
+    departureFilter?: string;
+    arrivalFilter?: string;
+    modelDescriptionFilter?: string;
+  }) => api.get('/profile/logbook', { params }).then((res) => res.data),
+
+  deleteJob: (jobId: number) =>
+    api.delete(`/profile/logbook/${jobId}`).then((res) => res.data),
+
+  getJobVideo: (jobId: number) =>
+    api.get(`/profile/job-video/${jobId}`).then((res) => res.data),
+
+  saveJobVideo: (jobId: number, data: { description: string; videoUrl: string }) =>
+    api.post(`/profile/job-video/${jobId}`, data).then((res) => res.data),
+
+  getLicenses: () =>
+    api.get('/profile/licenses').then((res) => res.data),
+
+  getLicenseItems: (licenseExpenseId: number) =>
+    api.get(`/profile/licenses/${licenseExpenseId}/items`).then((res) => res.data),
+
+  buyLicenseItem: (licenseItemId: number) =>
+    api.post(`/profile/licenses/items/${licenseItemId}/buy`).then((res) => res.data),
+
+  pilotTransfer: (percent: number) =>
+    api.post('/profile/transfer', { percent }).then((res) => res.data),
+
+  getGraduations: () =>
+    api.get('/profile/graduations').then((res) => res.data),
+
+  updateAvatar: (avatarIndex: number) =>
+    api.post('/profile/avatar', { avatarIndex }).then((res) => res.data),
+};
+
 export const capacityApi = {
   getCapacities: () =>
     api.get('/custom-capacity').then((res) =>

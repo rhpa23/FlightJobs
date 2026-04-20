@@ -232,23 +232,45 @@ Features:
 ### 3.4 Profile Page
 
 ```tsx
-// src/pages/Profile.tsx
-// Features:
-// - Pilot info display
-// - Avatar upload
-// - Flight logbook table:
-//   - Sortable columns
-//   - Filtering
-//   - Pagination
-// - License management:
-//   - License items
-//   - Purchase buttons
-//   - Expiration dates
-// - Custom plane capacity:
-//   - Create/edit/delete
-//   - Image upload
-// - Fund transfer
-// - Email preferences
+src/pages/Profile.tsx
+Features:
+- Pilot info display
+- Set a Pilot Avatar (persisted in existing PilotStatistics table at column Logo)
+  - Show current avatar
+  - Choose new avatar from a list of avatars from a predefined set (Use the existing avatar images from react famous library. Maximum 10 fixed avatars relative to the pilot's or heros).
+- Flight logbook table:
+  - Sortable columns
+  - Filtering (Departure, Arrival, Date range, Aircraft name)
+  - Remove filter button
+  - Pagination with page size selection
+- License management:
+  - Summary information about the pilot licenses 
+  - Overdue license items with: name, price and maturity date
+  - When a overdue license is clicked, show a modal with the license expenses items and a button to purchase it
+  - After the purchase the Overdue license should disappear from the list and the price should be deducted from the pilot's balance. Toast notification should be shown.
+  - Important: The license management should be based on the existing license system in the backend.
+- Button to fund transfer from pilot's balance to Airline bank balance (Modal)
+  - Info to show: Pilot bank balance, Bank costs and tax (15%), Pilot bank balance projection after transfer, Airline bank balance projection after transfer. Summary of the transfer.
+  - Input field to enter the amount to transfer in percentage (0-100%)
+  - Transfer button
+- Pilot graduation modal
+  - A list of available graduations with Graduation Name and Flight hours:
+    - ATP Senior Commander5000+
+    - ATP Commander 4000 - 4999
+    - ATP Senior Commander 3500 - 3999
+    - ATP Senior Captain 3000 - 3999
+    - ATP Captain 2000 - 2999
+    - ATP First Officer 1500 - 1999
+    - Commercial Senior Commander 1000 - 1499
+    - Commercial Commander 750 - 999
+    - Commercial Senior Captain 540 - 749
+    - Commercial Captain 430 - 539
+    - Commercial First Officer 360 - 429
+    - Senior Captain 250 - 359
+    - Captain 160 - 249
+    - First Officer 80 - 159
+    - Flight Officer 40 - 79
+    - Junior Flight Officer 0 - 39
 ```
 
 ### 3.5 Challenges Page

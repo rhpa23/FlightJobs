@@ -1,5 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
+import { PilotLicenseExpense } from './pilot-license-expense.entity';
 
 @Entity('pilotlicenseexpensesuserdbmodels')
 export class PilotLicenseExpenseUser {
@@ -9,6 +10,10 @@ export class PilotLicenseExpenseUser {
   @ManyToOne(() => User)
   @JoinColumn({ name: 'User_Id' })
   user: User;
+
+  @ManyToOne(() => PilotLicenseExpense)
+  @JoinColumn({ name: 'PilotLicenseExpense_Id' })
+  pilotLicenseExpense: PilotLicenseExpense;
 
   @Column({ name: 'MaturityDate', type: 'datetime' })
   maturityDate: Date;
