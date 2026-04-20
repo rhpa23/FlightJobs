@@ -2,9 +2,10 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { logout } from '../../store/slices/authSlice';
-import { Bars3Icon, XMarkIcon, UserCircleIcon, ArrowRightOnRectangleIcon } from '@heroicons/react/24/outline';
+import { Bars3Icon, XMarkIcon, UserCircleIcon, ArrowRightOnRectangleIcon, BellIcon } from '@heroicons/react/24/outline';
 import { SocialLinks } from '../SocialLinks';
 import { PayPalDonation } from '../PayPalDonation';
+import { Tooltip } from '../ui/Tooltip';
 import { AVATARS } from '../../constants/avatars';
 
 interface HeaderProps {
@@ -16,9 +17,16 @@ export const Header: React.FC<HeaderProps> = ({ onToggleSidebar, sidebarOpen }) 
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state) => state.auth);
   const { myStats } = useAppSelector((state) => state.statistics);
+  const { licenses } = useAppSelector((state) => state.profile);
 
   const selectedAvatar = myStats?.logo ? parseInt(myStats.logo) : 1;
   const avatar = AVATARS.find((a) => a.id === selectedAvatar) || AVATARS[0];
+
+  // Check for overdue licenses
+  const overdueLicenses = licenses.expenses.filter(
+    (expense) => new Date(expense.maturityDate) < new Date()
+  );
+  const hasOverdueLicenses = overdueLicenses.length > 0;
 
   const handleLogout = () => {
     dispatch(logout());
@@ -68,6 +76,19 @@ export const Header: React.FC<HeaderProps> = ({ onToggleSidebar, sidebarOpen }) 
                   {user.userName || user.email || 'Pilot'}
                 </span>
               </div>
+              {/* License Alert Notification */}
+              {hasOverdueLicenses && (
+                <Link to="/profile" className="relative">
+                  <Tooltip content="You have overdue licenses - click to manage" position="bottom">
+                    <div className="relative">
+                      <BellIcon className="h-6 w-6 text-red-500 animate-pulse" />
+                      <div className="absolute -top-2 -right-2 bg-red-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
+                        {overdueLicenses.length}
+                      </div>
+                    </div>
+                  </Tooltip>
+                </Link>
+              )}
               <div className="relative group">
                 <button className="flex items-center space-x-2 text-gray-400 hover:text-white transition-colors">
                   <div
