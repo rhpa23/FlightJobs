@@ -41,6 +41,12 @@ export class ProfileController {
     return this.profileService.buyLicenseItem(req.user.userId, licenseItemId);
   }
 
+  @Post('licenses/:licenseExpenseId/buy-all')
+  @ApiOperation({ summary: 'Buy all license items for a specific license' })
+  buyAllLicenseItems(@Request() req, @Param('licenseExpenseId') licenseExpenseId: number) {
+    return this.profileService.buyAllLicenseItems(req.user.userId, licenseExpenseId);
+  }
+
   @Get('graduations')
   @ApiOperation({ summary: 'Get available pilot graduations' })
   getGraduations() {

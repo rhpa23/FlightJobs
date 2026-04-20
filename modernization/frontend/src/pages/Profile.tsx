@@ -31,6 +31,7 @@ import {
   fetchLicenses,
   fetchLicenseItems,
   purchaseLicenseItem,
+  buyAllLicenseItems,
   transferFunds,
   fetchGraduations,
   setSelectedLicenseExpense,
@@ -117,7 +118,6 @@ export const Profile: React.FC = () => {
   const [showGraduationModal, setShowGraduationModal] = useState(false);
   const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false);
   const [jobToDelete, setJobToDelete] = useState<{ id: number; date: string; departure: string; arrival: string } | null>(null);
-  const [selectedLicenseExpense, setSelectedLicenseExpenseLocal] = useState<number | null>(null);
   const [transferPercent, setTransferPercent] = useState<number>(10);
   const [filters, setFilters] = useState<LogbookFilters>({
     departure: '',
@@ -168,13 +168,6 @@ export const Profile: React.FC = () => {
       })
     );
   }, [dispatch, currentPage, pageSize, sortOrder, sortDirection, filters]);
-
-  // Fetch license items when expense is selected
-  useEffect(() => {
-    if (selectedLicenseExpense) {
-      dispatch(fetchLicenseItems(selectedLicenseExpense));
-    }
-  }, [dispatch, selectedLicenseExpense]);
 
   // Calculate transfer projections
   const transferProjections = useMemo(() => {
@@ -236,16 +229,28 @@ export const Profile: React.FC = () => {
     }
   };
 
-  // Handle purchase license item
-  const handlePurchaseLicenseItem = async (itemId: number) => {
-    const result = await dispatch(purchaseLicenseItem(itemId));
-    if (purchaseLicenseItem.fulfilled.match(result)) {
-      addToast('License item purchased successfully!', 'success');
+  // Handle buy all license items
+  const handleBuyAllLicenseItems = async () => {
+    if (!licenses.selectedExpense) return;
+
+    const result = await dispatch(buyAllLicenseItems(licenses.selectedExpense.pilotLicenseExpenseId));
+    if (buyAllLicenseItems.fulfilled.match(result)) {
+      addToast(`All license items purchased! Total: F$${result.payload.totalCost.toFixed(2)}`, 'success');
       // Refresh licenses to get updated state
       dispatch(fetchLicenses());
-      if (selectedLicenseExpense) {
-        dispatch(fetchLicenseItems(selectedLicenseExpense));
-      }
+      dispatch(fetchMyStats());
+    } else {
+      addToast('Failed to purchase license items', 'error');
+    }
+  };
+
+  // Handle license expense selection
+  const handleSelectLicenseExpense = async (expenseId: number) => {
+    const expense = licenses.expenses.find((e) => e.id === expenseId);
+    if (expense) {
+      dispatch(setSelectedLicenseExpense(expense));
+      // Use pilotLicenseExpenseId to fetch items (backend expects PilotLicenseExpense ID)
+      dispatch(fetchLicenseItems(expense.pilotLicenseExpenseId));
     }
   };
 
@@ -619,15 +624,15 @@ export const Profile: React.FC = () => {
         isOpen={showLicenseModal}
         onClose={() => setShowLicenseModal(false)}
         title="License Management"
-        size="2xl"
+        size="3xl"
       >
         <div className="space-y-4">
           <p className="text-gray-400 text-sm">
             Manage your pilot licenses and purchase required items before expiration.
           </p>
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* License Expenses List */}
-            <div className="lg:col-span-2">
+            <div className="lg:col-span-1">
               <h3 className="text-sm font-medium text-gray-400 uppercase tracking-wide mb-3">
                 License Requirements
               </h3>
@@ -640,9 +645,9 @@ export const Profile: React.FC = () => {
                     return (
                       <div
                         key={expense.id}
-                        onClick={() => setSelectedLicenseExpenseLocal(expense.id)}
+                        onClick={() => handleSelectLicenseExpense(expense.id)}
                         className={`p-3 rounded-lg cursor-pointer transition-colors ${
-                          selectedLicenseExpense === expense.id
+                          licenses.selectedExpense?.id === expense.id
                             ? 'bg-blue-600/20 border border-blue-500/50'
                             : 'bg-gray-700/50 hover:bg-gray-700 border border-gray-600'
                         }`}
@@ -659,7 +664,7 @@ export const Profile: React.FC = () => {
                             </span>
                           </div>
                           <span className={`text-sm ${isOverdue ? 'text-red-400' : 'text-gray-400'}`}>
-                            Due: {new Date(expense.maturityDate).toLocaleDateString()}
+                            Due: {new Date(expense.maturityDate).toLocaleDateString('en-US')}
                           </span>
                         </div>
                       </div>
@@ -677,49 +682,89 @@ export const Profile: React.FC = () => {
             {/* License Items */}
             <div>
               <h3 className="text-sm font-medium text-gray-400 uppercase tracking-wide mb-3">
-                {selectedLicenseExpense
-                  ? licenses.expenses.find((e) => e.id === selectedLicenseExpense)?.name
-                  : 'Select a License'}
+                {licenses.selectedExpense?.name || 'Select a License'}
               </h3>
               <div className="space-y-3 max-h-80 overflow-y-auto">
-                {!selectedLicenseExpense ? (
+                {!licenses.selectedExpense ? (
                   <p className="text-gray-400 text-sm">Select a license requirement to view items.</p>
                 ) : licenses.selectedExpense?.items?.length === 0 ? (
                   <p className="text-gray-400 text-sm">No items found for this license.</p>
                 ) : (
-                  licenses.selectedExpense?.items?.map((item) => (
-                    <div
-                      key={item.id}
-                      className="p-3 bg-gray-700/50 rounded-lg border border-gray-600"
-                    >
-                      <div className="flex items-start gap-3">
-                        <div className="w-16 h-16 bg-gray-600 rounded-lg flex items-center justify-center text-2xl flex-shrink-0">
-                          {item.image ? (
-                            <img src={item.image} alt={item.name} className="w-full h-full object-cover rounded-lg" />
-                          ) : (
-                            <ShieldCheckIcon className="w-8 h-8 text-gray-400" />
-                          )}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-white truncate">{item.name}</p>
-                          <p className="text-lg font-bold text-green-400">{formatCurrency(item.price)}</p>
-                          {item.isBought ? (
-                            <div className="flex items-center gap-1 text-green-400 text-xs">
-                              <CheckCircleIcon className="w-3 h-3" />
-                              Purchased
+                  <>
+                    {/* Buy All Button */}
+                    {(() => {
+                      const unboughtItems = licenses.selectedExpense.items.filter((i) => !i.isBought);
+                      const totalCost = unboughtItems.reduce((sum, item) => sum + item.price, 0);
+                      const allBought = unboughtItems.length === 0;
+                      const hasEnoughFunds = (myStats?.bankBalance || 0) >= totalCost;
+
+                      return (
+                        <div className="mb-4">
+                          {allBought ? (
+                            <div className="flex items-center gap-2 text-green-400 text-sm bg-green-500/10 p-3 rounded-lg">
+                              <CheckCircleIcon className="w-5 h-5" />
+                              <span>All items purchased!</span>
                             </div>
                           ) : (
-                            <button
-                              onClick={() => handlePurchaseLicenseItem(item.id)}
-                              className="mt-1 px-3 py-1 bg-blue-600 hover:bg-blue-500 text-white text-xs rounded transition-colors"
-                            >
-                              Buy
-                            </button>
+                            <div className="bg-gray-700/50 rounded-lg border border-gray-600 p-4">
+                              <div className="flex items-center justify-between mb-3">
+                                <span className="text-sm text-gray-300">
+                                  {unboughtItems.length} item(s) to purchase
+                                </span>
+                                <span className="text-lg font-bold text-green-400">
+                                  Total: {formatCurrency(totalCost)}
+                                </span>
+                              </div>
+                              <button
+                                onClick={handleBuyAllLicenseItems}
+                                disabled={!hasEnoughFunds}
+                                className={`w-full py-2 rounded-lg font-medium transition-colors ${
+                                  hasEnoughFunds
+                                    ? 'bg-blue-600 hover:bg-blue-500 text-white'
+                                    : 'bg-gray-600 text-gray-400 cursor-not-allowed'
+                                }`}
+                              >
+                                {hasEnoughFunds ? 'Buy All' : 'Insufficient Funds'}
+                              </button>
+                              {!hasEnoughFunds && (
+                                <p className="text-xs text-red-400 mt-2 text-center">
+                                  Required: {formatCurrency(totalCost)} | Available: {formatCurrency(myStats?.bankBalance || 0)}
+                                </p>
+                              )}
+                            </div>
                           )}
                         </div>
+                      );
+                    })()}
+
+                    {/* Items List */}
+                    {licenses.selectedExpense.items.map((item) => (
+                      <div
+                        key={item.id}
+                        className="p-3 bg-gray-700/50 rounded-lg border border-gray-600"
+                      >
+                        <div className="flex items-start gap-3">
+                          <div className="w-16 h-16 bg-gray-600 rounded-lg flex items-center justify-center text-2xl flex-shrink-0">
+                            {item.image ? (
+                              <img src={item.image} alt={item.name} className="w-full h-full object-cover rounded-lg" />
+                            ) : (
+                              <ShieldCheckIcon className="w-8 h-8 text-gray-400" />
+                            )}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-white truncate">{item.name}</p>
+                            <p className="text-lg font-bold text-green-400">{formatCurrency(item.price)}</p>
+                            {item.isBought && (
+                              <div className="flex items-center gap-1 text-green-400 text-xs">
+                                <CheckCircleIcon className="w-3 h-3" />
+                                Purchased
+                              </div>
+                            )}
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  ))
+                    ))}
+                  </>
                 )}
               </div>
             </div>

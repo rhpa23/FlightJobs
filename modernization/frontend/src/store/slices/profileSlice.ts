@@ -36,6 +36,7 @@ interface LicenseItem {
 // License expense type
 interface LicenseExpense {
   id: number;
+  pilotLicenseExpenseId: number;
   name: string;
   maturityDate: string;
   isOverdue: boolean;
@@ -136,6 +137,14 @@ export const purchaseLicenseItem = createAsyncThunk(
   }
 );
 
+export const buyAllLicenseItems = createAsyncThunk(
+  'profile/buyAllLicenseItems',
+  async (licenseExpenseId: number) => {
+    const response = await profileApi.buyAllLicenseItems(licenseExpenseId);
+    return response;
+  }
+);
+
 export const transferFunds = createAsyncThunk(
   'profile/transferFunds',
   async (percent: number) => {
@@ -220,7 +229,7 @@ const profileSlice = createSlice({
       // Fetch License Items
       .addCase(fetchLicenseItems.fulfilled, (state, action) => {
         const { licenseExpenseId, items } = action.payload;
-        const expense = state.licenses.expenses.find((e) => e.id === licenseExpenseId);
+        const expense = state.licenses.expenses.find((e) => e.pilotLicenseExpenseId === licenseExpenseId);
         if (expense) {
           expense.items = items;
         }
@@ -237,6 +246,16 @@ const profileSlice = createSlice({
           if (itemIndex !== -1) {
             state.licenses.selectedExpense.items[itemIndex].isBought = true;
           }
+        }
+      })
+      // Buy All License Items
+      .addCase(buyAllLicenseItems.fulfilled, (state, action) => {
+        state.currentBankBalance = action.payload.newBalance;
+        // Mark all items as bought
+        if (state.licenses.selectedExpense) {
+          state.licenses.selectedExpense.items.forEach((item) => {
+            item.isBought = true;
+          });
         }
       })
       // Fetch Graduations

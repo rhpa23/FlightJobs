@@ -227,6 +227,7 @@ export class ProfileService {
 
         return {
           id: userLicense.id,
+          pilotLicenseExpenseId: userLicense.pilotLicenseExpense.id,
           name: userLicense.pilotLicenseExpense.name,
           maturityDate: userLicense.maturityDate,
           isOverdue: new Date(userLicense.maturityDate) < new Date(),
@@ -327,6 +328,84 @@ export class ProfileService {
     }
 
     return { success: true, itemId: licenseItemId };
+  }
+
+  /**
+   * Compra todos os itens não comprados de uma licença específica
+   */
+  async buyAllLicenseItems(userId: string, licenseExpenseId: number): Promise<any> {
+    // Buscar todos os itens do usuário
+    const allItems = await this.licenseItemUserRepository.find({
+      where: { user: { id: userId } },
+      relations: ['pilotLicenseItem', 'pilotLicenseItem.pilotLicenseExpense'],
+    });
+
+    // Filtrar apenas os itens desta licença que ainda não foram comprados
+    const licenseItems = allItems.filter(
+      (item) =>
+        item.pilotLicenseItem?.pilotLicenseExpense?.id === licenseExpenseId &&
+        !item.isBought
+    );
+
+    if (licenseItems.length === 0) {
+      throw new Error('No items to buy for this license');
+    }
+
+    // Calcular o custo total
+    const totalCost = licenseItems.reduce(
+      (sum, item) => sum + item.pilotLicenseItem.price,
+      0
+    );
+
+    // Verificar saldo do usuário
+    const statistics = await this.statisticsRepository.findOne({
+      where: { user: { id: userId } },
+    });
+
+    if (!statistics) {
+      throw new Error('User statistics not found');
+    }
+
+    if (statistics.bankBalance < totalCost) {
+      throw new Error(`Insufficient funds. Required: F$${totalCost.toFixed(2)}, Available: F$${statistics.bankBalance.toFixed(2)}`);
+    }
+
+    // Deduzir o saldo
+    statistics.bankBalance -= totalCost;
+    await this.statisticsRepository.save(statistics);
+
+    // Marcar todos os itens como comprados
+    for (const item of licenseItems) {
+      item.isBought = true;
+      await this.licenseItemUserRepository.save(item);
+    }
+
+    // Atualizar a data de vencimento da licença
+    const userLicense = await this.pilotLicenseExpenseUserRepository.findOne({
+      where: {
+        user: { id: userId },
+        pilotLicenseExpense: { id: licenseExpenseId },
+      },
+    });
+
+    if (userLicense) {
+      const expense = await this.pilotLicenseExpenseRepository.findOne({
+        where: { id: licenseExpenseId },
+      });
+
+      if (expense) {
+        userLicense.maturityDate = new Date(Date.now() + expense.daysMaturity * 24 * 60 * 60 * 1000);
+        userLicense.overdueProcessed = false;
+        await this.pilotLicenseExpenseUserRepository.save(userLicense);
+      }
+    }
+
+    return {
+      success: true,
+      itemsBought: licenseItems.length,
+      totalCost,
+      newBalance: statistics.bankBalance,
+    };
   }
 
   /**

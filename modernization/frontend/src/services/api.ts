@@ -238,6 +238,9 @@ export const profileApi = {
   buyLicenseItem: (licenseItemId: number) =>
     api.post(`/profile/licenses/items/${licenseItemId}/buy`).then((res) => res.data),
 
+  buyAllLicenseItems: (licenseExpenseId: number) =>
+    api.post(`/profile/licenses/${licenseExpenseId}/buy-all`).then((res) => res.data),
+
   pilotTransfer: (percent: number) =>
     api.post('/profile/transfer', { percent }).then((res) => res.data),
 
