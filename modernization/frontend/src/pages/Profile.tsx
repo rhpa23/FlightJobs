@@ -95,6 +95,19 @@ const getCurrentGraduation = (flightHours: number) => {
   return GRADUATIONS[GRADUATIONS.length - 1];
 };
 
+// Get license item icon based on index
+const getLicenseItemIcon = (index: number) => {
+  const icons = [
+    BookOpenIcon,
+    AcademicCapIcon,
+    ShieldCheckIcon,
+    CubeIcon,
+    ClockIcon,
+    CheckCircleIcon,
+  ];
+  return icons[index % icons.length];
+};
+
 interface LogbookFilters {
   departure: string;
   arrival: string;
@@ -738,32 +751,31 @@ export const Profile: React.FC = () => {
                     })()}
 
                     {/* Items List */}
-                    {licenses.selectedExpense.items.map((item) => (
-                      <div
-                        key={item.id}
-                        className="p-3 bg-gray-700/50 rounded-lg border border-gray-600"
-                      >
-                        <div className="flex items-start gap-3">
-                          <div className="w-16 h-16 bg-gray-600 rounded-lg flex items-center justify-center text-2xl flex-shrink-0">
-                            {item.image ? (
-                              <img src={item.image} alt={item.name} className="w-full h-full object-cover rounded-lg" />
-                            ) : (
-                              <ShieldCheckIcon className="w-8 h-8 text-gray-400" />
-                            )}
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-white truncate">{item.name}</p>
-                            <p className="text-lg font-bold text-green-400">{formatCurrency(item.price)}</p>
-                            {item.isBought && (
-                              <div className="flex items-center gap-1 text-green-400 text-xs">
-                                <CheckCircleIcon className="w-3 h-3" />
-                                Purchased
-                              </div>
-                            )}
+                    {licenses.selectedExpense.items.map((item, index) => {
+                      const Icon = getLicenseItemIcon(index);
+                      return (
+                        <div
+                          key={item.id}
+                          className="p-3 bg-gray-700/50 rounded-lg border border-gray-600"
+                        >
+                          <div className="flex items-start gap-3">
+                            <div className="w-16 h-16 bg-gray-600 rounded-lg flex items-center justify-center text-2xl flex-shrink-0">
+                              <Icon className="w-8 h-8 text-blue-400" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-medium text-white truncate">{item.name}</p>
+                              <p className="text-lg font-bold text-green-400">{formatCurrency(item.price)}</p>
+                              {item.isBought && (
+                                <div className="flex items-center gap-1 text-green-400 text-xs">
+                                  <CheckCircleIcon className="w-3 h-3" />
+                                  Purchased
+                                </div>
+                              )}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </>
                 )}
               </div>
