@@ -20,4 +20,7 @@ export class PilotLicenseExpenseUser {
 
   @Column({ name: 'OverdueProcessed', default: false })
   overdueProcessed: boolean;
+
+  @Column({ name: 'OverdueProcessed_old', nullable: true, default: false })
+  overdueProcessedOld: boolean;
 }

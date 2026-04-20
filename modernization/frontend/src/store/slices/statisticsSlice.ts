@@ -14,6 +14,7 @@ interface Statistics {
   weightUnit?: string;
   user?: any;
   airline?: any;
+  logo?: string;
 }
 
 interface LeaderboardEntry {

@@ -2,12 +2,14 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Job } from '../jobs/entities/job.entity';
+import { JobAirline } from '../job-airlines/entities/job-airline.entity';
 import { GetLogbookDto, LogbookEntry, LogbookResponse } from './dto/logbook.dto';
 import { PilotLicenseExpense } from '../licenses/entities/pilot-license-expense.entity';
 import { PilotLicenseExpenseUser } from '../licenses/entities/pilot-license-expense-user.entity';
 import { PilotLicenseItem } from '../licenses/entities/pilot-license-item.entity';
 import { LicenseItemUser } from '../licenses/entities/license-item-user.entity';
 import { User } from '../users/entities/user.entity';
+import { Statistics } from '../statistics/entities/statistics.entity';
 
 @Injectable()
 export class ProfileService {
@@ -16,6 +18,8 @@ export class ProfileService {
   constructor(
     @InjectRepository(Job)
     private jobsRepository: Repository<Job>,
+    @InjectRepository(JobAirline)
+    private jobAirlineRepository: Repository<JobAirline>,
     @InjectRepository(PilotLicenseExpense)
     private pilotLicenseExpenseRepository: Repository<PilotLicenseExpense>,
     @InjectRepository(PilotLicenseExpenseUser)
@@ -26,6 +30,8 @@ export class ProfileService {
     private licenseItemUserRepository: Repository<LicenseItemUser>,
     @InjectRepository(User)
     private usersRepository: Repository<User>,
+    @InjectRepository(Statistics)
+    private statisticsRepository: Repository<Statistics>,
   ) {}
 
   /**
@@ -149,18 +155,26 @@ export class ProfileService {
   async deleteLogbookJob(userId: string, jobId: number): Promise<void> {
     const job = await this.jobsRepository.findOne({
       where: { id: jobId },
-      relations: ['user'],
     });
 
     if (!job) {
       throw new Error('Job not found');
     }
 
-    if (job.user?.id !== userId) {
+    // Verificar se o job pertence ao usuário
+    const userJob = await this.jobsRepository.findOne({
+      where: { id: jobId, user: { id: userId } },
+    });
+
+    if (!userJob) {
       throw new Error('You can only delete your own jobs');
     }
 
-    await this.jobsRepository.remove(job);
+    // Deletar registros de JobAirline relacionados antes de deletar o Job
+    await this.jobAirlineRepository.delete({ job: { id: jobId } });
+
+    // Deletar o Job
+    await this.jobsRepository.delete({ id: jobId });
   }
 
   /**
@@ -354,6 +368,8 @@ export class ProfileService {
           user,
           pilotLicenseExpense: expense,
           maturityDate: new Date(Date.now() + expense.daysMaturity * 24 * 60 * 60 * 1000),
+          overdueProcessed: false,
+          overdueProcessedOld: false,
         });
         await this.pilotLicenseExpenseUserRepository.save(userExpense);
       }
@@ -382,5 +398,33 @@ export class ProfileService {
       { name: 'Flight Officer', flightHours: '40 - 79' },
       { name: 'Junior Flight Officer', flightHours: '0 - 39' },
     ];
+  }
+
+  /**
+   * Atualiza o avatar do usuário
+   * @param userId ID do usuário
+   * @param avatarId ID do avatar escolhido
+   */
+  async updateAvatar(userId: string, avatarId: number): Promise<void> {
+    const statistics = await this.statisticsRepository.findOne({
+      where: { user: { id: userId } },
+    });
+
+    if (statistics) {
+      statistics.logo = avatarId.toString();
+      await this.statisticsRepository.save(statistics);
+    } else {
+      // Criar statistics se não existir
+      const user = await this.usersRepository.findOne({ where: { id: userId } });
+      if (user) {
+        const newStatistics = this.statisticsRepository.create({
+          user,
+          logo: avatarId.toString(),
+          bankBalance: 0,
+          pilotScore: 0,
+        });
+        await this.statisticsRepository.save(newStatistics);
+      }
+    }
   }
 }

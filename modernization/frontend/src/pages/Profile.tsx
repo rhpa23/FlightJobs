@@ -11,7 +11,6 @@ import {
   ChevronDownIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
-  FilmIcon,
   TrashIcon,
   BanknotesIcon,
   AcademicCapIcon,
@@ -36,30 +35,18 @@ import {
   fetchGraduations,
   setSelectedLicenseExpense,
 } from '../store/slices/profileSlice';
+import { profileApi } from '../services/api';
 import { Modal } from '../components/ui/Modal';
 import { Tooltip } from '../components/ui/Tooltip';
 import { ToastContainer, ToastMsg } from '../components/Toast';
-
-// Predefined avatars (using heroicons as placeholder avatars)
-const AVATARS = [
-  { id: 1, name: 'Pilot', icon: '✈️', color: 'from-blue-500 to-blue-700' },
-  { id: 2, name: 'Captain', icon: '👨‍✈️', color: 'from-green-500 to-green-700' },
-  { id: 3, name: 'Commander', icon: '🎖️', color: 'from-yellow-500 to-yellow-700' },
-  { id: 4, name: 'Officer', icon: '🛡️', color: 'from-purple-500 to-purple-700' },
-  { id: 5, name: 'Hero', icon: '⭐', color: 'from-red-500 to-red-700' },
-  { id: 6, name: 'Ace', icon: '🏆', color: 'from-orange-500 to-orange-700' },
-  { id: 7, name: 'Eagle', icon: '🦅', color: 'from-teal-500 to-teal-700' },
-  { id: 8, name: 'Falcon', icon: '🦇', color: 'from-indigo-500 to-indigo-700' },
-  { id: 9, name: 'Hawk', icon: '🔥', color: 'from-pink-500 to-pink-700' },
-  { id: 10, name: 'Phoenix', icon: '🌟', color: 'from-cyan-500 to-cyan-700' },
-];
+import { AVATARS } from '../constants/avatars';
 
 // Graduation data (from legacy system)
 const GRADUATIONS = [
   { name: 'ATP Senior Commander', minHours: 5000, maxHours: null },
   { name: 'ATP Commander', minHours: 4000, maxHours: 4999 },
-  { name: 'ATP Senior Captain', minHours: 3500, maxHours: 3999 },
-  { name: 'ATP Captain', minHours: 3000, maxHours: 3499 },
+  { name: 'ATP Senior Captain', minHours: 3000, maxHours: 3999 },
+  { name: 'ATP Captain', minHours: 2000, maxHours: 2999 },
   { name: 'ATP First Officer', minHours: 1500, maxHours: 1999 },
   { name: 'Commercial Senior Commander', minHours: 1000, maxHours: 1499 },
   { name: 'Commercial Commander', minHours: 750, maxHours: 999 },
@@ -80,12 +67,18 @@ const formatCurrency = (value: number): string => {
   return `${neg ? '-' : ''}F$${absValue.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`;
 };
 
-// Format hours from string like "123h 45m" to number
+// Format hours from string like "123h 45m" or "123:45" to number
 const parseFlightHours = (timeStr: string): number => {
   if (!timeStr) return 0;
-  const match = timeStr.match(/(\d+)h\s*(\d+)?m?/);
-  if (match) {
-    return parseInt(match[1]) + (parseInt(match[2] || '0') / 60);
+  // Try format "123:45" (HH:MM from backend)
+  const matchHHMM = timeStr.match(/(\d+):(\d+)/);
+  if (matchHHMM) {
+    return parseInt(matchHHMM[1]) + (parseInt(matchHHMM[2]) / 60);
+  }
+  // Try format "123h 45m"
+  const matchHM = timeStr.match(/(\d+)h\s*(\d+)?m?/);
+  if (matchHM) {
+    return parseInt(matchHM[1]) + (parseInt(matchHM[2] || '0') / 60);
   }
   return 0;
 };
@@ -114,14 +107,16 @@ export const Profile: React.FC = () => {
   const { logbook, licenses, graduations, currentBankBalance, isLoading } = useAppSelector((state) => state.profile);
 
   // Local state
-  const [selectedAvatar, setSelectedAvatar] = useState<number>(1);
+  const avatarId = myStats?.logo ? parseInt(myStats.logo) : 1;
+  const validAvatarId = avatarId >= 1 && avatarId <= AVATARS.length ? avatarId : 1;
+  const [selectedAvatar, setSelectedAvatar] = useState<number>(validAvatarId);
   const [showAvatarModal, setShowAvatarModal] = useState(false);
   const [showFilterModal, setShowFilterModal] = useState(false);
-  const [showVideoModal, setShowVideoModal] = useState(false);
   const [showLicenseModal, setShowLicenseModal] = useState(false);
   const [showTransferModal, setShowTransferModal] = useState(false);
   const [showGraduationModal, setShowGraduationModal] = useState(false);
-  const [selectedJobVideo, setSelectedJobVideo] = useState<number | null>(null);
+  const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false);
+  const [jobToDelete, setJobToDelete] = useState<{ id: number; date: string; departure: string; arrival: string } | null>(null);
   const [selectedLicenseExpense, setSelectedLicenseExpenseLocal] = useState<number | null>(null);
   const [transferPercent, setTransferPercent] = useState<number>(10);
   const [filters, setFilters] = useState<LogbookFilters>({
@@ -150,6 +145,15 @@ export const Profile: React.FC = () => {
     dispatch(fetchLicenses());
     dispatch(fetchGraduations());
   }, [dispatch]);
+
+  // Update avatar when myStats changes
+  useEffect(() => {
+    if (myStats?.logo) {
+      const avatarId = parseInt(myStats.logo);
+      const validAvatarId = avatarId >= 1 && avatarId <= AVATARS.length ? avatarId : 1;
+      setSelectedAvatar(validAvatarId);
+    }
+  }, [myStats]);
 
   // Fetch logbook when filters or page changes
   useEffect(() => {
@@ -216,10 +220,20 @@ export const Profile: React.FC = () => {
   };
 
   // Handle delete job
-  const handleDeleteJob = async (jobId: number) => {
-    await dispatch(deleteLogbookJob(jobId));
-    addToast('Flight removed from logbook', 'success');
-    dispatch(fetchLogbook({ pageNumber: currentPage, sortOrder }));
+  const handleDeleteJob = async (jobId: number, date: string, departure: string, arrival: string) => {
+    setJobToDelete({ id: jobId, date, departure, arrival });
+    setShowDeleteConfirmModal(true);
+  };
+
+  // Confirm delete job
+  const confirmDeleteJob = async () => {
+    if (jobToDelete) {
+      await dispatch(deleteLogbookJob(jobToDelete.id));
+      addToast('Flight removed from logbook', 'success');
+      dispatch(fetchLogbook({ pageNumber: currentPage, sortOrder }));
+      setShowDeleteConfirmModal(false);
+      setJobToDelete(null);
+    }
   };
 
   // Handle purchase license item
@@ -247,9 +261,15 @@ export const Profile: React.FC = () => {
 
   // Handle avatar selection
   const handleSelectAvatar = async (avatarId: number) => {
-    setSelectedAvatar(avatarId);
-    setShowAvatarModal(false);
-    addToast('Avatar updated successfully!', 'success');
+    try {
+      await profileApi.updateAvatar(avatarId);
+      setSelectedAvatar(avatarId);
+      setShowAvatarModal(false);
+      addToast('Avatar updated successfully!', 'success');
+      dispatch(fetchMyStats());
+    } catch (error) {
+      addToast('Failed to update avatar', 'error');
+    }
   };
 
   // Remove filters
@@ -281,7 +301,10 @@ export const Profile: React.FC = () => {
               >
                 {AVATARS[selectedAvatar - 1].icon}
               </div>
-              <div className="absolute inset-0 rounded-full bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer">
+              <div
+                className="absolute inset-0 rounded-full bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer"
+                onClick={() => setShowAvatarModal(true)}
+              >
                 <CameraIcon className="w-6 h-6 text-white" />
               </div>
             </div>
@@ -327,9 +350,9 @@ export const Profile: React.FC = () => {
               </p>
             </div>
             <div className="text-center">
-              <p className="text-xs font-medium text-gray-400 uppercase tracking-wide">Flights</p>
+              <p className="text-xs font-medium text-gray-400 uppercase tracking-wide">Flight Hours</p>
               <p className="text-xl font-bold text-white">
-                {myStats?.numberFlights?.toLocaleString() || '0'}
+                {myStats?.flightTimeTotal || '0'}
               </p>
             </div>
           </div>
@@ -534,17 +557,7 @@ export const Profile: React.FC = () => {
                     <td className="px-4 py-3">
                       <div className="flex items-center justify-center gap-2">
                         <button
-                          onClick={() => {
-                            setSelectedJobVideo(entry.id);
-                            setShowVideoModal(true);
-                          }}
-                          className="p-1.5 text-gray-400 hover:text-blue-400 hover:bg-blue-500/10 rounded transition-colors"
-                          title="View video"
-                        >
-                          <FilmIcon className="w-4 h-4" />
-                        </button>
-                        <button
-                          onClick={() => handleDeleteJob(entry.id)}
+                          onClick={() => handleDeleteJob(entry.id, new Date(entry.endTime).toLocaleDateString(), entry.departureICAO, entry.arrivalICAO)}
                           className="p-1.5 text-gray-400 hover:text-red-400 hover:bg-red-500/10 rounded transition-colors"
                           title="Remove from logbook"
                         >
@@ -816,53 +829,6 @@ export const Profile: React.FC = () => {
         </div>
       </Modal>
 
-      {/* Video Modal */}
-      <Modal
-        isOpen={showVideoModal}
-        onClose={() => {
-          setShowVideoModal(false);
-          setSelectedJobVideo(null);
-        }}
-        title="Flight Video"
-        size="xl"
-      >
-        <div className="space-y-4">
-          <p className="text-gray-400 text-sm">
-            Add a video link from your flight to share with your airline.
-          </p>
-          <div>
-            <label className="block text-sm font-medium text-gray-400 mb-1">Video URL</label>
-            <input
-              type="url"
-              className="w-full px-3 py-2 bg-gray-700 text-white rounded-lg border border-gray-600 focus:border-blue-500 focus:outline-none"
-              placeholder="https://www.youtube.com/watch?v=..."
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-400 mb-1">Description</label>
-            <textarea
-              className="w-full px-3 py-2 bg-gray-700 text-white rounded-lg border border-gray-600 focus:border-blue-500 focus:outline-none"
-              rows={3}
-              placeholder="Describe your flight..."
-            />
-          </div>
-          <div className="flex justify-end gap-3">
-            <button
-              onClick={() => {
-                setShowVideoModal(false);
-                setSelectedJobVideo(null);
-              }}
-              className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors"
-            >
-              Close
-            </button>
-            <button className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg transition-colors">
-              Save
-            </button>
-          </div>
-        </div>
-      </Modal>
-
       {/* Transfer Modal */}
       <Modal
         isOpen={showTransferModal}
@@ -989,6 +955,56 @@ export const Profile: React.FC = () => {
               </div>
             );
           })}
+        </div>
+      </Modal>
+
+      {/* Delete Confirmation Modal */}
+      <Modal
+        isOpen={showDeleteConfirmModal}
+        onClose={() => {
+          setShowDeleteConfirmModal(false);
+          setJobToDelete(null);
+        }}
+        title="Confirm Deletion"
+        size="md"
+        footer={
+          <div className="flex items-center justify-end gap-3">
+            <button
+              onClick={() => {
+                setShowDeleteConfirmModal(false);
+                setJobToDelete(null);
+              }}
+              className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={confirmDeleteJob}
+              className="px-4 py-2 bg-red-600 hover:bg-red-500 text-white rounded-lg transition-colors"
+            >
+              Delete
+            </button>
+          </div>
+        }
+      >
+        <div className="space-y-4">
+          <p className="text-gray-300">
+            Are you sure you want to remove this flight from your logbook? This action cannot be undone.
+          </p>
+          {jobToDelete && (
+            <div className="p-4 bg-gray-700/50 rounded-lg border border-gray-600">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-sm text-gray-400">Date</p>
+                  <p className="text-white font-medium">{jobToDelete.date}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-400">Route</p>
+                  <p className="text-white font-medium">{jobToDelete.departure} → {jobToDelete.arrival}</p>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </Modal>
 

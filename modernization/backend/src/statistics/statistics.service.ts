@@ -55,6 +55,7 @@ export class StatisticsService {
         payloadTotal: totalPayload.toString(),
         weightUnit: 'kg',
         customPlaneCapacity: null,
+        logo: null,
       };
     }
     return {
@@ -73,6 +74,7 @@ export class StatisticsService {
         cargoCapacity: stats.customPlaneCapacity.cargoCapacity,
         imageUrl: stats.customPlaneCapacity.imageUrl,
       } : null,
+      logo: stats.logo,
     };
   }
 

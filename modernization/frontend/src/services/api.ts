@@ -244,8 +244,8 @@ export const profileApi = {
   getGraduations: () =>
     api.get('/profile/graduations').then((res) => res.data),
 
-  updateAvatar: (avatarIndex: number) =>
-    api.post('/profile/avatar', { avatarIndex }).then((res) => res.data),
+  updateAvatar: (avatarId: number) =>
+    api.put('/profile/avatar', { avatarId }).then((res) => res.data),
 };
 
 export const capacityApi = {

@@ -1,4 +1,4 @@
-import { Controller, Get, Delete, Post, Param, Query, Body, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Delete, Post, Put, Param, Query, Body, UseGuards, Request } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { ProfileService } from './profile.service';
 import { GetLogbookDto } from './dto/logbook.dto';
@@ -45,5 +45,11 @@ export class ProfileController {
   @ApiOperation({ summary: 'Get available pilot graduations' })
   getGraduations() {
     return this.profileService.getGraduations();
+  }
+
+  @Put('avatar')
+  @ApiOperation({ summary: 'Update user avatar' })
+  updateAvatar(@Request() req, @Body() body: { avatarId: number }) {
+    return this.profileService.updateAvatar(req.user.userId, body.avatarId);
   }
 }

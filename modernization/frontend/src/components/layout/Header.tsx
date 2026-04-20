@@ -5,6 +5,7 @@ import { logout } from '../../store/slices/authSlice';
 import { Bars3Icon, XMarkIcon, UserCircleIcon, ArrowRightOnRectangleIcon } from '@heroicons/react/24/outline';
 import { SocialLinks } from '../SocialLinks';
 import { PayPalDonation } from '../PayPalDonation';
+import { AVATARS } from '../../constants/avatars';
 
 interface HeaderProps {
   onToggleSidebar: () => void;
@@ -14,6 +15,10 @@ interface HeaderProps {
 export const Header: React.FC<HeaderProps> = ({ onToggleSidebar, sidebarOpen }) => {
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state) => state.auth);
+  const { myStats } = useAppSelector((state) => state.statistics);
+
+  const selectedAvatar = myStats?.logo ? parseInt(myStats.logo) : 1;
+  const avatar = AVATARS.find((a) => a.id === selectedAvatar) || AVATARS[0];
 
   const handleLogout = () => {
     dispatch(logout());
@@ -65,7 +70,11 @@ export const Header: React.FC<HeaderProps> = ({ onToggleSidebar, sidebarOpen }) 
               </div>
               <div className="relative group">
                 <button className="flex items-center space-x-2 text-gray-400 hover:text-white transition-colors">
-                  <UserCircleIcon className="h-8 w-8" />
+                  <div
+                    className={`w-8 h-8 rounded-full bg-gradient-to-br ${avatar.color} flex items-center justify-center text-lg`}
+                  >
+                    {avatar.icon}
+                  </div>
                 </button>
                 <div className="absolute right-0 top-6 mt-2 w-48 bg-gray-800 border border-gray-700 rounded-lg shadow-xl py-1 hidden group-hover:block z-50">
                   <div className="px-4 py-2 border-b border-gray-700">

@@ -15,6 +15,6 @@ export class LicenseItemUser {
   @JoinColumn({ name: 'PilotLicenseItem_Id' })
   pilotLicenseItem: PilotLicenseItem;
 
-  @Column({ name: 'IsBought', default: false })
+  @Column({ name: 'IsBought', default: false, nullable: false })
   isBought: boolean;
 }
