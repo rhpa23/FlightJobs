@@ -6,6 +6,8 @@ import { useAppDispatch, useAppSelector } from './store/hooks';
 import { fetchProfile } from './store/slices/authSlice';
 import { Login } from './pages/Login';
 import { Register } from './pages/Register';
+import { ForgotPassword } from './pages/ForgotPassword';
+import { ResetPassword } from './pages/ResetPassword';
 import { Dashboard } from './pages/Dashboard';
 import { SearchJobs } from './pages/SearchJobs';
 import { Airlines } from './pages/Airlines';
@@ -32,7 +34,9 @@ const AppContent: React.FC = () => {
           {/* Public routes */}
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+
           {/* Protected routes */}
           <Route
             path="/"

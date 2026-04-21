@@ -194,9 +194,9 @@ export class MailService implements OnModuleInit {
    * Add email to queue for background processing
    */
   async addToQueue(options: SendMailOptions): Promise<void> {
-    const sendEnabled = this.configService.get<boolean>('MAIL_SEND_ENABLED', true);
-    const useQueue = this.configService.get<boolean>('MAIL_USE_QUEUE', true);
-    
+    const sendEnabled = this.configService.get<string>('MAIL_SEND_ENABLED', 'true') !== 'false';
+    const useQueue = this.configService.get<string>('MAIL_USE_QUEUE', 'true') !== 'false';
+
     if (!sendEnabled) {
       this.logger.log(`Email sending disabled. Would send to: ${options.to}`);
       return;
