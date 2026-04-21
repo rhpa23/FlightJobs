@@ -2,6 +2,7 @@ import { Controller, Get, Delete, Post, Put, Param, Query, Body, UseGuards, Requ
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { ProfileService } from './profile.service';
 import { GetLogbookDto } from './dto/logbook.dto';
+import { TransferFundsDto } from './dto/transfer.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @ApiTags('profile')
@@ -57,5 +58,11 @@ export class ProfileController {
   @ApiOperation({ summary: 'Update user avatar' })
   updateAvatar(@Request() req, @Body() body: { avatarId: number }) {
     return this.profileService.updateAvatar(req.user.userId, body.avatarId);
+  }
+
+  @Post('transfer')
+  @ApiOperation({ summary: 'Transfer funds from pilot to airline' })
+  transferFunds(@Request() req, @Body() dto: TransferFundsDto) {
+    return this.profileService.transferFunds(req.user.userId, dto);
   }
 }

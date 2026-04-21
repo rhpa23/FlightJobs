@@ -10,6 +10,7 @@ import { PilotLicenseItem } from '../licenses/entities/pilot-license-item.entity
 import { LicenseItemUser } from '../licenses/entities/license-item-user.entity';
 import { User } from '../users/entities/user.entity';
 import { Statistics } from '../statistics/entities/statistics.entity';
+import { Airline } from '../airlines/entities/airline.entity';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { Statistics } from '../statistics/entities/statistics.entity';
       LicenseItemUser,
       User,
       Statistics,
+      Airline,
     ]),
   ],
   controllers: [ProfileController],
