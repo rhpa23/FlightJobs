@@ -106,7 +106,7 @@ export const Header: React.FC<HeaderProps> = ({ onToggleSidebar, sidebarOpen }) 
               {/* Airline Debt Notification */}
               {hasAirlineDebt && (
                 <Link to="/airlines" className="relative">
-                  <Tooltip content={`Your airline has debt: F$ ${userAirline.bankDebt?.toLocaleString()} - click to manage`} position="bottom">
+                  <Tooltip content={`Your airline has debt: F$ ${userAirline.bankDebt?.toLocaleString()} - click to manage`} position="left">
                     <div className="relative">
                       <ExclamationTriangleIcon className="h-6 w-6 text-orange-500 animate-pulse" />
                       <div className="absolute -top-2 -right-2 bg-orange-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">

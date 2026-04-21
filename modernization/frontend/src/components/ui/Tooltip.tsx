@@ -33,7 +33,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
       
       {isVisible && (
         <span
-          className={`absolute ${positionClasses[position]} px-3 py-1.5 bg-gray-900 text-white text-xs rounded-lg opacity-0 animate-fade-in pointer-events-none z-50 border border-gray-700 shadow-lg max-w-xs`}
+          className={`tooltip-content absolute ${positionClasses[position]} px-3 py-1.5 bg-gray-900 text-white text-xs rounded-lg opacity-0 pointer-events-none z-50 border border-gray-700 shadow-lg whitespace-normal break-words leading-tight`}
           style={{ animation: 'fadeIn 0.15s ease-in-out forwards' }}
         >
           {content}

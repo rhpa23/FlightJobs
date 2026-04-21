@@ -285,8 +285,8 @@ export const Airlines: React.FC = () => {
       addToast('No debt to pay.', 'error');
       return;
     }
-    if (amount > (myStats?.bankBalance ?? 0)) {
-      addToast('You don\'t have enough bank balance.', 'error');
+    if (amount > (userAirline?.bankBalance ?? 0)) {
+      addToast('Airline doesn\'t have enough bank balance.', 'error');
       return;
     }
     setIsSubmitting(true);
@@ -1041,15 +1041,15 @@ export const Airlines: React.FC = () => {
                 </p>
               </div>
               <div>
-                <span className="text-gray-400">Your Balance:</span>
+                <span className="text-gray-400">Airline Balance:</span>
                 <p className="text-green-400 font-medium">
-                  F$ {(myStats?.bankBalance ?? 0).toLocaleString()}
+                  F$ {(userAirline?.bankBalance ?? 0).toLocaleString()}
                 </p>
               </div>
               <div>
                 <span className="text-gray-400">Balance After Payment:</span>
                 <p className="text-white font-medium">
-                  F$ {((myStats?.bankBalance ?? 0) - (userAirline?.bankDebt ?? 0)).toLocaleString()}
+                  F$ {((userAirline?.bankBalance ?? 0) - (userAirline?.bankDebt ?? 0)).toLocaleString()}
                 </p>
               </div>
             </div>
@@ -1066,7 +1066,7 @@ export const Airlines: React.FC = () => {
               className="w-full px-3 py-2 border border-gray-600 rounded-lg bg-gray-600 text-white cursor-not-allowed"
             />
             <p className="text-xs text-gray-500 mt-1">
-              Full debt amount will be deducted from airline balance
+              Full debt amount will be deducted from the airline's bank balance
             </p>
           </div>
         </div>

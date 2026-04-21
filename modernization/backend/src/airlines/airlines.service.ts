@@ -236,17 +236,16 @@ export class AirlinesService {
       throw new HttpException('No debt to pay', HttpStatus.BAD_REQUEST);
     }
 
-    // Check if user has sufficient balance
-    if (statistics.bankBalance < airline.debtValue) {
-      throw new HttpException('Insufficient balance to pay debt', HttpStatus.BAD_REQUEST);
+    // Check if airline has sufficient balance
+    if (airline.bankBalance < airline.debtValue) {
+      throw new HttpException('Airline doesn\'t have enough bank balance to pay debt', HttpStatus.BAD_REQUEST);
     }
 
-    // Pay debt
-    statistics.bankBalance = statistics.bankBalance - airline.debtValue;
+    // Pay debt - deduct from airline bank balance
+    airline.bankBalance = airline.bankBalance - airline.debtValue;
     airline.debtValue = 0;
     airline.debtMaturityDate = new Date();
 
-    await this.statisticsRepository.save(statistics);
     await this.airlinesRepository.save(airline);
 
     return true;
@@ -560,7 +559,7 @@ export class AirlinesService {
     // Return enriched airline data
     return {
       ...airline,
-      bankDebt: airline.debtValue,
+      bankDebt: airline.debtValue > 0 ? airline.debtValue : null,
       fboCount: fboCount,
       alowEdit: isOwner,
       alowExit: !isOwner

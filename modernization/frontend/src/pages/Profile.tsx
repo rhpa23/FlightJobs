@@ -927,7 +927,7 @@ export const Profile: React.FC = () => {
               <div>
                 <p className="text-sm text-gray-400">
                   Bank Costs & Tax (15%)
-                  <Tooltip content="A 15% tax is applied on transfers to the airline" position="top" />
+                  <Tooltip content="A 15% tax is applied on transfers to the airline" position="left" />
                 </p>
                 <p className="text-lg font-semibold text-red-400">
                   {formatCurrency(transferProjections.tax)}

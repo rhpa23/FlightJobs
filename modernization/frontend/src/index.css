@@ -138,3 +138,9 @@ input[type='range']::-moz-range-thumb {
 ::-webkit-scrollbar-thumb:hover {
   background: #4b5563;
 }
+
+/* ── Tooltip custom styles ───────────────────────────────────────────────── */
+.tooltip-content {
+  width: max-content !important;
+  max-width: 250px !important;
+}
