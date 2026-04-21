@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { logout } from '../../store/slices/authSlice';
-import { Bars3Icon, XMarkIcon, UserCircleIcon, ArrowRightOnRectangleIcon, BellIcon } from '@heroicons/react/24/outline';
+import { fetchMyAirline } from '../../store/slices/airlinesSlice';
+import { Bars3Icon, XMarkIcon, UserCircleIcon, ArrowRightOnRectangleIcon, BellIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import { SocialLinks } from '../SocialLinks';
 import { PayPalDonation } from '../PayPalDonation';
 import { Tooltip } from '../ui/Tooltip';
@@ -18,6 +19,7 @@ export const Header: React.FC<HeaderProps> = ({ onToggleSidebar, sidebarOpen }) 
   const { user } = useAppSelector((state) => state.auth);
   const { myStats } = useAppSelector((state) => state.statistics);
   const { licenses } = useAppSelector((state) => state.profile);
+  const { userAirline } = useAppSelector((state) => state.airlines);
 
   const selectedAvatar = myStats?.logo ? parseInt(myStats.logo) : 1;
   const avatar = AVATARS.find((a) => a.id === selectedAvatar) || AVATARS[0];
@@ -27,6 +29,17 @@ export const Header: React.FC<HeaderProps> = ({ onToggleSidebar, sidebarOpen }) 
     (expense) => new Date(expense.maturityDate) < new Date()
   );
   const hasOverdueLicenses = overdueLicenses.length > 0;
+
+  // Check for airline debt (only for owner)
+  const isAirlineOwner = userAirline && user && userAirline.owner?.id === user.id;
+  const hasAirlineDebt = isAirlineOwner && userAirline.bankDebt && userAirline.bankDebt > 0;
+
+  // Load user airline data
+  useEffect(() => {
+    if (user) {
+      dispatch(fetchMyAirline());
+    }
+  }, [dispatch, user]);
 
   const handleLogout = () => {
     dispatch(logout());
@@ -84,6 +97,20 @@ export const Header: React.FC<HeaderProps> = ({ onToggleSidebar, sidebarOpen }) 
                       <BellIcon className="h-6 w-6 text-red-500 animate-pulse" />
                       <div className="absolute -top-2 -right-2 bg-red-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
                         {overdueLicenses.length}
+                      </div>
+                    </div>
+                  </Tooltip>
+                </Link>
+              )}
+
+              {/* Airline Debt Notification */}
+              {hasAirlineDebt && (
+                <Link to="/airlines" className="relative">
+                  <Tooltip content={`Your airline has debt: F$ ${userAirline.bankDebt?.toLocaleString()} - click to manage`} position="bottom">
+                    <div className="relative">
+                      <ExclamationTriangleIcon className="h-6 w-6 text-orange-500 animate-pulse" />
+                      <div className="absolute -top-2 -right-2 bg-orange-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
+                        !
                       </div>
                     </div>
                   </Tooltip>
