@@ -1,0 +1,46 @@
+<h2>⚠️ License Expiration Warning</h2>
+
+<p>Hi Captain {{userName}},</p>
+
+<p>FlightJobs is sending you this email because you have enabled license expiration warnings in your profile settings.</p>
+
+<div class="warning-box">
+  <h3>Your pilot license requirements are about to expire!</h3>
+  <p>You have <strong class="highlight">{{licenseCount}} requirement(s)</strong> that will expire soon.</p>
+</div>
+
+<h3>Expiring Requirements:</h3>
+<ul class="list">
+  {{#each licenses}}
+  <li>
+    <strong>{{name}}</strong><br>
+    <span style="font-size: 14px; color: #94a3b8;">
+      Expires: {{formatDate maturityDate}} 
+      {{#if (eq daysUntilExpiry 0)}}
+        <span class="text-danger">(TODAY!)</span>
+      {{else}}
+        ({{daysUntilExpiry}} days remaining)
+      {{/if}}
+    </span>
+  </li>
+  {{/each}}
+</ul>
+
+<div class="info-box">
+  <p><strong>⚠️ Important:</strong></p>
+  <p>If your pilot license expires, your next jobs will <strong>not score or pay</strong> until you renew your license. Go to your <strong>Profile → License</strong> section to check and renew your requirements.</p>
+</div>
+
+<div style="text-align: center;">
+  <a href="https://flightjobs.bsite.net/profile" class="button">Go to Profile</a>
+</div>
+
+<div class="divider"></div>
+
+<div class="info-box">
+  <p><strong>🔕 Want to stop these emails?</strong></p>
+  <p>You can disable license expiration warnings anytime by unchecking the box in the License popup window or visiting your profile settings.</p>
+</div>
+
+<p><em>Keep your paperwork current and fly safe!</em><br>
+<strong>The FlightJobs Team</strong></p>

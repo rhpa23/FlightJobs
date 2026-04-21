@@ -15,6 +15,7 @@ import { NavdataModule } from './navdata/navdata.module';
 import { LicensesModule } from './licenses/licenses.module';
 import { JobAirlinesModule } from './job-airlines/job-airlines.module';
 import { ProfileModule } from './profile/profile.module';
+import { MailModule } from './mail/mail.module';
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { ProfileModule } from './profile/profile.module';
     LicensesModule,
     JobAirlinesModule,
     ProfileModule,
+    MailModule,
   ],
   controllers: [AppController],
   providers: [AppService],

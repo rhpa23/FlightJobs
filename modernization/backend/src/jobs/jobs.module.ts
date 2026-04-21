@@ -12,6 +12,7 @@ import { Airline } from '../airlines/entities/airline.entity';
 import { AirlineFbo } from '../airlines/entities/airline-fbo.entity';
 import { JobAirline } from '../job-airlines/entities/job-airline.entity';
 import { NavdataModule } from '../navdata/navdata.module';
+import { MailModule } from '../mail/mail.module';
 
 @Module({
   imports: [
@@ -24,7 +25,8 @@ import { NavdataModule } from '../navdata/navdata.module';
       AirlineFbo,
       JobAirline
     ]),
-    forwardRef(() => NavdataModule)
+    forwardRef(() => NavdataModule),
+    MailModule,
   ],
   providers: [
     JobsService,

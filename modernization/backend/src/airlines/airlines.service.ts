@@ -248,6 +248,15 @@ export class AirlinesService {
 
     await this.airlinesRepository.save(airline);
 
+    // Reset airline bills warning sent flag for all pilots
+    // so they can receive future debt alerts
+    await this.statisticsRepository
+      .createQueryBuilder()
+      .update()
+      .set({ airlineBillsWarningSent: false })
+      .where('airlineId = :airlineId', { airlineId: airline.id })
+      .execute();
+
     return true;
   }
 

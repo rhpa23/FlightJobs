@@ -18,6 +18,7 @@ import { Airline } from '../airlines/entities/airline.entity';
 import { AirlineFbo } from '../airlines/entities/airline-fbo.entity';
 import { JobAirline } from '../job-airlines/entities/job-airline.entity';
 import { DataConversion } from '../common/utils/data-conversion.util';
+import { MailService } from '../mail/mail.service';
 
 // Constantes do legado
 const CHALLENGE_EXPIRED = 'Unfortunately, this Challenge is expired. Take another one.';
@@ -47,6 +48,7 @@ export class JobsService {
     private jobAirlineRepository: Repository<JobAirline>,
     private navdataService: NavdataService,
     private dataSource: DataSource,
+    private mailService: MailService,
   ) {}
 
   async findOne(id: number): Promise<Job> {
@@ -606,15 +608,88 @@ export class JobsService {
       // Aplicar o débito
       airline.debtValue += Math.floor(jobAirline.totalFlightCost);
 
-      // TODO: Enviar email de alerta se airline.debtValue > 0
-      // Isso deve ser feito via fila/buffer para não bloquear a resposta
+      // Enviar email de alerta se airline.debtValue > 0
+      // Isso é feito via fila para não bloquear a resposta
       if (airline.debtValue > 0) {
-        this.logger.warn(`Airline ${airline.name} has debt: ${airline.debtValue}. Email notification should be sent.`);
+        this.logger.warn(`Airline ${airline.name} has debt: ${airline.debtValue}. Sending email notifications...`);
+        await this.sendAirlineDebtNotifications(airline, job, jobAirline);
       }
     }
 
     // Salvar alterações
     await this.airlinesRepository.save(airline);
     await this.jobAirlineRepository.save(jobAirline);
+  }
+
+  /**
+   * Envia notificações de débito para todos os pilotos da airline
+   * que têm a preferência de alerta habilitada
+   */
+  private async sendAirlineDebtNotifications(
+    airline: Airline,
+    job: Job,
+    jobAirline: JobAirline
+  ): Promise<void> {
+    try {
+      // Buscar todos os pilotos da airline com alerta habilitado
+      const pilotStats = await this.statisticsRepository.find({
+        where: {
+          airline: { id: airline.id },
+          sendAirlineBillsWarning: true,
+          airlineBillsWarningSent: false,
+        },
+        relations: ['user'],
+      });
+
+      if (pilotStats.length === 0) {
+        this.logger.log(`No pilots to notify for airline ${airline.name} debt`);
+        return;
+      }
+
+      this.logger.log(`Sending debt notifications to ${pilotStats.length} pilots for airline ${airline.name}`);
+
+      // Calcular tempo de voo
+      const flightTimeMs = new Date(job.endTime).getTime() - new Date(job.startTime).getTime();
+      const flightTimeHours = Math.floor(flightTimeMs / (1000 * 60 * 60));
+      const flightTimeMinutes = Math.floor((flightTimeMs % (1000 * 60 * 60)) / (1000 * 60));
+      const flightTimeStr = `${flightTimeHours}h ${flightTimeMinutes}m`;
+
+      // Enviar emails em paralelo
+      await Promise.all(
+        pilotStats.map(async (stat) => {
+          try {
+            await this.mailService.sendAirlineDebtEmail({
+              userId: stat.user.id,
+              userName: stat.user.userName,
+              userEmail: stat.user.email,
+              airlineName: airline.name,
+              debtValue: airline.debtValue,
+              debtMaturityDate: airline.debtMaturityDate,
+              jobDetails: {
+                departure: job.departureICAO,
+                arrival: job.arrivalICAO,
+                model: job.modelDescription || job.modelName || 'Unknown',
+                flightTime: flightTimeStr,
+                distance: Math.round(job.distance),
+                pax: job.pax,
+                cargo: job.cargo,
+              },
+            });
+
+            // Marcar como enviado
+            await this.statisticsRepository.update(
+              { id: stat.id },
+              { airlineBillsWarningSent: true }
+            );
+
+            this.logger.log(`Debt notification sent to ${stat.user.email}`);
+          } catch (error) {
+            this.logger.error(`Failed to send debt notification to ${stat.user.email}:`, error);
+          }
+        })
+      );
+    } catch (error) {
+      this.logger.error(`Failed to send airline debt notifications for ${airline.name}:`, error);
+    }
   }
 }

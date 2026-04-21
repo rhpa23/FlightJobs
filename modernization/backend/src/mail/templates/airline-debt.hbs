@@ -1,0 +1,62 @@
+<h2>Airline Debt Alert</h2>
+
+<p>Hi Captain {{userName}},</p>
+
+<p>FlightJobs is sending you this email because you have enabled airline debt warnings in your profile settings.</p>
+
+<div class="warning-box">
+  <h3>A job at {{airlineName}} generated bills to pay!</h3>
+  <p>The current debt is <strong class="text-danger">{{formatCurrency debtValue}}</strong></p>
+  <p>Payment due date: <strong class="text-danger">{{formatDate debtMaturityDate}}</strong></p>
+</div>
+
+<div class="info-box">
+  <p><strong>⚠️ Warning:</strong></p>
+  <p>If the airline owner doesn't pay the bills before the due date, {{airlineName}} will not score, and future jobs will generate more debt, which could lead to <strong>bankruptcy</strong>.</p>
+</div>
+
+<h3>Job Details:</h3>
+<table style="width: 100%; border-collapse: collapse; margin: 16px 0;">
+  <tr style="border-bottom: 1px solid rgba(34, 184, 235, 0.3);">
+    <td style="padding: 8px 0; color: #94a3b8;">Departure:</td>
+    <td style="padding: 8px 0; text-align: right; font-weight: 600;">{{jobDetails.departure}}</td>
+  </tr>
+  <tr style="border-bottom: 1px solid rgba(34, 184, 235, 0.3);">
+    <td style="padding: 8px 0; color: #94a3b8;">Arrival:</td>
+    <td style="padding: 8px 0; text-align: right; font-weight: 600;">{{jobDetails.arrival}}</td>
+  </tr>
+  <tr style="border-bottom: 1px solid rgba(34, 184, 235, 0.3);">
+    <td style="padding: 8px 0; color: #94a3b8;">Aircraft:</td>
+    <td style="padding: 8px 0; text-align: right; font-weight: 600;">{{jobDetails.model}}</td>
+  </tr>
+  <tr style="border-bottom: 1px solid rgba(34, 184, 235, 0.3);">
+    <td style="padding: 8px 0; color: #94a3b8;">Flight Time:</td>
+    <td style="padding: 8px 0; text-align: right; font-weight: 600;">{{jobDetails.flightTime}}</td>
+  </tr>
+  <tr style="border-bottom: 1px solid rgba(34, 184, 235, 0.3);">
+    <td style="padding: 8px 0; color: #94a3b8;">Distance:</td>
+    <td style="padding: 8px 0; text-align: right; font-weight: 600;">{{jobDetails.distance}} nm</td>
+  </tr>
+  <tr style="border-bottom: 1px solid rgba(34, 184, 235, 0.3);">
+    <td style="padding: 8px 0; color: #94a3b8;">Passengers:</td>
+    <td style="padding: 8px 0; text-align: right; font-weight: 600;">{{jobDetails.pax}}</td>
+  </tr>
+  <tr>
+    <td style="padding: 8px 0; color: #94a3b8;">Cargo:</td>
+    <td style="padding: 8px 0; text-align: right; font-weight: 600;">{{jobDetails.cargo}}</td>
+  </tr>
+</table>
+
+<div style="text-align: center;">
+  <a href="https://flightjobs.bsite.net/airlines" class="button">View Airline Status</a>
+</div>
+
+<div class="divider"></div>
+
+<div class="info-box">
+  <p><strong>🔕 Want to stop these emails?</strong></p>
+  <p>You can disable airline debt warnings anytime by unchecking the box in the Airline Balance Situation popup or visiting your profile settings.</p>
+</div>
+
+<p><em>Keep your airline profitable!</em><br>
+<strong>The FlightJobs Team</strong></p>

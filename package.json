@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "@nestjs-modules/mailer": "^2.3.4",
+    "@nestjs/bull": "^11.0.4",
+    "@types/nodemailer": "^8.0.0",
+    "bull": "^4.16.5",
+    "handlebars": "^4.7.9",
+    "nodemailer": "^8.0.5"
+  }
+}

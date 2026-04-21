@@ -1,21 +1,27 @@
-import { Injectable, UnauthorizedException, ConflictException, BadRequestException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, ConflictException, BadRequestException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
 import { User } from '../users/entities/user.entity';
 import { Statistics } from '../statistics/entities/statistics.entity';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { verifyAspNetPassword, hashAspNetPassword } from '../utils/password.util';
+import { MailService } from '../mail/mail.service';
 
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger(AuthService.name);
+
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
     @InjectRepository(Statistics)
     private statisticsRepository: Repository<Statistics>,
     private jwtService: JwtService,
+    private mailService: MailService,
+    private configService: ConfigService,
   ) {}
 
   async validateUser(email: string, password: string): Promise<any> {
@@ -65,13 +71,34 @@ export class AuthService {
 
     const savedUser = await this.usersRepository.save(newUser);
 
-    // Create statistics record
+    // Create statistics record with default email settings
     const stats = this.statisticsRepository.create({
       userId: savedUser.id,
-      bankBalance: 0,
-      pilotScore: 0,
+      bankBalance: 2000,
+      pilotScore: 5,
+      sendLicenseWarning: true,
+      sendAirlineBillsWarning: true,
+      licenseWarningSent: false,
+      airlineBillsWarningSent: false,
     });
     await this.statisticsRepository.save(stats);
+
+    // Send welcome email
+    try {
+      const frontendUrl = this.configService.get<string>('FRONTEND_URL', 'http://localhost:3000');
+      const confirmationLink = `${frontendUrl}/confirm-email?userId=${savedUser.id}`;
+      
+      await this.mailService.sendWelcomeEmail({
+        userName: savedUser.userName,
+        userEmail: savedUser.email,
+        confirmationLink,
+      });
+      
+      this.logger.log(`Welcome email queued for ${savedUser.email}`);
+    } catch (error) {
+      // Don't fail registration if email fails
+      this.logger.error(`Failed to send welcome email to ${savedUser.email}:`, error);
+    }
 
     const payload = { email: savedUser.email, sub: savedUser.id };
     return {
@@ -93,6 +120,39 @@ export class AuthService {
     }
     const { passwordHash, ...result } = user;
     return result;
+  }
+
+  async requestPasswordReset(email: string): Promise<void> {
+    const user = await this.usersRepository.findOne({ where: { email } });
+    
+    if (!user) {
+      // Don't reveal if email exists
+      this.logger.log(`Password reset requested for non-existent email: ${email}`);
+      return;
+    }
+
+    if (!user.emailConfirmed) {
+      this.logger.log(`Password reset requested for unconfirmed email: ${email}`);
+      return;
+    }
+
+    try {
+      const frontendUrl = this.configService.get<string>('FRONTEND_URL', 'http://localhost:3000');
+      const resetToken = this.generateGuid(); // In production, use crypto secure token
+      const resetLink = `${frontendUrl}/reset-password?token=${resetToken}&email=${encodeURIComponent(email)}`;
+      
+      await this.mailService.sendPasswordResetEmail({
+        userName: user.userName,
+        userEmail: user.email,
+        resetLink,
+        expiresIn: '24 hours',
+      });
+      
+      this.logger.log(`Password reset email queued for ${email}`);
+    } catch (error) {
+      this.logger.error(`Failed to send password reset email to ${email}:`, error);
+      throw new Error('Failed to send password reset email');
+    }
   }
 
   private generateGuid(): string {
