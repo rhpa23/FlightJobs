@@ -25,6 +25,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { fetchMyStats } from '../store/slices/statisticsSlice';
+import { fetchMyAirline } from '../store/slices/airlinesSlice';
 import {
   fetchLogbook,
   deleteLogbookJob,
@@ -118,6 +119,7 @@ export const Profile: React.FC = () => {
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state) => state.auth);
   const { myStats, isLoading: statsLoading } = useAppSelector((state) => state.statistics);
+  const { userAirline } = useAppSelector((state) => state.airlines);
   const { logbook, licenses, graduations, currentBankBalance, isLoading } = useAppSelector((state) => state.profile);
 
   // Local state
@@ -155,6 +157,7 @@ export const Profile: React.FC = () => {
   // Fetch data on mount
   useEffect(() => {
     dispatch(fetchMyStats());
+    dispatch(fetchMyAirline());
     dispatch(fetchLicenses());
     dispatch(fetchGraduations());
   }, [dispatch]);
@@ -189,7 +192,7 @@ export const Profile: React.FC = () => {
     const tax = pilotBalance * 0.15;
     const transferAmount = pilotBalance * (transferPercent / 100);
     const pilotProjection = pilotBalance - transferAmount - tax;
-    const airlineProjection = (myStats.airline?.bankBalance || 0) + transferAmount;
+    const airlineProjection = (userAirline?.bankBalance || 0) + transferAmount;
     return {
       pilotBalance,
       tax,
@@ -197,7 +200,7 @@ export const Profile: React.FC = () => {
       pilotProjection,
       airlineProjection,
     };
-  }, [myStats, transferPercent]);
+  }, [myStats, userAirline, transferPercent]);
 
   // Get current graduation
   const currentGraduation = useMemo(() => {
@@ -386,14 +389,15 @@ export const Profile: React.FC = () => {
           <CameraIcon className="w-4 h-4" />
           Change Avatar
         </button>
-        <button
-          onClick={() => setShowTransferModal(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg transition-colors"
-          disabled={!myStats?.airline}
-        >
-          <ArrowUpTrayIcon className="w-4 h-4" />
-          Transfer to Airline
-        </button>
+        {userAirline && (
+          <button
+            onClick={() => setShowTransferModal(true)}
+            className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg transition-colors"
+          >
+            <ArrowUpTrayIcon className="w-4 h-4" />
+            Transfer to Airline
+          </button>
+        )}
         <button
           onClick={() => setShowGraduationModal(true)}
           className="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-lg transition-colors"
@@ -902,7 +906,7 @@ export const Profile: React.FC = () => {
             </button>
             <button
               onClick={handleTransfer}
-              disabled={!myStats?.airline || (myStats?.bankBalance || 0) <= 0}
+              disabled={!userAirline || (myStats?.bankBalance || 0) <= 0}
               className="px-4 py-2 bg-blue-600 hover:bg-blue-500 disabled:bg-gray-600 disabled:cursor-not-allowed text-white rounded-lg transition-colors"
             >
               Transfer
@@ -971,8 +975,8 @@ export const Profile: React.FC = () => {
             <div className="p-4 bg-blue-500/10 rounded-lg border border-blue-500/30">
               <p className="text-sm text-blue-300">
                 <strong>Transfer Summary:</strong> F${' '}
-                {transferProjections.transferAmount.toFixed(2)} will be transferred to your airline.
-                A tax of F$ {transferProjections.tax.toFixed(2)} will be deducted from your balance.
+                {formatCurrency(transferProjections.transferAmount)} will be transferred to your airline.
+                A tax of F$ {formatCurrency(transferProjections.tax)} will be deducted from your balance.
               </p>
             </div>
           </div>

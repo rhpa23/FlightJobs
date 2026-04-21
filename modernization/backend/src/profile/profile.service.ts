@@ -4,12 +4,14 @@ import { Repository } from 'typeorm';
 import { Job } from '../jobs/entities/job.entity';
 import { JobAirline } from '../job-airlines/entities/job-airline.entity';
 import { GetLogbookDto, LogbookEntry, LogbookResponse } from './dto/logbook.dto';
+import { TransferFundsDto } from './dto/transfer.dto';
 import { PilotLicenseExpense } from '../licenses/entities/pilot-license-expense.entity';
 import { PilotLicenseExpenseUser } from '../licenses/entities/pilot-license-expense-user.entity';
 import { PilotLicenseItem } from '../licenses/entities/pilot-license-item.entity';
 import { LicenseItemUser } from '../licenses/entities/license-item-user.entity';
 import { User } from '../users/entities/user.entity';
 import { Statistics } from '../statistics/entities/statistics.entity';
+import { Airline } from '../airlines/entities/airline.entity';
 
 @Injectable()
 export class ProfileService {
@@ -32,6 +34,8 @@ export class ProfileService {
     private usersRepository: Repository<User>,
     @InjectRepository(Statistics)
     private statisticsRepository: Repository<Statistics>,
+    @InjectRepository(Airline)
+    private airlinesRepository: Repository<Airline>,
   ) {}
 
   /**
@@ -505,5 +509,64 @@ export class ProfileService {
         await this.statisticsRepository.save(newStatistics);
       }
     }
+  }
+
+  /**
+   * Transfere fundos do piloto para a airline
+   */
+  async transferFunds(userId: string, dto: TransferFundsDto): Promise<any> {
+    // Buscar estatísticas do usuário com a airline
+    const statistics = await this.statisticsRepository.findOne({
+      where: { user: { id: userId } },
+      relations: ['airline'],
+    });
+
+    if (!statistics) {
+      throw new Error('User statistics not found');
+    }
+
+    if (!statistics.airline) {
+      throw new Error('User does not have an airline');
+    }
+
+    const pilotBalance = statistics.bankBalance || 0;
+    const { percent } = dto;
+
+    if (pilotBalance <= 0) {
+      throw new Error('Insufficient funds');
+    }
+
+    // Calcular valores
+    const tax = pilotBalance * 0.15;
+    const transferAmount = pilotBalance * (percent / 100);
+    const totalDeduction = transferAmount + tax;
+
+    if (totalDeduction > pilotBalance) {
+      throw new Error('Insufficient funds for transfer and tax');
+    }
+
+    // Deduzir do saldo do piloto
+    statistics.bankBalance -= totalDeduction;
+    await this.statisticsRepository.save(statistics);
+
+    // Adicionar ao saldo da airline
+    const airline = await this.airlinesRepository.findOne({
+      where: { id: statistics.airline.id },
+    });
+
+    if (!airline) {
+      throw new Error('Airline not found');
+    }
+
+    airline.bankBalance += transferAmount;
+    await this.airlinesRepository.save(airline);
+
+    return {
+      success: true,
+      transferAmount,
+      tax,
+      newPilotBalance: statistics.bankBalance,
+      newAirlineBalance: airline.bankBalance,
+    };
   }
 }
