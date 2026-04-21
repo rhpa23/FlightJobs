@@ -75,6 +75,7 @@ interface AirlinesState {
   pilots: Pilot[];
   fbos: Fbo[];
   availableFbos: AvailableFbo[];
+  ledger: LedgerData | null;
   isLoading: boolean;
   error: string | null;
 }
@@ -87,6 +88,7 @@ const initialState: AirlinesState = {
   pilots: [],
   fbos: [],
   availableFbos: [],
+  ledger: null,
   isLoading: false,
   error: null,
 };
@@ -171,6 +173,53 @@ export const hireFbo = createAsyncThunk('airlines/hireFbo', async (icao: string)
   return response;
 });
 
+export interface LedgerJob {
+  id: number;
+  departureICAO: string;
+  arrivalICAO: string;
+  modelDescription: string;
+  modelName: string;
+  distance: number;
+  flightTime: string;
+  pax: number;
+  payload: number;
+  fuelLoaded: number;
+  fuelBurned: number;
+  fuelPricePerKg: number;
+  fuelCost: number;
+  fuelCostPerNm: number;
+  groundCrewCost: number;
+  flightCrewCost: number;
+  flightAttendantCost: number;
+  totalCrewCost: number;
+  totalFlightCost: number;
+  revenue: number;
+  flightIncome: number;
+  userName: string;
+  startTime: string;
+  endTime: string;
+}
+
+export interface LedgerData {
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+  isFirstPage: boolean;
+  isLastPage: boolean;
+  pageCount: number;
+  pageNumber: number;
+  pageSize: number;
+  totalItemCount: number;
+  airlineJobs: LedgerJob[];
+}
+
+export const fetchAirlineLedger = createAsyncThunk(
+  'airlines/fetchAirlineLedger',
+  async ({ id, pageNumber, filters }: { id: number; pageNumber: number; filters?: { departure?: string; arrival?: string } }) => {
+    const response = await airlinesApi.getLedger(id, pageNumber, filters);
+    return response;
+  }
+);
+
 const airlinesSlice = createSlice({
   name: 'airlines',
   initialState,
@@ -186,6 +235,9 @@ const airlinesSlice = createSlice({
     },
     setPilots: (state, action: PayloadAction<Pilot[]>) => {
       state.pilots = action.payload;
+    },
+    clearLedger: (state) => {
+      state.ledger = null;
     },
   },
   extraReducers: (builder) => {
@@ -287,9 +339,21 @@ const airlinesSlice = createSlice({
       })
       .addCase(hireFbo.fulfilled, (state, action) => {
         // FBO hired successfully, will refresh data
+      })
+      .addCase(fetchAirlineLedger.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(fetchAirlineLedger.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.ledger = action.payload;
+      })
+      .addCase(fetchAirlineLedger.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.error.message || 'Failed to fetch ledger';
       });
   },
 });
 
-export const { clearError, setSelectedAirline, clearAirlineStats, setPilots } = airlinesSlice.actions;
+export const { clearError, setSelectedAirline, clearAirlineStats, setPilots, clearLedger } = airlinesSlice.actions;
 export default airlinesSlice.reducer;

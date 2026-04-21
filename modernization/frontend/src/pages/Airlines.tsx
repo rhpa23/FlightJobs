@@ -11,6 +11,7 @@ import {
   ArrowPathIcon,
   CheckIcon,
   MagnifyingGlassIcon,
+  BookOpenIcon,
 } from '@heroicons/react/24/outline';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import {
@@ -26,8 +27,11 @@ import {
   payDebt,
   fetchAvailableFbos,
   hireFbo,
+  fetchAirlineLedger,
+  clearLedger,
   Airline,
   AvailableFbo,
+  LedgerData,
 } from '../store/slices/airlinesSlice';
 import { fetchMyStats } from '../store/slices/statisticsSlice';
 import { Modal } from '../components/ui/Modal';
@@ -114,7 +118,7 @@ const initialFormData: AirlineFormData = {
 
 export const Airlines: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { airlines, userAirline, pilots, fbos, airlineStats, availableFbos, isLoading } = useAppSelector((state) => state.airlines);
+  const { airlines, userAirline, pilots, fbos, airlineStats, availableFbos, ledger, isLoading } = useAppSelector((state) => state.airlines);
   const { myStats } = useAppSelector((state) => state.statistics);
 
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -124,8 +128,11 @@ export const Airlines: React.FC = () => {
   const [showFboModal, setShowFboModal] = useState(false);
   const [showExitConfirm, setShowExitConfirm] = useState(false);
   const [showHireConfirm, setShowHireConfirm] = useState(false);
+  const [showLedgerModal, setShowLedgerModal] = useState(false);
   const [selectedFbo, setSelectedFbo] = useState<AvailableFbo | null>(null);
   const [fboSearchTerm, setFboSearchTerm] = useState('');
+  const [ledgerPage, setLedgerPage] = useState(1);
+  const [ledgerFilters, setLedgerFilters] = useState({ departure: '', arrival: '' });
 
   const [formData, setFormData] = useState<AirlineFormData>(initialFormData);
   const [editingAirlineId, setEditingAirlineId] = useState<number | null>(null);
@@ -323,6 +330,39 @@ export const Airlines: React.FC = () => {
     setSelectedFbo(fbo);
     setShowHireConfirm(true);
   }, []);
+
+  const handleOpenLedger = useCallback(async () => {
+    if (!userAirline) return;
+    setLedgerPage(1);
+    setLedgerFilters({ departure: '', arrival: '' });
+    await dispatch(fetchAirlineLedger({ id: userAirline.id, pageNumber: 1 }));
+    setShowLedgerModal(true);
+  }, [dispatch, userAirline]);
+
+  const handleCloseLedger = useCallback(() => {
+    setShowLedgerModal(false);
+    dispatch(clearLedger());
+  }, [dispatch]);
+
+  const handleLedgerPageChange = useCallback(async (page: number) => {
+    if (!userAirline) return;
+    setLedgerPage(page);
+    await dispatch(fetchAirlineLedger({ 
+      id: userAirline.id, 
+      pageNumber: page,
+      filters: ledgerFilters 
+    }));
+  }, [dispatch, userAirline, ledgerFilters]);
+
+  const handleLedgerFilter = useCallback(async () => {
+    if (!userAirline) return;
+    setLedgerPage(1);
+    await dispatch(fetchAirlineLedger({ 
+      id: userAirline.id, 
+      pageNumber: 1,
+      filters: ledgerFilters 
+    }));
+  }, [dispatch, userAirline, ledgerFilters]);
 
   const handleHireFbo = useCallback(async () => {
     if (!selectedFbo) return;
@@ -538,6 +578,13 @@ export const Airlines: React.FC = () => {
                   Manage FBOs
                 </button>
               )}
+              <button
+                onClick={handleOpenLedger}
+                className="flex items-center gap-2 px-4 py-2 bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 rounded-lg transition-all text-sm font-medium"
+              >
+                <BookOpenIcon className="h-4 w-4" />
+                Ledger
+              </button>
               {userAirline.bankDebt > 0 && (
                 <button
                   onClick={() => setShowPayDebtModal(true)}
@@ -1289,6 +1336,205 @@ export const Airlines: React.FC = () => {
         <p className="text-sm text-gray-500 mt-2">
           This will remove all your airline certificates and you'll need to re-apply to join.
         </p>
+      </Modal>
+
+      {/* Ledger Modal */}
+      <Modal
+        isOpen={showLedgerModal}
+        onClose={handleCloseLedger}
+        title={`${userAirline?.name} - Ledger`}
+        size="full"
+      >
+        <div className="space-y-4">
+          {/* Filters */}
+          <div className="flex flex-wrap gap-3 items-end">
+            <div className="flex-1 min-w-[120px] max-w-[180px]">
+              <label className="block text-xs font-medium text-gray-400 mb-1">Departure</label>
+              <input
+                type="text"
+                value={ledgerFilters.departure}
+                onChange={(e) => setLedgerFilters({ ...ledgerFilters, departure: e.target.value.toUpperCase() })}
+                onKeyPress={(e) => e.key === 'Enter' && handleLedgerFilter()}
+                placeholder="ICAO"
+                maxLength={4}
+                className="w-full px-3 py-2 text-sm border border-gray-600 rounded-lg bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              />
+            </div>
+            <div className="flex-1 min-w-[120px] max-w-[180px]">
+              <label className="block text-xs font-medium text-gray-400 mb-1">Arrival</label>
+              <input
+                type="text"
+                value={ledgerFilters.arrival}
+                onChange={(e) => setLedgerFilters({ ...ledgerFilters, arrival: e.target.value.toUpperCase() })}
+                onKeyPress={(e) => e.key === 'Enter' && handleLedgerFilter()}
+                placeholder="ICAO"
+                maxLength={4}
+                className="w-full px-3 py-2 text-sm border border-gray-600 rounded-lg bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              />
+            </div>
+            <button
+              onClick={handleLedgerFilter}
+              disabled={isLoading}
+              className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 disabled:bg-gray-600 text-white rounded-lg transition-colors text-sm font-medium"
+            >
+              {isLoading ? 'Loading...' : 'Filter'}
+            </button>
+            {(ledgerFilters.departure || ledgerFilters.arrival) && (
+              <button
+                onClick={() => {
+                  setLedgerFilters({ departure: '', arrival: '' });
+                  if (userAirline) {
+                    setLedgerPage(1);
+                    dispatch(fetchAirlineLedger({ id: userAirline.id, pageNumber: 1 }));
+                  }
+                }}
+                className="px-4 py-2 bg-gray-600 hover:bg-gray-500 text-white rounded-lg transition-colors text-sm font-medium"
+              >
+                Clear
+              </button>
+            )}
+          </div>
+
+          {/* Compact Ledger Table */}
+          <div className="overflow-x-auto">
+            <table className="w-full text-xs">
+              <thead className="bg-gray-800">
+                <tr className="border-b border-gray-700">
+                  <th className="text-left py-2 px-2 text-gray-400 font-medium whitespace-nowrap">Route</th>
+                  <th className="text-left py-2 px-2 text-gray-400 font-medium whitespace-nowrap">Model</th>
+                  <th className="text-right py-2 px-2 text-gray-400 font-medium whitespace-nowrap">Dist</th>
+                  <th className="text-right py-2 px-2 text-gray-400 font-medium whitespace-nowrap">Time</th>
+                  <th className="text-right py-2 px-2 text-gray-400 font-medium whitespace-nowrap">Pax</th>
+                  <th className="text-right py-2 px-2 text-gray-400 font-medium whitespace-nowrap">Payload</th>
+                  <th className="text-right py-2 px-2 text-gray-400 font-medium whitespace-nowrap">Fuel</th>
+                  <th className="text-right py-2 px-2 text-gray-400 font-medium whitespace-nowrap">Fuel Cost</th>
+                  <th className="text-right py-2 px-2 text-gray-400 font-medium whitespace-nowrap">Crew</th>
+                  <th className="text-right py-2 px-2 text-gray-400 font-medium whitespace-nowrap">Total Cost</th>
+                  <th className="text-right py-2 px-2 text-gray-400 font-medium whitespace-nowrap">Revenue</th>
+                  <th className="text-right py-2 px-2 text-gray-400 font-medium whitespace-nowrap">Income</th>
+                </tr>
+              </thead>
+              <tbody>
+                {isLoading ? (
+                  <tr>
+                    <td colSpan={12} className="text-center py-8 text-gray-400">
+                      <ArrowPathIcon className="h-6 w-6 animate-spin mx-auto mb-2" />
+                      Loading ledger...
+                    </td>
+                  </tr>
+                ) : !ledger || ledger.airlineJobs.length === 0 ? (
+                  <tr>
+                    <td colSpan={12} className="text-center py-8 text-gray-400">
+                      No flights found. Try different filters.
+                    </td>
+                  </tr>
+                ) : (
+                  ledger.airlineJobs.map((job) => (
+                    <tr
+                      key={job.id}
+                      className="border-b border-gray-700/50 hover:bg-gray-700/30 transition-colors"
+                    >
+                      <td className="py-2 px-2 whitespace-nowrap">
+                        <span className="text-emerald-400 font-medium">{job.departureICAO}</span>
+                        <span className="text-gray-500 mx-1">→</span>
+                        <span className="text-blue-400 font-medium">{job.arrivalICAO}</span>
+                      </td>
+                      <td className="py-2 px-2 text-gray-300 whitespace-nowrap truncate max-w-[120px]" title={job.modelDescription}>
+                        {job.modelDescription || job.modelName}
+                      </td>
+                      <td className="py-2 px-2 text-right text-gray-300 whitespace-nowrap">
+                        {job.distance.toLocaleString()} nm
+                      </td>
+                      <td className="py-2 px-2 text-right text-gray-300 whitespace-nowrap">
+                        {job.flightTime}
+                      </td>
+                      <td className="py-2 px-2 text-right text-gray-300 whitespace-nowrap">
+                        {job.pax}
+                      </td>
+                      <td className="py-2 px-2 text-right text-gray-300 whitespace-nowrap">
+                        {job.payload.toLocaleString()} kg
+                      </td>
+                      <td className="py-2 px-2 text-right text-gray-300 whitespace-nowrap">
+                        <div className="text-xs">
+                          <div>↑{job.fuelLoaded.toLocaleString()}</div>
+                          <div className="text-red-400">↓{job.fuelBurned.toLocaleString()}</div>
+                        </div>
+                      </td>
+                      <td className="py-2 px-2 text-right text-red-400 whitespace-nowrap">
+                        F$ {job.fuelCost.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                      </td>
+                      <td className="py-2 px-2 text-right text-red-400 whitespace-nowrap">
+                        F$ {job.totalCrewCost.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                      </td>
+                      <td className="py-2 px-2 text-right text-red-400 font-medium whitespace-nowrap">
+                        F$ {job.totalFlightCost.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                      </td>
+                      <td className="py-2 px-2 text-right text-green-400 font-medium whitespace-nowrap">
+                        F$ {job.revenue.toLocaleString()}
+                      </td>
+                      <td className={`py-2 px-2 text-right font-medium whitespace-nowrap ${job.flightIncome >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                        F$ {job.flightIncome.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Pagination */}
+          {ledger && ledger.pageCount > 1 && (
+            <div className="flex items-center justify-between pt-4 border-t border-gray-700">
+              <div className="text-sm text-gray-400">
+                Showing page {ledger.pageNumber} of {ledger.pageCount} ({ledger.totalItemCount} total flights)
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => handleLedgerPageChange(ledgerPage - 1)}
+                  disabled={!ledger.hasPreviousPage || isLoading}
+                  className="px-3 py-1 bg-gray-700 hover:bg-gray-600 disabled:bg-gray-800 disabled:text-gray-500 text-white rounded transition-colors text-sm"
+                >
+                  Previous
+                </button>
+                <div className="flex items-center gap-1">
+                  {Array.from({ length: Math.min(5, ledger.pageCount) }, (_, i) => {
+                    let pageNum: number;
+                    if (ledger.pageCount <= 5) {
+                      pageNum = i + 1;
+                    } else if (ledger.pageNumber <= 3) {
+                      pageNum = i + 1;
+                    } else if (ledger.pageNumber >= ledger.pageCount - 2) {
+                      pageNum = ledger.pageCount - 4 + i;
+                    } else {
+                      pageNum = ledger.pageNumber - 2 + i;
+                    }
+                    return (
+                      <button
+                        key={pageNum}
+                        onClick={() => handleLedgerPageChange(pageNum)}
+                        disabled={isLoading}
+                        className={`w-8 h-8 rounded text-sm font-medium transition-colors ${
+                          pageNum === ledger.pageNumber
+                            ? 'bg-emerald-600 text-white'
+                            : 'bg-gray-700 hover:bg-gray-600 text-gray-300'
+                        }`}
+                      >
+                        {pageNum}
+                      </button>
+                    );
+                  })}
+                </div>
+                <button
+                  onClick={() => handleLedgerPageChange(ledgerPage + 1)}
+                  disabled={!ledger.hasNextPage || isLoading}
+                  className="px-3 py-1 bg-gray-700 hover:bg-gray-600 disabled:bg-gray-800 disabled:text-gray-500 text-white rounded transition-colors text-sm"
+                >
+                  Next
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
       </Modal>
 
       <ToastContainer toasts={toasts} onDismiss={dismissToast} />

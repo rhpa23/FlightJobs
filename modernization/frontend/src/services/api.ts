@@ -135,8 +135,8 @@ export const airlinesApi = {
   fireFbo: (id: number, fboId: number) =>
     api.delete(`/airlines/${id}/fbos/${fboId}`).then(res => res.data),
 
-  getLedger: (id: number) =>
-    api.get(`/airlines/${id}/ledger`).then(res => res.data),
+  getLedger: (id: number, pageNumber: number, filters?: { departure?: string; arrival?: string }) =>
+    api.post(`/airlines/${id}/ledger`, filters || {}, { params: { pageNumber } }).then(res => res.data),
 
   checkNameAvailable: (name: string) =>
     api.get('/airlines/check-name', { params: { name } }).then(res => res.data),

@@ -256,30 +256,172 @@ export class AirlinesService {
     pageNumber: number,
     jobFilter: JobFilterDto
   ): Promise<PaginatedAirlineJobsDto> {
-    const pageSize = 40;
+    const pageSize = 6;
     const actualPageNumber = pageNumber || 1;
 
-    // Build query for jobs related to this airline
-    const queryBuilder = this.jobsRepository.createQueryBuilder('job')
-      .leftJoinAndSelect('job.user', 'user')
-      .where('job.user IN (SELECT User_Id FROM statisticsdbmodels WHERE Airline_Id = :airlineId)', { airlineId });
+    // Get user IDs in this airline
+    const userStats = await this.statisticsRepository.find({
+      where: { airline: { id: airlineId } },
+      select: ['userId']
+    });
+    const userIds = userStats.map(stat => stat.userId);
 
-    // Apply filters if provided
-    if (jobFilter.icao) {
-      queryBuilder.andWhere('(job.departureICAO = :icao OR job.arrivalICAO = :icao)', { icao: jobFilter.icao });
+    if (userIds.length === 0) {
+      return {
+        hasNextPage: false,
+        hasPreviousPage: false,
+        isFirstPage: true,
+        isLastPage: true,
+        pageCount: 0,
+        pageNumber: 1,
+        pageSize,
+        totalItemCount: 0,
+        airlineJobs: []
+      };
     }
 
+    // Build query for jobs related to this airline
+    // Select dates as raw strings to avoid timezone conversion issues
+    const queryBuilder = this.jobsRepository.createQueryBuilder('job')
+      .leftJoinAndSelect('job.user', 'user')
+      .select([
+        'job.id',
+        'job.paxWeight',
+        'job.departureICAO',
+        'job.arrivalICAO',
+        'job.distance',
+        'job.pax',
+        'job.cargo',
+        'job.pay',
+        'job.isDone',
+        'job.startTime',
+        'job.endTime',
+        'job.modelName',
+        'job.modelDescription',
+        'job.startFuelWeight',
+        'job.finishFuelWeight',
+        'job.aviationType',
+        'user.id',
+        'user.userName',
+      ])
+      .where('job.user.id IN (:...userIds)', { userIds })
+      .andWhere('job.isDone = :isDone', { isDone: true });
+
+    // Apply departure filter if provided
+    if (jobFilter.departure && jobFilter.departure.length === 4) {
+      queryBuilder.andWhere('job.departureICAO = :departure', { departure: jobFilter.departure.toUpperCase() });
+    }
+
+    // Apply arrival filter if provided
+    if (jobFilter.arrival && jobFilter.arrival.length === 4) {
+      queryBuilder.andWhere('job.arrivalICAO = :arrival', { arrival: jobFilter.arrival.toUpperCase() });
+    }
+
+    // Clone for count query
+    const countQuery = queryBuilder.clone();
+
     // Get total count
-    const totalItemCount = await queryBuilder.getCount();
+    const totalItemCount = await countQuery.getCount();
 
     // Get paginated results
     const jobs = await queryBuilder
       .orderBy('job.startTime', 'DESC')
+      .addOrderBy('job.id', 'DESC')
       .skip((actualPageNumber - 1) * pageSize)
       .take(pageSize)
       .getMany();
 
-    const pageCount = Math.ceil(totalItemCount / pageSize);
+    // Get airline FBOs for fuel discount calculation
+    const airlineFbos = await this.airlineFboRepository.find({
+      where: { airline: { id: airlineId } }
+    });
+
+    // Calculate ledger data for each job
+    const airlineJobs = jobs.map(job => {
+      const departureFbo = airlineFbos.find(fbo => fbo.icao === job.departureICAO);
+
+      // FuelPrice based on AviationType (legado: AviationType > 1 ? 5.20 : 5.70)
+      const fuelPrice = job.aviationType > 1 ? 5.20 : 5.70;
+
+      // FlightCrewCost = JobPay + (JobPay * 0.8) = JobPay * 1.8
+      const flightCrewCost = job.pay + (job.pay * 0.8);
+
+      // GroundCrewCost = FlightCrewCost * 0.3
+      let groundCrewCost = flightCrewCost * 0.3;
+
+      // Calculate fuel cost with discount (legado logic)
+      const fuelBurned = job.startFuelWeight - job.finishFuelWeight;
+      let fuelCostWithoutDiscount = fuelBurned * fuelPrice;
+      let fuelCost = fuelCostWithoutDiscount;
+
+      let grCrewDiscount = 0.0;
+      if (departureFbo) {
+        // Apply fuel discount to fuel price (legado: this.FuelPrice -= fuelDiscount)
+        const fuelDiscount = fuelPrice * departureFbo.fuelPriceDiscount;
+        const fuelPriceWithDiscount = fuelPrice - fuelDiscount;
+
+        // Recalculate fuel cost with discounted price
+        fuelCost = fuelBurned * fuelPriceWithDiscount;
+
+        // Apply ground crew discount (legado: this.GroundCrewCost -= grCrewDiscount)
+        grCrewDiscount = groundCrewCost * departureFbo.groundCrewDiscount;
+        groundCrewCost -= grCrewDiscount;
+      }
+
+      // FuelCostPerNM = FuelCost / Dist
+      const fuelCostPerNm = fuelCost / (job.distance || 1);
+
+      // FlightAttendantCost = (JobPax / 60) * (21 * JobFlightTimeHours)
+      const flightTimeHours = this.calculateFlightTimeHours(job.startTime, job.endTime);
+      const flightAttendantCost = (job.pax / 60) * (21 * flightTimeHours);
+
+      // TotalCrewCostLabor = FlightCrewCost + FlightAttendantCost
+      const totalCrewCostLabor = flightCrewCost + flightAttendantCost;
+
+      // TotalFlightCost = TotalCrewCostLabor + FuelCost + GroundCrewCost
+      const totalFlightCost = totalCrewCostLabor + fuelCost + groundCrewCost;
+
+      // RevenueEarned = TotalFlightCost * 1.35
+      let revenueEarned = totalFlightCost * 1.35;
+
+      // If has FBO, add back the discounts to revenue
+      if (departureFbo) {
+        revenueEarned += grCrewDiscount;
+        revenueEarned += (fuelCostWithoutDiscount - fuelCost);
+      }
+
+      // FlightIncome = RevenueEarned - TotalFlightCost
+      const flightIncome = revenueEarned - totalFlightCost;
+
+      return {
+        id: job.id,
+        departureICAO: job.departureICAO,
+        arrivalICAO: job.arrivalICAO,
+        modelDescription: job.modelDescription,
+        modelName: job.modelName,
+        distance: job.distance,
+        flightTime: this.calculateFlightTime(job.startTime, job.endTime),
+        pax: job.pax,
+        payload: (job.pax * (job.paxWeight > 0 ? job.paxWeight : 84)) + job.cargo,
+        fuelLoaded: job.startFuelWeight,
+        fuelBurned: fuelBurned,
+        fuelPricePerKg: fuelPrice,
+        fuelCost: fuelCost,
+        fuelCostPerNm: fuelCostPerNm,
+        groundCrewCost: groundCrewCost,
+        flightCrewCost: flightCrewCost,
+        flightAttendantCost: flightAttendantCost,
+        totalCrewCost: totalCrewCostLabor,
+        totalFlightCost: totalFlightCost,
+        revenue: revenueEarned,
+        flightIncome: flightIncome,
+        userName: job.user?.userName || 'Unknown',
+        startTime: job.startTime,
+        endTime: job.endTime
+      };
+    });
+
+    const pageCount = Math.ceil(totalItemCount / pageSize) || 1;
 
     return {
       hasNextPage: actualPageNumber < pageCount,
@@ -290,8 +432,45 @@ export class AirlinesService {
       pageNumber: actualPageNumber,
       pageSize,
       totalItemCount,
-      airlineJobs: jobs
+      airlineJobs
     };
+  }
+
+  private calculateFlightTime(startTime: Date, endTime: Date): string {
+    if (!startTime || !endTime) return '00:00';
+    const start = this.parseDateAsUTC(startTime);
+    const end = this.parseDateAsUTC(endTime);
+    const diff = end.getTime() - start.getTime();
+    if (diff < 0) return '00:00';
+    const hours = Math.floor(diff / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+  }
+
+  private calculateFlightTimeHours(startTime: Date, endTime: Date): number {
+    if (!startTime || !endTime) return 0;
+    const start = this.parseDateAsUTC(startTime);
+    const end = this.parseDateAsUTC(endTime);
+    const diff = end.getTime() - start.getTime();
+    if (diff < 0) return 0;
+    return diff / (1000 * 60 * 60);
+  }
+
+  /**
+   * Parse date treating it as UTC to avoid timezone conversion issues.
+   * SQLite stores dates without timezone, so we need to treat them as UTC
+   * and calculate the difference directly.
+   */
+  private parseDateAsUTC(dateValue: Date | string): Date {
+    if (!dateValue) return null;
+    
+    // If it's already a Date, extract the ISO string and re-parse as UTC
+    const dateStr = dateValue instanceof Date ? dateValue.toISOString() : String(dateValue);
+    
+    // Parse as UTC by appending Z
+    const utcDate = new Date(dateStr.endsWith('Z') ? dateStr : dateStr + 'Z');
+    
+    return utcDate;
   }
 
   async getFOBs(icao: string, airlineId: number): Promise<any[]> {
