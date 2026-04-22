@@ -24,17 +24,32 @@ export class Statistics {
   @Column({ name: 'SendLicenseWarning', type: 'boolean', default: false })
   sendLicenseWarning: boolean;
 
+  @Column({ name: 'SendLicenseWarning_old', type: 'boolean', default: false })
+  sendLicenseWarningOld: boolean;
+
   @Column({ name: 'SendAirlineBillsWarning', type: 'boolean', default: false })
   sendAirlineBillsWarning: boolean;
+
+  @Column({ name: 'SendAirlineBillsWarning_old', type: 'boolean', default: false })
+  sendAirlineBillsWarningOld: boolean;
 
   @Column({ name: 'LicenseWarningSent', type: 'boolean', default: false })
   licenseWarningSent: boolean;
 
+  @Column({ name: 'LicenseWarningSent_old', type: 'boolean', default: false })
+  licenseWarningSentOld: boolean;
+
   @Column({ name: 'AirlineBillsWarningSent', type: 'boolean', default: false })
   airlineBillsWarningSent: boolean;
 
+  @Column({ name: 'AirlineBillsWarningSent_old', type: 'boolean', default: false })
+  airlineBillsWarningSentOld: boolean;
+
   @Column({ name: 'UseCustomPlaneCapacity', type: 'boolean', default: false })
   useCustomPlaneCapacity: boolean;
+
+  @Column({ name: 'UseCustomPlaneCapacity_old', type: 'boolean', default: false })
+  useCustomPlaneCapacityOld: boolean;
 
   @Column({ name: 'WeightUnit', nullable: true })
   weightUnit: string;

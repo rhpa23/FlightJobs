@@ -36,7 +36,7 @@ export const register = createAsyncThunk(
   'auth/register',
   async (userData: { email: string; password: string; userName?: string }) => {
     const response = await authApi.register(userData);
-    localStorage.setItem('token', response.access_token);
+    // Don't set token - user must confirm email first
     return response;
   }
 );
@@ -96,8 +96,8 @@ const authSlice = createSlice({
       })
       .addCase(register.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.user = action.payload.user;
-        state.token = action.payload.access_token;
+        // Don't set user or token - user must confirm email first
+        state.error = null;
       })
       .addCase(register.rejected, (state, action) => {
         state.isLoading = false;

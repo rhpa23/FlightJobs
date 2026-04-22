@@ -5,6 +5,7 @@ import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
+import { ConfirmEmailDto } from './dto/confirm-email.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
 @ApiTags('auth')
@@ -63,5 +64,13 @@ export class AuthController {
   async resetPassword(@Body() resetPasswordDto: ResetPasswordDto) {
     await this.authService.resetPassword(resetPasswordDto);
     return { message: 'Password reset successfully' };
+  }
+
+  @Post('confirm-email')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Confirm email address' })
+  async confirmEmail(@Body() confirmEmailDto: ConfirmEmailDto) {
+    await this.authService.confirmEmail(confirmEmailDto);
+    return { message: 'Email confirmed successfully' };
   }
 }

@@ -8,6 +8,7 @@ import { Statistics } from '../statistics/entities/statistics.entity';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
+import { ConfirmEmailDto } from './dto/confirm-email.dto';
 import { verifyAspNetPassword, hashAspNetPassword } from '../utils/password.util';
 import { MailService } from '../mail/mail.service';
 
@@ -66,7 +67,7 @@ export class AuthService {
       email: registerDto.email,
       passwordHash,
       userName: registerDto.userName || registerDto.email,
-      emailConfirmed: true,
+      emailConfirmed: false,
       lockoutEnabled: true,
     });
 
@@ -88,26 +89,27 @@ export class AuthService {
     try {
       const frontendUrl = this.configService.get<string>('FRONTEND_URL', 'http://localhost:3000');
       const confirmationLink = `${frontendUrl}/confirm-email?userId=${savedUser.id}`;
-      
+
       await this.mailService.sendWelcomeEmail({
         userName: savedUser.userName,
         userEmail: savedUser.email,
         confirmationLink,
       });
-      
+
       this.logger.log(`Welcome email queued for ${savedUser.email}`);
     } catch (error) {
       // Don't fail registration if email fails
       this.logger.error(`Failed to send welcome email to ${savedUser.email}:`, error);
     }
 
-    const payload = { email: savedUser.email, sub: savedUser.id };
+    // Don't return token automatically - user must confirm email first
     return {
-      access_token: this.jwtService.sign(payload),
+      message: 'Registration successful. Please check your email to confirm your account.',
       user: {
         id: savedUser.id,
         email: savedUser.email,
         userName: savedUser.userName,
+        emailConfirmed: savedUser.emailConfirmed,
       },
     };
   }
@@ -178,6 +180,29 @@ export class AuthService {
     await this.usersRepository.save(user);
 
     this.logger.log(`Password reset successfully for ${email}`);
+  }
+
+  async confirmEmail(confirmEmailDto: ConfirmEmailDto): Promise<void> {
+    const { userId } = confirmEmailDto;
+
+    // Find user by ID
+    const user = await this.usersRepository.findOne({ where: { id: userId } });
+
+    if (!user) {
+      throw new BadRequestException('Invalid user ID');
+    }
+
+    // Check if already confirmed - if so, just return success
+    if (user.emailConfirmed) {
+      this.logger.log(`Email already confirmed for user ${userId}`);
+      return;
+    }
+
+    // Mark email as confirmed
+    user.emailConfirmed = true;
+    await this.usersRepository.save(user);
+
+    this.logger.log(`Email confirmed for user ${userId}`);
   }
 
   private generateGuid(): string {
