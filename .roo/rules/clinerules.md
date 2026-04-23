@@ -6,5 +6,5 @@
 
 # Diretrizes de Resposta
 
-1. Antes de realizar qualquer alteração estrutural, explique brevemente o que será feito em português.
-2. Ao finalizar uma tarefa, forneça um resumo do que foi entregue.
+1. Não altere a estrutura do banco de dados sem minha permissão explícita.
+2. Sempre que fizer uma alteração no backend, me avise no final, de forma resumida e bem destacada, para me lembrar reiniciar o backend no console.
