@@ -298,3 +298,6 @@ modernization/backend/tsconfig.tsbuildinfo
 # Database files
 **/App_Data/*.db
 **/App_Data/*.mdf
+
+# Environment files
+modernization/backend/.env
