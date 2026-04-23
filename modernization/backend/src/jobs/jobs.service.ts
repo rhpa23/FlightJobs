@@ -617,8 +617,8 @@ export class JobsService {
     }
 
     // Salvar alterações
-    await this.airlinesRepository.save(airline);
-    await this.jobAirlineRepository.save(jobAirline);
+   await this.airlinesRepository.save(airline);
+   await this.jobAirlineRepository.save(jobAirline);
   }
 
   /**
@@ -632,14 +632,13 @@ export class JobsService {
   ): Promise<void> {
     try {
       // Buscar todos os pilotos da airline com alerta habilitado
-      const pilotStats = await this.statisticsRepository.find({
-        where: {
-          airline: { id: airline.id },
-          sendAirlineBillsWarning: true,
-          airlineBillsWarningSent: false,
-        },
-        relations: ['user'],
-      });
+      const pilotStats = await this.statisticsRepository
+        .createQueryBuilder('stats')
+        .leftJoinAndSelect('stats.user', 'user')
+        .where('stats.airline.id = :airlineId', { airlineId: airline.id })
+        .andWhere('stats.sendAirlineBillsWarning = :sendWarning', { sendWarning: true })
+        .andWhere('stats.airlineBillsWarningSent = :warningSent', { warningSent: false })
+        .getMany();
 
       if (pilotStats.length === 0) {
         this.logger.log(`No pilots to notify for airline ${airline.name} debt`);
