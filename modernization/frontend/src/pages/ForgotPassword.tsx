@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { authApi } from '../services/api';
 
 const forgotPasswordSchema = z.object({
   email: z.string().email('Invalid email address'),
@@ -28,16 +29,7 @@ export const ForgotPassword: React.FC = () => {
     setError(null);
 
     try {
-      const response = await fetch('http://localhost:3001/api/auth/forgot-password', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to send reset email');
-      }
-
+      await authApi.forgotPassword(data.email);
       setSuccess(true);
     } catch (err) {
       setError('Failed to send reset email. Please try again.');

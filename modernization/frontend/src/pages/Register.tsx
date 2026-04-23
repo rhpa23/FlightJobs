@@ -62,7 +62,8 @@ export const Register: React.FC = () => {
               Registration Successful
             </h2>
             <p className="mt-2 text-center text-sm text-gray-400">
-              Please check your email to confirm your account before logging in.
+              Please check your email to confirm your account before logging in. <br />
+              <b>If you don't see the email, check your spam folder.</b>
             </p>
           </div>
 

@@ -31,18 +31,27 @@ api.interceptors.response.use(
 export const authApi = {
   login: (credentials: { email: string; password: string }) =>
     api.post('/auth/login', credentials).then(res => res.data),
-  
+
   register: (userData: { email: string; password: string; userName?: string }) =>
     api.post('/auth/register', userData).then(res => res.data),
-  
+
   refresh: () =>
     api.post('/auth/refresh').then(res => res.data),
-  
+
   getProfile: () =>
     api.get('/auth/profile').then(res => res.data),
-  
+
   logout: () =>
     api.post('/auth/logout').then(res => res.data),
+
+  confirmEmail: (userId: string) =>
+    api.post('/auth/confirm-email', { userId }).then(res => res.data),
+
+  forgotPassword: (email: string) =>
+    api.post('/auth/forgot-password', { email }).then(res => res.data),
+
+  resetPassword: (data: { token: string; email: string; newPassword: string }) =>
+    api.post('/auth/reset-password', data).then(res => res.data),
 };
 
 export const jobsApi = {

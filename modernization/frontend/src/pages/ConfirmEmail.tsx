@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useSearchParams, useNavigate } from 'react-router-dom';
+import { authApi } from '../services/api';
 
 export const ConfirmEmail: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -21,17 +22,7 @@ export const ConfirmEmail: React.FC = () => {
       setError(null);
 
       try {
-        const response = await fetch('http://localhost:3001/api/auth/confirm-email', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ userId }),
-        });
-
-        if (!response.ok) {
-          const data = await response.json();
-          throw new Error(data.message || 'Failed to confirm email');
-        }
-
+        await authApi.confirmEmail(userId);
         setSuccess(true);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to confirm email');

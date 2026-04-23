@@ -36,10 +36,20 @@ export class AuthService {
   }
 
   async login(loginDto: LoginDto) {
-    const user = await this.validateUser(loginDto.email, loginDto.password);
+    const user = await this.usersRepository.findOne({ where: { email: loginDto.email } });
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');
     }
+
+    const isPasswordValid = await verifyAspNetPassword(loginDto.password, user.passwordHash);
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    if (!user.emailConfirmed) {
+      throw new UnauthorizedException('Please confirm your email before logging in');
+    }
+
     const payload = { email: user.email, sub: user.id };
     return {
       access_token: this.jwtService.sign(payload),

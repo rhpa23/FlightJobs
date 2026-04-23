@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
+import { authApi } from '../services/api';
 
 const resetPasswordSchema = z.object({
   token: z.string().min(1, 'Token is required'),
@@ -48,20 +49,11 @@ export const ResetPassword: React.FC = () => {
     setError(null);
 
     try {
-      const response = await fetch('http://localhost:3001/api/auth/reset-password', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          token: data.token,
-          email: data.email,
-          newPassword: data.newPassword,
-        }),
+      await authApi.resetPassword({
+        token: data.token,
+        email: data.email,
+        newPassword: data.newPassword,
       });
-
-      if (!response.ok) {
-        throw new Error('Failed to reset password');
-      }
-
       setSuccess(true);
     } catch (err) {
       setError('Failed to reset password. Please try again or request a new reset link.');
