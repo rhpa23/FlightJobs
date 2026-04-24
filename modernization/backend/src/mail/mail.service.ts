@@ -39,8 +39,8 @@ export class MailService implements OnModuleInit {
   }
 
   private initializeTransporter() {
-    const host = this.configService.get<string>('MAIL_HOST', 'smtp.gmail.com');
-    const port = this.configService.get<number>('MAIL_PORT', 587);
+    const host = this.configService.get<string>('MAIL_HOST', '');
+    const port = this.configService.get<number>('MAIL_PORT', 0);
     const user = this.configService.get<string>('MAIL_USER', '');
     const pass = this.configService.get<string>('MAIL_PASS', '');
     const secure = this.configService.get<boolean>('MAIL_SECURE', false);
@@ -269,7 +269,7 @@ export class MailService implements OnModuleInit {
         body: bodyContent,
       });
 
-      const fromEmail = this.configService.get<string>('MAIL_FROM', 'flightjobs.net.no.reply@gmail.com');
+      const fromEmail = this.configService.get<string>('MAIL_FROM', '');
       const fromName = this.configService.get<string>('MAIL_FROM_NAME', 'FlightJobs');
 
       const mailOptions: nodemailer.SendMailOptions = {
