@@ -27,7 +27,7 @@ export class MailScheduler {
    * License expiration warning job
    * Runs every 3 hours - same as legacy WarningEmailJob
    */
-  @Cron('0 */3 * * *')
+  @Cron('0 */3 * * *')  //  @Cron('*/1 * * * *') //Runs every 1 minutes for testing
   async handleLicenseWarningJob(): Promise<void> {
     // Prevent concurrent execution
     if (this.isJobRunning) {
@@ -48,11 +48,11 @@ export class MailScheduler {
         .createQueryBuilder('expense')
         .innerJoinAndSelect('expense.user', 'user')
         .innerJoinAndSelect('expense.pilotLicenseExpense', 'license')
-        .innerJoin('statistics', 'stats', 'stats.userId = user.id')
+        .innerJoin('statisticsdbmodels', 'stats', 'stats.userId = user.id')
         .where('expense.maturityDate < :checkDate', { checkDate })
-        .andWhere('stats.sendLicenseWarning = :sendWarning', { sendWarning: true })
-        .andWhere('stats.licenseWarningSent = :warningSent', { warningSent: false })
-        .andWhere('user.emailConfirmed = :confirmed', { confirmed: true })
+        .andWhere('stats.sendLicenseWarning = true')
+        .andWhere('stats.licenseWarningSent = false')
+        .andWhere('user.emailConfirmed = true')
         .getMany();
 
       // Group by user
