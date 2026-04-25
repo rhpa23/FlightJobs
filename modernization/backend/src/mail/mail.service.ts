@@ -260,13 +260,20 @@ export class MailService implements OnModuleInit {
         throw new Error(`Template not found: ${options.template}`);
       }
 
-      // Render body content
-      const bodyContent = templateFn(options.context);
+      // Get frontend URL from config
+      const frontendUrl = this.configService.get<string>('FRONTEND_URL', 'http://localhost:3002');
+
+      // Render body content with frontendUrl
+      const bodyContent = templateFn({
+        ...options.context,
+        frontendUrl,
+      });
 
       // Wrap with base template
       const html = this.baseTemplate({
         subject: options.subject,
         body: bodyContent,
+        frontendUrl,
       });
 
       const fromEmail = this.configService.get<string>('MAIL_FROM', '');
