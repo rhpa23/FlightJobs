@@ -21,6 +21,7 @@ import {
 import { CheckCircleIcon } from '@heroicons/react/24/solid';
 import { useNavigate } from 'react-router-dom';
 import { searchApi, capacityApi, statisticsApi } from '../services/api';
+import { useWeightUnit } from '../hooks/useWeightUnit';
 import 'leaflet/dist/leaflet.css';
 
 /* ── Fix Leaflet icon paths with CRA/webpack ─────────────────────────────── */
@@ -322,10 +323,11 @@ interface CapacityModalProps {
   onUpdate: (id: number, d: Omit<CustomCapacity, 'id'>) => Promise<void>;
   onRemove: (id: number) => Promise<void>;
   weightUnit?: string;
+  convertWeight?: (valueInKg: number) => number;
 }
 
 function CustomCapacityModal({
-  isOpen, onClose, onSelect, capacities, selectedCapacity, onSave, onUpdate, onRemove, weightUnit = 'kg',
+  isOpen, onClose, onSelect, capacities, selectedCapacity, onSave, onUpdate, onRemove, weightUnit = 'kg', convertWeight = (v) => v,
 }: CapacityModalProps) {
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [isNewMode, setIsNewMode] = useState(false);
@@ -468,7 +470,7 @@ function CustomCapacityModal({
                     >
                       {capacities.map((c) => (
                         <option key={c.id} value={c.id}>
-                          {c.customNameCapacity} ({c.customPassengerCapacity} pax | {c.customCargoCapacityWeight}{weightUnit} cargo)
+                          {c.customNameCapacity} ({c.customPassengerCapacity} pax | {convertWeight(c.customCargoCapacityWeight).toLocaleString()} {weightUnit} cargo)
                         </option>
                       ))}
                       {capacities.length === 0 && <option value="">— No capacities saved —</option>}
@@ -598,12 +600,11 @@ function CustomCapacityModal({
   );
 }
 
-/* ── ConfirmModal ────────────────────────────────────────────────────────── */
 interface ConfirmModalProps {
   isOpen: boolean;
   isLoading: boolean;
   onClose: () => void;
-  onConfirm: (jobs: GeneratedJobOption[]) => Promise<void>;
+  onConfirm: (selected: GeneratedJobOption[]) => void;
   jobs: GeneratedJobOption[];
   onToggleJob: (idx: number) => void;
   onSelectAll: () => void;
@@ -611,11 +612,12 @@ interface ConfirmModalProps {
   arrival: string;
   paxWeight?: number;
   weightUnit?: string;
+  convertWeight?: (valueInKg: number) => number;
 }
 
 function ConfirmModal({
   isOpen, isLoading, onClose, onConfirm, jobs, onToggleJob, onSelectAll,
-  departure, arrival, paxWeight = 87, weightUnit = 'kg',
+  departure, arrival, paxWeight = 87, weightUnit = 'kg', convertWeight = (v) => v,
 }: ConfirmModalProps) {
   const allSelected = jobs.length > 0 && jobs.every((j) => j.isSelected);
   const selected = jobs.filter((j) => j.isSelected);
@@ -701,14 +703,14 @@ function ConfirmModal({
                                 Total pax: <span className="font-bold text-white">{totalPax}</span>
                               </span>
                               <span className="text-gray-300">
-                                Total cargo: <span className="font-bold text-white">{totalCargo} {weightUnit}</span>
+                                Total cargo: <span className="font-bold text-white">{convertWeight(totalCargo).toLocaleString()} {weightUnit}</span>
                               </span>
                               <span className="text-gray-300">
                                 Pilot Payment: <span className="font-bold text-green-400">F${pilotPayment.toLocaleString()}</span>
                               </span>
                             </div>
                             <div className="pt-1 text-xs text-gray-300">
-                              Total payload: <span className="font-bold text-white">{totalPayload} {weightUnit}</span>
+                              Total payload: <span className="font-bold text-white">{convertWeight(totalPayload).toLocaleString()} {weightUnit}</span>
                             </div>
                           </>
                         )}
@@ -768,7 +770,7 @@ function ConfirmModal({
                                     </span>
                                   </div>
                                 </td>
-                                <td className="px-3 py-3 text-right font-mono text-gray-200">{job.payload}</td>
+                                <td className="px-3 py-3 text-right font-mono text-gray-200">{convertWeight(parseInt(job.payload) || 0).toLocaleString()} {weightUnit}</td>
                                 <td className="px-3 py-3 text-right font-mono font-bold text-green-400">{job.pay}</td>
                               </tr>
                             ))}
@@ -785,7 +787,7 @@ function ConfirmModal({
                   <div className="flex items-center justify-between px-6 py-4 bg-gray-800/30 border-t border-gray-700">
                     <span className="text-xs text-gray-500">
                       Passenger weight for payload calculation:{' '}
-                      <span className="font-semibold text-gray-300">{paxWeight} {weightUnit}</span>
+                      <span className="font-semibold text-gray-300">{convertWeight(paxWeight).toLocaleString()} {weightUnit}</span>
                     </span>
                     <div className="flex items-center gap-3">
                       <button type="button" onClick={onClose}
@@ -819,6 +821,7 @@ function ConfirmModal({
 /* ══════════════════════════════════════════════════════════════════════════*/
 export const SearchJobs: React.FC = () => {
   const navigate = useNavigate();
+  const { unit: weightUnit, convert } = useWeightUnit();
 
   /* Airport state */
   const [departure, setDeparture] = useState('');
@@ -1500,6 +1503,8 @@ export const SearchJobs: React.FC = () => {
         onSave={onSaveCap}
         onUpdate={onUpdateCap}
         onRemove={onRemoveCap}
+        weightUnit={weightUnit}
+        convertWeight={convert}
       />
 
       <ConfirmModal
@@ -1513,6 +1518,8 @@ export const SearchJobs: React.FC = () => {
         departure={departure}
         arrival={arrival}
         paxWeight={selectedCapacity?.customPaxWeight ?? 87}
+        weightUnit={weightUnit}
+        convertWeight={convert}
       />
     </div>
   );

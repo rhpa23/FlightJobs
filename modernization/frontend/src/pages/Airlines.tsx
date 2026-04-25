@@ -34,6 +34,7 @@ import {
   LedgerData,
 } from '../store/slices/airlinesSlice';
 import { fetchMyStats } from '../store/slices/statisticsSlice';
+import { useWeightUnit } from '../hooks/useWeightUnit';
 import { Modal } from '../components/ui/Modal';
 import { Tooltip } from '../components/ui/Tooltip';
 import { AirlineCardComponent } from '../components/ui/AirlineCard';
@@ -120,6 +121,7 @@ export const Airlines: React.FC = () => {
   const dispatch = useAppDispatch();
   const { airlines, userAirline, pilots, fbos, airlineStats, availableFbos, ledger, isLoading } = useAppSelector((state) => state.airlines);
   const { myStats } = useAppSelector((state) => state.statistics);
+  const { format: formatWeight } = useWeightUnit();
 
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -1452,7 +1454,7 @@ export const Airlines: React.FC = () => {
                         {job.pax}
                       </td>
                       <td className="py-2 px-2 text-right text-gray-300 whitespace-nowrap">
-                        {job.payload.toLocaleString()} kg
+                        {formatWeight(job.payload)}
                       </td>
                       <td className="py-2 px-2 text-right text-gray-300 whitespace-nowrap">
                         <div className="text-xs">
