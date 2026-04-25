@@ -184,6 +184,12 @@ export const statisticsApi = {
 
   getMonthlyEarnings: () =>
     api.get('/statistics/monthly-earnings').then(res => res.data),
+
+  updateNotificationPreferences: (data: { sendLicenseWarning: boolean; sendAirlineBillsWarning: boolean }) =>
+    api.patch('/statistics/notification-preferences', data).then(res => res.data),
+
+  updateWeightUnit: (weightUnit: string) =>
+    api.patch('/statistics/weight-unit', { weightUnit }).then(res => res.data),
 };
 
 export const searchApi = {

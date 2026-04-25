@@ -75,6 +75,8 @@ export class StatisticsService {
         imageUrl: stats.customPlaneCapacity.imageUrl,
       } : null,
       logo: stats.logo,
+      sendLicenseWarning: stats.sendLicenseWarning || false,
+      sendAirlineBillsWarning: stats.sendAirlineBillsWarning || false,
     };
   }
 
@@ -181,5 +183,41 @@ export class StatisticsService {
     };
     const [month, year] = monthKey.split('/');
     return new Date(parseInt(year), months[month] || 0, 1);
+  }
+
+  async updateNotificationPreferences(userId: string, sendLicenseWarning: boolean, sendAirlineBillsWarning: boolean): Promise<Statistics> {
+    let stats = await this.statisticsRepository.findOne({
+      where: { userId },
+    });
+
+    if (!stats) {
+      stats = this.statisticsRepository.create({
+        userId,
+        sendLicenseWarning,
+        sendAirlineBillsWarning,
+      });
+    } else {
+      stats.sendLicenseWarning = sendLicenseWarning;
+      stats.sendAirlineBillsWarning = sendAirlineBillsWarning;
+    }
+
+    return this.statisticsRepository.save(stats);
+  }
+
+  async updateWeightUnit(userId: string, weightUnit: string): Promise<Statistics> {
+    let stats = await this.statisticsRepository.findOne({
+      where: { userId },
+    });
+
+    if (!stats) {
+      stats = this.statisticsRepository.create({
+        userId,
+        weightUnit,
+      });
+    } else {
+      stats.weightUnit = weightUnit;
+    }
+
+    return this.statisticsRepository.save(stats);
   }
 }

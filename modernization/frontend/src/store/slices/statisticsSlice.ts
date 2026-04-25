@@ -15,6 +15,8 @@ interface Statistics {
   user?: any;
   airline?: any;
   logo?: string;
+  sendLicenseWarning?: boolean;
+  sendAirlineBillsWarning?: boolean;
 }
 
 interface LeaderboardEntry {
@@ -142,6 +144,22 @@ export const fetchAirlineStats = createAsyncThunk('statistics/fetchAirlineStats'
   return response;
 });
 
+export const updateNotificationPreferences = createAsyncThunk(
+  'statistics/updateNotificationPreferences',
+  async (data: { sendLicenseWarning: boolean; sendAirlineBillsWarning: boolean }) => {
+    const response = await statisticsApi.updateNotificationPreferences(data);
+    return response;
+  }
+);
+
+export const updateWeightUnit = createAsyncThunk(
+  'statistics/updateWeightUnit',
+  async (weightUnit: string) => {
+    const response = await statisticsApi.updateWeightUnit(weightUnit);
+    return response;
+  }
+);
+
 const statisticsSlice = createSlice({
   name: 'statistics',
   initialState,
@@ -205,6 +223,17 @@ const statisticsSlice = createSlice({
       })
       .addCase(fetchAirlineStats.fulfilled, (state, action) => {
         state.airlineStats = action.payload;
+      })
+      .addCase(updateNotificationPreferences.fulfilled, (state, action) => {
+        if (state.myStats) {
+          state.myStats.sendLicenseWarning = action.payload.sendLicenseWarning;
+          state.myStats.sendAirlineBillsWarning = action.payload.sendAirlineBillsWarning;
+        }
+      })
+      .addCase(updateWeightUnit.fulfilled, (state, action) => {
+        if (state.myStats) {
+          state.myStats.weightUnit = action.payload.weightUnit;
+        }
       });
   },
 });

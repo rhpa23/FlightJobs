@@ -1,4 +1,4 @@
-import { Controller, Get, Param, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Patch, Body, UseGuards, Request } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { StatisticsService } from './statistics.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -44,5 +44,28 @@ export class StatisticsController {
   @ApiOperation({ summary: 'Get monthly earnings for the last 6 months' })
   getMonthlyEarnings(@Request() req) {
     return this.statisticsService.getMonthlyEarnings(req.user.userId);
+  }
+
+  @Patch('notification-preferences')
+  @ApiOperation({ summary: 'Update notification preferences' })
+  updateNotificationPreferences(
+    @Request() req,
+    @Body('sendLicenseWarning') sendLicenseWarning: boolean,
+    @Body('sendAirlineBillsWarning') sendAirlineBillsWarning: boolean,
+  ) {
+    return this.statisticsService.updateNotificationPreferences(
+      req.user.userId,
+      sendLicenseWarning,
+      sendAirlineBillsWarning,
+    );
+  }
+
+  @Patch('weight-unit')
+  @ApiOperation({ summary: 'Update weight unit preference' })
+  updateWeightUnit(
+    @Request() req,
+    @Body('weightUnit') weightUnit: string,
+  ) {
+    return this.statisticsService.updateWeightUnit(req.user.userId, weightUnit);
   }
 }

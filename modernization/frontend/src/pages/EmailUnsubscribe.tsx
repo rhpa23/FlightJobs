@@ -39,6 +39,9 @@ export const EmailUnsubscribe: React.FC = () => {
     <div className="min-h-screen bg-gradient-to-br from-[#0f0f1e] via-[#1a1a2e] to-[#16213e] flex items-center justify-center p-4">
       <div className="w-full max-w-md bg-[#1e293b]/60 backdrop-blur-lg rounded-2xl border border-[#22b8eb]/20 p-8 shadow-2xl">
         <div className="text-center">
+          <div className="mb-6 flex justify-center">
+            <img src="/logo192.png" alt="FlightJobs" className="h-14 w-14 opacity-40" />
+          </div>
           <div className="mx-auto w-16 h-16 bg-[#22b8eb]/10 rounded-full flex items-center justify-center mb-6">
             {status === 'success' ? (
               <CheckCircleIcon className="w-8 h-8 text-green-400" />

@@ -25,6 +25,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { fetchMyStats } from '../store/slices/statisticsSlice';
+import { useWeightUnit } from '../hooks/useWeightUnit';
 import { fetchMyAirline } from '../store/slices/airlinesSlice';
 import {
   fetchLogbook,
@@ -118,7 +119,8 @@ interface LogbookFilters {
 export const Profile: React.FC = () => {
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state) => state.auth);
-  const { myStats, isLoading: statsLoading } = useAppSelector((state) => state.statistics);
+  const { myStats } = useAppSelector((state) => state.statistics);
+  const { format: formatWeight } = useWeightUnit();
   const { userAirline } = useAppSelector((state) => state.airlines);
   const { logbook, licenses, graduations, currentBankBalance, isLoading } = useAppSelector((state) => state.profile);
 
@@ -300,7 +302,7 @@ export const Profile: React.FC = () => {
   };
 
   // Loading state
-  if (statsLoading || isLoading) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
@@ -564,17 +566,17 @@ export const Profile: React.FC = () => {
                     <td className="px-4 py-3 text-gray-300">{entry.distance} NM</td>
                     <td className="px-4 py-3 text-gray-300">{entry.pax}</td>
                     <td className="px-4 py-3 text-gray-300">
-                      {entry.cargo} {myStats?.weightUnit || 'kg'}
+                      {formatWeight(entry.cargo)}
                     </td>
                     <td className="px-4 py-3 text-gray-300">
-                      {entry.payloadDisplay} {myStats?.weightUnit || 'kg'}
+                      {formatWeight(Number(entry.payloadDisplay))}
                     </td>
                     <td className="px-4 py-3 text-green-400 font-medium">
                       F$ {entry.pay?.toLocaleString()}
                     </td>
                     <td className="px-4 py-3 text-gray-300">{entry.flightTime}</td>
                     <td className="px-4 py-3 text-gray-300">
-                      {entry.usedFuelWeightDisplay} {myStats?.weightUnit || 'kg'}
+                      {formatWeight(Number(entry.usedFuelWeightDisplay))}
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center justify-center gap-2">

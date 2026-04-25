@@ -38,6 +38,9 @@ export const ConfirmEmail: React.FC = () => {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-md w-full space-y-8">
+          <div className="text-center">
+            <img src="/logo192.png" alt="FlightJobs" className="mx-auto h-14 w-14 opacity-40 mb-4" />
+          </div>
           <div className="mx-auto h-12 w-12 flex items-center justify-center rounded-full bg-blue-600">
             <svg className="animate-spin h-8 w-8 text-white" fill="none" viewBox="0 0 24 24">
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
@@ -56,6 +59,9 @@ export const ConfirmEmail: React.FC = () => {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-md w-full space-y-8">
+          <div className="text-center">
+            <img src="/logo192.png" alt="FlightJobs" className="mx-auto h-14 w-14 opacity-40 mb-4" />
+          </div>
           <div>
             <div className="mx-auto h-12 w-12 flex items-center justify-center rounded-full bg-red-600">
               <svg className="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -87,6 +93,9 @@ export const ConfirmEmail: React.FC = () => {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-md w-full space-y-8">
+          <div className="text-center">
+            <img src="/logo192.png" alt="FlightJobs" className="mx-auto h-14 w-14 opacity-40 mb-4" />
+          </div>
           <div>
             <div className="mx-auto h-12 w-12 flex items-center justify-center rounded-full bg-green-600">
               <svg className="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">

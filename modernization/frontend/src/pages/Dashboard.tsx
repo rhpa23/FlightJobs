@@ -17,6 +17,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { fetchMyStats, fetchMonthlyEarnings } from '../store/slices/statisticsSlice';
+import { useWeightUnit } from '../hooks/useWeightUnit';
 import { fetchPendingJobs, fetchActiveJob, deleteJob, activateJob } from '../store/slices/jobsSlice';
 import { fetchMyAirline } from '../store/slices/airlinesSlice';
 import { ToastContainer, ToastMsg } from '../components/Toast';
@@ -50,6 +51,7 @@ export const Dashboard: React.FC = () => {
   const { myStats, monthlyEarnings, isLoading } = useAppSelector((state) => state.statistics);
   const { pendingJobs, currentJob } = useAppSelector((state) => state.jobs);
   const { userAirline } = useAppSelector((state) => state.airlines);
+  const { format: formatWeight, unit } = useWeightUnit();
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [showActivateModal, setShowActivateModal] = useState(false);
   const [showDeletePendingModal, setShowDeletePendingModal] = useState(false);
@@ -213,7 +215,7 @@ export const Dashboard: React.FC = () => {
                   <span className="relative group">
                     <InformationCircleIcon className="w-3.5 h-3.5 text-gray-600 cursor-help" />
                     <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-1 bg-gray-900 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10 border border-gray-700">
-                      Weight for each pax: {currentJob.paxWeight} {myStats?.weightUnit || ''}
+                      Weight for each pax: {formatWeight(currentJob.paxWeight)}
                     </span>
                   </span>
                 </p>
@@ -233,7 +235,7 @@ export const Dashboard: React.FC = () => {
                   </span>
                 </p>
                 <p className="text-lg font-semibold text-green-400">
-                  {currentJob.pax != null && currentJob.cargo != null ? ((currentJob.pax * currentJob.paxWeight) + currentJob.cargo).toLocaleString() + ' ' + (myStats?.weightUnit || '') : '0'}
+                  {currentJob.pax != null && currentJob.cargo != null ? formatWeight((currentJob.pax * currentJob.paxWeight) + currentJob.cargo) : '0'}
                 </p>
               </div>
             </div>
@@ -250,7 +252,7 @@ export const Dashboard: React.FC = () => {
               <CubeIcon className="h-5 w-5 text-gray-500 mt-0.5 flex-shrink-0" />
               <div>
                 <p className="text-xs font-medium text-gray-400 uppercase tracking-wide">Cargo</p>
-                <p className="text-lg font-semibold text-white">{currentJob.cargo + ' ' + (myStats?.weightUnit || '')}</p>
+                <p className="text-lg font-semibold text-white">{formatWeight(currentJob.cargo)}</p>
               </div>
             </div>
             <div className="flex items-start gap-3">
