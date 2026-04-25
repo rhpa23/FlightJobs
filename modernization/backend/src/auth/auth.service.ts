@@ -9,6 +9,7 @@ import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { ConfirmEmailDto } from './dto/confirm-email.dto';
+import { UnsubscribeDto } from './dto/unsubscribe.dto';
 import { verifyAspNetPassword, hashAspNetPassword } from '../utils/password.util';
 import { MailService } from '../mail/mail.service';
 
@@ -101,6 +102,7 @@ export class AuthService {
       const confirmationLink = `${frontendUrl}/confirm-email?userId=${savedUser.id}`;
 
       await this.mailService.sendWelcomeEmail({
+        userId: savedUser.id,
         userName: savedUser.userName,
         userEmail: savedUser.email,
         confirmationLink,
@@ -155,6 +157,7 @@ export class AuthService {
       const resetLink = `${frontendUrl}/reset-password?token=${resetToken}&email=${encodeURIComponent(email)}`;
       
       await this.mailService.sendPasswordResetEmail({
+        userId: user.id,
         userName: user.userName,
         userEmail: user.email,
         resetLink,
@@ -213,6 +216,36 @@ export class AuthService {
     await this.usersRepository.save(user);
 
     this.logger.log(`Email confirmed for user ${userId}`);
+  }
+
+  async unsubscribeEmail(unsubscribeDto: UnsubscribeDto): Promise<void> {
+    const { token } = unsubscribeDto;
+
+    // Find user by ID (token is the userId in this implementation)
+    const user = await this.usersRepository.findOne({ where: { id: token } });
+
+    if (!user) {
+      throw new BadRequestException('Invalid unsubscribe token');
+    }
+
+    // Find user's statistics record
+    const stats = await this.statisticsRepository.findOne({
+      where: { userId: user.id },
+    });
+
+    if (!stats) {
+      throw new BadRequestException('User statistics not found');
+    }
+
+    // Disable all email notifications
+    stats.sendLicenseWarning = false;
+    stats.sendAirlineBillsWarning = false;
+    //stats.licenseWarningSent = false;
+    //stats.airlineBillsWarningSent = false;
+
+    await this.statisticsRepository.save(stats);
+
+    this.logger.log(`User ${user.id} unsubscribed from all email notifications`);
   }
 
   private generateGuid(): string {

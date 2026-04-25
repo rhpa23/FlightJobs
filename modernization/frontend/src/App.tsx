@@ -9,6 +9,7 @@ import { Register } from './pages/Register';
 import { ForgotPassword } from './pages/ForgotPassword';
 import { ResetPassword } from './pages/ResetPassword';
 import { ConfirmEmail } from './pages/ConfirmEmail';
+import { EmailUnsubscribe } from './pages/EmailUnsubscribe';
 import { Dashboard } from './pages/Dashboard';
 import { SearchJobs } from './pages/SearchJobs';
 import { Airlines } from './pages/Airlines';
@@ -38,6 +39,7 @@ const AppContent: React.FC = () => {
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/confirm-email" element={<ConfirmEmail />} />
+          <Route path="/email-unsubscribe" element={<EmailUnsubscribe />} />
 
           {/* Protected routes */}
           <Route

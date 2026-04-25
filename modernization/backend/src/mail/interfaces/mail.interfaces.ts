@@ -44,12 +44,14 @@ export interface AirlineDebtData {
 }
 
 export interface WelcomeEmailData {
+  userId: string;
   userName: string;
   userEmail: string;
   confirmationLink: string;
 }
 
 export interface PasswordResetData {
+  userId: string;
   userName: string;
   userEmail: string;
   resetLink: string;

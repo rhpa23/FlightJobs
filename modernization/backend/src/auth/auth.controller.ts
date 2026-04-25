@@ -6,6 +6,7 @@ import { RegisterDto } from './dto/register.dto';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { ConfirmEmailDto } from './dto/confirm-email.dto';
+import { UnsubscribeDto } from './dto/unsubscribe.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
 @ApiTags('auth')
@@ -72,5 +73,13 @@ export class AuthController {
   async confirmEmail(@Body() confirmEmailDto: ConfirmEmailDto) {
     await this.authService.confirmEmail(confirmEmailDto);
     return { message: 'Email confirmed successfully' };
+  }
+
+  @Post('unsubscribe')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Unsubscribe from all email notifications' })
+  async unsubscribe(@Body() unsubscribeDto: UnsubscribeDto) {
+    await this.authService.unsubscribeEmail(unsubscribeDto);
+    return { message: 'You have been unsubscribed from all email notifications.' };
   }
 }

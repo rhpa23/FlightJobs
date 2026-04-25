@@ -274,6 +274,7 @@ export class MailService implements OnModuleInit {
         subject: options.subject,
         body: bodyContent,
         frontendUrl,
+        userId: options.context.userId,
       });
 
       const fromEmail = this.configService.get<string>('MAIL_FROM', '');
@@ -310,6 +311,7 @@ export class MailService implements OnModuleInit {
       subject: 'Confirm your account',
       template: 'welcome',
       context: {
+        userId: data.userId,
         userName: data.userName,
         userEmail: data.userEmail,
         confirmationLink: data.confirmationLink,
@@ -327,6 +329,7 @@ export class MailService implements OnModuleInit {
       subject: 'Reset your password',
       template: 'password-reset',
       context: {
+        userId: data.userId,
         userName: data.userName,
         userEmail: data.userEmail,
         resetLink: data.resetLink,
@@ -345,6 +348,7 @@ export class MailService implements OnModuleInit {
       subject: 'Pilot license expiration warning',
       template: 'license-warning',
       context: {
+        userId: data.userId,
         userName: data.userName,
         userEmail: data.userEmail,
         licenseCount: data.licenses.length,
@@ -363,6 +367,7 @@ export class MailService implements OnModuleInit {
       subject: 'Airline has bills to pay',
       template: 'airline-debt',
       context: {
+        userId: data.userId,
         userName: data.userName,
         userEmail: data.userEmail,
         airlineName: data.airlineName,

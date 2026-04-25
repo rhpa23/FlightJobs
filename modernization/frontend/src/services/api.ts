@@ -52,6 +52,9 @@ export const authApi = {
 
   resetPassword: (data: { token: string; email: string; newPassword: string }) =>
     api.post('/auth/reset-password', data).then(res => res.data),
+
+  unsubscribeEmail: (token: string) =>
+    api.post('/auth/unsubscribe', { token }).then(res => res.data),
 };
 
 export const jobsApi = {
