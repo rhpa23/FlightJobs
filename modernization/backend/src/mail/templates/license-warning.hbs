@@ -14,7 +14,7 @@
   {{#each licenses}}
   <li>
     <strong>{{name}}</strong><br>
-    <span style="font-size: 14px; color: #94a3b8;">
+    <span style="font-size: 14px; color: #000000ab;">
       Expires: {{formatDate maturityDate}} 
       {{#if (eq daysUntilExpiry 0)}}
         <span class="text-danger">(TODAY!)</span>
@@ -32,7 +32,7 @@
 </div>
 
 <div style="text-align: center;">
-  <a href="https://flightjobs.bsite.net/profile" class="button">Go to Profile</a>
+  <a href="{{frontendUrl}}/profile" class="button">Go to Profile</a>
 </div>
 
 <div class="divider"></div>
