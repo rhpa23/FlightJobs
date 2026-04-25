@@ -2,10 +2,12 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { fetchMyStats, updateNotificationPreferences, updateWeightUnit } from '../store/slices/statisticsSlice';
 import { ToastContainer, ToastMsg } from '../components/Toast';
+import { usersApi } from '../services/api';
 
 export const Settings: React.FC = () => {
   const dispatch = useAppDispatch();
   const { myStats, isLoading } = useAppSelector((state) => state.statistics);
+  const { user } = useAppSelector((state) => state.auth);
 
   const [licenseWarning, setLicenseWarning] = useState(false);
   const [airlineBillsWarning, setAirlineBillsWarning] = useState(false);
@@ -13,6 +15,13 @@ export const Settings: React.FC = () => {
   const [isSavingNotifications, setIsSavingNotifications] = useState(false);
   const [isSavingWeightUnit, setIsSavingWeightUnit] = useState(false);
   const [toasts, setToasts] = useState<ToastMsg[]>([]);
+
+  // Account Settings state
+  const [userName, setUserName] = useState('');
+  const [password, setPassword] = useState('');
+  const [userNameError, setUserNameError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const [isSavingAccount, setIsSavingAccount] = useState(false);
 
   useEffect(() => {
     dispatch(fetchMyStats());
@@ -25,6 +34,13 @@ export const Settings: React.FC = () => {
       setWeightUnit(myStats.weightUnit === 'lbs' ? 'lbs' : 'kg');
     }
   }, [myStats]);
+
+  // Load userName from auth user
+  useEffect(() => {
+    if (user?.userName) {
+      setUserName(user.userName);
+    }
+  }, [user]);
 
   const addToast = useCallback((message: string, type: ToastMsg['type'] = 'success') => {
     const id = Date.now();
@@ -62,6 +78,71 @@ export const Settings: React.FC = () => {
     }
   };
 
+  // Validation functions
+  const validateUserName = (value: string): boolean => {
+    if (value.length < 3) {
+      setUserNameError('UserName must be at least 3 characters');
+      return false;
+    }
+    setUserNameError('');
+    return true;
+  };
+
+  const validatePassword = (value: string): boolean => {
+    if (!value) return true; // Password is optional
+    const hasUpperCase = /[A-Z]/.test(value);
+    const hasNumber = /[0-9]/.test(value);
+    if (!hasUpperCase || !hasNumber) {
+      setPasswordError('Password must contain at least one uppercase letter and one number');
+      return false;
+    }
+    setPasswordError('');
+    return true;
+  };
+
+  const handleSaveAccount = async () => {
+    if (!user?.id) {
+      addToast('User not found', 'error');
+      return;
+    }
+
+    const isUserNameValid = validateUserName(userName);
+    const isPasswordValid = validatePassword(password);
+
+    if (!isUserNameValid || !isPasswordValid) {
+      return;
+    }
+
+    setIsSavingAccount(true);
+    try {
+      const data: { userName?: string; password?: string } = {};
+      if (userName !== user.userName) {
+        data.userName = userName;
+      }
+      if (password) {
+        data.password = password;
+      }
+
+      if (Object.keys(data).length === 0) {
+        addToast('No changes to save', 'info');
+        setIsSavingAccount(false);
+        return;
+      }
+
+      await usersApi.updateUser(user.id, data);
+      addToast('Account settings saved successfully!', 'success');
+      setPassword(''); // Clear password after successful save
+    } catch (err: any) {
+      if (err?.response?.data?.message?.includes('duplicate') || err?.response?.status === 409) {
+        addToast('This UserName is already taken', 'error');
+      } else {
+        addToast('Error saving account settings', 'error');
+      }
+    } finally {
+      setIsSavingAccount(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       <h1 className="text-2xl font-semibold text-white">Settings</h1>
@@ -70,24 +151,69 @@ export const Settings: React.FC = () => {
       <div className="bg-gray-800 p-6 rounded-lg">
         <h2 className="text-lg font-medium text-white mb-4">Account Settings</h2>
         <div className="space-y-4">
+          {/* Email (read-only) */}
           <div>
             <label className="block text-sm font-medium text-gray-300">Email</label>
             <input
               type="email"
-              className="mt-1 block w-full px-3 py-2 border border-gray-600 rounded-md bg-gray-700 text-white"
-              placeholder="pilot@example.com"
+              value={user?.email || ''}
+              disabled
+              className="mt-1 block w-full px-3 py-2 border border-gray-600 rounded-md bg-gray-600 text-gray-400 cursor-not-allowed"
             />
+            <p className="text-xs text-gray-500 mt-1">Email cannot be changed</p>
           </div>
+
+          {/* UserName */}
           <div>
-            <label className="block text-sm font-medium text-gray-300">Password</label>
+            <label className="block text-sm font-medium text-gray-300">UserName</label>
+            <input
+              type="text"
+              value={userName}
+              onChange={(e) => {
+                setUserName(e.target.value);
+                if (userNameError) validateUserName(e.target.value);
+              }}
+              onBlur={() => validateUserName(userName)}
+              className={`mt-1 block w-full px-3 py-2 border rounded-md bg-gray-700 text-white ${
+                userNameError ? 'border-red-500' : 'border-gray-600'
+              }`}
+              placeholder="Your username"
+            />
+            {userNameError && (
+              <p className="text-xs text-red-400 mt-1">{userNameError}</p>
+            )}
+          </div>
+
+          {/* Password */}
+          <div>
+            <label className="block text-sm font-medium text-gray-300">New Password</label>
             <input
               type="password"
-              className="mt-1 block w-full px-3 py-2 border border-gray-600 rounded-md bg-gray-700 text-white"
-              placeholder="••••••••"
+              value={password}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                if (passwordError) validatePassword(e.target.value);
+              }}
+              onBlur={() => validatePassword(password)}
+              className={`mt-1 block w-full px-3 py-2 border rounded-md bg-gray-700 text-white ${
+                passwordError ? 'border-red-500' : 'border-gray-600'
+              }`}
+              placeholder="Leave blank to keep current password"
             />
+            {passwordError && (
+              <p className="text-xs text-red-400 mt-1">{passwordError}</p>
+            )}
+            <p className="text-xs text-gray-500 mt-1">
+              Password must contain at least one uppercase letter and one number
+            </p>
           </div>
-          <button className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-            Save Changes
+
+          <button
+            onClick={handleSaveAccount}
+            disabled={isSavingAccount || isLoading}
+            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isSavingAccount ? 'Saving...' : 'Save Changes'}
           </button>
         </div>
       </div>

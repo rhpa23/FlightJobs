@@ -57,6 +57,11 @@ export const authApi = {
     api.post('/auth/unsubscribe', { token }).then(res => res.data),
 };
 
+export const usersApi = {
+  updateUser: (id: string, data: { userName?: string; password?: string }) =>
+    api.put(`/users/${id}`, data).then(res => res.data),
+};
+
 export const jobsApi = {
   getJobs: () =>
     api.get('/jobs').then(res => res.data),
